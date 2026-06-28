@@ -4,7 +4,7 @@ import { CheckoutPage } from "../../public/pages/CheckoutPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title:   "Thanh toán",
+    title: "Thanh toán",
     noindex: true,
   });
 

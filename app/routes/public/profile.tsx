@@ -4,7 +4,7 @@ import { ProfilePage } from "../../public/pages/ProfilePage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title:   "Tài khoản của tôi",
+    title: "Tài khoản của tôi",
     noindex: true, // Profile page không cần index
   });
 

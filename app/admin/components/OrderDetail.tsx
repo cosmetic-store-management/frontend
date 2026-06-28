@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Circle,
@@ -6,12 +7,16 @@ import {
   MapPin,
   Package,
 } from "lucide-react";
+import { Link } from "react-router";
 import type { Order } from "@/admin/types/order";
+import { orderStatusMeta, paymentMethodLabel } from "../types/order-meta";
 import {
-  orderStatusMeta,
-  paymentMethodLabel,
-} from "../types/order-meta";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -46,7 +51,15 @@ function buildSteps(orderStatus: Order["orderStatus"]) {
   if (orderStatus === "cancelled" || orderStatus === "returned") {
     return [
       { id: "created", title: "Đơn hàng được đặt", done: true, current: false },
-      { id: orderStatus, title: orderStatus === "cancelled" ? "Đơn hàng đã bị hủy" : "Đơn hàng đã hoàn trả", done: true, current: true },
+      {
+        id: orderStatus,
+        title:
+          orderStatus === "cancelled"
+            ? "Đơn hàng đã bị hủy"
+            : "Đơn hàng đã hoàn trả",
+        done: true,
+        current: true,
+      },
     ];
   }
   const idx = JOURNEY.findIndex((s) => s.key === orderStatus);
@@ -63,10 +76,25 @@ function buildSteps(orderStatus: Order["orderStatus"]) {
 type OrderDetailProps = {
   open: boolean;
   order: Order | null;
+  loading?: boolean;
   onClose: () => void;
+  onRefund?: (orderId: string) => void;
+  onApproveReturn?: (orderId: string) => void;
+  onRejectReturn?: (orderId: string, reason: string) => void;
 };
 
-export default function OrderDetail({ open, order, onClose }: OrderDetailProps) {
+export default function OrderDetail({
+  open,
+  order,
+  loading = false,
+  onClose,
+  onRefund,
+  onApproveReturn,
+  onRejectReturn,
+}: OrderDetailProps) {
+  const [rejectReason, setRejectReason] = useState("");
+  const [isRejecting, setIsRejecting] = useState(false);
+
   if (!order) return null;
 
   const meta = orderStatusMeta[order.orderStatus] ?? orderStatusMeta.pending;
@@ -75,7 +103,7 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden sm:rounded-md flex flex-col">
+      <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden sm:rounded-sm flex flex-col">
         {/* Header */}
         <DialogHeader className="shrink-0 border-b border-border px-4 py-4 sm:px-6 bg-surface text-left">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -101,7 +129,7 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
               </div>
             </div>
 
-            <div className="text-right">
+            <div className="text-right pr-8 sm:pr-10">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
                 Tổng tiền
               </p>
@@ -144,13 +172,21 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold leading-5 text-ink">
+                        <Link
+                          to={`/product/${item.productId}`}
+                          target="_blank"
+                          className="truncate text-sm font-semibold leading-5 text-ink hover:text-brand hover:underline block"
+                        >
                           {item.productName}
-                        </p>
+                        </Link>
                         {item.variantName && (
-                          <p className="mt-0.5 text-xs text-ink-muted">{item.variantName}</p>
+                          <p className="mt-0.5 text-xs text-ink-muted">
+                            {item.variantName}
+                          </p>
                         )}
-                        <p className="mt-1 text-xs text-ink-muted">SL: x{item.quantity}</p>
+                        <p className="mt-1 text-xs text-ink-muted">
+                          SL: x{item.quantity}
+                        </p>
                       </div>
                     </div>
                     <p className="shrink-0 text-right text-base font-semibold text-ink sm:text-left">
@@ -165,11 +201,15 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
                 <div className="space-y-2 text-sm text-ink-muted">
                   <div className="flex items-center justify-between gap-4">
                     <span>Tạm tính</span>
-                    <span className="text-ink">{formatVnd(order.subtotal)}</span>
+                    <span className="text-ink">
+                      {formatVnd(order.subtotal)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
                     <span>Phí vận chuyển</span>
-                    <span className="text-ink">{formatVnd(order.shippingFee)}</span>
+                    <span className="text-ink">
+                      {formatVnd(order.shippingFee)}
+                    </span>
                   </div>
                 </div>
                 <div className="my-4 h-px bg-border" />
@@ -182,7 +222,17 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
                   </p>
                 </div>
                 {order.note && (
-                  <p className="mt-3 text-xs italic text-ink-muted bg-surface-soft p-2 rounded-sm">Ghi chú: {order.note}</p>
+                  <p className="mt-3 text-xs italic text-ink-muted bg-surface-soft p-2 rounded-sm">
+                    Ghi chú: {order.note}
+                  </p>
+                )}
+                {order.returnReason && (
+                  <div className="mt-3 bg-danger/5 border border-danger/20 p-3 rounded-sm">
+                    <p className="text-xs font-semibold text-danger uppercase tracking-widest mb-1">
+                      Lý do yêu cầu trả hàng
+                    </p>
+                    <p className="text-sm text-ink">{order.returnReason}</p>
+                  </div>
                 )}
               </div>
             </div>
@@ -202,10 +252,17 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
                         {order.receiverName} • {order.phone}
                       </p>
                       <p className="text-sm text-ink-muted">
-                        {[order.street, order.ward, order.district, order.province]
-                          .filter(Boolean).join(", ") || order.address || "—"}
+                        {[
+                          order.street,
+                          order.ward,
+                          order.district,
+                          order.province,
+                        ]
+                          .filter(Boolean)
+                          .join(", ") ||
+                          order.address ||
+                          "—"}
                       </p>
-
                     </div>
                   </div>
 
@@ -235,6 +292,28 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
                   )}
                 </div>
               </div>
+
+              {/* Lý do trả hàng nếu có */}
+              {order.returnReason && (
+                <div className="border border-warning/40 bg-warning/5 p-4 sm:p-5 rounded-sm">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-warning mb-2">
+                    Lý do yêu cầu trả hàng
+                  </h4>
+                  <p className="text-sm text-ink font-medium">
+                    {order.returnReason}
+                  </p>
+                  {order.returnRejectReason && (
+                    <div className="mt-3 pt-3 border-t border-warning/20">
+                      <p className="text-xs font-bold text-danger mb-1">
+                        Lý do từ chối:
+                      </p>
+                      <p className="text-sm text-ink font-medium">
+                        {order.returnRejectReason}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Hành trình đơn hàng */}
               <div className="border border-border bg-surface p-4 sm:p-5 rounded-sm">
@@ -272,9 +351,77 @@ export default function OrderDetail({ open, order, onClose }: OrderDetailProps) 
             </div>
           </div>
         </div>
-        <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end">
+        <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end gap-2 flex-wrap">
+          {order.orderStatus === "return_pending" &&
+            onApproveReturn &&
+            onRejectReturn && (
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
+                {isRejecting ? (
+                  <div className="flex gap-2 items-center w-full sm:w-auto">
+                    <input
+                      type="text"
+                      placeholder="Lý do từ chối..."
+                      className="border border-border text-sm px-2 py-1.5 w-full sm:w-48 outline-none focus:border-brand"
+                      value={rejectReason}
+                      onChange={(e) => setRejectReason(e.target.value)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="bg-danger text-white border-danger hover:bg-danger/90 hover:text-white"
+                      disabled={loading || !rejectReason.trim()}
+                      onClick={() => {
+                        onRejectReturn(order.id, rejectReason);
+                        setIsRejecting(false);
+                        setRejectReason("");
+                      }}
+                    >
+                      Xác nhận
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setIsRejecting(false)}
+                    >
+                      Huỷ
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="text-danger hover:text-danger hover:bg-danger/10"
+                      disabled={loading}
+                      onClick={() => setIsRejecting(true)}
+                    >
+                      Từ chối trả hàng
+                    </Button>
+                    <Button
+                      type="button"
+                      className="bg-warning text-white hover:bg-warning/90"
+                      disabled={loading}
+                      onClick={() => onApproveReturn(order.id)}
+                    >
+                      Duyệt yêu cầu
+                    </Button>
+                  </>
+                )}
+              </div>
+            )}
+
+          {order.paymentStatus === "refund_pending" && onRefund && (
+            <Button
+              type="button"
+              className="bg-brand text-white"
+              disabled={loading}
+              onClick={() => onRefund(order.id)}
+            >
+              {loading ? "Đang xử lý..." : "Xác nhận"}
+            </Button>
+          )}
           <Button type="button" variant="outline" onClick={onClose}>
-            Đóng
+            Huỷ
           </Button>
         </DialogFooter>
       </DialogContent>

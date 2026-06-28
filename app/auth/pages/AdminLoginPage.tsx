@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "../hooks/useAdminAuth";
@@ -23,9 +23,10 @@ export default function AdminLoginPage() {
 
   const onSubmit = (data: LoginForm) => {
     loginMutation.mutate(data, {
-      onSuccess: (user) => {
+      onSuccess: () => {
         toast.success("Đăng nhập thành công!");
-        navigate("/admin", { replace: true });
+        // Use hard redirect to ensure clean mount for Admin Dashboard with SSR
+        window.location.href = "/admin";
       },
       onError: (err) => {
         toast.error(err instanceof Error ? err.message : "Đăng nhập thất bại");
@@ -36,60 +37,62 @@ export default function AdminLoginPage() {
   const isSubmitting = loginMutation.isPending;
 
   return (
-    <div className="w-full max-w-sm bg-surface border border-border shadow-ui-card rounded-sm p-8 animate-page-enter">
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-ink">Đăng nhập</h1>
-        <p className="text-sm text-ink-muted mt-1">Chào mừng bạn trở lại GlowUp</p>
+    <div className="w-full animate-page-enter">
+      <div className="mb-8">
+        <h1 className="text-heading-1">Đăng nhập</h1>
+        <p className="text-body-sm mt-2">
+          Vui lòng nhập thông tin đăng nhập của bạn
+        </p>
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); handleSubmit(onSubmit)(e); }} className="space-y-4" noValidate>
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(onSubmit)(e);
+        }}
+        className="space-y-5"
+        noValidate
+      >
+        <div>
           <Input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="you@example.com"
+            placeholder="Email"
+            className="h-12 bg-white border-zinc-200 focus:bg-white focus:border-brand focus:ring-1 focus:ring-brand transition-colors [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_30px_white_inset] [&:-webkit-autofill]:text-ink"
             {...register("email")}
             aria-invalid={!!errors.email}
           />
           {errors.email && (
-            <p className="text-xs text-danger">{errors.email.message}</p>
+            <p className="text-xs text-danger mt-1">{errors.email.message}</p>
           )}
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="password">Mật khẩu</Label>
+        <div>
           <Input
             id="password"
             type="password"
             autoComplete="current-password"
-            placeholder="••••••••"
+            placeholder="Mật khẩu"
+            className="h-12 bg-white border-zinc-200 focus:bg-white focus:border-brand focus:ring-1 focus:ring-brand transition-colors [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_30px_white_inset] [&:-webkit-autofill]:text-ink"
             {...register("password")}
             aria-invalid={!!errors.password}
           />
           {errors.password && (
-            <p className="text-xs text-danger">{errors.password.message}</p>
+            <p className="text-xs text-danger mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
-        <div className="flex justify-end">
-          <a href="/admin/forgot-password" className="text-xs text-brand hover:underline">
-            Quên mật khẩu?
-          </a>
-        </div>
-
-        <Button type="submit" disabled={isSubmitting} className="w-full">
-          {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn-primary w-full h-12 mt-4 text-[15px]"
+        >
+          {isSubmitting ? "Đang xử lý..." : "Đăng nhập"}
         </Button>
       </form>
-
-      <p className="mt-5 text-center text-sm text-ink-muted">
-        Chưa có tài khoản?{" "}
-        <a href="/admin/register" className="text-brand hover:underline font-medium">
-          Đăng ký ngay
-        </a>
-      </p>
     </div>
   );
 }

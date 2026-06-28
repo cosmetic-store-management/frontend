@@ -15,7 +15,10 @@ export const updateNotesSchema = z.object({
 });
 
 export const adjustPointsSchema = z.object({
-  pointsChanged: z.coerce.number().min(-100000).max(100000, "Số điểm không hợp lệ"),
+  pointsChanged: z.coerce
+    .number()
+    .min(-100000)
+    .max(100000, "Số điểm không hợp lệ"),
   reason: z.string().min(1, "Lý do không được để trống"),
 });
 

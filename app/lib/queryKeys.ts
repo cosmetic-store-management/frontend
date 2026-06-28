@@ -5,49 +5,49 @@
  */
 export const QK = {
   // ── Auth / User ─────────────────────────────────────────────
-  me:             ()               => ["me"]                       as const,
+  me: () => ["me"] as const,
 
   // ── Products ──────────────────────────────────────────────
-  products:       (filters?: unknown) => ["products", filters]     as const,
-  product:        (slug: string)   => ["product", slug]            as const,
+  products: (filters?: unknown) => ["products", filters] as const,
+  product: (slug: string) => ["product", slug] as const,
 
   // ── Catalog (với full filter/pagination state) ─────────────
-  catalog:        (params: unknown)=> ["catalog", params]          as const,
+  catalog: (params: unknown) => ["catalog", params] as const,
 
   // ── Categories ────────────────────────────────────────────
-  categories:     ()               => ["public_categories"]        as const,
+  categories: () => ["public_categories"] as const,
 
   // ── Brands ────────────────────────────────────────────────
-  brands:         ()               => ["brands"]                   as const,
+  brands: () => ["brands"] as const,
 
   // ── User Interactions ─────────────────────────────────────
-  favorites:      ()               => ["favorites"]                as const,
-  recentlyViewed: (page: number)   => ["recentlyViewed", page]     as const,
+  favorites: () => ["favorites"] as const,
+  recentlyViewed: (page: number) => ["recentlyViewed", page] as const,
 
   // ── Orders ────────────────────────────────────────────────
-  myOrders:       ()               => ["myOrders"]                 as const,
+  myOrders: () => ["myOrders"] as const,
 
   // ── Vouchers ──────────────────────────────────────────────
-  myVouchers:     ()               => ["myVouchers"]               as const,
-  publicVouchers: ()               => ["publicVouchers"]           as const,
-  walletVouchers: ()               => ["walletVouchers"]           as const,
-  allWalletVouchers: ()            => ["allWalletVouchers"]        as const,
+  myVouchers: () => ["myVouchers"] as const,
+  publicVouchers: () => ["publicVouchers"] as const,
+  walletVouchers: () => ["walletVouchers"] as const,
+  allWalletVouchers: () => ["allWalletVouchers"] as const,
 
   // ── Reviews ───────────────────────────────────────────────
-  reviews:        (productId: string, params?: unknown) =>
-                    ["reviews", productId, params]                  as const,
+  reviews: (productId: string, params?: unknown) =>
+    ["reviews", productId, params] as const,
 
   // ── User Profile ──────────────────────────────────────────
-  myProfile:      ()               => ["myProfile"]                as const,
-  tier:           ()               => ["myTierInfo"]               as const,
+  myProfile: () => ["myProfile"] as const,
+  tier: () => ["myTierInfo"] as const,
 
   // ── Product Recommendations ───────────────────────────────
   recommendations: (id: string, limit: number) =>
-                    ["product_recommendations", id, limit]          as const,
+    ["product_recommendations", id, limit] as const,
 
   // ── Settings ──────────────────────────────────────────────
-  settings:       ()               => ["publicSettings"]           as const,
+  settings: () => ["publicSettings"] as const,
 
   // ── Single Order ──────────────────────────────────────────
-  order:          (id: string)     => ["order", id]                as const,
+  order: (id: string) => ["order", id] as const,
 } as const;

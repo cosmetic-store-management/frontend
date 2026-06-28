@@ -1,7 +1,7 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   // base — rounded-sm theo design system
@@ -10,53 +10,55 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // Đỏ rượu — nút chính
-        default:     "bg-brand text-white hover:bg-brand-dark",
+        default: "bg-brand text-white hover:bg-brand-dark",
         // Đỏ destructive
         destructive: "bg-danger text-white hover:bg-danger text-white",
         // Viền — nút phụ
-        outline:     "border border-border bg-surface text-ink hover:bg-surface-muted",
+        outline:
+          "border border-border bg-surface text-ink hover:bg-surface-muted",
         // Xám nhạt
-        secondary:   "bg-surface-muted text-ink hover:bg-surface-muted/80",
+        secondary: "bg-surface-muted text-ink hover:bg-surface-muted/80",
         // Không nền
-        ghost:       "text-ink-muted hover:bg-surface-muted hover:text-ink",
+        ghost: "text-ink-muted hover:bg-surface-muted hover:text-ink",
         // Link
-        link:        "text-brand underline-offset-4 hover:underline p-0 h-auto",
+        link: "text-brand underline-offset-4 hover:underline p-0 h-auto",
         // Đen — accent button
-        dark:        "bg-ink text-white hover:bg-neutral-700",
+        dark: "bg-ink text-white hover:bg-neutral-700",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm:      "h-8 px-3 text-xs",
-        lg:      "h-11 px-8",
-        icon:    "h-10 w-10",
+        sm: "h-8 px-3 text-xs",
+        lg: "h-11 px-8",
+        icon: "h-10 w-10",
         "icon-sm": "h-8 w-8",
       },
     },
     defaultVariants: {
       variant: "default",
-      size:    "default",
+      size: "default",
     },
-  }
-)
+  },
+);
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    const Comp = asChild ? Slot : "button";
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       />
-    )
-  }
-)
-Button.displayName = "Button"
+    );
+  },
+);
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

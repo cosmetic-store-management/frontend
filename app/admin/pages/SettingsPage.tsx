@@ -1,58 +1,80 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Settings, Shield, CreditCard, Database, Loader2, Store, Truck, Landmark } from "lucide-react";
+import {
+  Settings,
+  Shield,
+  CreditCard,
+  Loader2,
+  Store,
+  Lock,
+  Save,
+  Palette,
+  Share2
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/ui/image-upload";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/lib/toast";
-import { useSettings, useSaveSettings, useDownloadBackup } from "../hooks/useSettings";
-import { settingsSchema, type SettingsFormData } from "../schemas/settings.schema";
-
-// Custom Switch component to avoid dependency on Shadcn Switch if it's not installed
-const CustomSwitch = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
-  <button
-    type="button"
-    role="switch"
-    aria-checked={checked}
-    onClick={() => onChange(!checked)}
-    className={`
-      peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50
-      ${checked ? "bg-brand" : "bg-ink-lighter/30"}
-    `}
-  >
-    <span
-      className={`
-        pointer-events-none block h-5 w-5 rounded-full bg-surface shadow-lg ring-0 transition-transform
-        ${checked ? "translate-x-5" : "translate-x-0"}
-      `}
-    />
-  </button>
-);
+import {
+  useSettings,
+  useSaveSettings,
+} from "../hooks/useSettings";
+import { useChangePassword } from "@/auth/hooks/useAdminAuth";
+import { useAdminAuthStore } from "@/store";
+import {
+  settingsSchema,
+  profileSchema,
+  passwordSchema,
+  type SettingsFormData,
+  type ProfileFormData,
+  type PasswordFormData,
+} from "../schemas/settings.schema";
 
 export function SettingsPage() {
   const { data: settings, isLoading } = useSettings();
   const saveSettingsMutation = useSaveSettings();
-  const backupMutation = useDownloadBackup();
-  const [activeTab, setActiveTab] = useState<"general" | "payment" | "security">("general");
+  const changePasswordMutation = useChangePassword();
+  
+  const { user } = useAdminAuthStore();
 
+  const { data: banksData } = useQuery({
+    queryKey: ["vietqr-banks"],
+    queryFn: async () => {
+      const res = await fetch("https://api.vietqr.io/v2/banks");
+      return res.json();
+    },
+  });
+  const banks = banksData?.data || [];
+
+  const [activeTab, setActiveTab] = useState<"general" | "branding" | "payment" | "security">("general");
+
+  // Form Cài đặt chung & Thanh toán
   const {
     control,
     handleSubmit,
     reset,
-    watch,
-    formState: { errors },
+    watch: _watch,
   } = useForm<SettingsFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(settingsSchema) as any,
     defaultValues: {
       storeName: "",
       email: "",
       phone: "",
       storeAddress: "",
+      logoUrl: "",
+      favicon: "",
       currency: "VND",
-      standardShippingFee: 30000,
-      freeShippingThreshold: 500000,
       pointsEarnRate: 100,
       maxPointsPct: 50,
       isCodActive: false,
@@ -64,7 +86,34 @@ export function SettingsPage() {
     },
   });
 
-  const isBankActive = watch("isBankActive");
+  // Form Thông tin cá nhân
+  const {
+    control: _profileControl,
+    handleSubmit: _handleProfileSubmit,
+    reset: resetProfile,
+  } = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema) as any,
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+    },
+  });
+
+  // Form Đổi mật khẩu
+  const {
+    control: passwordControl,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPassword,
+    formState: { errors: passwordErrors },
+  } = useForm<PasswordFormData>({
+    resolver: zodResolver(passwordSchema) as any,
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
 
   useEffect(() => {
     if (settings) {
@@ -73,48 +122,67 @@ export function SettingsPage() {
         email: settings.email || "",
         phone: settings.phone || "",
         storeAddress: settings.storeAddress || "",
+        taxId: settings.taxId || "",
+        workingHours: settings.workingHours || "",
+        description: settings.description || "",
+        logoUrl: settings.logoUrl || "",
+        favicon: settings.favicon || "",
+        seoTitle: settings.seoTitle || "",
+        seoDescription: settings.seoDescription || "",
+        facebookUrl: settings.facebookUrl || "",
+        instagramUrl: settings.instagramUrl || "",
+        tiktokUrl: settings.tiktokUrl || "",
+        youtubeUrl: settings.youtubeUrl || "",
+        zaloUrl: settings.zaloUrl || "",
         currency: settings.currency || "VND",
-        standardShippingFee: settings.standardShippingFee ?? 30000,
-        freeShippingThreshold: settings.freeShippingThreshold ?? 500000,
         pointsEarnRate: settings.pointsEarnRate ?? 100,
         maxPointsPct: settings.maxPointsPct ?? 50,
+        profitMargin: settings.profitMargin ?? 0,
         isCodActive: !!settings.isCodActive,
         isBankActive: !!settings.isBankActive,
+        isQrActive: !!settings.isQrActive,
         bankName: settings.bankName || "",
         bankAccountNumber: settings.bankAccountNumber || "",
         bankAccountName: settings.bankAccountName || "",
-        isQrActive: !!settings.isQrActive,
+        bankQrCodeUrl: settings.bankQrCodeUrl || "",
       });
     }
   }, [settings, reset]);
 
+  useEffect(() => {
+    if (user) {
+      resetProfile({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user, resetProfile]);
+
   const onSubmitAll = async (data: SettingsFormData) => {
     try {
-      await saveSettingsMutation.mutateAsync(data);
+      await saveSettingsMutation.mutateAsync(data as any);
       toast.success("Đã lưu cấu hình thành công!");
     } catch (err: any) {
       toast.error(err.message || "Lỗi khi lưu cấu hình!");
     }
   };
 
-  const onError = (errors: any) => {
-    if (errors.storeName || errors.email || errors.phone || errors.storeAddress || errors.standardShippingFee || errors.freeShippingThreshold) {
-      toast.error("Vui lòng điền đúng thông tin Cài đặt chung");
-      setActiveTab("general");
-    } else if (errors.isBankActive || errors.bankName || errors.bankAccountNumber || errors.bankAccountName) {
-      toast.error("Vui lòng điền đúng thông tin Cổng thanh toán");
-      setActiveTab("payment");
-    } else {
-      toast.error("Vui lòng kiểm tra lại thông tin nhập");
+  const onPasswordSubmit = async (data: PasswordFormData) => {
+    try {
+      await changePasswordMutation.mutateAsync({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+      toast.success("Đổi mật khẩu thành công!");
+      resetPassword();
+    } catch (err: any) {
+      toast.error(err.message || "Lỗi khi đổi mật khẩu!");
     }
   };
 
-  const handleBackup = () => {
-    toast.promise(backupMutation.mutateAsync(), {
-      loading: "Đang sao lưu cơ sở dữ liệu...",
-      success: "Đã tạo bản sao lưu thành công (glowup_db_backup.json)",
-      error: (err: any) => err.message || "Lỗi khi sao lưu dữ liệu!",
-    });
+  const onError = () => {
+    toast.error("Vui lòng kiểm tra lại thông tin nhập");
   };
 
   if (isLoading) {
@@ -130,25 +198,44 @@ export function SettingsPage() {
     <div className="space-y-6 max-w-5xl animate-page-enter text-left">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-ink tracking-tight">Cấu hình hệ thống</h1>
-        <p className="text-sm text-ink-muted mt-1">Quản lý cài đặt chung, chính sách vận chuyển, và cổng thanh toán</p>
+        <h1 className="text-2xl font-bold text-ink tracking-tight">
+          Cấu hình hệ thống
+        </h1>
+        <p className="text-sm text-ink-muted mt-1">
+          Quản lý cài đặt chung, cổng thanh toán, và thông tin cá nhân
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Sidebar Nav */}
-        <div className="space-y-1 bg-surface border border-border rounded-sm p-3 shadow-ui-soft h-fit">
+        <div className="space-y-1 bg-surface border border-border rounded-sm p-3 shadow-ui-soft h-fit sticky top-6">
           <button
             onClick={() => setActiveTab("general")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
-              activeTab === "general" ? "bg-brand text-white font-medium shadow-ui-soft" : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+              activeTab === "general"
+                ? "bg-brand text-white font-medium shadow-ui-soft"
+                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
             }`}
           >
             <Settings className="w-4 h-4" /> Cài đặt chung
           </button>
           <button
+            onClick={() => setActiveTab("branding")}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
+              activeTab === "branding"
+                ? "bg-brand text-white font-medium shadow-ui-soft"
+                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+            }`}
+          >
+            <Palette className="w-4 h-4" /> Thương Hiệu
+          </button>
+
+          <button
             onClick={() => setActiveTab("payment")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
-              activeTab === "payment" ? "bg-brand text-white font-medium shadow-ui-soft" : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+              activeTab === "payment"
+                ? "bg-brand text-white font-medium shadow-ui-soft"
+                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
             }`}
           >
             <CreditCard className="w-4 h-4" /> Cổng thanh toán
@@ -156,261 +243,349 @@ export function SettingsPage() {
           <button
             onClick={() => setActiveTab("security")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
-              activeTab === "security" ? "bg-brand text-white font-medium shadow-ui-soft" : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+              activeTab === "security"
+                ? "bg-brand text-white font-medium shadow-ui-soft"
+                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
             }`}
           >
-            <Shield className="w-4 h-4" /> Bảo mật & Dữ liệu
+            <Shield className="w-4 h-4" /> Cá nhân & Bảo mật
           </button>
         </div>
 
         {/* Content Area */}
         <div className="md:col-span-3 space-y-6">
-          <form id="settings-form" onSubmit={handleSubmit(onSubmitAll as any, onError)}>
-            
-            {/* TAB 1: CÀI ĐẶT CHUNG */}
-            {activeTab === "general" && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                {/* Thông tin cửa hàng */}
-                <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft space-y-4">
-                  <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                    <Store className="w-5 h-5 text-brand" />
-                    <h3 className="font-semibold text-base text-ink">Thông tin cửa hàng</h3>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="storeName" className="text-xs font-semibold text-ink">Tên cửa hàng <span className="text-danger">*</span></Label>
-                      <Controller control={control} name="storeName" render={({ field }) => (
-                        <Input {...field} id="storeName" placeholder="GlowUp Cosmetics" />
-                      )} />
-                      {errors.storeName && <p className="text-xs text-danger">{errors.storeName.message}</p>}
+          {(activeTab === "general" || activeTab === "branding" || activeTab === "payment") && (
+            <form onSubmit={handleSubmit(onSubmitAll, onError)} className="space-y-6">
+              
+              {activeTab === "general" && (
+                <>
+                  <div className="premium-card p-6 space-y-6">
+                    <div className="flex items-center gap-2 border-b border-border pb-4">
+                      <Store className="w-5 h-5 text-brand" />
+                      <h2 className="text-lg font-bold text-ink">Thông tin cửa hàng</h2>
                     </div>
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="currency" className="text-xs font-semibold text-ink">Đơn vị tiền tệ</Label>
-                      <Controller control={control} name="currency" render={({ field }) => (
-                        <Input {...field} id="currency" disabled />
-                      )} />
-                      {errors.currency && <p className="text-xs text-danger">{errors.currency.message}</p>}
-                    </div>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="email" className="text-xs font-semibold text-ink">Email liên hệ <span className="text-danger">*</span></Label>
-                      <Controller control={control} name="email" render={({ field }) => (
-                        <Input {...field} id="email" type="email" placeholder="contact@shop.com" />
-                      )} />
-                      {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
-                    </div>
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="phone" className="text-xs font-semibold text-ink">Hotline hỗ trợ <span className="text-danger">*</span></Label>
-                      <Controller control={control} name="phone" render={({ field }) => (
-                        <Input {...field} id="phone" placeholder="090..." />
-                      )} />
-                      {errors.phone && <p className="text-xs text-danger">{errors.phone.message}</p>}
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 text-left">
-                    <Label htmlFor="storeAddress" className="text-xs font-semibold text-ink">Địa chỉ cửa hàng <span className="text-danger">*</span></Label>
-                    <Controller control={control} name="storeAddress" render={({ field }) => (
-                      <Input {...field} id="storeAddress" placeholder="Địa chỉ chi tiết phục vụ đổi trả/hóa đơn" />
-                    )} />
-                    {errors.storeAddress && <p className="text-xs text-danger">{errors.storeAddress.message}</p>}
-                  </div>
-                </div>
-
-                {/* Chính sách giao hàng */}
-                <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft space-y-4">
-                  <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                    <Truck className="w-5 h-5 text-brand" />
-                    <h3 className="font-semibold text-base text-ink">Chính sách vận chuyển</h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="standardShippingFee" className="text-xs font-semibold text-ink">Phí ship mặc định (VNĐ) <span className="text-danger">*</span></Label>
-                      <Controller control={control} name="standardShippingFee" render={({ field }) => (
-                        <Input {...field} id="standardShippingFee" type="number" min="0" step="1000" />
-                      )} />
-                      {errors.standardShippingFee && <p className="text-xs text-danger">{errors.standardShippingFee.message}</p>}
-                    </div>
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="freeShippingThreshold" className="text-xs font-semibold text-ink">Ngưỡng miễn phí Freeship (VNĐ) <span className="text-danger">*</span></Label>
-                      <Controller control={control} name="freeShippingThreshold" render={({ field }) => (
-                        <Input {...field} id="freeShippingThreshold" type="number" min="0" step="10000" />
-                      )} />
-                      {errors.freeShippingThreshold && <p className="text-xs text-danger">{errors.freeShippingThreshold.message}</p>}
-                    </div>
-                  </div>
-                  <p className="text-xs text-ink-muted">
-                    Hệ thống sẽ tự động tính phí vận chuyển cho khách hàng lúc thanh toán dựa trên các thông số này. Không sử dụng API bên thứ 3.
-                  </p>
-                </div>
-
-                {/* Chương trình điểm thưởng */}
-                <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft space-y-4">
-                  <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                    <span className="text-brand text-lg">✦</span>
-                    <h3 className="font-semibold text-base text-ink">Chương trình điểm thưởng</h3>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="pointsEarnRate" className="text-xs font-semibold text-ink">
-                        Tỷ lệ tích điểm <span className="text-danger">*</span>
-                      </Label>
-                      <Controller control={control} name="pointsEarnRate" render={({ field }) => (
-                        <Input {...field} id="pointsEarnRate" type="number" min="1" step="1" />
-                      )} />
-                      {errors.pointsEarnRate && <p className="text-xs text-danger">{errors.pointsEarnRate.message}</p>}
-                      <p className="text-xs text-ink-muted">Chi N đồng = 1 điểm GlowUp (mặc định: 100)</p>
-                    </div>
-                    <div className="space-y-1.5 text-left">
-                      <Label htmlFor="maxPointsPct" className="text-xs font-semibold text-ink">
-                        Giới hạn dùng điểm (%) <span className="text-danger">*</span>
-                      </Label>
-                      <Controller control={control} name="maxPointsPct" render={({ field }) => (
-                        <Input {...field} id="maxPointsPct" type="number" min="1" max="100" step="1" />
-                      )} />
-                      {errors.maxPointsPct && <p className="text-xs text-danger">{errors.maxPointsPct.message}</p>}
-                      <p className="text-xs text-ink-muted">Tối đa X% giá trị đơn hàng có thể thanh toán bằng điểm (mặc định: 50%)</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* TAB 2: CỔNG THANH TOÁN */}
-            {activeTab === "payment" && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft space-y-4">
-                  <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                    <CreditCard className="w-5 h-5 text-brand" />
-                    <h3 className="font-semibold text-base text-ink">Phương thức thanh toán</h3>
-                  </div>
-
-                  <div className="space-y-6">
-                    {/* COD */}
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-sm font-semibold text-ink">Thanh toán khi nhận hàng (COD)</h4>
-                        <p className="text-xs text-ink-muted">Cho phép khách hàng thanh toán bằng tiền mặt khi nhận hàng.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label>Tên cửa hàng <span className="text-danger">*</span></Label>
+                        <Controller
+                          name="storeName"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="Tên shop" />}
+                        />
                       </div>
-                      <Controller control={control} name="isCodActive" render={({ field: { value, onChange } }) => (
-                        <CustomSwitch checked={value} onChange={onChange} />
-                      )} />
-                    </div>
-
-                    {/* Bank Transfer */}
-                    <div className="space-y-4 pt-4 border-t border-border/50">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="text-sm font-semibold text-ink">Chuyển khoản ngân hàng trực tiếp</h4>
-                          <p className="text-xs text-ink-muted">Cung cấp thông tin tài khoản để khách chuyển khoản thủ công.</p>
-                        </div>
-                        <Controller control={control} name="isBankActive" render={({ field: { value, onChange } }) => (
-                          <CustomSwitch checked={value} onChange={onChange} />
-                        )} />
+                      <div className="space-y-2">
+                        <Label>SĐT Liên hệ</Label>
+                        <Controller
+                          name="phone"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="09xxxx" />}
+                        />
                       </div>
+                      <div className="space-y-2">
+                        <Label>Email</Label>
+                        <Controller
+                          name="email"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="email@shop.com" />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Mã số thuế</Label>
+                        <Controller
+                          name="taxId"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="Mã số thuế" />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Địa chỉ cửa hàng</Label>
+                        <Controller
+                          name="storeAddress"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="123 Đường..." />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Giờ hoạt động</Label>
+                        <Controller
+                          name="workingHours"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="08:00 - 22:00" />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Đơn vị tiền tệ</Label>
+                        <Controller
+                          name="currency"
+                          control={control}
+                          render={({ field }) => <Input {...field} disabled />}
+                        />
+                      </div>
+                      <div className="md:col-span-2 space-y-2">
+                        <Label>Mô tả cửa hàng</Label>
+                        <Controller
+                          name="description"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="Mô tả..." />}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
-                      {/* Thông tin NH chỉ hiện khi bật chuyển khoản */}
-                      {isBankActive && (
-                        <div className="bg-surface-soft p-4 rounded-md border border-border/60 space-y-4 animate-in fade-in slide-in-from-top-2">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Landmark className="w-4 h-4 text-brand" />
-                            <h5 className="text-sm font-semibold text-ink">Thông tin tài khoản nhận tiền</h5>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1.5 text-left">
-                              <Label className="text-xs font-semibold text-ink">Tên Ngân hàng</Label>
-                              <Controller control={control} name="bankName" render={({ field }) => (
-                                <Input {...field} placeholder="VD: Vietcombank" />
-                              )} />
-                            </div>
-                            <div className="space-y-1.5 text-left">
-                              <Label className="text-xs font-semibold text-ink">Số Tài Khoản</Label>
-                              <Controller control={control} name="bankAccountNumber" render={({ field }) => (
-                                <Input {...field} placeholder="VD: 0123456789" />
-                              )} />
-                            </div>
-                          </div>
-                          <div className="space-y-1.5 text-left">
-                            <Label className="text-xs font-semibold text-ink">Tên Chủ Tài Khoản</Label>
-                            <Controller control={control} name="bankAccountName" render={({ field }) => (
-                              <Input {...field} placeholder="VD: NGUYEN VAN A" />
-                            )} />
-                          </div>
-                          {errors.isBankActive && (
-                            <p className="text-xs text-danger">{errors.isBankActive.message}</p>
+              {activeTab === "branding" && (
+                <div className="space-y-6">
+                  <div className="premium-card p-6 space-y-6">
+                    <div className="flex items-center gap-2 border-b border-border pb-4">
+                      <Palette className="w-5 h-5 text-brand" />
+                      <h2 className="text-lg font-bold text-ink">Thương Hiệu</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label>Logo</Label>
+                        <Controller
+                          name="logoUrl"
+                          control={control}
+                          render={({ field }) => (
+                            <ImageUpload
+                              value={field.value || ""}
+                              onChange={field.onChange}
+                            />
                           )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* QR Code */}
-                    <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                      <div>
-                        <h4 className="text-sm font-semibold text-ink">Thanh toán qua mã QR (Momo/VNPAY)</h4>
-                        <p className="text-xs text-ink-muted">Chức năng tích hợp đang được xây dựng (Coming soon).</p>
+                        />
                       </div>
-                      <Controller control={control} name="isQrActive" render={({ field: { value, onChange } }) => (
-                        <CustomSwitch checked={value} onChange={onChange} />
-                      )} />
+                      <div className="space-y-2">
+                        <Label>Favicon</Label>
+                        <Controller
+                          name="favicon"
+                          control={control}
+                          render={({ field }) => (
+                            <ImageUpload
+                              value={field.value || ""}
+                              onChange={field.onChange}
+                            />
+                          )}
+                        />
+                      </div>
+                      <div className="md:col-span-2 space-y-2">
+                        <Label>SEO Title</Label>
+                        <Controller
+                          name="seoTitle"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="Tiêu đề trang web" />}
+                        />
+                      </div>
+                      <div className="md:col-span-2 space-y-2">
+                        <Label>SEO Description</Label>
+                        <Controller
+                          name="seoDescription"
+                          control={control}
+                          render={({ field }) => <Textarea {...field} placeholder="Mô tả cho máy tìm kiếm" rows={2} />}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="premium-card p-6 space-y-6">
+                    <div className="flex items-center gap-2 border-b border-border pb-4">
+                      <Share2 className="w-5 h-5 text-brand" />
+                      <h2 className="text-lg font-bold text-ink">Mạng xã hội</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label>Facebook URL</Label>
+                        <Controller
+                          name="facebookUrl"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="https://facebook.com/..." />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Instagram URL</Label>
+                        <Controller
+                          name="instagramUrl"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="https://instagram.com/..." />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>TikTok URL</Label>
+                        <Controller
+                          name="tiktokUrl"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="https://tiktok.com/..." />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Youtube URL</Label>
+                        <Controller
+                          name="youtubeUrl"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="https://youtube.com/..." />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Zalo URL</Label>
+                        <Controller
+                          name="zaloUrl"
+                          control={control}
+                          render={({ field }) => <Input {...field} placeholder="https://zalo.me/..." />}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* TAB 3: BẢO MẬT & DỮ LIỆU */}
-            {activeTab === "security" && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
-                <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft space-y-4">
-                  <div className="flex items-center gap-2 mb-4 pb-2 border-b border-border">
-                    <Database className="w-5 h-5 text-brand" />
-                    <h3 className="font-semibold text-base text-ink">Hệ thống & Dữ liệu</h3>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface-soft p-4 rounded-md border border-border/60">
-                    <div>
-                      <h4 className="text-sm font-semibold text-ink">Sao lưu cơ sở dữ liệu</h4>
-                      <p className="text-xs text-ink-muted mt-1">
-                        Trích xuất toàn bộ thông tin sản phẩm, đơn hàng, người dùng thành file JSON.
-                      </p>
+              {activeTab === "general" && (
+                <>
+                  <div className="premium-card p-6 space-y-6">
+                    <div className="flex items-center gap-2 border-b border-border pb-4">
+                      <Store className="w-5 h-5 text-brand" />
+                      <h2 className="text-lg font-bold text-ink">Điểm thưởng</h2>
                     </div>
-                    <Button 
-                      type="button" 
-                      onClick={handleBackup} 
-                      variant="outline" 
-                      size="sm" 
-                      className="gap-2 border-dashed whitespace-nowrap" 
-                      disabled={backupMutation.isPending}
-                    >
-                      {backupMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        "Tải bản Backup"
-                      )}
-                    </Button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      <div className="space-y-2">
+                        <Label>Tỷ lệ tích điểm (VND = 1 điểm)</Label>
+                        <Controller
+                          name="pointsEarnRate"
+                          control={control}
+                          render={({ field }) => <Input type="number" {...field} />}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Tối đa % dùng điểm</Label>
+                        <Controller
+                          name="maxPointsPct"
+                          control={control}
+                          render={({ field }) => <Input type="number" {...field} />}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === "payment" && (
+                <div className="space-y-6">
+
+                  {/* Bank Transfer */}
+                  <div className="premium-card p-5">
+                    <div className="flex items-center gap-2 border-b border-border pb-4 mb-4">
+                      <CreditCard className="w-5 h-5 text-brand" />
+                      <h2 className="text-lg font-bold text-ink">Chuyển khoản ngân hàng</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-fade-in">
+                        <div className="space-y-2">
+                          <Label>Ngân hàng</Label>
+                          <Controller
+                            name="bankName"
+                            control={control}
+                            render={({ field }) => (
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <SelectTrigger className="w-full h-10 [&>span]:w-full [&>span]:overflow-hidden [&>span]:block">
+                                  <SelectValue placeholder="Chọn ngân hàng" />
+                                </SelectTrigger>
+                                <SelectContent className="max-h-[300px]">
+                                  {banks.map((bank: any) => (
+                                    <SelectItem key={bank.bin} value={bank.bin} className="w-full">
+                                      <div className="flex items-center gap-2 w-full overflow-hidden">
+                                        <img src={bank.logo} alt={bank.shortName} className="w-5 h-5 object-contain shrink-0" />
+                                        <span className="truncate block text-left">{bank.shortName} - {bank.name}</span>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Số tài khoản</Label>
+                          <Controller
+                            name="bankAccountNumber"
+                            control={control}
+                            render={({ field }) => <Input {...field} placeholder="Nhập số tài khoản" />}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Tên chủ tài khoản</Label>
+                          <Controller
+                            name="bankAccountName"
+                            control={control}
+                            render={({ field }) => <Input {...field} placeholder="Nhập tên chủ tài khoản" />}
+                          />
+                        </div>
+                      </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Global Save Button */}
-            {(activeTab === "general" || activeTab === "payment") && (
-              <div className="flex justify-end pt-4 mt-6 border-t border-border">
-                <Button type="submit" className="min-w-[120px]" disabled={saveSettingsMutation.isPending}>
+              <div className="flex justify-end pt-4">
+                <Button
+                  type="submit"
+                  disabled={saveSettingsMutation.isPending}
+                  className="gap-2 px-6"
+                >
                   {saveSettingsMutation.isPending ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : null}
-                  Lưu thay đổi
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  Lưu cấu hình
                 </Button>
               </div>
-            )}
-          </form>
+            </form>
+          )}
+
+          {activeTab === "security" && (
+            <div className="space-y-6">
+              <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="premium-card p-6 space-y-6">
+                <div className="flex items-center gap-2 border-b border-border pb-4">
+                  <Lock className="w-5 h-5 text-brand" />
+                  <h2 className="text-lg font-bold text-ink">Đổi mật khẩu</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Mật khẩu hiện tại</Label>
+                    <Controller
+                      name="currentPassword"
+                      control={passwordControl}
+                      render={({ field }) => <Input {...field} type="password" />}
+                    />
+                    {passwordErrors.currentPassword && <span className="text-xs text-danger">{passwordErrors.currentPassword.message}</span>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Mật khẩu mới</Label>
+                    <Controller
+                      name="newPassword"
+                      control={passwordControl}
+                      render={({ field }) => <Input {...field} type="password" />}
+                    />
+                    {passwordErrors.newPassword && <span className="text-xs text-danger">{passwordErrors.newPassword.message}</span>}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Xác nhận mật khẩu mới</Label>
+                    <Controller
+                      name="confirmPassword"
+                      control={passwordControl}
+                      render={({ field }) => <Input {...field} type="password" />}
+                    />
+                    {passwordErrors.confirmPassword && <span className="text-xs text-danger">{passwordErrors.confirmPassword.message}</span>}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={changePasswordMutation.isPending} className="gap-2 px-6">
+                    {changePasswordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Đổi mật khẩu
+                  </Button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </div>

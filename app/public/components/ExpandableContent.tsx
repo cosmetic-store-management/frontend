@@ -6,10 +6,20 @@ interface ExpandableContentProps {
   maxHeight?: number; // Height in pixels before truncation kicks in
 }
 
-export function ExpandableContent({ children, maxHeight = 800 }: ExpandableContentProps) {
+export function ExpandableContent({
+  children,
+  maxHeight = 800,
+}: ExpandableContentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [needsExpansion, setNeedsExpansion] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [contentHeight, setContentHeight] = useState<number>(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(contentRef.current.scrollHeight);
+    }
+  }, [children]);
 
   useEffect(() => {
     // Check if content exceeds the max height
@@ -22,10 +32,12 @@ export function ExpandableContent({ children, maxHeight = 800 }: ExpandableConte
 
   return (
     <div className="relative w-full">
-      <div 
+      <div
         ref={contentRef}
-        className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? "" : "relative"}`}
-        style={{ maxHeight: isExpanded ? `${contentRef.current?.scrollHeight}px` : `${maxHeight}px` }}
+        className="transition-all duration-300 ease-in-out overflow-hidden relative"
+        style={{
+          maxHeight: isExpanded ? `${contentHeight}px` : `${maxHeight}px`,
+        }}
       >
         {children}
 
@@ -36,15 +48,21 @@ export function ExpandableContent({ children, maxHeight = 800 }: ExpandableConte
       </div>
 
       {needsExpansion && (
-        <div className={`flex justify-center w-full ${isExpanded ? "mt-6" : "-mt-6 relative z-10"}`}>
+        <div
+          className={`flex justify-center w-full ${isExpanded ? "mt-6" : "-mt-6 relative z-10"}`}
+        >
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 bg-surface hover:bg-surface-muted text-danger border border-danger px-6 py-2.5 rounded-sm font-semibold transition-colors shadow-sm"
+            className="flex items-center gap-2 bg-surface hover:bg-surface-muted text-brand border border-brand px-6 py-2.5 rounded-sm font-semibold transition-colors "
           >
             {isExpanded ? (
-              <>Thu gọn nội dung <ChevronUp className="w-4 h-4" /></>
+              <>
+                Thu gọn nội dung <ChevronUp className="w-4 h-4" />
+              </>
             ) : (
-              <>Xem thêm nội dung <ChevronDown className="w-4 h-4" /></>
+              <>
+                Xem thêm nội dung <ChevronDown className="w-4 h-4" />
+              </>
             )}
           </button>
         </div>

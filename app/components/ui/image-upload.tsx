@@ -10,7 +10,12 @@ interface ImageUploadProps {
   compact?: boolean; // chỉ hiện icon, ẩn text — dùng cho khối nhỏ
 }
 
-export function ImageUpload({ value, onChange, className = "", compact = false }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  className = "",
+  compact = false,
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,7 +38,9 @@ export function ImageUpload({ value, onChange, className = "", compact = false }
       try {
         setIsUploading(true);
         // Gọi API upload thực tế → lưu file lên server, trả về URL
-        const result = await apiClient.post<{ url: string }>("/upload", { base64 });
+        const result = await apiClient.post<{ url: string }>("/upload", {
+          base64,
+        });
         onChange(result.url);
       } catch (err) {
         console.error("Upload error", err);
@@ -65,13 +72,17 @@ export function ImageUpload({ value, onChange, className = "", compact = false }
       />
 
       {value ? (
-        <div className="relative group rounded-md border border-border overflow-hidden bg-surface-soft flex items-center justify-center aspect-square">
-          <img src={value} alt="Uploaded" className="w-full h-full object-contain" />
+        <div className="relative group rounded-sm border border-border overflow-hidden bg-surface-soft flex items-center justify-center aspect-square">
+          <img
+            src={value}
+            alt="Uploaded"
+            className="w-full h-full object-contain"
+          />
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
             <button
               type="button"
               onClick={triggerUpload}
-              className="p-1.5 bg-surface text-ink rounded-md hover:bg-surface-muted transition-colors"
+              className="p-1.5 bg-surface text-ink rounded-sm hover:bg-surface-muted transition-colors"
               title="Thay đổi ảnh"
             >
               <Upload className="w-4 h-4" />
@@ -79,7 +90,7 @@ export function ImageUpload({ value, onChange, className = "", compact = false }
             <button
               type="button"
               onClick={removeImage}
-              className="p-1.5 bg-danger text-white rounded-md hover:bg-danger transition-colors"
+              className="p-1.5 bg-danger text-white rounded-sm hover:bg-danger transition-colors"
               title="Xóa ảnh"
             >
               <X className="w-4 h-4" />
@@ -89,22 +100,34 @@ export function ImageUpload({ value, onChange, className = "", compact = false }
       ) : (
         <div
           onClick={triggerUpload}
-          className="group rounded-md border-2 border-dashed border-border hover:border-brand bg-surface-soft hover:bg-brand/5 transition-all flex flex-col items-center justify-center cursor-pointer aspect-square"
+          className="group rounded-sm border-2 border-dashed border-border hover:border-brand bg-surface-soft hover:bg-brand/5 transition-all flex flex-col items-center justify-center cursor-pointer aspect-square"
         >
           {isUploading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin text-brand" />
-              {!compact && <span className="text-xs font-medium mt-1 text-ink-muted">Đang tải lên...</span>}
+              {!compact && (
+                <span className="text-xs font-medium mt-1 text-ink-muted">
+                  Đang tải lên...
+                </span>
+              )}
             </>
           ) : (
             <>
-              <ImageIcon className={`text-ink-muted group-hover:text-brand transition-colors ${compact ? "w-5 h-5" : "w-8 h-8 mb-2"}`} />
+              <ImageIcon
+                className={`text-ink-muted group-hover:text-brand transition-colors ${compact ? "w-5 h-5" : "w-8 h-8 mb-2"}`}
+              />
               {compact ? (
-                <span className="text-[9px] text-ink-muted group-hover:text-brand transition-colors mt-1 leading-tight text-center">Tải lên</span>
+                <span className="text-[9px] text-ink-muted group-hover:text-brand transition-colors mt-1 leading-tight text-center">
+                  Tải lên
+                </span>
               ) : (
                 <>
-                  <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">Bấm để tải ảnh lên</span>
-                  <span className="text-[10px] text-ink-muted/70 mt-1">PNG, JPG · tối đa 5MB</span>
+                  <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">
+                    Bấm để tải ảnh lên
+                  </span>
+                  <span className="text-[10px] text-ink-muted/70 mt-1">
+                    PNG, JPG · tối đa 5MB
+                  </span>
                 </>
               )}
             </>

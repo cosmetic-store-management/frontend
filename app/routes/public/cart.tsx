@@ -4,7 +4,7 @@ import { CartPage } from "../../public/pages/CartPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title:   "Giỏ hàng",
+    title: "Giỏ hàng",
     noindex: true, // Cart page không cần index
   });
 

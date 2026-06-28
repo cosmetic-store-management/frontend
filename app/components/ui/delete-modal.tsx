@@ -1,96 +1,86 @@
-import { AlertCircle, X } from "lucide-react";
+import { ReactNode } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { createPortal } from "react-dom";
+import { AlertCircle } from "lucide-react";
 
-type DeleteModalProps = {
+export type DeleteModalProps = {
   open: boolean;
-  loading?: boolean;
-  submitError?: string | null;
   title?: string;
-  description?: string;
-  confirmText?: string;
-  cancelText?: string;
+  description?: ReactNode;
   onClose: () => void;
   onConfirm: () => void | Promise<void>;
+  loading?: boolean;
+  submitError?: string | null;
+  cancelText?: string;
+  confirmText?: string;
+  loadingText?: string;
+  disableConfirm?: boolean;
 };
 
 export default function DeleteModal({
   open,
-  loading = false,
-  submitError = null,
   title = "Xác nhận xóa",
-  description = "Bạn có chắc muốn xóa dữ liệu này? Hành động này không thể hoàn tác.",
-  confirmText = "Xóa",
-  cancelText = "Hủy",
+  description = "Bạn có chắc chắn muốn xoá dữ liệu này khỏi hệ thống? Hành động này không thể hoàn tác.",
   onClose,
   onConfirm,
+  loading = false,
+  submitError = null,
+  cancelText = "Hủy",
+  confirmText = "Xác nhận",
+  loadingText = "Đang xử lý...",
+  disableConfirm = false,
 }: DeleteModalProps) {
-  if (!open) {
-    return null;
-  }
-
-  return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/20 px-4 py-6">
-      <button
-        type="button"
-        aria-label="Close overlay"
-        onClick={onClose}
-        className="absolute inset-0"
-      />
-
-      <div className="relative z-10 w-full max-w-md bg-surface shadow-ui-card sm:rounded-sm overflow-y-auto max-h-[90vh] p-6 sm:p-7">
-        {/* Nút X */}
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-sm text-ink-muted transition-colors hover:bg-surface-soft hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand"
-        >
-          <X className="h-4 w-4" />
-        </button>
-
-        {/* Nội dung */}
-        <div className="flex items-start gap-4 mt-1 mb-8 pr-6">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-danger/10 text-danger">
-            <AlertCircle className="h-5 w-5" />
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="animate-scale-in sm:max-w-[480px] p-6">
+        <DialogHeader className="flex flex-row items-start gap-4 space-y-0 text-left">
+          <div className="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center shrink-0 mt-0.5">
+            <AlertCircle className="w-6 h-6 text-danger" />
           </div>
-
-          <div className="flex-1 space-y-2 mt-0.5">
-            <h2 className="text-lg font-bold text-ink">{title}</h2>
-            <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-wrap">
+          <div className="space-y-2 flex-1">
+            <DialogTitle className="text-xl font-bold text-ink">
+              {title}
+            </DialogTitle>
+            <DialogDescription className="text-[15px] text-ink-muted leading-relaxed">
               {description}
-            </p>
+            </DialogDescription>
           </div>
-        </div>
+        </DialogHeader>
 
-        {/* Footer (Actions) */}
-        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
-          <div className="flex-1 w-full sm:w-auto">
+        <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+          <div className="flex-1 w-full sm:w-auto min-w-0">
             {submitError && (
-              <p className="text-sm font-medium text-danger truncate">{submitError}</p>
+              <p className="text-sm font-medium text-danger text-left">
+                {submitError}
+              </p>
             )}
           </div>
-          <div className="flex w-full sm:w-auto gap-3">
+          <div className="flex w-full sm:w-auto gap-3 shrink-0">
             <Button
-              type="button"
               variant="outline"
+              className="flex-1 sm:flex-none h-10 px-6 font-medium text-ink bg-surface border-border hover:bg-surface-muted"
               onClick={onClose}
-              className="flex-1 sm:flex-none h-10 border-border bg-surface px-5 text-ink hover:bg-surface-soft shadow-sm"
             >
               {cancelText}
             </Button>
-
             <Button
-              type="button"
+              variant="default"
+              className="flex-1 sm:flex-none h-10 px-6 font-medium"
               onClick={onConfirm}
-              disabled={loading}
-              className="flex-1 sm:flex-none h-10 bg-danger px-5 text-white shadow-sm hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-70 transition-colors"
+              disabled={loading || disableConfirm}
             >
-              {loading ? "Đang xử lý..." : confirmText}
+              {loading ? loadingText : confirmText}
             </Button>
           </div>
-        </div>
-      </div>
-    </div>,
-    document.body
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

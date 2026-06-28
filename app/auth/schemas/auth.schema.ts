@@ -27,13 +27,15 @@ export const forgotPasswordSchema = z.object({
 
 export type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 
-export const resetPasswordSchema = z.object({
-  token: z.string().min(1, "Vui lòng nhập reset token"),
-  password: z.string().min(6, "Mật khẩu ít nhất 6 ký tự"),
-  confirmPassword: z.string().min(6, "Mật khẩu xác nhận ít nhất 6 ký tự"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Mật khẩu xác nhận không khớp",
-  path: ["confirmPassword"],
-});
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, "Vui lòng nhập reset token"),
+    password: z.string().min(6, "Mật khẩu ít nhất 6 ký tự"),
+    confirmPassword: z.string().min(6, "Mật khẩu xác nhận ít nhất 6 ký tự"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Mật khẩu xác nhận không khớp",
+    path: ["confirmPassword"],
+  });
 
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;

@@ -1,17 +1,30 @@
 import { useState } from "react";
 import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgotPassword } from "@/auth/hooks/usePublicAuth";
+import {
+  publicForgotPasswordSchema,
+  type PublicForgotPasswordForm,
+} from "../schemas/public-auth.schema";
 import { toast } from "@/lib/toast";
-import { Phone } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function PublicForgotPasswordPage() {
-  const [phone, setPhone] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const forgotPasswordMutation = useForgotPassword();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    forgotPasswordMutation.mutate(phone, {
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isSubmitting },
+  } = useForm<PublicForgotPasswordForm>({
+    resolver: zodResolver(publicForgotPasswordSchema),
+    defaultValues: { email: "" },
+  });
+  const onSubmit = async (data: PublicForgotPasswordForm) => {
+    forgotPasswordMutation.mutate(data.email, {
       onSuccess: () => {
         setSubmitted(true);
       },
@@ -21,20 +34,24 @@ export default function PublicForgotPasswordPage() {
     });
   };
 
-  const isSubmitting = forgotPasswordMutation.isPending;
-
   if (submitted) {
     return (
-      <div className="container mx-auto px-4 py-16 max-w-md animate-page-enter">
-        <div className="w-full bg-surface border border-border shadow-sm rounded-sm p-8 text-center">
+      <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+        <div className="w-full text-center">
           <div className="mb-4 text-4xl">📧</div>
-          <h1 className="text-xl font-bold text-ink mb-2">Kiểm tra hộp thư email</h1>
-          <p className="text-sm text-ink-muted mb-6">
-            Nếu tài khoản gắn với số <strong>{phone}</strong> có email, hướng dẫn đặt lại mật khẩu đã được gửi.
-            Link có hiệu lực trong <strong>1 giờ</strong>.
+          <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333] mb-4">
+            Kiểm tra hộp thư
+          </h1>
+          <p className="text-sm text-[#757575] mb-8 leading-relaxed">
+            Nếu tài khoản gắn với email <strong>{getValues("email")}</strong>{" "}
+            tồn tại, hướng dẫn đặt lại mật khẩu đã được gửi. Link có hiệu lực
+            trong <strong>1 giờ</strong>.
           </p>
-          <Link to="/login" className="text-sm text-brand hover:underline">
-            Quay lại đăng nhập
+          <Link
+            to="/login"
+            className="text-sm text-[#8A151B] hover:underline font-medium"
+          >
+            ← Quay lại đăng nhập
           </Link>
         </div>
       </div>
@@ -42,42 +59,60 @@ export default function PublicForgotPasswordPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-md animate-page-enter">
-      <div className="w-full bg-surface border border-border shadow-sm rounded-sm p-8">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-ink">Khôi phục mật khẩu</h1>
-          <p className="text-sm text-ink-muted mt-2">
+    <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+      <div className="w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333]">
+            Khôi phục mật khẩu
+          </h1>
+          <p className="text-sm text-[#757575] mt-3">
             Nhập số điện thoại của bạn, chúng tôi sẽ gửi link đặt lại qua email.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-ink">Số điện thoại</label>
-            <div className="relative">
-              <Phone className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" />
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Nhập số điện thoại"
-                className="w-full bg-surface-soft border border-border rounded-sm py-3 pl-10 pr-4 text-sm focus:ring-1 focus:ring-brand focus:outline-none"
-              />
-            </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+          noValidate
+        >
+          <div className="relative">
+            <input
+              type="email"
+              placeholder="Nhập email của bạn"
+              {...register("email")}
+              className={`w-full h-[48px] px-4 bg-white border ${
+                errors.email
+                  ? "border-danger focus:border-danger"
+                  : "border-[#cccccc] focus:border-[#333333]"
+              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+            />
+            {errors.email && (
+              <p className="text-xs text-danger mt-1.5">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn-hover w-full bg-brand hover:bg-brand-dark text-white font-bold py-3.5 rounded-sm shadow-ui-card transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70"
-          >
-            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : "Gửi yêu cầu"}
-          </button>
+          <div className="mt-6">
+            <button
+              type="submit"
+              disabled={isSubmitting || forgotPasswordMutation.isPending}
+              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-[50px] flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
+            >
+              {isSubmitting || forgotPasswordMutation.isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                "Gửi link đặt lại mật khẩu"
+              )}
+            </button>
+          </div>
         </form>
 
-        <p className="mt-6 text-center text-sm">
-          <Link to="/login" className="text-brand hover:underline font-medium">
+        <p className="mt-8 text-center text-sm">
+          <Link
+            to="/login"
+            className="text-[#8A151B] hover:underline font-medium"
+          >
             ← Quay lại đăng nhập
           </Link>
         </p>

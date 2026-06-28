@@ -4,9 +4,9 @@ import { useAuth } from "@/auth/hooks/usePublicAuth";
 
 // Static mapping — phải định nghĩa ở FE để Tailwind JIT scan được class
 const TIER_GRADIENT: Record<string, string> = {
-  member:  "from-emerald-500 to-teal-600",
-  silver:  "from-slate-400 to-slate-600",
-  gold:    "from-yellow-500 to-amber-600",
+  member: "from-emerald-500 to-teal-600",
+  silver: "from-slate-400 to-slate-600",
+  gold: "from-yellow-500 to-amber-600",
   diamond: "from-violet-600 to-indigo-700",
 };
 
@@ -18,7 +18,9 @@ export function TierPage() {
     <div className="animate-slide-up bg-surface px-6 py-6 flex-1">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-ink mb-1">Hạng thành viên</h2>
-        <p className="text-xs text-ink-muted">Hạng được tính từ tổng chi tiêu đơn hàng hoàn thành</p>
+        <p className="text-xs text-ink-muted">
+          Hạng được tính từ tổng chi tiêu đơn hàng hoàn thành
+        </p>
       </div>
 
       {isLoading ? (
@@ -28,13 +30,17 @@ export function TierPage() {
       ) : tierInfo ? (
         <>
           {/* ── Thẻ hạng thành viên ── */}
-          <div className={`p-6 rounded-sm text-white shadow-md bg-gradient-to-br ${TIER_GRADIENT[tierInfo.tier] ?? "from-emerald-500 to-teal-600"} relative overflow-hidden mb-6`}>
+          <div
+            className={`p-6 rounded-sm text-white  bg-gradient-to-br ${TIER_GRADIENT[tierInfo.tier] ?? "from-emerald-500 to-teal-600"} relative overflow-hidden mb-6`}
+          >
             <div className="absolute top-0 right-0 p-6 opacity-10">
               <Award className="w-32 h-32" />
             </div>
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-4">
-                <p className="text-xl font-bold uppercase tracking-widest">{user?.name}</p>
+                <p className="text-xl font-bold uppercase tracking-widest">
+                  {user?.name}
+                </p>
                 <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">
                   {tierInfo.tierLabelEn}
                 </span>
@@ -42,12 +48,18 @@ export function TierPage() {
               <div className="flex items-end justify-between">
                 <div>
                   <p className="text-xs opacity-70 mb-0.5">Hạng hiện tại</p>
-                  <p className="text-3xl font-black tracking-wider">{tierInfo.tierLabel}</p>
+                  <p className="text-3xl font-black tracking-wider">
+                    {tierInfo.tierLabel}
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs opacity-70 mb-0.5">Tổng chi tiêu</p>
-                  <p className="text-xl font-bold">{tierInfo.totalSpent.toLocaleString("vi-VN")}₫</p>
-                  <p className="text-xs opacity-70">{tierInfo.orderCount} đơn hoàn thành</p>
+                  <p className="text-xl font-bold">
+                    {tierInfo.totalSpent.toLocaleString("vi-VN")}₫
+                  </p>
+                  <p className="text-xs opacity-70">
+                    {tierInfo.orderCount} đơn hoàn thành
+                  </p>
                 </div>
               </div>
             </div>
@@ -61,19 +73,24 @@ export function TierPage() {
               <p className="text-sm font-bold text-ink">
                 {tierInfo.totalSpent >= 1_000_000
                   ? `${(tierInfo.totalSpent / 1_000_000).toFixed(1)}M`
-                  : tierInfo.totalSpent.toLocaleString("vi-VN")}₫
+                  : tierInfo.totalSpent.toLocaleString("vi-VN")}
+                ₫
               </p>
             </div>
             <div className="bg-surface-soft border border-border rounded-sm p-4 text-center">
               <Star className="w-5 h-5 text-brand mx-auto mb-1" />
               <p className="text-xs text-ink-muted mb-0.5">Đơn hoàn thành</p>
-              <p className="text-sm font-bold text-ink">{tierInfo.orderCount}</p>
+              <p className="text-sm font-bold text-ink">
+                {tierInfo.orderCount}
+              </p>
             </div>
             <div className="bg-surface-soft border border-border rounded-sm p-4 text-center">
               <Gem className="w-5 h-5 text-brand mx-auto mb-1" />
               <p className="text-xs text-ink-muted mb-0.5">Ưu đãi hạng</p>
               <p className="text-sm font-bold text-ink">
-                {tierInfo.discountPercent > 0 ? `-${tierInfo.discountPercent}%` : "Chưa có"}
+                {tierInfo.discountPercent > 0
+                  ? `-${tierInfo.discountPercent}%`
+                  : "Chưa có"}
               </p>
             </div>
           </div>
@@ -82,11 +99,19 @@ export function TierPage() {
           {tierInfo.nextTierLabel ? (
             <div className="bg-surface-soft p-5 rounded-sm border border-border mb-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-ink text-sm">Tiến trình thăng hạng</h3>
-                <span className="text-xs text-ink-muted">{tierInfo.progressPercent}%</span>
+                <h3 className="font-semibold text-ink text-sm">
+                  Tiến trình thăng hạng
+                </h3>
+                <span className="text-xs text-ink-muted">
+                  {tierInfo.progressPercent}%
+                </span>
               </div>
               <p className="text-xs text-ink-muted mb-3">
-                Chi thêm <span className="font-bold text-brand">{tierInfo.spentToNext?.toLocaleString("vi-VN")}₫</span> để đạt hạng <strong>{tierInfo.nextTierLabel}</strong>
+                Chi thêm{" "}
+                <span className="font-bold text-brand">
+                  {tierInfo.spentToNext?.toLocaleString("vi-VN")}₫
+                </span>{" "}
+                để đạt hạng <strong>{tierInfo.nextTierLabel}</strong>
               </p>
               <div className="w-full bg-border rounded-full h-2.5 overflow-hidden">
                 <div
@@ -102,43 +127,70 @@ export function TierPage() {
           ) : (
             <div className="bg-surface-soft p-5 rounded-sm border border-brand/30 text-center mb-6">
               <Award className="w-10 h-10 text-brand mx-auto mb-2" />
-              <h3 className="font-bold text-ink">Chúc mừng! Bạn đã đạt hạng cao nhất 🎉</h3>
-              <p className="text-xs text-ink-muted mt-1">Cảm ơn bạn đã đồng hành cùng GlowUp Beauty</p>
+              <h3 className="font-bold text-ink">
+                Chúc mừng! Bạn đã đạt hạng cao nhất 🎉
+              </h3>
+              <p className="text-xs text-ink-muted mt-1">
+                Cảm ơn bạn đã đồng hành cùng GlowUp Beauty
+              </p>
             </div>
           )}
 
           {/* ── Bảng quyền lợi ── */}
           <div className="bg-surface-soft rounded-sm border border-border overflow-hidden">
             <div className="px-5 py-3 border-b border-border">
-              <h3 className="font-semibold text-ink text-sm">Quyền lợi theo hạng</h3>
+              <h3 className="font-semibold text-ink text-sm">
+                Quyền lợi theo hạng
+              </h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-surface">
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-ink-muted">Hạng</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-ink-muted">Chi tiêu tối thiểu</th>
-                    <th className="text-left px-4 py-3 text-xs font-semibold text-ink-muted">Giảm giá đơn hàng</th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-ink-muted">
+                      Hạng
+                    </th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-ink-muted">
+                      Chi tiêu tối thiểu
+                    </th>
+                    <th className="text-left px-4 py-3 text-xs font-semibold text-ink-muted">
+                      Giảm giá đơn hàng
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {tierInfo.tiers.map((t: any) => (
-                    <tr key={t.key} className={`border-b border-border/50 transition-colors ${t.isCurrent ? "bg-brand/5" : ""}`}>
+                    <tr
+                      key={t.key}
+                      className={`border-b border-border/50 transition-colors ${t.isCurrent ? "bg-brand/5" : ""}`}
+                    >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          {t.isCurrent && <CheckCircle className="w-3.5 h-3.5 text-brand flex-shrink-0" />}
-                          <span className={`font-semibold text-sm ${t.isCurrent ? "text-brand" : "text-ink"}`}>{t.label}</span>
                           {t.isCurrent && (
-                            <span className="text-[10px] bg-brand text-white px-1.5 py-0.5 rounded-full font-bold ml-1">Hiện tại</span>
+                            <CheckCircle className="w-3.5 h-3.5 text-brand flex-shrink-0" />
+                          )}
+                          <span
+                            className={`font-semibold text-sm ${t.isCurrent ? "text-brand" : "text-ink"}`}
+                          >
+                            {t.label}
+                          </span>
+                          {t.isCurrent && (
+                            <span className="text-[10px] bg-brand text-white px-1.5 py-0.5 rounded-full font-bold ml-1">
+                              Hiện tại
+                            </span>
                           )}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-ink-muted text-xs">
-                        {t.minSpent === 0 ? "Mặc định" : `≥ ${(t.minSpent / 1_000_000).toFixed(0)} triệu₫`}
+                        {t.minSpent === 0
+                          ? "Mặc định"
+                          : `≥ ${(t.minSpent / 1_000_000).toFixed(0)} triệu₫`}
                       </td>
                       <td className="px-4 py-3">
                         {t.discount > 0 ? (
-                          <span className="text-xs font-bold text-success">-{Math.round(t.discount * 100)}%</span>
+                          <span className="text-xs font-bold text-success">
+                            -{Math.round(t.discount * 100)}%
+                          </span>
                         ) : (
                           <span className="text-xs text-ink-muted">—</span>
                         )}
@@ -149,7 +201,8 @@ export function TierPage() {
               </table>
             </div>
             <p className="text-[10px] text-ink-muted px-4 py-2 border-t border-border/50">
-              * Giảm giá áp dụng tự động khi thanh toán, không cộng thêm với mã giảm giá.
+              * Giảm giá áp dụng tự động khi thanh toán, không cộng thêm với mã
+              giảm giá.
             </p>
           </div>
         </>

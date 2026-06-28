@@ -4,7 +4,11 @@ import { useProducts } from "@/public/hooks/useProducts";
 import { useCategories } from "@/public/hooks/useCategories";
 import { useDebounce } from "@/hooks/useDebounce";
 
-const findCategoryContext = (cats: any[], slugToFind: string, parent: any = null): { active: any, parent: any } | null => {
+const findCategoryContext = (
+  cats: any[],
+  slugToFind: string,
+  parent: any = null,
+): { active: any; parent: any } | null => {
   for (const cat of cats) {
     if (cat.slug === slugToFind) return { active: cat, parent };
     if (cat.children && cat.children.length > 0) {
@@ -17,53 +21,70 @@ const findCategoryContext = (cats: any[], slugToFind: string, parent: any = null
 
 export function useProductCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   const categoryParam = searchParams.get("category") || "";
-  const selectedCategories = categoryParam ? categoryParam.split(',').filter(Boolean) : [];
-  
+  const selectedCategories = categoryParam
+    ? categoryParam.split(",").filter(Boolean)
+    : [];
+
   // Brands now use brand IDs (ObjectIds) instead of names for type-safe filtering
   const brandsParam = searchParams.get("brandId") || "";
-  const selectedBrandIds = brandsParam ? brandsParam.split(',').filter(Boolean) : [];
-  
+  const selectedBrandIds = brandsParam
+    ? brandsParam.split(",").filter(Boolean)
+    : [];
+
   const minPriceParam = searchParams.get("minPrice") || "";
   const maxPriceParam = searchParams.get("maxPrice") || "";
   const sortParam = searchParams.get("sort") || "newest";
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const [minPriceInput, setMinPriceInput] = useState(minPriceParam ? parseInt(minPriceParam, 10).toLocaleString('vi-VN') : "");
-  const [maxPriceInput, setMaxPriceInput] = useState(maxPriceParam ? parseInt(maxPriceParam, 10).toLocaleString('vi-VN') : "");
+  const [minPriceInput, setMinPriceInput] = useState(
+    minPriceParam ? parseInt(minPriceParam, 10).toLocaleString("vi-VN") : "",
+  );
+  const [maxPriceInput, setMaxPriceInput] = useState(
+    maxPriceParam ? parseInt(maxPriceParam, 10).toLocaleString("vi-VN") : "",
+  );
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState({
     categories: true,
     price: true,
-    brands: true
+    brands: true,
   });
   const [currentPage, setCurrentPage] = useState(1);
 
   const toggleFilter = (key: keyof typeof openFilters) => {
-    setOpenFilters(prev => ({ ...prev, [key]: !prev[key] }));
+    setOpenFilters((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const handlePriceChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/\D/g, '');
-    if (!rawValue) {
-      setter('');
-      return;
-    }
-    setter(parseInt(rawValue, 10).toLocaleString('vi-VN'));
-  };
+  const handlePriceChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const rawValue = e.target.value.replace(/\D/g, "");
+      if (!rawValue) {
+        setter("");
+        return;
+      }
+      setter(parseInt(rawValue, 10).toLocaleString("vi-VN"));
+    };
 
   // Reset page when search changes
   useEffect(() => {
+    {
+      /* eslint-disable-next-line  */
+    }
     setCurrentPage(1);
   }, [debouncedSearch]);
 
   const { data: categories = [] } = useCategories();
 
-  const { data: prodData, isLoading, isFetching } = useProducts({ 
+  const {
+    data: prodData,
+    isLoading,
+    isFetching,
+  } = useProducts({
     page: currentPage,
-    limit: 24, 
+    limit: 24,
     search: debouncedSearch || undefined,
     category: categoryParam || undefined,
     brandId: brandsParam || undefined,
@@ -72,8 +93,10 @@ export function useProductCatalog() {
     sort: sortParam,
   });
 
-  const rawProducts = (Array.isArray(prodData) ? prodData : (prodData as any)?.products) || [];
-  const brands: import("../services/product.service").BrandRef[] = (prodData as any)?.availableBrands || [];
+  const rawProducts =
+    (Array.isArray(prodData) ? prodData : (prodData as any)?.products) || [];
+  const brands: import("../services/product.service").BrandRef[] =
+    (prodData as any)?.availableBrands || [];
   const totalPages = (prodData as any)?.pagination?.totalPages || 1;
 
   // Products sorted by backend — no client-side sort needed
@@ -82,9 +105,9 @@ export function useProductCatalog() {
   // --- Handlers ---
   const toggleCategory = (slug: string) => {
     let newCategories = [...selectedCategories];
-    
+
     if (newCategories.includes(slug)) {
-      newCategories = newCategories.filter(c => c !== slug);
+      newCategories = newCategories.filter((c) => c !== slug);
       if (newCategories.length === 0) {
         const context = findCategoryContext(categories, slug);
         if (context && context.parent) {
@@ -94,13 +117,14 @@ export function useProductCatalog() {
     } else {
       const context = findCategoryContext(categories, slug);
       if (context && context.parent) {
-        newCategories = newCategories.filter(c => c !== context.parent.slug);
+        newCategories = newCategories.filter((c) => c !== context.parent.slug);
       }
       newCategories.push(slug);
     }
-    
+
     const newParams = new URLSearchParams(searchParams);
-    if (newCategories.length > 0) newParams.set("category", newCategories.join(','));
+    if (newCategories.length > 0)
+      newParams.set("category", newCategories.join(","));
     else newParams.delete("category");
     newParams.delete("page");
     setSearchParams(newParams, { preventScrollReset: true });
@@ -108,11 +132,11 @@ export function useProductCatalog() {
 
   const toggleBrand = (brandId: string) => {
     const newIds = selectedBrandIds.includes(brandId)
-      ? selectedBrandIds.filter(b => b !== brandId)
+      ? selectedBrandIds.filter((b) => b !== brandId)
       : [...selectedBrandIds, brandId];
-      
+
     const newParams = new URLSearchParams(searchParams);
-    if (newIds.length > 0) newParams.set("brandId", newIds.join(','));
+    if (newIds.length > 0) newParams.set("brandId", newIds.join(","));
     else newParams.delete("brandId");
     newParams.delete("page");
     setSearchParams(newParams, { preventScrollReset: true });
@@ -120,9 +144,11 @@ export function useProductCatalog() {
 
   const applyPriceFilter = () => {
     const newParams = new URLSearchParams(searchParams);
-    if (minPriceInput) newParams.set("minPrice", minPriceInput.replace(/\D/g, ''));
+    if (minPriceInput)
+      newParams.set("minPrice", minPriceInput.replace(/\D/g, ""));
     else newParams.delete("minPrice");
-    if (maxPriceInput) newParams.set("maxPrice", maxPriceInput.replace(/\D/g, ''));
+    if (maxPriceInput)
+      newParams.set("maxPrice", maxPriceInput.replace(/\D/g, ""));
     else newParams.delete("maxPrice");
     newParams.delete("page");
     setSearchParams(newParams, { preventScrollReset: true });
@@ -136,7 +162,7 @@ export function useProductCatalog() {
   };
 
   let sidebarTitle = "LOẠI SẢN PHẨM";
-  let displaySubcategories: any[] = categories; 
+  let displaySubcategories: any[] = categories;
 
   if (selectedCategories.length > 0) {
     const context = findCategoryContext(categories, selectedCategories[0]);
@@ -168,7 +194,8 @@ export function useProductCatalog() {
       currentPage,
       selectedCategories,
       selectedBrands: selectedBrandIds,
-      categoryParam: selectedCategories.length === 0 ? "all" : selectedCategories[0]
+      categoryParam:
+        selectedCategories.length === 0 ? "all" : selectedCategories[0],
     },
     data: {
       categories,
@@ -186,9 +213,9 @@ export function useProductCatalog() {
       setMaxPriceInput,
       setSortBy: (sort: string) => {
         const newParams = new URLSearchParams(searchParams);
-        if (sort === 'newest') newParams.delete('sort');
-        else newParams.set('sort', sort);
-        newParams.delete('page');
+        if (sort === "newest") newParams.delete("sort");
+        else newParams.set("sort", sort);
+        newParams.delete("page");
         setSearchParams(newParams, { preventScrollReset: true });
       },
       setIsMobileFilterOpen,
@@ -209,7 +236,7 @@ export function useProductCatalog() {
         } else {
           toggleCategory(catId);
         }
-      }
-    }
+      },
+    },
   };
 }

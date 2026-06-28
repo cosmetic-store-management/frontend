@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Upload, X, Loader2, Image as ImageIcon, Plus } from "lucide-react";
+import { X, Loader2, Image as ImageIcon, Plus } from "lucide-react";
 import { toast } from "@/lib/toast";
 
 interface MultiImageUploadProps {
@@ -8,7 +8,11 @@ interface MultiImageUploadProps {
   className?: string;
 }
 
-export function MultiImageUpload({ value = [], onChange, className = "" }: MultiImageUploadProps) {
+export function MultiImageUpload({
+  value = [],
+  onChange,
+  className = "",
+}: MultiImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,10 +42,10 @@ export function MultiImageUpload({ value = [], onChange, className = "" }: Multi
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
-        
+
         newUrls.push(base64);
       }
-      
+
       onChange([...value, ...newUrls]);
     } catch (error) {
       console.error("Upload error", error);
@@ -78,13 +82,20 @@ export function MultiImageUpload({ value = [], onChange, className = "" }: Multi
       {value.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
           {value.map((url, index) => (
-            <div key={index} className="relative group rounded-md border border-border overflow-hidden bg-surface-soft flex items-center justify-center aspect-square">
-              <img src={url} alt={`Uploaded ${index}`} className="w-full h-full object-cover" />
+            <div
+              key={index}
+              className="relative group rounded-sm border border-border overflow-hidden bg-surface-soft flex items-center justify-center aspect-square"
+            >
+              <img
+                src={url}
+                alt={`Uploaded ${index}`}
+                className="w-full h-full object-cover"
+              />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button
                   type="button"
                   onClick={() => removeImage(index)}
-                  className="p-1.5 bg-danger text-white rounded-md hover:bg-danger transition-colors shadow-sm"
+                  className="p-1.5 bg-danger text-white rounded-sm hover:bg-danger transition-colors "
                   title="Xóa ảnh"
                 >
                   <X className="w-4 h-4" />
@@ -94,7 +105,7 @@ export function MultiImageUpload({ value = [], onChange, className = "" }: Multi
           ))}
           <div
             onClick={triggerUpload}
-            className="group rounded-md border-2 border-dashed border-border hover:border-brand bg-surface-soft hover:bg-brand/5 transition-all flex flex-col items-center justify-center cursor-pointer aspect-square"
+            className="group rounded-sm border-2 border-dashed border-border hover:border-brand bg-surface-soft hover:bg-brand/5 transition-all flex flex-col items-center justify-center cursor-pointer aspect-square"
           >
             {isUploading ? (
               <Loader2 className="w-5 h-5 animate-spin text-brand" />
@@ -108,7 +119,7 @@ export function MultiImageUpload({ value = [], onChange, className = "" }: Multi
       {value.length === 0 && (
         <div
           onClick={triggerUpload}
-          className="group rounded-md border-2 border-dashed border-border hover:border-brand bg-surface-soft hover:bg-brand/5 transition-all flex flex-col items-center justify-center cursor-pointer h-32"
+          className="group rounded-sm border-2 border-dashed border-border hover:border-brand bg-surface-soft hover:bg-brand/5 transition-all flex flex-col items-center justify-center cursor-pointer h-32"
         >
           {isUploading ? (
             <>
@@ -118,8 +129,12 @@ export function MultiImageUpload({ value = [], onChange, className = "" }: Multi
           ) : (
             <>
               <ImageIcon className="w-8 h-8 mb-2 text-ink-muted group-hover:text-brand transition-colors" />
-              <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">Bấm để tải nhiều ảnh lên</span>
-              <span className="text-[10px] text-ink-muted/70 mt-1">PNG, JPG up to 5MB</span>
+              <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">
+                Bấm để tải nhiều ảnh lên
+              </span>
+              <span className="text-[10px] text-ink-muted/70 mt-1">
+                PNG, JPG up to 5MB
+              </span>
             </>
           )}
         </div>

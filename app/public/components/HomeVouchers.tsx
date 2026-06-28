@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { Ticket, Tag, Truck, Gift, Check, ChevronRight } from "lucide-react";
 import { Link } from "react-router";
-import { usePublicVouchers, useCollectVoucher, useGetWalletVouchers } from "../hooks/useVoucher";
+import {
+  usePublicVouchers,
+  useCollectVoucher,
+  useGetWalletVouchers,
+} from "../hooks/useVoucher";
 import { usePublicAuthStore } from "@/store";
 import { toast } from "@/lib/toast";
 import type { PublicVoucher } from "../services/voucher.service";
@@ -11,26 +15,40 @@ function getVoucherMeta(voucher: PublicVoucher) {
     return {
       icon: <Truck className="w-3.5 h-3.5" />,
       title: "Freeship",
-      desc: voucher.minOrderValue > 0 ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K` : "Tất cả đơn hàng",
+      desc:
+        voucher.minOrderValue > 0
+          ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+          : "Tất cả đơn hàng",
     };
   }
   if (voucher.discountType === "percent") {
     return {
       icon: <Tag className="w-3.5 h-3.5" />,
       title: `Giảm ${voucher.discountValue}%`,
-      desc: voucher.maxDiscount && voucher.maxDiscount > 0
-        ? `Tối đa ${(voucher.maxDiscount / 1000).toFixed(0)}K`
-        : voucher.minOrderValue > 0 ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K` : "Mọi đơn hàng",
+      desc:
+        voucher.maxDiscount && voucher.maxDiscount > 0
+          ? `Tối đa ${(voucher.maxDiscount / 1000).toFixed(0)}K`
+          : voucher.minOrderValue > 0
+            ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+            : "Mọi đơn hàng",
     };
   }
   return {
     icon: <Ticket className="w-3.5 h-3.5" />,
     title: `Giảm ${(voucher.discountValue / 1000).toFixed(0)}K`,
-    desc: voucher.minOrderValue > 0 ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K` : "Mọi đơn hàng",
+    desc:
+      voucher.minOrderValue > 0
+        ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+        : "Mọi đơn hàng",
   };
 }
 
-function HomeSingleVoucher({ voucher, isSaved, onCollect, isLoading }: {
+function HomeSingleVoucher({
+  voucher,
+  isSaved,
+  onCollect,
+  isLoading,
+}: {
   voucher: PublicVoucher;
   isSaved: boolean;
   onCollect: (code: string) => void;
@@ -70,7 +88,15 @@ function HomeSingleVoucher({ voucher, isSaved, onCollect, isLoading }: {
               : "bg-brand text-white hover:bg-brand-dark"
           }`}
         >
-          {saved ? <><Check className="w-2.5 h-2.5" /> Đã lưu</> : <><Gift className="w-2.5 h-2.5" /> Lưu mã</>}
+          {saved ? (
+            <>
+              <Check className="w-2.5 h-2.5" /> Đã lưu
+            </>
+          ) : (
+            <>
+              <Gift className="w-2.5 h-2.5" /> Lưu mã
+            </>
+          )}
         </button>
       </div>
     </div>
@@ -84,8 +110,6 @@ export function HomeVouchers() {
   const collectMutation = useCollectVoucher();
 
   const savedCodes = new Set((walletVouchers || []).map((v: any) => v.code));
-
-
 
   const handleCollect = (code: string) => {
     if (!user) {
@@ -105,7 +129,7 @@ export function HomeVouchers() {
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl md:text-3xl font-black text-ink uppercase tracking-wider">
+        <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
           Mã Giảm Giá
         </h2>
         {user && (
@@ -121,7 +145,10 @@ export function HomeVouchers() {
       <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar">
         {isLoading
           ? [...Array(4)].map((_, i) => (
-              <div key={i} className="min-w-[180px] h-[88px] bg-surface-soft border border-border rounded-sm animate-pulse shrink-0" />
+              <div
+                key={i}
+                className="min-w-[180px] h-[88px] bg-surface-soft border border-border rounded-sm animate-pulse shrink-0"
+              />
             ))
           : vouchers!.map((v) => (
               <HomeSingleVoucher

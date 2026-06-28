@@ -16,8 +16,8 @@ export function ProductImageGallery({
   isActive = true,
 }: ProductImageGalleryProps) {
   // bg = luôn hiển thị; fg = ảnh mới fade-in đè lên
-  const [bgSrc, setBgSrc]     = useState(mainImage);
-  const [fgSrc, setFgSrc]     = useState<string | null>(null);
+  const [bgSrc, setBgSrc] = useState(mainImage);
+  const [fgSrc, setFgSrc] = useState<string | null>(null);
   const [fgVisible, setFgVisible] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -51,17 +51,27 @@ export function ProductImageGallery({
   };
 
   useEffect(() => {
+    {
+      /* eslint-disable-next-line  */
+    }
     changeImage(selectedVariantImage || mainImage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    {
+      /* eslint-disable-next-line  */
+    }
   }, [selectedVariantImage, mainImage]);
 
   // Scroll thumbnail active vào view
   useEffect(() => {
     if (!scrollRef.current) return;
-    const btn = scrollRef.current.querySelector<HTMLButtonElement>(`[data-img="${currentImage}"]`);
+    const btn = scrollRef.current.querySelector<HTMLButtonElement>(
+      `[data-img="${currentImage}"]`,
+    );
     if (btn) {
       const c = scrollRef.current;
-      c.scrollTo({ left: btn.offsetLeft - c.clientWidth / 2 + btn.clientWidth / 2, behavior: "smooth" });
+      c.scrollTo({
+        left: btn.offsetLeft - c.clientWidth / 2 + btn.clientWidth / 2,
+        behavior: "smooth",
+      });
     }
   }, [currentImage]);
 
@@ -99,7 +109,10 @@ export function ProductImageGallery({
 
       {/* Thumbnails */}
       {allImages.length > 1 && (
-        <div ref={scrollRef} className="flex gap-2 overflow-x-auto py-0.5 scrollbar-hide">
+        <div
+          ref={scrollRef}
+          className="flex gap-2 overflow-x-auto py-0.5 scrollbar-hide"
+        >
           {allImages.map((img, i) => (
             <button
               key={i}
@@ -112,7 +125,11 @@ export function ProductImageGallery({
                   : "border-transparent opacity-60 hover:opacity-90"
               }`}
             >
-              <img src={img} alt={`${productName} ${i + 1}`} className="w-full h-full object-cover" />
+              <img
+                src={img}
+                alt={`${productName} ${i + 1}`}
+                className="w-full h-full object-cover"
+              />
             </button>
           ))}
         </div>

@@ -1,4 +1,11 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +17,11 @@ import type { User } from "@/admin/types/user";
 import { useEffect } from "react";
 
 const updateNotesSchema = z.object({
-  internalNotes: z.string().max(1000, "Ghi chú không được vượt quá 1000 ký tự").optional().or(z.literal("")),
+  internalNotes: z
+    .string()
+    .max(1000, "Ghi chú không được vượt quá 1000 ký tự")
+    .optional()
+    .or(z.literal("")),
 });
 
 type UpdateNotesFormData = z.infer<typeof updateNotesSchema>;
@@ -22,8 +33,18 @@ interface StaffNotesModalProps {
   isLoading: boolean;
 }
 
-export function StaffNotesModal({ user, onOpenChange, onSubmit, isLoading }: StaffNotesModalProps) {
-  const { control, handleSubmit, formState: { errors }, reset } = useForm<UpdateNotesFormData>({
+export function StaffNotesModal({
+  user,
+  onOpenChange,
+  onSubmit,
+  isLoading,
+}: StaffNotesModalProps) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<UpdateNotesFormData>({
     resolver: zodResolver(updateNotesSchema),
     defaultValues: { internalNotes: "" },
   });
@@ -38,13 +59,18 @@ export function StaffNotesModal({ user, onOpenChange, onSubmit, isLoading }: Sta
     <Dialog open={!!user} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] animate-scale-in text-left">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-ink">Ghi chú nội bộ</DialogTitle>
+          <DialogTitle className="text-base font-bold text-ink">
+            Ghi chú nội bộ
+          </DialogTitle>
           <DialogDescription className="text-xs text-ink-muted mt-1">
-            Ghi chú về hiệu suất, thái độ hoặc các thông tin đặc biệt của <strong>{user?.name}</strong>.
+            Ghi chú về hiệu suất, thái độ hoặc các thông tin đặc biệt của{" "}
+            <strong>{user?.name}</strong>.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Label htmlFor="internalNotes" className="sr-only">Nội dung ghi chú</Label>
+          <Label htmlFor="internalNotes" className="sr-only">
+            Nội dung ghi chú
+          </Label>
           <Controller
             control={control}
             name="internalNotes"
@@ -58,14 +84,24 @@ export function StaffNotesModal({ user, onOpenChange, onSubmit, isLoading }: Sta
               />
             )}
           />
-          {errors.internalNotes && <p className="text-xs text-danger">{errors.internalNotes.message}</p>}
+          {errors.internalNotes && (
+            <p className="text-xs text-danger">
+              {errors.internalNotes.message}
+            </p>
+          )}
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Hủy bỏ
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
+              Huỷ
             </Button>
             <Button type="submit" disabled={isLoading}>
-              {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-              Lưu ghi chú
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : null}
+              Xác nhận
             </Button>
           </DialogFooter>
         </form>

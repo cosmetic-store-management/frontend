@@ -17,7 +17,8 @@ interface UIState {
 
 export const useUIStore = create<UIState>((set) => ({
   isSidebarOpen: false, // Thường ẩn trên mobile
-  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+  toggleSidebar: () =>
+    set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   setSidebarOpen: (isOpen) => set({ isSidebarOpen: isOpen }),
 
   theme: "light",

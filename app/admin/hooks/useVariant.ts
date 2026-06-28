@@ -26,8 +26,13 @@ export function useCreateVariant() {
 export function useUpdateVariant() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof updateAttribute>[1] }) =>
-      updateAttribute(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Parameters<typeof updateAttribute>[1];
+    }) => updateAttribute(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["variants"] });
     },

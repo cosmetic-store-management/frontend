@@ -3,33 +3,44 @@ import { useState } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { useOrders } from "../hooks/useOrders";
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import DeleteModal from "@/components/ui/delete-modal";
-import { Pagination } from "@/components/ui/pagination";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import OrderDetail, { formatVnd } from "../components/OrderDetail";
 import { orderStatusMeta } from "../types/order-meta";
-import OrderModal from "../components/OrderModal";
+import OrderModal, { type OrderFormValues } from "../components/OrderModal";
+import { PageHeader } from "../components/PageHeader";
 import type { Order, OrderStatus } from "@/admin/types/order";
-import type { OrderFormValues } from "../components/OrderModal";
 import type { FilterKey } from "../hooks/useOrders";
 import { exportToCSV } from "@/lib/utils";
 
-const STATUS_TABS: { key: FilterKey | "processing" | "returned"; label: string }[] = [
-  { key: "all", label: "Tất cả" },
-  { key: "pending", label: "Chờ xác nhận" },
-  { key: "processing", label: "Đang xử lý" },
-  { key: "shipping", label: "Đang giao" },
-  { key: "completed", label: "Hoàn tất" },
-  { key: "returned", label: "Trả hàng" },
-  { key: "cancelled", label: "Đã hủy" },
-];
+const STATUS_TABS: {
+  key: FilterKey | "processing" | "returned";
+  label: string;
+}[] = [
+    { key: "all", label: "Tất cả" },
+    { key: "pending", label: "Chờ xác nhận" },
+    { key: "processing", label: "Đang xử lý" },
+    { key: "shipping", label: "Đang giao" },
+    { key: "completed", label: "Hoàn tất" },
+    { key: "returned", label: "Trả hàng" },
+    { key: "cancelled", label: "Đã hủy" },
+  ];
 
 function fmtDate(v?: string) {
   if (!v) return "-";
@@ -52,13 +63,14 @@ export function OrderPage() {
 
   // Convert DateRange → YYYY-MM-DD strings for the API
   const dateFrom = dateRange?.from ? format(dateRange.from, "yyyy-MM-dd") : "";
-  const dateTo   = dateRange?.to   ? format(dateRange.to,   "yyyy-MM-dd") : "";
+  const dateTo = dateRange?.to ? format(dateRange.to, "yyyy-MM-dd") : "";
 
   const {
     orders,
     pagination,
-    currentPage,
-    setCurrentPage,
+    cursors,
+    handleNext,
+    handlePrev,
     loading,
     error,
     submitting,
@@ -69,7 +81,10 @@ export function OrderPage() {
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
-  const closeModal = () => { setModal({ type: "none" }); clearError(); };
+  const closeModal = () => {
+    setModal({ type: "none" });
+    clearError();
+  };
 
   const handleEditSubmit = async (values: OrderFormValues) => {
     if (modal.type !== "edit") return;
@@ -87,343 +102,387 @@ export function OrderPage() {
 
   return (
     <section className="space-y-4 animate-page-enter">
-      <div className="space-y-4 border border-border rounded-sm bg-surface p-4 shadow-ui-soft sm:p-5">
-        <CardHeader className="space-y-4 p-0">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 space-y-1.5 flex-1">
-              <CardTitle className="text-2xl font-bold tracking-tight text-ink">
-                Quản lý đơn hàng
-              </CardTitle>
-              <CardDescription className="max-w-2xl text-sm leading-6 text-ink-muted">
-                Theo dõi thông tin đơn hàng, khách hàng, tổng tiền và trạng thái xử lý.
-              </CardDescription>
-            </div>
-            <button
-              onClick={() => {
-                {
-                  const data = orders.map(o => ({
-                    code: o.code,
-                    customer: o.receiverName,
-                    phone: o.phone || "-",
-                    date: fmtDate(o.createdAt),
-                    status: o.orderStatus,
-                    total: o.totalAmount,
-                    payment: o.paymentMethod
-                  }));
-                  exportToCSV(data, [
+      <PageHeader
+        title="Quản lý đơn hàng"
+        description="Theo dõi thông tin đơn hàng, khách hàng, tổng tiền và trạng thái xử lý."
+        error={error}
+        onClearError={clearError}
+        actions={
+          <button
+            onClick={() => {
+              {
+                const data = orders.map((o) => ({
+                  code: o.code,
+                  customer: o.receiverName,
+                  phone: o.phone || "-",
+                  date: fmtDate(o.createdAt),
+                  status: o.orderStatus,
+                  total: o.totalAmount,
+                  payment: o.paymentMethod,
+                }));
+                exportToCSV(
+                  data,
+                  [
                     { key: "code", label: "Mã Đơn" },
                     { key: "customer", label: "Khách Hàng" },
                     { key: "phone", label: "SĐT" },
                     { key: "date", label: "Ngày Đặt" },
                     { key: "status", label: "Trạng Thái" },
                     { key: "total", label: "Tổng Tiền" },
-                    { key: "payment", label: "Phương Thức" }
-                  ], "Danh_sach_don_hang");
-                }
-              }}
-              className="inline-flex h-9 items-center justify-center rounded-sm bg-brand px-4 text-xs font-semibold text-white shadow hover:bg-brand/90 transition-colors"
-            >
-              Xuất Excel
-            </button>
-          </div>
-
-          <div className="group relative w-full max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
-            <Input
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder="Tìm theo mã đơn, khách hàng, số điện thoại..."
-              className="h-11 border-border bg-surface pl-9 pr-9 text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
-            />
-            {keyword && (
-              <button
-                type="button"
-                onClick={() => setKeyword("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
-                title="Xóa tìm kiếm"
-              >
-                <X className="size-4" />
-              </button>
-            )}
-          </div>
-
-          {/* ── Single filter row: [Status ▾] [Date] [Payment ▾] ── */}
-          <div className="flex flex-wrap items-center gap-2">
-
-            {/* Status filter – Select dropdown */}
-            <Select value={filter} onValueChange={(v) => setFilter(v as FilterKey)}>
-              <SelectTrigger className="h-9 w-fit text-xs rounded-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {STATUS_TABS.map(tab => (
-                  <SelectItem key={tab.key} value={tab.key}>{tab.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Date range picker */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-9 text-xs font-normal rounded-sm text-muted-foreground"
-                >
-                  <span className="whitespace-nowrap">
-                    {dateRange?.from && dateRange?.to
-                      ? `${format(dateRange.from, "dd/MM/yyyy")} — ${format(dateRange.to, "dd/MM/yyyy")}`
-                      : dateRange?.from
-                      ? `Từ ${format(dateRange.from, "dd/MM/yyyy")} …`
-                      : "Lọc theo ngày"}
-                  </span>
-                  {dateRange?.from && (
-                    <span
-                      role="button"
-                      onClick={e => { e.stopPropagation(); setDateRange(undefined); }}
-                      className="ml-1 hover:text-ink transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={(range: DateRange | undefined) => { setDateRange(range); }}
-                />
-              </PopoverContent>
-            </Popover>
-
-            {/* Payment filter – no icon */}
-            <Select value={paymentFilter || "all"} onValueChange={v => setPaymentFilter(v === "all" ? "" : v)}>
-              <SelectTrigger className="h-9 w-fit text-xs rounded-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả thanh toán</SelectItem>
-                <SelectItem value="pending">Chờ thanh toán</SelectItem>
-                <SelectItem value="paid">Đã thanh toán</SelectItem>
-                <SelectItem value="refund_pending">Cần hoàn tiền</SelectItem>
-                <SelectItem value="failed">Thất bại</SelectItem>
-              </SelectContent>
-            </Select>
-
-          </div>
-
-        </CardHeader>
-      </div>
-
-      <div className="border border-border rounded-sm bg-surface shadow-ui-soft">
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-280 table-fixed text-[13px] sm:text-sm">
-              <thead>
-                <tr className="bg-surface-muted text-left text-ink-muted">
-                  <th
-                    style={{ width: "16%" }}
-                    className="px-4 py-3.5 text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Mã đơn
-                  </th>
-                  <th
-                    style={{ width: "18%" }}
-                    className="px-3.5 py-3.5 text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Khách hàng
-                  </th>
-                  <th
-                    style={{ width: "13%" }}
-                    className="px-3.5 py-3.5 text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Số điện thoại
-                  </th>
-                  <th
-                    style={{ width: "14%" }}
-                    className="px-3.5 py-3.5 text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Ngày đặt
-                  </th>
-                  <th
-                    style={{ width: "13%" }}
-                    className="px-3.5 py-3.5 text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Thanh toán
-                  </th>
-                  <th
-                    style={{ width: "12%" }}
-                    className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Trạng thái
-                  </th>
-                  <th
-                    style={{ width: "14%" }}
-                    className="px-4 py-3.5 text-center text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Tổng tiền
-                  </th>
-                  <th
-                    style={{ width: "7%" }}
-                    className="px-4 py-3.5 text-right text-xs font-semibold uppercase tracking-wide"
-                  >
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody className="bg-surface">
-                {loading && (
-                  <tr>
-                    <td
-                      colSpan={8}
-                      className="px-4 py-12 text-center text-sm text-ink-muted"
-                    >
-                      Đang tải dữ liệu đơn hàng...
-                    </td>
-                  </tr>
-                )}
-
-                {!loading &&
-                  orders.map((item) => {
-                    const meta =
-                      orderStatusMeta[item.orderStatus as OrderStatus] ?? orderStatusMeta.pending;
-                    const StatusIcon = meta.icon;
-                    return (
-                      <tr
-                        key={item.id}
-                        className="border-b border-border transition-colors last:border-b-0 hover:bg-surface-soft"
-                      >
-                        <td className="px-4 py-3.5 align-middle">
-                          <button
-                            type="button"
-                            onClick={() => { clearError(); setModal({ type: "detail", order: item }); }}
-                            title={item.code}
-                            className="block truncate font-medium text-ink transition-colors hover:text-danger"
-                          >
-                            {item.code}
-                          </button>
-                        </td>
-                        <td className="px-3.5 py-3.5 align-middle">
-                          <span
-                            title={item.receiverName}
-                            className="block truncate text-ink-muted"
-                          >
-                            {item.receiverName}
-                          </span>
-                        </td>
-                        <td className="px-3.5 py-3.5 align-middle">
-                          <span className="block truncate text-ink-muted">
-                            {item.phone || "-"}
-                          </span>
-                        </td>
-                        <td className="px-3.5 py-3.5 align-middle">
-                          <span className="block truncate text-ink-muted">
-                            {fmtDate(item.createdAt)}
-                          </span>
-                        </td>
-                        <td className="px-3.5 py-3.5 align-middle">
-                          {/* Payment status badge */}
-                          {item.paymentStatus === "paid" ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-success/10 text-success">Đã TT</span>
-                          ) : item.paymentStatus === "refund_pending" ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 border border-purple-500/20">Cần Hoàn Tiền</span>
-                          ) : item.paymentStatus === "failed" ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-danger/10 text-danger">Thất bại</span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning">Chờ TT</span>
-                          )}
-                        </td>
-                        <td className="px-3.5 py-3.5 text-center align-middle">
-                          <span
-                            className={`inline-flex min-h-8 items-center gap-1.5 px-3 py-1 text-xs font-semibold ${meta.badgeClass}`}
-                          >
-                            <StatusIcon className="h-3 w-3" />
-                            {meta.label}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3.5 text-center align-middle font-semibold tabular-nums text-ink">
-                          {formatVnd(item.totalAmount ?? 0)}
-                        </td>
-                        <td className="px-4 py-3.5 text-right align-middle">
-                          <div className="flex items-center justify-end gap-1">
-                            <button
-                              type="button"
-                              title="Cập nhật trạng thái"
-                              onClick={() => { clearError(); setModal({ type: "edit", order: item }); }}
-                              className="rounded p-1.5 text-ink-muted transition-colors hover:bg-surface-soft hover:text-danger"
-                            >
-                              <Edit className="size-4" />
-                            </button>
-                            {item.orderStatus !== "cancelled" &&
-                              item.orderStatus !== "completed" && (
-                                <button
-                                  type="button"
-                                  title="Hủy đơn hàng"
-                                  onClick={() => { clearError(); setModal({ type: "cancel", order: item }); }}
-                                  className="rounded p-1.5 text-ink-muted transition-colors hover:bg-surface-soft hover:text-danger"
-                                >
-                                  <Ban className="size-4" />
-                                </button>
-                              )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-
-                {!loading && orders.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={8}
-                      className="px-4 py-12 text-center text-sm text-ink-muted"
-                    >
-                      {keyword.trim() ? (
-                        <span>
-                          Không tìm thấy đơn hàng nào khớp với{" "}
-                          <span className="font-medium text-ink-muted">
-                            "{keyword.trim()}"
-                          </span>
-                          .{" "}
-                          <button
-                            type="button"
-                            onClick={() => setKeyword("")}
-                            className="text-danger hover:underline"
-                          >
-                            Xóa tìm kiếm
-                          </button>
-                        </span>
-                      ) : filter !== "all" ? (
-                        <span>
-                          Không có đơn hàng nào ở trạng thái này.{" "}
-                          <button
-                            type="button"
-                            onClick={() => setFilter("all")}
-                            className="text-danger hover:underline"
-                          >
-                            Xem tất cả
-                          </button>
-                        </span>
-                      ) : (
-                        "Chưa có đơn hàng nào."
-                      )}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          {pagination && pagination.totalPages > 1 && (
-            <div className="border-t border-border bg-surface px-4 py-4 sm:px-6">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={pagination.totalPages}
-                onPageChange={setCurrentPage}
+                    { key: "payment", label: "Phương Thức" },
+                  ],
+                  "Danh_sach_don_hang",
+                );
+              }
+            }}
+            className="inline-flex h-10 items-center justify-center rounded-sm bg-brand px-4 text-xs font-semibold text-white shadow-none hover:bg-brand/90 transition-colors"
+          >
+            Xuất Excel
+          </button>
+        }
+        filters={
+          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+            <div className="group relative w-full sm:w-[320px]">
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
+              <Input
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="Tìm theo mã đơn, khách hàng, số điện thoại..."
+                className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
+              {keyword && (
+                <button
+                  type="button"
+                  onClick={() => setKeyword("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="size-4" />
+                </button>
+              )}
             </div>
-          )}
-        </CardContent>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Select
+                value={filter}
+                onValueChange={(v) => setFilter(v as FilterKey)}
+              >
+                <SelectTrigger className="h-10 w-fit text-xs border-border bg-surface text-ink-muted">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STATUS_TABS.map((tab) => (
+                    <SelectItem key={tab.key} value={tab.key}>
+                      {tab.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-10 text-xs font-normal border-border bg-surface text-ink-muted"
+                  >
+                    <span className="whitespace-nowrap">
+                      {dateRange?.from && dateRange?.to
+                        ? `${format(dateRange.from, "dd/MM/yyyy")} — ${format(dateRange.to, "dd/MM/yyyy")}`
+                        : dateRange?.from
+                          ? `Từ ${format(dateRange.from, "dd/MM/yyyy")} …`
+                          : "Lọc theo ngày"}
+                    </span>
+                    {dateRange?.from && (
+                      <span
+                        role="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDateRange(undefined);
+                        }}
+                        className="ml-1 hover:text-ink transition-colors"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={(range: DateRange | undefined) => {
+                      setDateRange(range);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Select
+                value={paymentFilter || "all"}
+                onValueChange={(v) => setPaymentFilter(v === "all" ? "" : v)}
+              >
+                <SelectTrigger className="h-10 w-fit text-xs border-border bg-surface text-ink-muted">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả thanh toán</SelectItem>
+                  <SelectItem value="pending">Chờ thanh toán</SelectItem>
+                  <SelectItem value="paid">Đã thanh toán</SelectItem>
+                  <SelectItem value="refund_pending">Cần hoàn tiền</SelectItem>
+                  <SelectItem value="failed">Thất bại</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        }
+      />
+
+      <div className="premium-card">
+        <div className="overflow-x-auto">
+          <Table className="min-w-[1000px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border text-left">
+                <TableHead
+                  style={{ width: "16%" }}
+                  className="px-4 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
+                >
+                  Mã đơn
+                </TableHead>
+                <TableHead
+                  style={{ width: "18%" }}
+                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Khách hàng
+                </TableHead>
+                <TableHead
+                  style={{ width: "13%" }}
+                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Số điện thoại
+                </TableHead>
+                <TableHead
+                  style={{ width: "14%" }}
+                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Ngày đặt
+                </TableHead>
+                <TableHead
+                  style={{ width: "13%" }}
+                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Thanh toán
+                </TableHead>
+                <TableHead
+                  style={{ width: "12%" }}
+                  className="px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Trạng thái
+                </TableHead>
+                <TableHead
+                  style={{ width: "14%" }}
+                  className="px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Tổng tiền
+                </TableHead>
+                <TableHead
+                  style={{ width: "7%" }}
+                  className="px-4 text-right text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Thao tác
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {loading && (
+                <TableRow>
+                  <TableCell
+                    colSpan={8}
+                    className="px-4 py-12 text-center text-sm text-ink-muted"
+                  >
+                    Đang tải dữ liệu đơn hàng...
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {!loading &&
+                orders.map((item) => {
+                  const meta =
+                    orderStatusMeta[item.orderStatus as OrderStatus] ??
+                    orderStatusMeta.pending;
+                  const StatusIcon = meta.icon;
+                  return (
+                    <TableRow key={item.id}>
+                      <TableCell className="px-4 py-3.5 align-middle">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            clearError();
+                            setModal({ type: "detail", order: item });
+                          }}
+                          title={item.code}
+                          className="block truncate font-semibold text-ink transition-colors hover:text-brand hover:underline"
+                        >
+                          {item.code}
+                        </button>
+                      </TableCell>
+                      <TableCell className="px-3.5 py-3.5 align-middle">
+                        <span
+                          title={item.receiverName}
+                          className="block truncate text-ink font-medium"
+                        >
+                          {item.receiverName}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-3.5 py-3.5 align-middle text-center">
+                        <span className="block truncate text-ink">
+                          {item.phone || "-"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-3.5 py-3.5 align-middle text-center">
+                        <span className="block truncate text-ink-muted">
+                          {fmtDate(item.createdAt)}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-3.5 py-3.5 align-middle text-center">
+                        {/* Payment status badge */}
+                        {item.paymentStatus === "paid" ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-success/10 text-success">
+                            Đã TT
+                          </span>
+                        ) : item.paymentStatus === "refund_pending" ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 border border-purple-500/20">
+                            Cần Hoàn Tiền
+                          </span>
+                        ) : item.paymentStatus === "failed" ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-danger/10 text-danger">
+                            Thất bại
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning">
+                            Chờ TT
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="px-3.5 py-3.5 text-center align-middle">
+                        <span
+                          className={`inline-flex min-h-8 items-center gap-1.5 px-3 py-1 text-xs font-semibold ${meta.badgeClass}`}
+                        >
+                          <StatusIcon className="h-3 w-3" />
+                          {meta.label}
+                        </span>
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-right align-middle font-semibold tabular-nums text-ink">
+                        {formatVnd(item.totalAmount ?? 0)}
+                      </TableCell>
+                      <TableCell className="px-4 py-3.5 text-right align-middle">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            title="Cập nhật trạng thái"
+                            onClick={() => {
+                              clearError();
+                              setModal({ type: "edit", order: item });
+                            }}
+                            className="rounded p-1.5 text-ink-muted transition-colors hover:bg-surface-soft hover:text-danger"
+                          >
+                            <Edit className="size-4" />
+                          </button>
+                          {item.orderStatus !== "cancelled" &&
+                            item.orderStatus !== "completed" && (
+                              <button
+                                type="button"
+                                title="Hủy đơn hàng"
+                                onClick={() => {
+                                  clearError();
+                                  setModal({ type: "cancel", order: item });
+                                }}
+                                className="rounded p-1.5 text-ink-muted transition-colors hover:bg-surface-soft hover:text-danger"
+                              >
+                                <Ban className="size-4" />
+                              </button>
+                            )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+
+              {!loading && orders.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={8}
+                    className="px-4 py-12 text-center text-sm text-ink-muted"
+                  >
+                    {keyword.trim() ? (
+                      <span>
+                        Không tìm thấy đơn hàng nào khớp với{" "}
+                        <span className="font-medium text-ink-muted">
+                          "{keyword.trim()}"
+                        </span>
+                        .{" "}
+                        <button
+                          type="button"
+                          onClick={() => setKeyword("")}
+                          className="text-danger hover:underline"
+                        >
+                          Xóa tìm kiếm
+                        </button>
+                      </span>
+                    ) : filter !== "all" ? (
+                      <span>
+                        Không có đơn hàng nào ở trạng thái này.{" "}
+                        <button
+                          type="button"
+                          onClick={() => setFilter("all")}
+                          className="text-danger hover:underline"
+                        >
+                          Xem tất cả
+                        </button>
+                      </span>
+                    ) : (
+                      "Chưa có đơn hàng nào."
+                    )}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        {(cursors.length > 0 || pagination?.hasNextPage) && (
+          <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
+            <div className="text-sm text-ink-muted font-medium">
+              Trang {cursors.length + 1}
+              {pagination?.total > 0 && (
+                <>
+                  <span className="mx-2 text-border">|</span>
+                  Tổng: {pagination.total} đơn hàng
+                </>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-sm h-9 px-4 font-medium"
+                onClick={handlePrev}
+                disabled={cursors.length === 0}
+              >
+                Trước
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-sm h-9 px-4 font-medium"
+                onClick={handleNext}
+                disabled={!pagination?.hasNextPage}
+              >
+                Sau
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <DeleteModal
@@ -450,14 +509,24 @@ export function OrderPage() {
         submitError={error}
         orderCode={modal.type === "edit" ? modal.order.code : undefined}
         orderedAt={modal.type === "edit" ? modal.order.createdAt : undefined}
-        totalAmount={modal.type === "edit" ? modal.order.totalAmount : undefined}
-        receiverName={modal.type === "edit" ? modal.order.receiverName : undefined}
+        totalAmount={
+          modal.type === "edit" ? modal.order.totalAmount : undefined
+        }
+        receiverName={
+          modal.type === "edit" ? modal.order.receiverName : undefined
+        }
         phone={modal.type === "edit" ? modal.order.phone : undefined}
         address={modal.type === "edit" ? modal.order.address : undefined}
         note={modal.type === "edit" ? modal.order.note : undefined}
-        paymentMethod={modal.type === "edit" ? modal.order.paymentMethod : undefined}
-        currentOrderStatus={modal.type === "edit" ? modal.order.orderStatus : undefined}
-        initialTrackingCode={modal.type === "edit" ? modal.order.trackingCode : undefined}
+        paymentMethod={
+          modal.type === "edit" ? modal.order.paymentMethod : undefined
+        }
+        currentOrderStatus={
+          modal.type === "edit" ? modal.order.orderStatus : undefined
+        }
+        initialTrackingCode={
+          modal.type === "edit" ? modal.order.trackingCode : undefined
+        }
         onClose={closeModal}
         onSubmit={handleEditSubmit}
       />

@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router";
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router";
 import { ShoppingCart, Heart } from "lucide-react";
-import { useCartStore } from "@/store/cart.store";
 import { useAuth } from "@/auth/hooks/usePublicAuth";
 import { useToggleFavorite, useFavorites } from "../hooks/useUser";
 import { toast } from "@/lib/toast";
@@ -8,6 +8,7 @@ import { toast } from "@/lib/toast";
 interface ProductCardProps {
   product: any;
   layout?: "grid" | "list";
+  priority?: boolean;
 }
 
 /** Sản phẩm mới nếu createdAt < 30 ngày trước */
@@ -18,19 +19,25 @@ function isNewProduct(createdAt?: string | Date): boolean {
 }
 
 /** Phân bổ nhãn FREESHIP linh hoạt dựa trên product ID */
-const FREESHIP_LABELS = ["FREESHIP TQ", "FREESHIP HCM HN", "FREESHIP HCM"] as const;
+const FREESHIP_LABELS = [
+  "FREESHIP TQ",
+  "FREESHIP HCM HN",
+  "FREESHIP HCM",
+] as const;
 function getFreeshiplabel(id: string): string {
   let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  for (let i = 0; i < id.length; i++)
+    hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
   return FREESHIP_LABELS[hash % FREESHIP_LABELS.length];
 }
 
-export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
-  const navigate = useNavigate();
-  const addItem = useCartStore((state) => state.addItem);
-
+export const ProductCard = React.memo(function ProductCard({
+  product,
+  layout = "grid",
+  priority = false,
+}: ProductCardProps) {
   const variants = product.variants || [];
-  
+
   // Calculate selling price and original price
   let minSellingPrice = product.price || 0;
   let maxSellingPrice = product.price || 0;
@@ -41,11 +48,11 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
   if (variants.length > 0) {
     const sellingPrices = variants.map((v: any) => v.discountPrice || v.price);
     const originalPrices = variants.map((v: any) => v.price);
-    
+
     minSellingPrice = Math.min(...sellingPrices);
     maxSellingPrice = Math.max(...sellingPrices);
     maxOriginalPrice = Math.max(...originalPrices);
-    
+
     if (maxOriginalPrice > minSellingPrice) {
       hasDiscount = true;
       discountPct = Math.round((1 - minSellingPrice / maxOriginalPrice) * 100);
@@ -56,23 +63,29 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
     discountPct = Math.round((1 - minSellingPrice / maxOriginalPrice) * 100);
   }
 
-  const priceDisplay = minSellingPrice === maxSellingPrice
-    ? minSellingPrice.toLocaleString("vi-VN") + "đ"
-    : `${minSellingPrice.toLocaleString("vi-VN")}đ – ${maxSellingPrice.toLocaleString("vi-VN")}đ`;
+  const priceDisplay =
+    minSellingPrice === maxSellingPrice
+      ? minSellingPrice.toLocaleString("vi-VN") + "đ"
+      : `${minSellingPrice.toLocaleString("vi-VN")}đ – ${maxSellingPrice.toLocaleString("vi-VN")}đ`;
 
-  const isOutOfStock = variants.length > 0 && variants.every((v: any) => v.stock === 0);
+  const isOutOfStock =
+    variants.length > 0 && variants.every((v: any) => v.stock === 0);
   const isInactive = product.isActive === false;
   const isNew = isNewProduct(product.createdAt);
   const isHot = !isNew && (product.soldCount || 0) >= 100;
 
   // Ảnh hover — imageUrls[0] nếu có (khác imageUrl chính)
   const hoverImage: string | null = (() => {
-    const urls: string[] = Array.isArray(product.imageUrls) ? product.imageUrls : [];
+    const urls: string[] = Array.isArray(product.imageUrls)
+      ? product.imageUrls
+      : [];
     const alt = urls.find((u) => u !== product.imageUrl);
     return alt ?? null;
   })();
 
   const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { data: favorites = [] } = useFavorites();
   const toggleFavoriteMutation = useToggleFavorite();
   const isFavorite = favorites.some((fav: any) => fav.id === product.id);
@@ -81,37 +94,10 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (!isLoggedIn) {
-      toast.error("Vui lòng đăng nhập để lưu sản phẩm yêu thích");
+      navigate(`/login?returnUrl=${encodeURIComponent(location.pathname)}`);
       return;
     }
     toggleFavoriteMutation.mutate(product.id);
-  };
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (isOutOfStock || isInactive) {
-      toast.error("Sản phẩm hiện đang tạm hết hàng");
-      return;
-    }
-    if (variants.length > 1) {
-      navigate(`/product/${product.slug}`);
-      return;
-    }
-    const v = variants[0];
-    if (v) {
-      addItem({
-        productId: product.id,
-        variantId: v.id,
-        name: product.name,
-        variantName: v.name,
-        price: v.price,
-        imageUrl: product.imageUrl,
-        quantity: 1,
-        stock: v.stock,
-      });
-      toast.success("Đã thêm vào giỏ hàng!");
-    }
   };
 
   // ────────────────────────── LIST ──────────────────────────
@@ -119,27 +105,44 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
     return (
       <Link
         to={`/product/${product.slug}`}
-        className="group flex flex-row h-36 bg-white border border-border/50 hover:border-brand/30 hover:shadow-sm transition-all overflow-hidden"
+        className="premium-card group flex flex-row h-36"
       >
         <div className="relative w-36 h-full shrink-0 overflow-hidden bg-surface-soft">
-          {product.imageUrl
-            ? <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
-            : <div className="w-full h-full flex items-center justify-center text-ink-muted/30"><ShoppingCart className="w-8 h-8" /></div>
-          }
+          {product.imageUrl ? (
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              loading={priority ? "eager" : "lazy"}
+              fetchPriority={priority ? "high" : "auto"}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-ink-muted/30">
+              <ShoppingCart className="w-8 h-8" />
+            </div>
+          )}
           {isOutOfStock && !isInactive && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-              <span className="bg-foreground text-white text-xs font-bold px-2 py-1 uppercase tracking-wider">Hết hàng</span>
+              <span className="bg-foreground text-white text-xs font-bold px-2 py-1 uppercase tracking-wider">
+                Hết hàng
+              </span>
             </div>
           )}
         </div>
         <div className="flex flex-col flex-1 p-3 justify-between min-w-0">
           {product.brandName && (
-            <span className="text-[11px] text-ink-muted uppercase tracking-wider">{product.brandName}</span>
+            <span className="text-[11px] text-ink-muted uppercase tracking-wider">
+              {product.brandName}
+            </span>
           )}
-          <h3 className="text-sm font-medium text-ink line-clamp-2 leading-snug">{product.name}</h3>
+          <h3 className="text-sm font-medium text-ink line-clamp-2 leading-snug">
+            {product.name}
+          </h3>
           <div className="flex items-center justify-between gap-2">
             <div>
-              <span className="text-[#C81D25] font-bold text-sm">{priceDisplay}</span>
+              <span className="text-[#C81D25] font-bold text-sm">
+                {priceDisplay}
+              </span>
               {hasDiscount && (
                 <span className="ml-2 text-xs text-ink-muted line-through">
                   {maxOriginalPrice.toLocaleString("vi-VN")}đ
@@ -147,7 +150,10 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
               )}
             </div>
             <button onClick={handleToggleFavorite} className="p-1 shrink-0">
-              <Heart className={`w-4 h-4 ${isFavorite ? "fill-[#C81D25] text-[#C81D25]" : "text-ink-muted/50"}`} strokeWidth={1.5} />
+              <Heart
+                className={`w-4 h-4 ${isFavorite ? "fill-[#C81D25] text-[#C81D25]" : "text-ink-muted/50"}`}
+                strokeWidth={1.5}
+              />
             </button>
           </div>
         </div>
@@ -159,25 +165,24 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
   return (
     <Link
       to={`/product/${product.slug}`}
-      className="group flex flex-col bg-white border border-border/50 hover:border-brand/20 hover:shadow-sm transition-all overflow-hidden h-full"
+      className="premium-card group flex flex-col h-full"
     >
       {/* ── Image ── */}
       <div className="relative aspect-square overflow-hidden bg-surface-soft">
         {/* Primary image */}
-        {product.imageUrl
-          ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${hoverImage ? "group-hover:opacity-0" : ""}`}
-            />
-          )
-          : (
-            <div className="absolute inset-0 flex items-center justify-center text-ink-muted/20">
-              <ShoppingCart className="w-10 h-10" />
-            </div>
-          )
-        }
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${hoverImage ? "group-hover:opacity-0" : ""}`}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-ink-muted/20">
+            <ShoppingCart className="w-10 h-10" />
+          </div>
+        )}
 
         {/* Hover / secondary image (opacity crossfade) */}
         {hoverImage && (
@@ -185,16 +190,12 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
             src={hoverImage}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 opacity-0 group-hover:opacity-100"
+            loading="lazy"
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
           />
         )}
 
-        {/* Discount overlay badge on image — top-left */}
-        {hasDiscount && (
-          <span className="absolute top-2 left-2 bg-[#C81D25] text-white text-[11px] font-black px-2 py-0.5 leading-tight z-10">
-            -{discountPct}%
-          </span>
-        )}
+        {/* Discount overlay removed as requested */}
 
         {/* Out of stock overlay */}
         {isOutOfStock && !isInactive && (
@@ -208,19 +209,18 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
 
       {/* ── Content ── */}
       <div className="p-2.5 flex flex-col flex-1">
-
         {/* Badges row: FREESHIP (linh hoạt) + NEW / HOT */}
-        <div className="flex items-center gap-1 mb-1.5 flex-wrap">
-          <span className="bg-[#0b2b5e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
+        <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+          <span className="bg-[#0b2b5e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight">
             {getFreeshiplabel(product.id || product._id || product.name || "")}
           </span>
           {isNew && (
-            <span className="bg-[#C81D25] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
+            <span className="bg-[#C81D25] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight shadow-sm">
               NEW
             </span>
           )}
           {isHot && (
-            <span className="bg-[#f97316] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
+            <span className="bg-[#f97316] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight shadow-sm">
               HOT
             </span>
           )}
@@ -234,20 +234,27 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
         )}
 
         {/* Product name */}
-        <h3 className="text-[13px] font-medium text-ink line-clamp-2 leading-snug flex-1">
+        <h3 className="text-[13px] font-medium text-ink line-clamp-2 leading-snug">
           {product.name}
         </h3>
 
         {/* Price */}
-        <div className="mt-1.5 flex items-end justify-between gap-1">
+        <div className="mt-auto pt-1.5 flex items-end justify-between gap-1">
           <div className="min-w-0">
-            <div className="text-[#C81D25] font-bold text-[14px] leading-tight">{priceDisplay}</div>
+            <div className="text-[#C81D25] font-bold text-[14px] leading-tight">
+              {priceDisplay}
+            </div>
             {hasDiscount && (
               <div className="text-[11px] text-ink-muted line-through leading-tight mt-0.5">
                 {maxOriginalPrice.toLocaleString("vi-VN")}đ
               </div>
             )}
           </div>
+          {hasDiscount && (
+            <div className="w-8 h-8 rounded-full bg-[#84cc16] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mb-1">
+              -{discountPct}%
+            </div>
+          )}
         </div>
 
         {/* Sold count + heart (luôn hiện — giống Skinfood) */}
@@ -257,9 +264,11 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
               <>
                 <span className="font-semibold text-ink">
                   {product.soldCount >= 1000
-                    ? (product.soldCount / 1000).toFixed(1).replace(".0", "") + "k"
+                    ? (product.soldCount / 1000).toFixed(1).replace(".0", "") +
+                      "k"
                     : product.soldCount}
-                </span>{" "}Đã bán
+                </span>{" "}
+                Đã bán
               </>
             )}
           </span>
@@ -277,4 +286,4 @@ export function ProductCard({ product, layout = "grid" }: ProductCardProps) {
       </div>
     </Link>
   );
-}
+});

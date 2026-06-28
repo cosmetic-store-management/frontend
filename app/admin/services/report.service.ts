@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/client";
+import { useAdminAuthStore } from "@/store/admin.auth.store";
 
 export interface DashboardStats {
   stats: {
@@ -36,12 +37,46 @@ export interface DashboardStats {
   }[];
 }
 
-export function getDashboardData(startDate?: string, endDate?: string): Promise<DashboardStats> {
+export function getDashboardData(
+  startDate?: string,
+  endDate?: string,
+): Promise<DashboardStats> {
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);
   if (endDate) params.append("endDate", endDate);
   const qs = params.toString() ? `?${params.toString()}` : "";
   return apiClient.get<DashboardStats>(`/reports/dashboard${qs}`);
+}
+
+export function exportPdf(startDate?: string, endDate?: string) {
+  const params = new URLSearchParams();
+  if (startDate) params.append("startDate", startDate);
+  if (endDate) params.append("endDate", endDate);
+  const qs = params.toString() ? `?${params.toString()}` : "";
+
+  // Create a form or link to download directly
+  const url = `${import.meta.env.VITE_API_URL}/reports/export-pdf${qs}`;
+  const token = useAdminAuthStore.getState().token;
+
+  return fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to export PDF");
+      return res.blob();
+    })
+    .then((blob) => {
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = `Report_${new Date().toISOString().slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+    });
 }
 
 export interface CompletionRates {
@@ -53,7 +88,10 @@ export interface CompletionRates {
   cancelledRate: number;
 }
 
-export function getCompletionRates(startDate?: string, endDate?: string): Promise<CompletionRates> {
+export function getCompletionRates(
+  startDate?: string,
+  endDate?: string,
+): Promise<CompletionRates> {
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);
   if (endDate) params.append("endDate", endDate);
@@ -69,7 +107,10 @@ export interface VoucherStats {
   isActive: boolean;
 }
 
-export function getVoucherStats(startDate?: string, endDate?: string): Promise<VoucherStats[]> {
+export function getVoucherStats(
+  startDate?: string,
+  endDate?: string,
+): Promise<VoucherStats[]> {
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);
   if (endDate) params.append("endDate", endDate);
@@ -83,7 +124,10 @@ export interface RevenueChartData {
   orders: number;
 }
 
-export function getRevenueChart(startDate?: string, endDate?: string): Promise<RevenueChartData[]> {
+export function getRevenueChart(
+  startDate?: string,
+  endDate?: string,
+): Promise<RevenueChartData[]> {
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);
   if (endDate) params.append("endDate", endDate);
@@ -97,12 +141,17 @@ export interface CategoryPerformanceData {
   sold: number;
 }
 
-export function getCategoryPerformance(startDate?: string, endDate?: string): Promise<CategoryPerformanceData[]> {
+export function getCategoryPerformance(
+  startDate?: string,
+  endDate?: string,
+): Promise<CategoryPerformanceData[]> {
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);
   if (endDate) params.append("endDate", endDate);
   const qs = params.toString() ? `?${params.toString()}` : "";
-  return apiClient.get<CategoryPerformanceData[]>(`/reports/category-performance${qs}`);
+  return apiClient.get<CategoryPerformanceData[]>(
+    `/reports/category-performance${qs}`,
+  );
 }
 
 export interface PaymentMethodsData {
@@ -111,7 +160,10 @@ export interface PaymentMethodsData {
   revenue: number;
 }
 
-export function getPaymentMethodsStats(startDate?: string, endDate?: string): Promise<PaymentMethodsData[]> {
+export function getPaymentMethodsStats(
+  startDate?: string,
+  endDate?: string,
+): Promise<PaymentMethodsData[]> {
   const params = new URLSearchParams();
   if (startDate) params.append("startDate", startDate);
   if (endDate) params.append("endDate", endDate);

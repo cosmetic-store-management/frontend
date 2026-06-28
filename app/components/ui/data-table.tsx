@@ -16,7 +16,12 @@
  */
 import React from "react";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { TableBodySkeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -25,34 +30,34 @@ import { Loader2 } from "lucide-react";
 type Align = "left" | "center" | "right";
 
 export interface DataTableColumn<T> {
-  key:      string;
-  header:   React.ReactNode;
-  align?:   Align;
-  width?:   string;
+  key: string;
+  header: React.ReactNode;
+  align?: Align;
+  width?: string;
   /** Nếu không có render, tự dùng row[key] */
-  render?:  (row: T, index: number) => React.ReactNode;
+  render?: (row: T, index: number) => React.ReactNode;
 }
 
 interface DataTableProps<T> {
-  columns:         DataTableColumn<T>[];
-  data:            T[];
-  isLoading?:      boolean;
-  emptyMessage?:   React.ReactNode;
-  keyExtractor?:   (row: T, index: number) => string | number;
+  columns: DataTableColumn<T>[];
+  data: T[];
+  isLoading?: boolean;
+  emptyMessage?: React.ReactNode;
+  keyExtractor?: (row: T, index: number) => string | number;
   /** Callback khi click một row */
-  onRowClick?:     (row: T) => void;
+  onRowClick?: (row: T) => void;
   /** CSS className cho outer wrapper */
-  className?:      string;
+  className?: string;
   /** Số cột skeleton rows khi isLoading */
-  skeletonRows?:   number;
+  skeletonRows?: number;
   /** Min width cho scroll ngang */
-  minWidth?:       string;
+  minWidth?: string;
 }
 
 const alignClass: Record<Align, string> = {
-  left:   "text-left",
+  left: "text-left",
   center: "text-center",
-  right:  "text-right",
+  right: "text-right",
 };
 
 export function DataTable<T>({
@@ -67,7 +72,12 @@ export function DataTable<T>({
   minWidth = "600px",
 }: DataTableProps<T>) {
   return (
-    <div className={cn("border border-border rounded-sm bg-surface shadow-ui-soft overflow-hidden", className)}>
+    <div
+      className={cn(
+        "border border-border rounded-sm bg-surface shadow-ui-soft overflow-hidden",
+        className,
+      )}
+    >
       <div className="overflow-x-auto">
         <Table style={{ minWidth }}>
           <TableHeader>
@@ -78,7 +88,7 @@ export function DataTable<T>({
                   className={cn(
                     "px-5 py-4 text-xs font-semibold uppercase tracking-wider text-ink-muted",
                     alignClass[col.align ?? "left"],
-                    col.width
+                    col.width,
                   )}
                   style={col.width ? { width: col.width } : undefined}
                 >
@@ -93,7 +103,10 @@ export function DataTable<T>({
               <TableBodySkeleton rows={skeletonRows} cols={columns.length} />
             ) : data.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="py-16 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="py-16 text-center"
+                >
                   <div className="flex flex-col items-center gap-3 text-ink-muted">
                     <span className="text-3xl">🔍</span>
                     <p className="text-sm">{emptyMessage}</p>
@@ -108,7 +121,7 @@ export function DataTable<T>({
                     key={key}
                     className={cn(
                       "transition-colors border-b border-border last:border-0",
-                      onRowClick && "cursor-pointer hover:bg-bg/40"
+                      onRowClick && "cursor-pointer hover:bg-bg/40",
                     )}
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     style={{ "--i": index } as React.CSSProperties}
@@ -116,7 +129,10 @@ export function DataTable<T>({
                     {columns.map((col) => (
                       <TableCell
                         key={col.key}
-                        className={cn("px-5 py-4 align-middle", alignClass[col.align ?? "left"])}
+                        className={cn(
+                          "px-5 py-4 align-middle",
+                          alignClass[col.align ?? "left"],
+                        )}
                       >
                         {col.render
                           ? col.render(row, index)
@@ -137,12 +153,12 @@ export function DataTable<T>({
 // ── DataTablePagination helper ────────────────────────────────────────────────
 
 interface PaginationProps {
-  page:        number;
-  totalPages:  number;
+  page: number;
+  totalPages: number;
   totalItems?: number;
-  limit?:      number;
-  onChange:    (page: number) => void;
-  isLoading?:  boolean;
+  limit?: number;
+  onChange: (page: number) => void;
+  isLoading?: boolean;
 }
 
 export function DataTablePagination({
@@ -155,8 +171,8 @@ export function DataTablePagination({
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  const start = ((page - 1) * (limit ?? 10)) + 1;
-  const end   = Math.min(page * (limit ?? 10), totalItems ?? 0);
+  const start = (page - 1) * (limit ?? 10) + 1;
+  const end = Math.min(page * (limit ?? 10), totalItems ?? 0);
 
   return (
     <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
@@ -203,10 +219,14 @@ export function DataTablePagination({
                 "h-8 w-8 rounded-sm border text-sm font-medium transition-colors",
                 p === page
                   ? "bg-brand text-white border-brand"
-                  : "border-border text-ink-muted hover:bg-surface-muted"
+                  : "border-border text-ink-muted hover:bg-surface-muted",
               )}
             >
-              {isLoading && p === page ? <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" /> : p}
+              {isLoading && p === page ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" />
+              ) : (
+                p
+              )}
             </button>
           );
         })}

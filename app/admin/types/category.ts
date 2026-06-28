@@ -14,4 +14,7 @@ export interface Category {
 }
 
 // Dùng cho Product (chỉ cần lấy các thông tin cơ bản của Category)
-export type CategoryPreview = Pick<Category, "id" | "name" | "slug" | "imageUrl">;
+export type CategoryPreview = Pick<
+  Category,
+  "id" | "name" | "slug" | "imageUrl"
+>;

@@ -4,8 +4,8 @@ import type { User } from "@/admin/types/user";
 
 interface AdminAuthState {
   user: User | null;
-  token: string | null;         // access token (ngắn hạn)
-  refreshToken: string | null;  // refresh token (dài hạn)
+  token: string | null; // access token (ngắn hạn)
+  refreshToken: string | null; // refresh token (dài hạn)
   isAuthenticated: boolean;
   isAdmin: boolean;
   isOwner: boolean;
@@ -56,6 +56,6 @@ export const useAdminAuthStore = create<AdminAuthState>()(
     {
       name: "glowup_admin_auth", // Lưu ở key riêng cho Admin
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

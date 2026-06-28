@@ -1,9 +1,12 @@
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
 const Switch = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { checked?: boolean; onCheckedChange?: (checked: boolean) => void }
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    checked?: boolean;
+    onCheckedChange?: (checked: boolean) => void;
+  }
 >(({ className, checked, onCheckedChange, ...props }, ref) => (
   <button
     type="button"
@@ -13,19 +16,19 @@ const Switch = React.forwardRef<
     className={cn(
       "peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-50",
       checked ? "bg-success" : "bg-ink/20",
-      className
+      className,
     )}
     ref={ref}
     {...props}
   >
     <span
       className={cn(
-        "pointer-events-none block h-5 w-5 rounded-full bg-surface shadow-lg ring-0 transition-transform",
-        checked ? "translate-x-5" : "translate-x-0"
+        "pointer-events-none block h-5 w-5 rounded-full bg-surface  ring-0 transition-transform",
+        checked ? "translate-x-5" : "translate-x-0",
       )}
     />
   </button>
-))
-Switch.displayName = "Switch"
+));
+Switch.displayName = "Switch";
 
-export { Switch }
+export { Switch };

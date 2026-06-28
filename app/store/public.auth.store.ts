@@ -4,8 +4,8 @@ import type { User } from "@/admin/types/user"; // Re-use the same user type, or
 
 interface PublicAuthState {
   user: User | null;
-  token: string | null;         // access token (ngắn hạn)
-  refreshToken: string | null;  // refresh token (dài hạn)
+  token: string | null; // access token (ngắn hạn)
+  refreshToken: string | null; // refresh token (dài hạn)
   isAuthenticated: boolean;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   setAccessToken: (token: string) => void;
@@ -43,6 +43,6 @@ export const usePublicAuthStore = create<PublicAuthState>()(
     {
       name: "glowup_public_auth", // Lưu ở key riêng cho Public
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

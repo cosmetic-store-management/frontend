@@ -11,9 +11,24 @@ import { VouchersPage } from "@/public/components/account/VouchersPage";
 import { FavoritesPage } from "@/public/components/account/FavoritesPage";
 import { ViewedPage } from "@/public/components/account/ViewedPage";
 
-type Tab = "profile" | "address" | "orders" | "tier" | "vouchers" | "favorites" | "viewed";
+type Tab =
+  | "profile"
+  | "address"
+  | "orders"
+  | "tier"
+  | "vouchers"
+  | "favorites"
+  | "viewed";
 
-const VALID_TABS: Tab[] = ["profile", "address", "orders", "tier", "vouchers", "favorites", "viewed"];
+const VALID_TABS: Tab[] = [
+  "profile",
+  "address",
+  "orders",
+  "tier",
+  "vouchers",
+  "favorites",
+  "viewed",
+];
 
 export function ProfilePage() {
   const { user, logout: clearAuth } = useAuth();
@@ -27,6 +42,9 @@ export function ProfilePage() {
   // Sync tab with URL query param
   useEffect(() => {
     if (viewParam === "coupon") {
+      {
+        /* eslint-disable-next-line  */
+      }
       setActiveTab("vouchers");
     } else if (viewParam && VALID_TABS.includes(viewParam as Tab)) {
       setActiveTab(viewParam as Tab);
@@ -37,7 +55,8 @@ export function ProfilePage() {
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab as Tab);
-    const query = tab === "profile" ? "" : `?view=${tab === "vouchers" ? "coupon" : tab}`;
+    const query =
+      tab === "profile" ? "" : `?view=${tab === "vouchers" ? "coupon" : tab}`;
     navigate(`/account${query}`, { replace: true });
   };
 

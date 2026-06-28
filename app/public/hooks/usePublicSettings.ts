@@ -19,7 +19,9 @@ export function usePublicSettings() {
   return useQuery<PublicSettings>({
     queryKey: QK.settings(),
     queryFn: () =>
-      apiClient.get<{ settings: PublicSettings }>("/settings").then(r => r.settings),
+      apiClient
+        .get<{ settings: PublicSettings }>("/settings")
+        .then((r) => r.settings),
     staleTime: 5 * 60 * 1000, // 5 phút — settings hiếm khi thay đổi
   });
 }

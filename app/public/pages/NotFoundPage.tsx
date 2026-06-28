@@ -11,13 +11,13 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-brand-50 flex items-center justify-center px-4 py-16">
       <div className="max-w-2xl w-full text-center space-y-8">
-
         {/* 404 Visual */}
         <div className="relative inline-block">
           <div
             className="text-[160px] sm:text-[200px] font-black leading-none tracking-tighter"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--brand)) 0%, hsl(var(--brand-dark)) 100%)",
+              background:
+                "linear-gradient(135deg, hsl(var(--brand)) 0%, hsl(var(--brand-dark)) 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
@@ -36,22 +36,30 @@ export default function NotFoundPage() {
             Trang không tồn tại
           </h1>
           <p className="text-base text-ink-muted max-w-md mx-auto leading-relaxed">
-            Oops! Trang bạn đang tìm kiếm đã bị xóa, đổi tên hoặc chưa từng tồn tại.
-            Hãy kiểm tra lại URL hoặc khám phá các trang khác của GlowUp.
+            Oops! Trang bạn đang tìm kiếm đã bị xóa, đổi tên hoặc chưa từng tồn
+            tại. Hãy kiểm tra lại URL hoặc khám phá các trang khác của GlowUp.
           </p>
         </div>
 
         {/* Quick links */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
           {[
-            { label: "Trang chủ",    to: "/",         icon: <Home className="w-4 h-4" /> },
-            { label: "Sản phẩm",     to: "/products", icon: <Search className="w-4 h-4" /> },
-            { label: "Danh mục",     to: "/categories", icon: <Search className="w-4 h-4" /> },
+            { label: "Trang chủ", to: "/", icon: <Home className="w-4 h-4" /> },
+            {
+              label: "Sản phẩm",
+              to: "/products",
+              icon: <Search className="w-4 h-4" />,
+            },
+            {
+              label: "Danh mục",
+              to: "/categories",
+              icon: <Search className="w-4 h-4" />,
+            },
           ].map(({ label, to, icon }) => (
             <Link
               key={to}
               to={to}
-              className="flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-border bg-white hover:bg-brand hover:text-white hover:border-brand transition-all duration-200 text-sm font-medium text-ink shadow-sm"
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-sm border border-border bg-white hover:bg-brand hover:text-white hover:border-brand transition-all duration-200 text-sm font-medium text-ink "
             >
               {icon}
               {label}
@@ -70,7 +78,7 @@ export default function NotFoundPage() {
           </button>
           <Link
             to="/"
-            className="btn-hover flex items-center gap-2 px-6 py-3 rounded-sm bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors shadow-sm"
+            className="btn-hover flex items-center gap-2 px-6 py-3 rounded-sm bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors "
           >
             <Home className="w-4 h-4" />
             Về trang chủ

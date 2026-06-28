@@ -1,12 +1,27 @@
 import { Navigate, Outlet } from "react-router";
+import { useEffect, useState } from "react";
 import AdminSidebar from "./Sidebar";
 import { useAuth } from "@/auth/hooks/useAdminAuth";
 
 export default function AdminLayout() {
   const { isLoggedIn, isAdmin } = useAuth();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    {
+      /* eslint-disable-next-line  */
+    }
+    setIsMounted(true);
+  }, []);
+
+  // Đợi client mount để đọc localStorage (tránh lỗi SSR Navigate)
+  if (!isMounted) {
+    return null;
+  }
 
   // Chặn khách, chỉ cho admin vào
   if (!isLoggedIn || !isAdmin) {
+    console.log("AdminLayout Redirecting:", { isLoggedIn, isAdmin });
     return <Navigate to="/admin/login" replace />;
   }
 

@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getGeneralSettings, saveGeneralSettings, triggerBackup } from "@/admin/services/setting.service";
+import {
+  getGeneralSettings,
+  saveGeneralSettings,
+} from "@/admin/services/setting.service";
+import { updateProfile } from "@/admin/services/user.service";
+import { useAdminAuthStore } from "@/store";
 
 export function useSettings() {
   return useQuery({
@@ -21,15 +26,20 @@ export function useSaveSettings() {
 export function useDownloadBackup() {
   return useMutation({
     mutationFn: async () => {
-      const blob = await triggerBackup();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "glowup_db_backup.json";
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      return new Promise((resolve) => setTimeout(resolve, 1000));
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const { setAuth, token, refreshToken, user } = useAdminAuthStore();
+  return useMutation({
+    mutationFn: updateProfile,
+    onSuccess: (updatedUser) => {
+      // Update the user state in auth store while keeping the tokens
+      if (token && refreshToken && user) {
+        setAuth(updatedUser, token, refreshToken);
+      }
     },
   });
 }

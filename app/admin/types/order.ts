@@ -1,5 +1,21 @@
-export type OrderStatus = "pending" | "processing" | "shipping" | "completed" | "cancelled" | "returned";
-export type PaymentMethod = "cod" | "bank" | "ewallet" | "qr" | "cash" | "card" | "vnpay";
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipping"
+  | "completed"
+  | "cancelled"
+  | "return_pending"
+  | "returned";
+export type PaymentMethod =
+  | "cod"
+  | "bank"
+  | "ewallet"
+  | "qr"
+  | "cash"
+  | "card"
+  | "stripe"
+  | "pos_card"
+  | "transfer";
 
 export interface OrderItem {
   productId: string;
@@ -36,7 +52,11 @@ export interface Order {
   channel: "pos" | "online";
   creatorId: string | null;
   paymentStatus: "pending" | "paid" | "failed" | "refund_pending";
-  trackingCode?: string;
+  idempotencyKey?: string;
+  transactionId?: string;
   earnedPoints?: number;
   usedPoints?: number;
+  completedAt?: string;
+  returnReason?: string;
+  trackingCode?: string;
 }

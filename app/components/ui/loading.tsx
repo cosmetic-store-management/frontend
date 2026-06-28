@@ -31,7 +31,7 @@ export default function Loading({
         fullScreen
           ? "flex h-screen w-full items-center justify-center"
           : "inline-flex items-center justify-center",
-        className
+        className,
       )}
       role="status"
       aria-label={label}

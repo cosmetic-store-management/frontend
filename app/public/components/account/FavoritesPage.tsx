@@ -10,10 +10,14 @@ export function FavoritesPage() {
       <div className="flex items-start justify-between mb-6">
         <div>
           <h2 className="text-lg font-bold text-ink">Sản phẩm yêu thích</h2>
-          <p className="text-xs text-ink-muted mt-0.5">Danh sách sản phẩm bạn đã lưu</p>
+          <p className="text-xs text-ink-muted mt-0.5">
+            Danh sách sản phẩm bạn đã lưu
+          </p>
         </div>
         {favorites.length > 0 && (
-          <span className="text-xs text-ink-muted mt-1">{favorites.length} sản phẩm</span>
+          <span className="text-xs text-ink-muted mt-1">
+            {favorites.length} sản phẩm
+          </span>
         )}
       </div>
 
@@ -27,9 +31,16 @@ export function FavoritesPage() {
             <Heart className="w-8 h-8 text-ink-muted" />
           </div>
           <div className="text-center">
-            <p className="text-sm font-semibold text-ink mb-1">Chưa có sản phẩm yêu thích</p>
-            <p className="text-xs text-ink-muted mb-4">Bấm vào biểu tượng ❤️ trên sản phẩm để lưu vào đây</p>
-            <a href="/products" className="inline-block bg-brand text-white text-sm font-bold px-5 py-2 rounded-sm btn-hover">
+            <p className="text-sm font-semibold text-ink mb-1">
+              Chưa có sản phẩm yêu thích
+            </p>
+            <p className="text-xs text-ink-muted mb-4">
+              Bấm vào biểu tượng ❤️ trên sản phẩm để lưu vào đây
+            </p>
+            <a
+              href="/products"
+              className="inline-block bg-brand text-white text-sm font-bold px-5 py-2 rounded-sm btn-hover"
+            >
               Khám phá sản phẩm
             </a>
           </div>

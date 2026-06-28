@@ -58,7 +58,7 @@ function promise<T>(
     success: string | ((data: T) => string);
     error: string | ((err: unknown) => string);
     description?: string;
-  }
+  },
 ) {
   return sonner.promise(p, options);
 }

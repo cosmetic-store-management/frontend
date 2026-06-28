@@ -1,7 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAuditLogs } from "@/admin/services/audit-log.service";
 
-export function useAuditLogs(params: { search?: string; domain?: string; startDate?: string; endDate?: string }) {
+export function useAuditLogs(params: {
+  search?: string;
+  domain?: string;
+  startDate?: string;
+  endDate?: string;
+  cursor?: string;
+  limit?: number;
+}) {
   return useQuery({
     queryKey: ["audit-logs", params],
     queryFn: () => getAuditLogs(params),

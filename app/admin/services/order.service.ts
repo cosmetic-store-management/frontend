@@ -1,28 +1,111 @@
 import { apiClient } from "@/lib/client";
 import type { Order } from "@/admin/types/order";
-import type { CreateOrderPayload } from "@/public/types/checkout";
 
 // ── Customer ──────────────────────────────────────────────────────────────────
 
 export function getMyOrders(): Promise<Order[]> {
-  return apiClient.get<{ orders: Order[] }>("/orders/my-orders")
+  return apiClient
+    .get<{ orders: Order[] }>("/orders/my-orders")
     .then((data) => data.orders);
 }
 
 export function getOrderById(id: string): Promise<Order> {
-  return apiClient.get<{ order: Order }>(`/orders/${id}`)
+  return apiClient
+    .get<{ order: Order }>(`/orders/${id}`)
     .then((data) => data.order);
 }
 
-export function createOrder(payload: CreateOrderPayload): Promise<Order> {
-  return apiClient.post<{ order: Order }>("/orders", payload)
-    .then((data) => data.order);
-}
+export const createOrder = async (payload: any) => {
+  return apiClient
+    .post<{ order: Order }>("/checkout", payload)
+    .then((res) => res.order);
+};
 
-export function cancelOrder(id: string): Promise<Order> {
-  return apiClient.patch<{ order: Order }>(`/orders/${id}/cancel`)
-    .then((data) => data.order);
-}
+export const updateOrderStatus = async (
+  orderId: string,
+  payload: {
+    orderStatus?: string;
+    trackingCode?: string;
+  },
+) => {
+  return apiClient
+    .patch<{
+      message: string;
+      order: Order;
+    }>(`/orders/admin/${orderId}/status`, payload)
+    .then((res) => res.order);
+};
+
+export const updateOrderAdmin = async (orderId: string, payload: any) => {
+  return apiClient
+    .patch<{ message: string; order: Order }>(
+      `/orders/admin/${orderId}/details`,
+      payload,
+    )
+    .then((res) => res.order);
+};
+
+export const cancelOrder = async (orderId: string) => {
+  return apiClient
+    .patch<{ message: string; order: Order }>(`/orders/${orderId}/cancel`)
+    .then((res) => res.order);
+};
+
+export const processRefund = async (orderId: string, payload?: any) => {
+  return apiClient
+    .patch<{ message: string; order: Order }>(`/orders/admin/${orderId}/refund`, payload)
+    .then((res) => res.order);
+};
+
+export const approveReturn = async (orderId: string) => {
+  return apiClient
+    .patch<{ message: string; order: Order }>(
+      `/orders/admin/${orderId}/return/approve`,
+    )
+    .then((res) => res.order);
+};
+
+export const rejectReturn = async (orderId: string, rejectReason: string) => {
+  return apiClient
+    .patch<{ message: string; order: Order }>(
+      `/orders/admin/${orderId}/return/reject`,
+      { rejectReason },
+    )
+    .then((res) => res.order);
+};
+
+export const fetchOrders = async (query: Partial<AdminOrderQuery>) => {
+  // Loại bỏ các key undefined hoặc null để URL query sạch sẽ
+  Object.keys(query).forEach((key) => {
+    if (
+      query[key as keyof AdminOrderQuery] === undefined ||
+      query[key as keyof AdminOrderQuery] === null ||
+      query[key as keyof AdminOrderQuery] === ""
+    ) {
+      delete query[key as keyof AdminOrderQuery];
+    }
+  });
+
+  return apiClient.get<OrderListResult>(
+    "/orders/admin/list",
+    query as Record<string, string | number | boolean>,
+  );
+};
+
+export const fetchOrderById = async (id: string) => {
+  return apiClient
+    .get<{ order: Order }>(`/orders/${id}`)
+    .then((res) => res.order);
+};
+
+/**
+ * Tạo đơn hàng POS tại quầy
+ */
+export const createPOSOrder = async (payload: any) => {
+  return apiClient
+    .post<{ order: Order }>("/checkout/pos", payload)
+    .then((res) => res.order);
+};
 
 // ── Admin ─────────────────────────────────────────────────────────────────────
 
@@ -31,7 +114,7 @@ export interface AdminOrderQuery {
   orderStatus?: string;
   channel?: string;
   userId?: string;
-  page?: number;
+  cursor?: string;
   limit?: number;
   paymentStatus?: string;
   dateFrom?: string;
@@ -41,33 +124,16 @@ export interface AdminOrderQuery {
 export interface OrderListResult {
   orders: Order[];
   pagination: {
-    page: number;
     limit: number;
     total: number;
-    totalPages: number;
+    nextCursor: string | null;
+    hasNextPage: boolean;
   };
 }
 
-export function getAdminOrders(query: AdminOrderQuery = {}): Promise<OrderListResult> {
-  return apiClient.get<OrderListResult>("/orders/admin/list", query as Record<string, string | number | boolean>);
-}
-
-export function updateOrderStatus(
-  id: string,
-  data: { orderStatus?: string; receiverName?: string; phone?: string }
-): Promise<Order> {
-  return apiClient.patch<{ order: Order }>(`/orders/admin/${id}/status`, data)
-    .then((res) => res.order);
-}
-
 export interface CreatePOSOrderPayload {
-  paymentMethod: "cash" | "card" | "qr";
+  paymentMethod: "cash" | "pos_card" | "transfer";
   items: { productId: string; quantity: number; variant?: string }[];
   note?: string;
   customerPhone?: string;
-}
-
-export function createPOSOrder(payload: CreatePOSOrderPayload): Promise<Order> {
-  return apiClient.post<{ order: Order }>("/orders/pos", payload)
-    .then((data) => data.order);
 }

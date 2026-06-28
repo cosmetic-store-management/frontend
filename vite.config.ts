@@ -1,10 +1,12 @@
-﻿import { reactRouter } from "@react-router/dev/vite";
+import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
 export default defineConfig({
-  plugins: [process.env.VITEST ? null : reactRouter(), tailwindcss()].filter(Boolean) as any,
+  plugins: [process.env.VITEST ? null : reactRouter(), tailwindcss()].filter(
+    Boolean,
+  ) as any,
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./app"),
@@ -19,7 +21,8 @@ export default defineConfig({
       "/api": "http://localhost:3001",
     },
   },
-  // @ts-ignore - vitest config field
+  build: {},
+  // @ts-expect-error - vitest config field
   test: {
     globals: true,
     environment: "jsdom",

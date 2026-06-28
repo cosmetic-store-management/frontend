@@ -8,13 +8,17 @@ interface RelatedProductsProps {
   currentProductId: string;
 }
 
-export function RelatedProducts({ categoryId, currentProductId }: RelatedProductsProps) {
+export function RelatedProducts({
+  categoryId,
+  currentProductId,
+}: RelatedProductsProps) {
   // `category` param accepts slug or id — the BE falls back to _id lookup
   const { data, isLoading } = useProducts({ category: categoryId, limit: 12 });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Filter out the current product from the results
-  const products = data?.products.filter(p => p.id !== currentProductId) || [];
+  const products =
+    data?.products.filter((p) => p.id !== currentProductId) || [];
 
   if (isLoading) {
     return (
@@ -30,13 +34,13 @@ export function RelatedProducts({ categoryId, currentProductId }: RelatedProduct
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
   const scrollRight = () => {
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
 
@@ -65,10 +69,13 @@ export function RelatedProducts({ categoryId, currentProductId }: RelatedProduct
       <div
         ref={scrollContainerRef}
         className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide snap-x snap-mandatory"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
-        {products.map(product => (
-          <div key={product.id} className="w-[180px] min-w-[180px] sm:w-[200px] sm:min-w-[200px] md:w-[calc((100%-48px)/4)] md:min-w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)] lg:min-w-[calc((100%-64px)/5)] shrink-0 snap-start">
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className="w-[180px] min-w-[180px] sm:w-[200px] sm:min-w-[200px] md:w-[calc((100%-48px)/4)] md:min-w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)] lg:min-w-[calc((100%-64px)/5)] shrink-0 snap-start"
+          >
             <ProductCard product={product} />
           </div>
         ))}

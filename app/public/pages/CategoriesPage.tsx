@@ -8,14 +8,20 @@ function CategorySkeleton() {
   return (
     <div className="space-y-8">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-surface overflow-hidden rounded-sm border border-border/50">
+        <div
+          key={i}
+          className="bg-surface overflow-hidden rounded-sm border border-border/50"
+        >
           <div className="px-5 py-4 bg-surface-soft flex items-center justify-between">
             <div className="h-5 w-40 bg-border/50 rounded animate-pulse" />
             <div className="h-4 w-20 bg-border/50 rounded animate-pulse" />
           </div>
           <div className="p-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((j) => (
-              <div key={j} className="h-[68px] bg-surface-soft rounded-sm animate-pulse border border-border/30" />
+              <div
+                key={j}
+                className="h-[68px] bg-surface-soft rounded-sm animate-pulse border border-border/30"
+              />
             ))}
           </div>
         </div>
@@ -61,14 +67,17 @@ export function CategoriesPage() {
         return acc;
       }
       // Lọc children match
-      const matchedChildren = (root.children || []).map((child: any) => {
-        if (child.name.toLowerCase().includes(q)) return child;
-        const matchedSubs = (child.children || []).filter((sub: any) =>
-          sub.name.toLowerCase().includes(q)
-        );
-        if (matchedSubs.length > 0) return { ...child, children: matchedSubs };
-        return null;
-      }).filter(Boolean);
+      const matchedChildren = (root.children || [])
+        .map((child: any) => {
+          if (child.name.toLowerCase().includes(q)) return child;
+          const matchedSubs = (child.children || []).filter((sub: any) =>
+            sub.name.toLowerCase().includes(q),
+          );
+          if (matchedSubs.length > 0)
+            return { ...child, children: matchedSubs };
+          return null;
+        })
+        .filter(Boolean);
 
       if (matchedChildren.length > 0) {
         acc.push({ ...root, children: matchedChildren });
@@ -80,12 +89,13 @@ export function CategoriesPage() {
   return (
     <div className="bg-white w-full flex-1">
       <div className="max-w-[1200px] w-full mx-auto px-4 py-8 animate-page-enter">
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-border/50">
           <div>
             <nav className="flex items-center text-xs text-ink-muted mb-2 gap-1.5">
-              <Link to="/" className="hover:text-brand transition-colors">Trang chủ</Link>
+              <Link to="/" className="hover:text-brand transition-colors">
+                Trang chủ
+              </Link>
               <ChevronRight className="w-3 h-3" />
               <span className="text-ink font-medium">Danh mục</span>
             </nav>
@@ -95,7 +105,11 @@ export function CategoriesPage() {
             {!isLoading && (
               <p className="text-sm text-ink-muted mt-1">
                 {categories.length} nhóm danh mục •{" "}
-                {(categories as any[]).reduce((s: number, c: any) => s + (c.children?.length || 0), 0)} danh mục con
+                {(categories as any[]).reduce(
+                  (s: number, c: any) => s + (c.children?.length || 0),
+                  0,
+                )}{" "}
+                danh mục con
               </p>
             )}
           </div>
@@ -120,8 +134,12 @@ export function CategoriesPage() {
         {!isLoading && filtered.length === 0 && (
           <div className="text-center py-20">
             <Search className="w-12 h-12 mx-auto text-border mb-4" />
-            <h3 className="text-lg font-bold text-ink">Không tìm thấy danh mục</h3>
-            <p className="text-ink-muted mt-2 text-sm">Thử tìm với từ khóa khác</p>
+            <h3 className="text-lg font-bold text-ink">
+              Không tìm thấy danh mục
+            </h3>
+            <p className="text-ink-muted mt-2 text-sm">
+              Thử tìm với từ khóa khác
+            </p>
             <button
               onClick={() => setSearch("")}
               className="mt-4 text-brand hover:underline text-sm font-medium"
@@ -141,7 +159,7 @@ export function CategoriesPage() {
               return (
                 <section
                   key={rootCat.id || rootCat._id}
-                  className="bg-surface overflow-hidden rounded-sm border border-border/50 shadow-sm"
+                  className="bg-surface overflow-hidden rounded-sm border border-border/50 "
                 >
                   {/* Section Header */}
                   <div className="px-5 py-4 bg-surface-soft flex items-center justify-between border-b border-border/40">
@@ -158,7 +176,8 @@ export function CategoriesPage() {
                       </h2>
                       {(rootCat.productCount ?? 0) > 0 && (
                         <span className="text-[11px] text-ink-muted font-normal hidden sm:inline">
-                          ({rootCat.productCount.toLocaleString("vi-VN")} sản phẩm)
+                          ({rootCat.productCount.toLocaleString("vi-VN")} sản
+                          phẩm)
                         </span>
                       )}
                     </div>
@@ -192,7 +211,9 @@ export function CategoriesPage() {
                                     >
                                       {sub.name}
                                       {(sub.productCount ?? 0) > 0 && (
-                                        <span className="text-[10px] opacity-60">({sub.productCount})</span>
+                                        <span className="text-[10px] opacity-60">
+                                          ({sub.productCount})
+                                        </span>
                                       )}
                                     </Link>
                                   ))}

@@ -1,74 +1,128 @@
-import { useState, useCallback, useEffect } from "react";
-import { getAdminReviews, deleteReview, replyReview, type ReviewAdmin } from "../services/review.service";
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  getAdminReviews,
+  deleteReview,
+  replyReview,
+} from "../services/review.service";
 
 export function useAdminReviews() {
-  const [reviews, setReviews] = useState<ReviewAdmin[]>([]);
-  const [pagination, setPagination] = useState<{ page: number; limit: number; total: number; totalPages: number } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const queryClient = useQueryClient();
+  const [cursors, setCursors] = useState<string[]>([]);
+  const currentCursor = cursors[cursors.length - 1] || undefined;
   const [filterRating, setFilterRating] = useState<string>("all");
   const [filterReplied, setFilterReplied] = useState<string>("all");
   const [filterProductName, setFilterProductName] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const fetchReviews = useCallback(async (page: number, rating: string, isReplied: string, productName: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await getAdminReviews(page, 10, rating, isReplied, productName);
-      setReviews(data.reviews);
-      setPagination(data.pagination);
-    } catch (err: any) {
-      setError(err.message || "Lỗi khi lấy danh sách đánh giá");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // 1. Fetch Reviews
+  const queryParams = useMemo(
+    () => ({
+      cursor: currentCursor,
+      limit: 10,
+      rating: filterRating,
+      isReplied: filterReplied,
+      productName: filterProductName,
+    }),
+    [currentCursor, filterRating, filterReplied, filterProductName],
+  );
 
-  useEffect(() => {
-    // Only fetch automatically if not typing in search box, or we could debounce it in the component.
-    // For simplicity, we'll fetch on change, but maybe debounce it in ReviewPage.tsx or handle via a search button.
-    fetchReviews(currentPage, filterRating, filterReplied, filterProductName);
-  }, [fetchReviews, currentPage, filterRating, filterReplied, filterProductName]);
+  // Reset cursors when filter changes
+  useMemo(() => {
+    setCursors([]);
+  }, [filterRating, filterReplied, filterProductName]);
 
-  const submitDelete = async (id: string) => {
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      await deleteReview(id);
-      await fetchReviews(currentPage, filterRating, filterReplied, filterProductName);
-      return true;
-    } catch (err: any) {
-      setSubmitError(err.message || "Lỗi khi xóa đánh giá");
-      return false;
-    } finally {
-      setSubmitting(false);
+  const {
+    data: reviewsData,
+    isLoading: loading,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ["admin", "reviews", queryParams],
+    queryFn: () =>
+      getAdminReviews(
+        queryParams.cursor,
+        queryParams.limit,
+        queryParams.rating,
+        queryParams.isReplied,
+        queryParams.productName,
+      ),
+  });
+
+  const reviews = reviewsData?.reviews || [];
+  const pagination = reviewsData?.pagination || {
+    limit: 10,
+    total: 0,
+    nextCursor: null,
+    hasNextPage: false,
+  };
+
+  const handleNext = () => {
+    if (pagination.nextCursor) {
+      setCursors((prev) => [...prev, pagination.nextCursor!]);
     }
   };
 
-  const submitReply = async (id: string, text: string) => {
-    setSubmitting(true);
+  const handlePrev = () => {
+    setCursors((prev) => prev.slice(0, -1));
+  };
+  const error = queryError
+    ? queryError instanceof Error
+      ? queryError.message
+      : "Lỗi khi lấy danh sách đánh giá"
+    : null;
+
+  // 2. Mutations
+  const deleteMut = useMutation({
+    mutationFn: (id: string) => deleteReview(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
+    },
+    onError: (err: any) => {
+      setSubmitError(err.message || "Lỗi khi xóa đánh giá");
+    },
+  });
+
+  const replyMut = useMutation({
+    mutationFn: ({ id, text }: { id: string; text: string }) =>
+      replyReview(id, text),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
+    },
+    onError: (err: any) => {
+      setSubmitError(err.message || "Lỗi khi phản hồi đánh giá");
+    },
+  });
+
+  const isDeleting = deleteMut.isPending;
+  const isReplying = replyMut.isPending;
+
+  const submitDelete = async (id: string) => {
     setSubmitError(null);
     try {
-      await replyReview(id, text);
-      await fetchReviews(currentPage, filterRating, filterReplied, filterProductName);
+      await deleteMut.mutateAsync(id);
       return true;
-    } catch (err: any) {
-      setSubmitError(err.message || "Lỗi khi phản hồi đánh giá");
+    } catch {
       return false;
-    } finally {
-      setSubmitting(false);
+    }
+  };
+
+  const submitReply = async (id: string, text?: string) => {
+    setSubmitError(null);
+    try {
+      await replyMut.mutateAsync({ id, text: text || "" });
+      return true;
+    } catch {
+      return false;
     }
   };
 
   return {
     reviews,
     pagination,
-    currentPage,
-    setCurrentPage,
+    cursors,
+    handleNext,
+    handlePrev,
     filterRating,
     setFilterRating,
     filterReplied,
@@ -77,11 +131,12 @@ export function useAdminReviews() {
     setFilterProductName,
     loading,
     error,
-    submitting,
+    isDeleting,
+    isReplying,
     submitError,
     submitDelete,
     submitReply,
     clearError: () => setSubmitError(null),
-    refresh: () => fetchReviews(currentPage, filterRating, filterReplied, filterProductName),
+    refresh: refetch,
   };
 }

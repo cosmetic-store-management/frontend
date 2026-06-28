@@ -11,11 +11,18 @@ export function getAttributes() {
   return apiClient.get<AttributeOption[]>("/attributes");
 }
 
-export function createAttribute(payload: { name: string; code: string; values: string[] }) {
+export function createAttribute(payload: {
+  name: string;
+  code: string;
+  values: string[];
+}) {
   return apiClient.post<AttributeOption>("/attributes", payload);
 }
 
-export function updateAttribute(id: string, payload: { name?: string; values?: string[] }) {
+export function updateAttribute(
+  id: string,
+  payload: { name?: string; values?: string[] },
+) {
   return apiClient.patch<AttributeOption>(`/attributes/${id}`, payload);
 }
 

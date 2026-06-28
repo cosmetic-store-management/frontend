@@ -13,10 +13,9 @@ export interface Brand {
 }
 
 export function getPublicBrands(): Promise<Brand[]> {
-  return apiClient.get<{ brands: Brand[] }>("/brands")
-    .then((res: any) => {
-      // Handle both flat and nested response structures
-      const list = res?.brands ?? res?.data?.brands ?? res ?? [];
-      return Array.isArray(list) ? list : [];
-    });
+  return apiClient.get<{ brands: Brand[] }>("/brands").then((res: any) => {
+    // Handle both flat and nested response structures
+    const list = res?.brands ?? res?.data?.brands ?? res ?? [];
+    return Array.isArray(list) ? list : [];
+  });
 }

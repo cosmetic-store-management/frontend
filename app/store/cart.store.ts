@@ -19,15 +19,21 @@ interface CartState {
   voucherCode: string | null;
   discountAmount: number;
   isOpen: boolean;
-  
+
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, variantId: string) => void;
-  updateQuantity: (productId: string, variantId: string, quantity: number) => void;
+  updateQuantity: (
+    productId: string,
+    variantId: string,
+    quantity: number,
+  ) => void;
   clearCart: () => void;
-  
+
   applyVoucher: (code: string, discountAmount: number) => void;
   removeVoucher: () => void;
-  
+
+  setItems: (items: CartItem[]) => void;
+
   getSubtotal: () => number;
   getTotal: () => number;
   setIsOpen: (isOpen: boolean) => void;
@@ -44,28 +50,37 @@ export const useCartStore = create<CartState>()(
       addItem: (newItem) => {
         set((state) => {
           const existing = state.items.find(
-            (i) => i.productId === newItem.productId && i.variantId === newItem.variantId
+            (i) =>
+              i.productId === newItem.productId &&
+              i.variantId === newItem.variantId,
           );
           if (existing) {
-            const newQty = Math.min(existing.quantity + newItem.quantity, newItem.stock);
+            const newQty = Math.min(
+              existing.quantity + newItem.quantity,
+              newItem.stock,
+            );
             return {
               items: state.items.map((i) =>
-                i.productId === newItem.productId && i.variantId === newItem.variantId
+                i.productId === newItem.productId &&
+                i.variantId === newItem.variantId
                   ? { ...i, quantity: newQty, stock: newItem.stock }
-                  : i
+                  : i,
               ),
               isOpen: true,
             };
           }
           const clampedQty = Math.min(newItem.quantity, newItem.stock);
-          return { items: [...state.items, { ...newItem, quantity: clampedQty }], isOpen: true };
+          return {
+            items: [...state.items, { ...newItem, quantity: clampedQty }],
+            isOpen: true,
+          };
         });
       },
 
       removeItem: (productId, variantId) => {
         set((state) => ({
           items: state.items.filter(
-            (i) => !(i.productId === productId && i.variantId === variantId)
+            (i) => !(i.productId === productId && i.variantId === variantId),
           ),
         }));
       },
@@ -73,7 +88,8 @@ export const useCartStore = create<CartState>()(
       updateQuantity: (productId, variantId, quantity) => {
         set((state) => ({
           items: state.items.map((i) => {
-            if (i.productId !== productId || i.variantId !== variantId) return i;
+            if (i.productId !== productId || i.variantId !== variantId)
+              return i;
             const clamped = Math.max(1, Math.min(quantity, i.stock || 999));
             return { ...i, quantity: clamped };
           }),
@@ -92,8 +108,13 @@ export const useCartStore = create<CartState>()(
         set({ voucherCode: null, discountAmount: 0 });
       },
 
+      setItems: (items) => set({ items }),
+
       getSubtotal: () => {
-        return get().items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        return get().items.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
       },
 
       getTotal: () => {
@@ -106,8 +127,8 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "glowup-cart-storage",
-    }
-  )
+    },
+  ),
 );
 
 // ── Selectors (pure functions — dùng thay vì gọi methods trong component) ────

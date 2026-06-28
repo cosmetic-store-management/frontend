@@ -15,6 +15,7 @@ import {
   logoutAdmin,
   forgotPassword,
   resetPassword,
+  changePassword,
   type LoginPayload,
   type RegisterPayload,
 } from "@/auth/services/auth.service";
@@ -22,7 +23,8 @@ import {
 // ── Hook truy cập trạng thái Auth ────────────────────────────────────────────────
 
 export function useAuth() {
-  const { user, isAuthenticated, isAdmin, isOwner, isManager, clearAuth } = useAdminAuthStore();
+  const { user, isAuthenticated, isAdmin, isOwner, isManager, clearAuth } =
+    useAdminAuthStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -75,7 +77,19 @@ export function useForgotPassword() {
 
 export function useResetPassword() {
   return useMutation({
-    mutationFn: ({ token, newPassword }: { token: string; newPassword: string }) =>
-      resetPassword(token, newPassword),
+    mutationFn: ({
+      token,
+      newPassword,
+    }: {
+      token: string;
+      newPassword: string;
+    }) => resetPassword(token, newPassword),
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (payload: { currentPassword: string; newPassword: string }) =>
+      changePassword(payload),
   });
 }

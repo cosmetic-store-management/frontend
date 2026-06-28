@@ -7,7 +7,6 @@ export interface UpdateProfilePayload {
   gender?: "male" | "female" | "other";
 }
 
-
 export interface AddressPayload {
   province: string;
   district: string;
@@ -17,7 +16,7 @@ export interface AddressPayload {
 }
 
 export function getMyProfile() {
-  return apiClient.get<{ user: any }>("/auth/me").then(d => d.user);
+  return apiClient.get<{ user: any }>("/auth/me").then((d) => d.user);
 }
 
 export function updateMyProfile(payload: UpdateProfilePayload) {
@@ -25,19 +24,29 @@ export function updateMyProfile(payload: UpdateProfilePayload) {
 }
 
 export function updateMyAvatar(avatarDataUrl: string) {
-  return apiClient.patch<{ message: string; user: any }>("/users/me/avatar", { avatar: avatarDataUrl });
+  return apiClient.patch<{ message: string; user: any }>("/users/me/avatar", {
+    avatar: avatarDataUrl,
+  });
 }
 
 export function addMyAddress(payload: AddressPayload) {
-  return apiClient.post<{ message: string; user: any }>("/users/me/addresses", payload);
+  return apiClient.post<{ message: string; user: any }>(
+    "/users/me/addresses",
+    payload,
+  );
 }
 
 export function updateMyAddress(addressId: string, payload: AddressPayload) {
-  return apiClient.put<{ message: string; user: any }>(`/users/me/addresses/${addressId}`, payload);
+  return apiClient.put<{ message: string; user: any }>(
+    `/users/me/addresses/${addressId}`,
+    payload,
+  );
 }
 
 export function deleteMyAddress(addressId: string) {
-  return apiClient.delete<{ message: string; user: any }>(`/users/me/addresses/${addressId}`);
+  return apiClient.delete<{ message: string; user: any }>(
+    `/users/me/addresses/${addressId}`,
+  );
 }
 
 export function getFavorites() {
@@ -45,7 +54,9 @@ export function getFavorites() {
 }
 
 export function toggleFavorite(productId: string) {
-  return apiClient.post<{ action: "added" | "removed" }>(`/users/me/favorites/${productId}`);
+  return apiClient.post<{ action: "added" | "removed" }>(
+    `/users/me/favorites/${productId}`,
+  );
 }
 
 export interface ViewedResponse {
@@ -57,7 +68,9 @@ export interface ViewedResponse {
 }
 
 export function getRecentlyViewed(page = 1, limit = 12) {
-  return apiClient.get<ViewedResponse>(`/users/me/viewed?page=${page}&limit=${limit}`);
+  return apiClient.get<ViewedResponse>(
+    `/users/me/viewed?page=${page}&limit=${limit}`,
+  );
 }
 
 export function recordRecentlyViewed(productId: string) {

@@ -8,7 +8,12 @@ type PaginationProps = {
   className?: string;
 };
 
-export function Pagination({ currentPage, totalPages, onPageChange, className }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+  className,
+}: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const pages = [];
@@ -23,10 +28,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
     if (currentPage > 3) {
       pages.push("...");
     }
-    
+
     let start = Math.max(2, currentPage - 1);
     let end = Math.min(totalPages - 1, currentPage + 1);
-    
+
     if (currentPage <= 3) {
       end = 4;
     }
@@ -45,7 +50,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
   }
 
   return (
-    <nav aria-label="pagination" className={cn("flex items-center justify-center gap-1", className)}>
+    <nav
+      aria-label="pagination"
+      className={cn("flex items-center justify-center gap-1", className)}
+    >
       <button
         type="button"
         disabled={currentPage === 1}
@@ -59,7 +67,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
       {pages.map((page, index) => {
         if (page === "...") {
           return (
-            <span key={`ellipsis-${index}`} className="flex h-9 w-9 items-center justify-center text-ink-muted">
+            <span
+              key={`ellipsis-${index}`}
+              className="flex h-9 w-9 items-center justify-center text-ink-muted"
+            >
               <MoreHorizontal className="size-4" />
             </span>
           );
@@ -73,10 +84,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, className }:
             onClick={() => onPageChange(page as number)}
             aria-current={isCurrent ? "page" : undefined}
             className={cn(
-              "inline-flex h-9 w-9 items-center justify-center rounded-sm border text-sm font-medium transition-colors",
+              "inline-flex h-9 w-9 items-center justify-center border text-sm font-medium transition-colors",
               isCurrent
-                ? "border-border bg-danger text-white shadow-sm"
-                : "border-transparent text-ink-muted hover:bg-surface-soft hover:text-ink"
+                ? "border-transparent bg-primary text-primary-foreground"
+                : "border-transparent text-muted-foreground hover:bg-surface-soft hover:text-foreground",
             )}
           >
             {page}

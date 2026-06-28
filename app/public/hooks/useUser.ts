@@ -1,7 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { 
-  getMyProfile, updateMyProfile, updateMyAvatar, addMyAddress, updateMyAddress, deleteMyAddress, getMyTierInfo, type UpdateProfilePayload, type AddressPayload,
-  getFavorites, toggleFavorite, getRecentlyViewed, recordRecentlyViewed, clearRecentlyViewed, removeRecentlyViewed
+import {
+  getMyProfile,
+  updateMyProfile,
+  updateMyAvatar,
+  addMyAddress,
+  updateMyAddress,
+  deleteMyAddress,
+  getMyTierInfo,
+  type UpdateProfilePayload,
+  type AddressPayload,
+  getFavorites,
+  toggleFavorite,
+  getRecentlyViewed,
+  recordRecentlyViewed,
+  clearRecentlyViewed,
+  removeRecentlyViewed,
 } from "../services/user.service";
 import { usePublicAuthStore } from "@/store";
 import { QK } from "@/lib/queryKeys";
@@ -17,8 +30,8 @@ export function useMyProfile() {
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
-  const setAuth      = usePublicAuthStore((s) => s.setAuth);
-  const token        = usePublicAuthStore((s) => s.token);
+  const setAuth = usePublicAuthStore((s) => s.setAuth);
+  const token = usePublicAuthStore((s) => s.token);
   const refreshToken = usePublicAuthStore((s) => s.refreshToken);
 
   return useMutation({
@@ -35,14 +48,15 @@ export function useUpdateProfile() {
 
 export function useAddAddress() {
   const queryClient = useQueryClient();
-  const setAuth      = usePublicAuthStore((s) => s.setAuth);
-  const token        = usePublicAuthStore((s) => s.token);
+  const setAuth = usePublicAuthStore((s) => s.setAuth);
+  const token = usePublicAuthStore((s) => s.token);
   const refreshToken = usePublicAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (payload: AddressPayload) => addMyAddress(payload),
     onSuccess: (data) => {
-      if (token && refreshToken && data.user) setAuth(data.user, token, refreshToken);
+      if (token && refreshToken && data.user)
+        setAuth(data.user, token, refreshToken);
       queryClient.invalidateQueries({ queryKey: QK.myProfile() });
     },
   });
@@ -50,14 +64,16 @@ export function useAddAddress() {
 
 export function useUpdateAddress() {
   const queryClient = useQueryClient();
-  const setAuth      = usePublicAuthStore((s) => s.setAuth);
-  const token        = usePublicAuthStore((s) => s.token);
+  const setAuth = usePublicAuthStore((s) => s.setAuth);
+  const token = usePublicAuthStore((s) => s.token);
   const refreshToken = usePublicAuthStore((s) => s.refreshToken);
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: AddressPayload }) => updateMyAddress(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: AddressPayload }) =>
+      updateMyAddress(id, payload),
     onSuccess: (data) => {
-      if (token && refreshToken && data.user) setAuth(data.user, token, refreshToken);
+      if (token && refreshToken && data.user)
+        setAuth(data.user, token, refreshToken);
       queryClient.invalidateQueries({ queryKey: QK.myProfile() });
     },
   });
@@ -65,28 +81,30 @@ export function useUpdateAddress() {
 
 export function useDeleteAddress() {
   const queryClient = useQueryClient();
-  const setAuth      = usePublicAuthStore((s) => s.setAuth);
-  const token        = usePublicAuthStore((s) => s.token);
+  const setAuth = usePublicAuthStore((s) => s.setAuth);
+  const token = usePublicAuthStore((s) => s.token);
   const refreshToken = usePublicAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (id: string) => deleteMyAddress(id),
     onSuccess: (data) => {
-      if (token && refreshToken && data.user) setAuth(data.user, token, refreshToken);
+      if (token && refreshToken && data.user)
+        setAuth(data.user, token, refreshToken);
       queryClient.invalidateQueries({ queryKey: QK.myProfile() });
     },
   });
 }
 
 export function useUpdateAvatar() {
-  const setAuth      = usePublicAuthStore((s) => s.setAuth);
-  const token        = usePublicAuthStore((s) => s.token);
+  const setAuth = usePublicAuthStore((s) => s.setAuth);
+  const token = usePublicAuthStore((s) => s.token);
   const refreshToken = usePublicAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (avatarDataUrl: string) => updateMyAvatar(avatarDataUrl),
     onSuccess: (data) => {
-      if (token && refreshToken && data.user) setAuth(data.user, token, refreshToken);
+      if (token && refreshToken && data.user)
+        setAuth(data.user, token, refreshToken);
     },
   });
 }
@@ -101,16 +119,18 @@ export function useMyTierInfo() {
 }
 
 export function useFavorites() {
+  const isAuthenticated = usePublicAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: QK.favorites(),
-    queryFn: () => getFavorites().then(res => res.products),
+    queryFn: () => getFavorites().then((res) => res.products),
     staleTime: 5 * 60 * 1000,
+    enabled: isAuthenticated,
   });
 }
 
 export function useToggleFavorite() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (productId: string) => toggleFavorite(productId),
 
@@ -132,7 +152,11 @@ export function useToggleFavorite() {
     },
 
     onSuccess: (res) => {
-      toast.success(res.action === "added" ? "Đã thêm vào yêu thích ❤️" : "Đã xóa khỏi yêu thích");
+      toast.success(
+        res.action === "added"
+          ? "Đã thêm vào yêu thích ❤️"
+          : "Đã xóa khỏi yêu thích",
+      );
     },
 
     onError: (_err, _id, context: any) => {
@@ -152,7 +176,11 @@ export function useToggleFavorite() {
 
 // ── Recently Viewed ──────────────────────────────────────────────────────────
 
-export function useRecentlyViewed(page = 1, limit = 12, options?: { enabled?: boolean }) {
+export function useRecentlyViewed(
+  page = 1,
+  limit = 12,
+  options?: { enabled?: boolean },
+) {
   return useQuery({
     queryKey: QK.recentlyViewed(page),
     queryFn: () => getRecentlyViewed(page, limit),
@@ -168,7 +196,7 @@ export function useRecordViewed() {
     mutationFn: (productId: string) => recordRecentlyViewed(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QK.recentlyViewed(1) });
-    }
+    },
   });
 }
 
@@ -183,7 +211,7 @@ export function useClearViewed() {
     },
     onError: (error: any) => {
       toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại");
-    }
+    },
   });
 }
 
@@ -195,15 +223,20 @@ export function useRemoveViewed() {
     onMutate: async (productId: string) => {
       // Optimistic update — xóa ngay trên cache
       await queryClient.cancelQueries({ queryKey: ["recentlyViewed"] });
-      const previous = queryClient.getQueriesData({ queryKey: ["recentlyViewed"] });
-      queryClient.setQueriesData({ queryKey: ["recentlyViewed"] }, (old: any) => {
-        if (!old) return old;
-        return {
-          ...old,
-          products: old.products?.filter((p: any) => p.id !== productId),
-          total: Math.max(0, (old.total ?? 0) - 1),
-        };
+      const previous = queryClient.getQueriesData({
+        queryKey: ["recentlyViewed"],
       });
+      queryClient.setQueriesData(
+        { queryKey: ["recentlyViewed"] },
+        (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            products: old.products?.filter((p: any) => p.id !== productId),
+            total: Math.max(0, (old.total ?? 0) - 1),
+          };
+        },
+      );
       return { previous };
     },
     onError: (_err, _id, context: any) => {
@@ -218,6 +251,6 @@ export function useRemoveViewed() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recentlyViewed"] });
       toast.success("Đã xóa sản phẩm khỏi lịch sử");
-    }
+    },
   });
 }

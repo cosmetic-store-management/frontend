@@ -14,10 +14,7 @@ interface SkeletonProps {
 export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
-      className={cn(
-        "animate-pulse rounded-sm bg-surface-muted/70",
-        className
-      )}
+      className={cn("animate-pulse rounded-sm bg-surface-muted/70", className)}
       aria-hidden="true"
     />
   );
@@ -79,7 +76,13 @@ export function TableRowSkeleton({ cols = 5 }: { cols?: number }) {
 }
 
 /** N rows của TableRowSkeleton */
-export function TableBodySkeleton({ rows = 8, cols = 5 }: { rows?: number; cols?: number }) {
+export function TableBodySkeleton({
+  rows = 8,
+  cols = 5,
+}: {
+  rows?: number;
+  cols?: number;
+}) {
   return (
     <>
       {[...Array(rows)].map((_, i) => (

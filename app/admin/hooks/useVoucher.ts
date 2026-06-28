@@ -1,51 +1,41 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/client";
-import type { Voucher } from "@/admin/types/voucher";
+import {
+  getAdminVouchers,
+  createAdminVoucher,
+  updateAdminVoucher,
+  deleteAdminVoucher,
+  type VoucherPayload,
+} from "@/admin/services/voucher.service";
 
-export const useVouchers = () => {
-  return useQuery({
-    queryKey: ["admin-vouchers"],
-    queryFn: async () => {
-      const res = await apiClient.get<{ vouchers: Voucher[] }>("/vouchers/admin");
-      return res.vouchers;
-    },
+const QUERY_KEY = ["admin-vouchers"] as const;
+
+export const useVouchers = () =>
+  useQuery({
+    queryKey: QUERY_KEY,
+    queryFn: getAdminVouchers,
   });
-};
 
 export const useCreateVoucher = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: any) => {
-      const res = await apiClient.post<{ voucher: Voucher }>("/vouchers/admin", data);
-      return res.voucher;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-vouchers"] });
-    },
+    mutationFn: (data: VoucherPayload) => createAdminVoucher(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 };
 
 export const useUpdateVoucher = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      const res = await apiClient.put<{ voucher: Voucher }>(`/vouchers/admin/${id}`, data);
-      return res.voucher;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-vouchers"] });
-    },
+    mutationFn: ({ id, data }: { id: string; data: Partial<VoucherPayload> }) =>
+      updateAdminVoucher(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 };
 
 export const useDeleteVoucher = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      await apiClient.delete(`/vouchers/admin/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-vouchers"] });
-    },
+    mutationFn: (id: string) => deleteAdminVoucher(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
   });
 };

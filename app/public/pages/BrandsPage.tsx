@@ -10,13 +10,29 @@ function firstLetterKey(name: string): string {
   return /[0-9]/.test(first) ? "0-9" : first;
 }
 
-const ALPHABET = ["0-9", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
+const ALPHABET = [
+  "0-9",
+  ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i)),
+];
 
 // Brands nổi bật (ưu tiên hiện trong dark carousel)
 const FEATURED_SLUGS = [
-  "merzy", "romand", "maybelline", "lorealparis", "l-oreal-paris",
-  "laneige", "innisfree", "some-by-mi", "cosrx", "anessa",
-  "klairs", "clinique", "dior", "nyx", "hada-labo", "3ce",
+  "merzy",
+  "romand",
+  "maybelline",
+  "lorealparis",
+  "l-oreal-paris",
+  "laneige",
+  "innisfree",
+  "some-by-mi",
+  "cosrx",
+  "anessa",
+  "klairs",
+  "clinique",
+  "dior",
+  "nyx",
+  "hada-labo",
+  "3ce",
 ];
 
 // ─── BrandCard ───────────────────────────────────────────────────────────────
@@ -28,9 +44,10 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
     <Link
       to={`/products?brandId=${brand.id}`}
       className={`group flex flex-col items-center transition-all duration-200 overflow-hidden
-        ${dark
-          ? "border border-white/10 hover:border-white/25"
-          : "border border-[#e8e8e8] bg-white hover:border-[#ccc] hover:shadow-md"
+        ${
+          dark
+            ? "border border-white/10 hover:border-white/25"
+            : "border border-[#e8e8e8] bg-white hover:border-[#ccc] hover:"
         }`}
     >
       {/* Logo area — always white bg so logo image shows correctly */}
@@ -50,10 +67,14 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
       </div>
 
       {/* Brand name — white in dark section, gray in light section */}
-      <div className={`w-full px-2 py-2 text-center
-        ${dark ? "bg-[#1e1e1e]" : "bg-white border-t border-[#e8e8e8]"}`}>
-        <span className={`text-[10px] font-bold uppercase tracking-widest line-clamp-1
-          ${dark ? "text-white/60 group-hover:text-white" : "text-ink/60 group-hover:text-ink"} transition-colors`}>
+      <div
+        className={`w-full px-2 py-2 text-center
+        ${dark ? "bg-[#1e1e1e]" : "bg-white border-t border-[#e8e8e8]"}`}
+      >
+        <span
+          className={`text-[10px] font-bold uppercase tracking-widest line-clamp-1
+          ${dark ? "text-white/60 group-hover:text-white" : "text-ink/60 group-hover:text-ink"} transition-colors`}
+        >
           {brand.name}
         </span>
       </div>
@@ -69,10 +90,13 @@ export default function BrandsPage() {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   // Sort + group
-  const sorted = useMemo(() =>
-    [...brands].sort((a: any, b: any) =>
-      a.name.localeCompare(b.name, "vi", { sensitivity: "base" })
-    ), [brands]);
+  const sorted = useMemo(
+    () =>
+      [...brands].sort((a: any, b: any) =>
+        a.name.localeCompare(b.name, "vi", { sensitivity: "base" }),
+      ),
+    [brands],
+  );
 
   const grouped = useMemo(() => {
     const map: Record<string, any[]> = {};
@@ -89,7 +113,11 @@ export default function BrandsPage() {
   // Featured brands: match by slug or pick first N popular ones
   const featured = useMemo(() => {
     const matched = brands.filter((b: any) =>
-      FEATURED_SLUGS.some(s => b.slug?.toLowerCase().includes(s) || b.name?.toLowerCase().includes(s.replace(/-/g, " ")))
+      FEATURED_SLUGS.some(
+        (s) =>
+          b.slug?.toLowerCase().includes(s) ||
+          b.name?.toLowerCase().includes(s.replace(/-/g, " ")),
+      ),
     );
     // Fill up to 10 with remaining brands
     const ids = new Set(matched.map((b: any) => b.id));
@@ -98,18 +126,23 @@ export default function BrandsPage() {
   }, [brands]);
 
   const scrollTo = (letter: string) => {
-    sectionRefs.current[letter]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    sectionRefs.current[letter]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
 
   const scrollCarousel = (dir: "left" | "right") => {
     if (!carouselRef.current) return;
     const amount = carouselRef.current.clientWidth * 0.8;
-    carouselRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });
+    carouselRef.current.scrollBy({
+      left: dir === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-
       {/* ══════════════════════════════════════════════════════════════
           THƯƠNG HIỆU NỔI BẬT — dark section
       ══════════════════════════════════════════════════════════════ */}
@@ -128,14 +161,20 @@ export default function BrandsPage() {
             >
               {isLoading
                 ? Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="min-w-[200px] flex-1 aspect-[4/3] bg-[#2a2a2a] animate-pulse" />
+                    <div
+                      key={i}
+                      className="min-w-[200px] flex-1 aspect-[4/3] bg-[#2a2a2a] animate-pulse"
+                    />
                   ))
                 : featured.map((brand: any) => (
-                    <div key={brand.id} className="min-w-[200px] flex-1" style={{ scrollSnapAlign: "start" }}>
+                    <div
+                      key={brand.id}
+                      className="min-w-[200px] flex-1"
+                      style={{ scrollSnapAlign: "start" }}
+                    >
                       <BrandCard brand={brand} dark />
                     </div>
-                  ))
-              }
+                  ))}
             </div>
 
             {/* Arrow buttons — sit inside carousel, no overflow */}
@@ -162,7 +201,9 @@ export default function BrandsPage() {
         <div className="max-w-[1200px] mx-auto">
           {/* Count heading */}
           <p className="text-center font-black text-[15px] uppercase tracking-widest text-ink mb-5">
-            {isLoading ? "Đang tải..." : `Xem Tất Cả ${brands.length} Thương Hiệu`}
+            {isLoading
+              ? "Đang tải..."
+              : `Xem Tất Cả ${brands.length} Thương Hiệu`}
           </p>
 
           {/* A-Z navigation */}
@@ -174,9 +215,10 @@ export default function BrandsPage() {
                   key={letter}
                   onClick={() => active && scrollTo(letter)}
                   className={`text-[13px] font-semibold transition-colors leading-none py-0.5
-                    ${active
-                      ? "text-ink hover:text-brand cursor-pointer"
-                      : "text-ink/20 cursor-default"
+                    ${
+                      active
+                        ? "text-ink hover:text-brand cursor-pointer"
+                        : "text-ink/20 cursor-default"
                     }`}
                 >
                   {letter}
@@ -198,18 +240,24 @@ export default function BrandsPage() {
             ))}
           </div>
         ) : brands.length === 0 ? (
-          <div className="py-20 text-center text-ink-muted">Hiện chưa có thương hiệu nào</div>
+          <div className="py-20 text-center text-ink-muted">
+            Hiện chưa có thương hiệu nào
+          </div>
         ) : (
           <div className="flex flex-col gap-8">
-            {ALPHABET.filter(l => activeLetters.has(l)).map((letter) => (
+            {ALPHABET.filter((l) => activeLetters.has(l)).map((letter) => (
               <section
                 key={letter}
-                ref={el => { sectionRefs.current[letter] = el; }}
+                ref={(el) => {
+                  sectionRefs.current[letter] = el;
+                }}
                 className="scroll-mt-36"
               >
                 {/* Letter heading */}
                 <div className="flex items-center gap-4 mb-4 pb-2 border-b border-[#e8e8e8]">
-                  <span className="text-[13px] font-bold text-ink">{letter}</span>
+                  <span className="text-[13px] font-bold text-ink">
+                    {letter}
+                  </span>
                 </div>
 
                 {/* Cards */}

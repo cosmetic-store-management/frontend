@@ -17,17 +17,17 @@ export interface CreateOrderPayload {
 }
 
 export function createOrder(payload: CreateOrderPayload) {
-  return apiClient.post<{ message: string; order: any }>("/orders", payload);
+  return apiClient.post<any>("/checkout", payload);
 }
 
 export function getOrderById(id: string) {
-  return apiClient.get<{ order: any }>(`/orders/${id}`).then(d => d.order);
+  return apiClient.get<{ order: any }>(`/orders/${id}`).then((d) => d.order);
 }
 
-
 export function getMyOrders() {
-  return apiClient.get<{ orders: any[] }>("/orders/my-orders")
-    .then(data => data.orders);
+  return apiClient
+    .get<{ orders: any[] }>("/orders/my-orders")
+    .then((data) => data.orders);
 }
 
 export interface PreviewOrderPayload {
@@ -41,13 +41,36 @@ export interface PreviewOrderPayload {
 }
 
 export function previewOrder(payload: PreviewOrderPayload) {
-  return apiClient.post<any>("/orders/preview", payload);
+  return apiClient.post<any>("/checkout/preview", payload);
 }
 
 export function createPaymentUrl(orderId: string) {
-  return apiClient.post<{ paymentUrl: string }>(`/orders/${orderId}/create-payment-url`, {});
+  return apiClient.post<{ paymentUrl: string }>(
+    `/orders/${orderId}/create-payment-url`,
+    {},
+  );
 }
 
 export function cancelMyOrder(orderId: string) {
-  return apiClient.patch<{ message: string; order: any }>(`/orders/${orderId}/cancel`, {});
+  return apiClient.patch<{ message: string; order: any }>(
+    `/orders/${orderId}/cancel`,
+    {},
+  );
+}
+
+export function requestReturnOrder(
+  orderId: string,
+  reason: string,
+  images?: string[],
+) {
+  return apiClient.patch<{ message: string; order: any }>(
+    `/orders/${orderId}/return`,
+    { reason, images },
+  );
+}
+
+export function createStripeIntent(orderId: string) {
+  return apiClient.post<{ clientSecret: string }>(`/payments/create-intent`, {
+    orderId,
+  });
 }

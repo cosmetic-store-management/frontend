@@ -7,7 +7,14 @@ import {
   deleteBrand,
 } from "@/admin/services/brand.service";
 
-export function useBrands(query: { search?: string; status?: string; page?: number; limit?: number } = {}) {
+export function useBrands(
+  query: {
+    search?: string;
+    status?: string;
+    cursor?: string;
+    limit?: number;
+  } = {},
+) {
   return useQuery({
     queryKey: ["brands", query],
     queryFn: () => getAdminBrands(query),
@@ -27,8 +34,13 @@ export function useCreateBrand() {
 export function useUpdateBrand() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Parameters<typeof updateBrand>[1] }) =>
-      updateBrand(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Parameters<typeof updateBrand>[1];
+    }) => updateBrand(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["brands"] });
     },

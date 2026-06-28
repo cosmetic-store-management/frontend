@@ -1,5 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDashboardData, getCompletionRates, getVoucherStats, getRevenueChart, getCategoryPerformance, getPaymentMethodsStats } from "@/admin/services/report.service";
+import {
+  getDashboardData,
+  getCompletionRates,
+  getVoucherStats,
+  getRevenueChart,
+  getCategoryPerformance,
+  getPaymentMethodsStats,
+} from "@/admin/services/report.service";
 
 export function useDashboardData(startDate?: string, endDate?: string) {
   return useQuery({

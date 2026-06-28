@@ -1,27 +1,32 @@
 import { apiClient } from "@/lib/client";
 
 export interface ShopSettings {
-  storeName:             string;
-  email:                 string;
-  phone:                 string;
-  storeAddress:          string;
-  currency:              string;
-  standardShippingFee:   number;
-  freeShippingThreshold: number;
-  pointsEarnRate?:       number;
-  maxPointsPct?:         number;
-  isCodActive:           boolean;
-  isBankActive:          boolean;
-  bankName:              string;
-  bankAccountNumber:     string;
-  bankAccountName:       string;
-  isQrActive:            boolean;
-  // Social links (optional — có thể được thêm vào sau)
-  facebookUrl?:          string;
-  instagramUrl?:         string;
-  youtubeUrl?:           string;
-  logoUrl?:              string;
-  description?:          string;
+  storeName: string;
+  email: string;
+  phone: string;
+  storeAddress: string;
+  currency: string;
+  pointsEarnRate?: number;
+  maxPointsPct?: number;
+  isCodActive: boolean;
+  isBankActive: boolean;
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountName: string;
+  isQrActive: boolean;
+  // Ext Fields
+  taxId?: string;
+  workingHours?: string;
+  logoUrl?: string;
+  favicon?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  // Social links
+  facebookUrl?: string;
+  instagramUrl?: string;
+  tiktokUrl?: string;
+  zaloUrl?: string;
+  youtubeUrl?: string;
 }
 
 export const getPublicSettings = () =>

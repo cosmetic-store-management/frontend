@@ -1,31 +1,38 @@
-import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useResetPassword } from "@/auth/hooks/usePublicAuth";
+import {
+  publicResetPasswordSchema,
+  type PublicResetPasswordForm,
+} from "../schemas/public-auth.schema";
 import { toast } from "@/lib/toast";
-import { Lock } from "lucide-react";
+import { Lock, Loader2 } from "lucide-react";
 
 export default function PublicResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const resetPasswordMutation = useResetPassword();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<PublicResetPasswordForm>({
+    resolver: zodResolver(publicResetPasswordSchema),
+    defaultValues: { token: token || "", password: "", confirmPassword: "" },
+  });
+
+  const onSubmit = async (data: PublicResetPasswordForm) => {
     if (!token) {
       toast.error("Không tìm thấy token. Link không hợp lệ.");
       return;
     }
-    if (password !== confirmPassword) {
-      toast.error("Mật khẩu không khớp!");
-      return;
-    }
 
     resetPasswordMutation.mutate(
-      { token, newPassword: password },
+      { token, newPassword: data.password },
       {
         onSuccess: () => {
           toast.success("Đặt lại mật khẩu thành công!");
@@ -34,70 +41,91 @@ export default function PublicResetPasswordPage() {
         onError: (err) => {
           toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
         },
-      }
+      },
     );
   };
 
-  const isSubmitting = resetPasswordMutation.isPending;
-
   if (!token) {
     return (
-      <div className="container mx-auto px-4 py-16 max-w-md animate-page-enter">
-        <div className="w-full bg-surface border border-border shadow-sm rounded-sm p-8 text-center text-danger">
-          <p className="font-bold">Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.</p>
+      <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+        <div className="w-full text-center">
+          <h1 className="text-xl uppercase tracking-widest font-semibold text-[#8A151B] mb-2">
+            Lỗi
+          </h1>
+          <p className="text-sm text-[#757575]">
+            Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-md animate-page-enter">
-      <div className="w-full bg-surface border border-border shadow-sm rounded-sm p-8">
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold text-ink">Đặt lại mật khẩu</h1>
-          <p className="text-sm text-ink-muted mt-2">Vui lòng nhập mật khẩu mới của bạn.</p>
+    <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+      <div className="w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333]">
+            Đặt lại mật khẩu
+          </h1>
+          <p className="text-sm text-[#757575] mt-3">
+            Vui lòng nhập mật khẩu mới của bạn.
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-ink">Mật khẩu mới</label>
-            <div className="relative">
-              <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" />
-              <input
-                type="password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Nhập mật khẩu mới"
-                className="w-full bg-surface-soft border border-border rounded-sm py-3 pl-10 pr-4 text-sm focus:ring-1 focus:ring-brand focus:outline-none"
-              />
-            </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+          noValidate
+        >
+          <div className="relative">
+            <input
+              type="password"
+              placeholder="Mật khẩu mới"
+              {...register("password")}
+              className={`w-full h-[48px] px-4 bg-white border ${
+                errors.password
+                  ? "border-danger focus:border-danger"
+                  : "border-[#cccccc] focus:border-[#333333]"
+              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+            />
+            {errors.password && (
+              <p className="text-xs text-danger mt-1.5">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-sm font-semibold text-ink">Xác nhận mật khẩu</label>
-            <div className="relative">
-              <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" />
-              <input
-                type="password"
-                required
-                minLength={8}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Nhập lại mật khẩu mới"
-                className="w-full bg-surface-soft border border-border rounded-sm py-3 pl-10 pr-4 text-sm focus:ring-1 focus:ring-brand focus:outline-none"
-              />
-            </div>
+          <div className="relative">
+            <input
+              type="password"
+              placeholder="Xác nhận mật khẩu mới"
+              {...register("confirmPassword")}
+              className={`w-full h-[48px] px-4 bg-white border ${
+                errors.confirmPassword
+                  ? "border-danger focus:border-danger"
+                  : "border-[#cccccc] focus:border-[#333333]"
+              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+            />
+            {errors.confirmPassword && (
+              <p className="text-xs text-danger mt-1.5">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="btn-hover w-full bg-brand hover:bg-brand-dark text-white font-bold py-3.5 rounded-sm shadow-ui-card transition-colors flex items-center justify-center gap-2 mt-4 disabled:opacity-70"
-          >
-            {isSubmitting ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : "Lưu mật khẩu mới"}
-          </button>
+          <div className="mt-6">
+            <button
+              type="submit"
+              disabled={isSubmitting || resetPasswordMutation.isPending}
+              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-[50px] flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
+            >
+              {isSubmitting || resetPasswordMutation.isPending ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                "Xác nhận đặt lại"
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

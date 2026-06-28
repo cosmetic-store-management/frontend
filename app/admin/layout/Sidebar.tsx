@@ -14,12 +14,13 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
-  Tags,
   FolderTree,
   Bookmark,
   Ticket,
   MessageSquare,
-  ServerCog
+  ServerCog,
+  HelpCircle,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/auth/hooks/useAdminAuth";
@@ -33,35 +34,59 @@ export default function AdminSidebar() {
     return user?.permissions?.includes(perm) || false;
   };
 
-  const isOrderRoute = pathname === "/admin/pos" || pathname === "/admin/orders";
+  const isOrderRoute =
+    pathname === "/admin/pos" || pathname === "/admin/orders";
   const isCatalogRoute =
     pathname === "/admin/products" ||
     pathname === "/admin/categories" ||
     pathname === "/admin/brands" ||
     pathname === "/admin/inventory";
-  const isCustomerRoute = pathname === "/admin/customers" || pathname === "/admin/reviews";
-  const isSystemRoute = pathname === "/admin/staff" || pathname === "/admin/audit-logs" || pathname === "/admin/settings";
+  const isCustomerRoute =
+    pathname === "/admin/customers" || pathname === "/admin/reviews";
+  const isMarketingRoute =
+    pathname === "/admin/vouchers" || pathname === "/admin/flash-sales";
+  const isSystemRoute =
+    pathname === "/admin/staff" ||
+    pathname === "/admin/audit-logs" ||
+    pathname === "/admin/settings";
 
   const [orderOpen, setOrderOpen] = useState(isOrderRoute);
   const [catalogOpen, setCatalogOpen] = useState(isCatalogRoute);
   const [customerOpen, setCustomerOpen] = useState(isCustomerRoute);
+  const [marketingOpen, setMarketingOpen] = useState(isMarketingRoute);
   const [systemOpen, setSystemOpen] = useState(isSystemRoute);
 
   // Sync open state when path changes externally
   useEffect(() => {
+    {
+      /* eslint-disable-next-line  */
+    }
     if (isOrderRoute) setOrderOpen(true);
     if (isCatalogRoute) setCatalogOpen(true);
     if (isCustomerRoute) setCustomerOpen(true);
+    if (isMarketingRoute) setMarketingOpen(true);
     if (isSystemRoute) setSystemOpen(true);
-  }, [pathname, isOrderRoute, isCatalogRoute, isCustomerRoute, isSystemRoute]);
-
+  }, [
+    pathname,
+    isOrderRoute,
+    isCatalogRoute,
+    isCustomerRoute,
+    isMarketingRoute,
+    isSystemRoute,
+  ]);
 
   return (
     <aside className="w-64 shrink-0 bg-card text-foreground border-r border-border flex flex-col z-20 shadow-ui-soft">
       {/* Logo / Header */}
-      <div className="px-6 py-5 border-b border-border flex items-center gap-3">
-        <LayoutDashboard className="w-5 h-5 text-primary" />
-        <span className="font-bold tracking-wider text-base">GLOWUP ADMIN</span>
+      <div className="px-6 py-5 border-b border-border flex items-center gap-3.5">
+        <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full flex items-center justify-center shadow-sm ring-1 ring-border/50">
+          <img
+            src="/logo.png"
+            alt="GlowUp Logo"
+            className="w-full h-full object-cover scale-[1.45]"
+          />
+        </div>
+        <span className="font-bold text-xl tracking-wide text-ink">GlowUp</span>
       </div>
 
       {/* Navigation */}
@@ -70,10 +95,10 @@ export default function AdminSidebar() {
         <Link
           to="/admin"
           className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground",
+            "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand",
             pathname === "/admin"
-              ? "bg-primary text-primary-foreground font-medium shadow-ui-soft"
-              : "text-muted-foreground"
+              ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+              : "text-muted-foreground",
           )}
         >
           <LayoutDashboard className="w-4 h-4" />
@@ -86,8 +111,8 @@ export default function AdminSidebar() {
             <button
               onClick={() => setOrderOpen(!orderOpen)}
               className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground text-muted-foreground",
-                isOrderRoute && "text-foreground font-medium"
+                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
+                isOrderRoute && "text-brand font-semibold",
               )}
             >
               <div className="flex items-center gap-3">
@@ -106,8 +131,10 @@ export default function AdminSidebar() {
                   <Link
                     to="/admin/pos"
                     className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                      pathname === "/admin/pos" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                      pathname === "/admin/pos"
+                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                        : "text-muted-foreground",
                     )}
                   >
                     <CreditCard className="w-3.5 h-3.5" />
@@ -118,8 +145,10 @@ export default function AdminSidebar() {
                   <Link
                     to="/admin/orders"
                     className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                      pathname === "/admin/orders" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                      pathname === "/admin/orders"
+                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                        : "text-muted-foreground",
                     )}
                   >
                     <ShoppingCart className="w-3.5 h-3.5" />
@@ -137,8 +166,8 @@ export default function AdminSidebar() {
             <button
               onClick={() => setCatalogOpen(!catalogOpen)}
               className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground text-muted-foreground",
-                isCatalogRoute && "text-foreground font-medium"
+                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
+                isCatalogRoute && "text-brand font-semibold",
               )}
             >
               <div className="flex items-center gap-3">
@@ -157,8 +186,10 @@ export default function AdminSidebar() {
                 <Link
                   to="/admin/products"
                   className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                    pathname === "/admin/products" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/products"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
                   )}
                 >
                   <Package className="w-3.5 h-3.5" />
@@ -167,8 +198,10 @@ export default function AdminSidebar() {
                 <Link
                   to="/admin/inventory"
                   className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                    pathname === "/admin/inventory" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/inventory"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
                   )}
                 >
                   <Box className="w-3.5 h-3.5" />
@@ -177,8 +210,10 @@ export default function AdminSidebar() {
                 <Link
                   to="/admin/categories"
                   className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                    pathname === "/admin/categories" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/categories"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
                   )}
                 >
                   <FolderTree className="w-3.5 h-3.5" />
@@ -187,8 +222,10 @@ export default function AdminSidebar() {
                 <Link
                   to="/admin/brands"
                   className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                    pathname === "/admin/brands" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/brands"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
                   )}
                 >
                   <Bookmark className="w-3.5 h-3.5" />
@@ -205,8 +242,8 @@ export default function AdminSidebar() {
             <button
               onClick={() => setCustomerOpen(!customerOpen)}
               className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground text-muted-foreground",
-                isCustomerRoute && "text-foreground font-medium"
+                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
+                isCustomerRoute && "text-brand font-semibold",
               )}
             >
               <div className="flex items-center gap-3">
@@ -225,8 +262,10 @@ export default function AdminSidebar() {
                   <Link
                     to="/admin/customers"
                     className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                      pathname === "/admin/customers" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                      pathname === "/admin/customers"
+                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                        : "text-muted-foreground",
                     )}
                   >
                     <Users className="w-3.5 h-3.5" />
@@ -237,8 +276,10 @@ export default function AdminSidebar() {
                   <Link
                     to="/admin/reviews"
                     className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                      pathname === "/admin/reviews" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                      pathname === "/admin/reviews"
+                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                        : "text-muted-foreground",
                     )}
                   >
                     <MessageSquare className="w-3.5 h-3.5" />
@@ -250,21 +291,56 @@ export default function AdminSidebar() {
           </div>
         )}
 
-        {/* MARKETING */}
-        {hasPerm("vouchers.view") && (
-          <div className="pt-1">
-            <Link
-              to="/admin/vouchers"
+        {/* MARKETING GROUP */}
+        {(hasPerm("vouchers.view") ||
+          hasPerm("flash_sales.view") ||
+          isOwner) && (
+          <div className="space-y-0.5 pt-1">
+            <button
+              onClick={() => setMarketingOpen(!marketingOpen)}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground",
-                pathname === "/admin/vouchers"
-                  ? "bg-primary text-primary-foreground font-medium shadow-ui-soft"
-                  : "text-muted-foreground"
+                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
+                isMarketingRoute && "text-brand font-semibold",
               )}
             >
-              <Ticket className="w-4 h-4" />
-              Mã giảm giá
-            </Link>
+              <div className="flex items-center gap-3">
+                <Ticket className="w-4 h-4" />
+                <span>Khuyến mãi</span>
+              </div>
+              {marketingOpen ? (
+                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+              ) : (
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+              )}
+            </button>
+            {marketingOpen && (
+              <div className="pl-4 pr-1 py-1 ml-4 space-y-1 bg-muted/40 rounded-sm border-l border-border animate-slide-down">
+                <Link
+                  to="/admin/vouchers"
+                  className={cn(
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/vouchers"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  <Ticket className="w-3.5 h-3.5" />
+                  Mã giảm giá
+                </Link>
+                <Link
+                  to="/admin/flash-sales"
+                  className={cn(
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/flash-sales"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  Flash Sale
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
@@ -274,10 +350,10 @@ export default function AdminSidebar() {
             <Link
               to="/admin/reports"
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground",
+                "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand",
                 pathname === "/admin/reports"
-                  ? "bg-primary text-primary-foreground font-medium shadow-ui-soft"
-                  : "text-muted-foreground"
+                  ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                  : "text-muted-foreground",
               )}
             >
               <BarChart3 className="w-4 h-4" />
@@ -292,8 +368,8 @@ export default function AdminSidebar() {
             <button
               onClick={() => setSystemOpen(!systemOpen)}
               className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-muted hover:text-foreground text-muted-foreground",
-                isSystemRoute && "text-foreground font-medium"
+                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
+                isSystemRoute && "text-brand font-semibold",
               )}
             >
               <div className="flex items-center gap-3">
@@ -311,8 +387,10 @@ export default function AdminSidebar() {
                 <Link
                   to="/admin/staff"
                   className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                    pathname === "/admin/staff" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                    pathname === "/admin/staff"
+                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                      : "text-muted-foreground",
                   )}
                 >
                   <UserCog className="w-3.5 h-3.5" />
@@ -322,8 +400,10 @@ export default function AdminSidebar() {
                   <Link
                     to="/admin/audit-logs"
                     className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                      pathname === "/admin/audit-logs" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                      pathname === "/admin/audit-logs"
+                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                        : "text-muted-foreground",
                     )}
                   >
                     <History className="w-3.5 h-3.5" />
@@ -334,8 +414,10 @@ export default function AdminSidebar() {
                   <Link
                     to="/admin/settings"
                     className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-foreground",
-                      pathname === "/admin/settings" ? "bg-primary text-primary-foreground font-medium shadow-ui-soft" : "text-muted-foreground"
+                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
+                      pathname === "/admin/settings"
+                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
+                        : "text-muted-foreground",
                     )}
                   >
                     <Settings className="w-3.5 h-3.5" />

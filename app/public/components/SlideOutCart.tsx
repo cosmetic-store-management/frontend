@@ -4,7 +4,8 @@ import { useCartStore } from "@/store/cart.store";
 import { useEffect } from "react";
 
 export function SlideOutCart() {
-  const { items, isOpen, setIsOpen, removeItem, updateQuantity, getTotal } = useCartStore();
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, getTotal } =
+    useCartStore();
 
   const cartCount = items.reduce((total, item) => total + item.quantity, 0);
 
@@ -25,13 +26,15 @@ export function SlideOutCart() {
   return (
     <div className="fixed inset-0 z-[999] flex justify-end">
       {/* Backdrop */}
-      <div 
+      {/* eslint-disable-next-line  */}
+      {/* eslint-disable-next-line  */}
+      <div
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm transition-opacity animate-fade-in"
         onClick={() => setIsOpen(false)}
       />
 
       {/* Cart Drawer */}
-      <div className="relative w-full max-w-md bg-surface h-full shadow-2xl flex flex-col animate-slide-in-right">
+      <div className="relative w-full max-w-md bg-surface h-full  flex flex-col animate-slide-in-right">
         {/* Header */}
         <div className="p-4 sm:p-6 border-b border-border flex items-center justify-between bg-surface-soft/50">
           <div className="flex items-center gap-3">
@@ -43,7 +46,7 @@ export function SlideOutCart() {
               <p className="text-xs text-ink-muted">{cartCount} sản phẩm</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setIsOpen(false)}
             className="p-2 text-ink-muted hover:text-ink hover:bg-surface-muted rounded-full transition-colors"
           >
@@ -60,9 +63,11 @@ export function SlideOutCart() {
               </div>
               <div>
                 <h3 className="text-lg font-bold text-ink">Giỏ hàng trống</h3>
-                <p className="text-sm text-ink-muted mt-1">Chưa có sản phẩm nào trong giỏ hàng.</p>
+                <p className="text-sm text-ink-muted mt-1">
+                  Chưa có sản phẩm nào trong giỏ hàng.
+                </p>
               </div>
-              <button 
+              <button
                 onClick={() => setIsOpen(false)}
                 className="btn-hover mt-4 px-6 py-2.5 bg-brand text-white font-bold rounded-full hover:bg-brand-dark transition-colors"
               >
@@ -72,11 +77,17 @@ export function SlideOutCart() {
           ) : (
             <div className="space-y-6">
               {items.map((item) => (
-                <div key={`${item.productId}-${item.variantId}`} className="flex gap-4 group">
+                <div
+                  key={`${item.productId}-${item.variantId}`}
+                  className="flex gap-4 group"
+                >
                   {/* Product Image */}
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-md border border-border bg-surface-soft overflow-hidden shrink-0">
-                    <img 
-                      src={item.imageUrl || "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80"} 
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-sm border border-border bg-surface-soft overflow-hidden shrink-0">
+                    <img
+                      src={
+                        item.imageUrl ||
+                        "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80"
+                      }
                       alt={item.name}
                       className="w-full h-full object-cover"
                     />
@@ -89,10 +100,14 @@ export function SlideOutCart() {
                         <h4 className="text-sm font-bold text-ink line-clamp-2 leading-tight group-hover:text-brand transition-colors">
                           {item.name}
                         </h4>
-                        <p className="text-xs text-ink-muted mt-1">Loại: {item.variantName}</p>
+                        <p className="text-xs text-ink-muted mt-1">
+                          Loại: {item.variantName}
+                        </p>
                       </div>
-                      <button 
-                        onClick={() => removeItem(item.productId, item.variantId)}
+                      <button
+                        onClick={() =>
+                          removeItem(item.productId, item.variantId)
+                        }
                         className="p-1.5 text-ink-muted hover:text-danger hover:bg-danger/10 rounded transition-colors shrink-0"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -101,8 +116,14 @@ export function SlideOutCart() {
 
                     <div className="mt-auto flex items-end justify-between">
                       <div className="flex items-center border border-border rounded-sm h-8 bg-surface">
-                        <button 
-                          onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
+                        <button
+                          onClick={() =>
+                            updateQuantity(
+                              item.productId,
+                              item.variantId,
+                              item.quantity - 1,
+                            )
+                          }
                           className="w-8 h-full flex items-center justify-center text-ink-muted hover:text-brand transition-colors"
                         >
                           <Minus className="w-3 h-3" />
@@ -110,8 +131,14 @@ export function SlideOutCart() {
                         <span className="w-8 text-center text-xs font-semibold text-ink">
                           {item.quantity}
                         </span>
-                        <button 
-                          onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
+                        <button
+                          onClick={() =>
+                            updateQuantity(
+                              item.productId,
+                              item.variantId,
+                              item.quantity + 1,
+                            )
+                          }
                           className="w-8 h-full flex items-center justify-center text-ink-muted hover:text-brand transition-colors"
                         >
                           <Plus className="w-3 h-3" />
@@ -133,23 +160,25 @@ export function SlideOutCart() {
           <div className="border-t border-border bg-surface-soft/30 p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between text-base">
               <span className="font-semibold text-ink">Tổng cộng:</span>
-              <span className="font-bold text-xl text-brand">{getTotal().toLocaleString("vi-VN")}₫</span>
+              <span className="font-bold text-xl text-brand">
+                {getTotal().toLocaleString("vi-VN")}₫
+              </span>
             </div>
             <p className="text-[11px] text-ink-muted text-center">
               Phí vận chuyển và thuế sẽ được tính khi thanh toán.
             </p>
             <div className="grid grid-cols-2 gap-3">
-              <Link 
-                to="/cart" 
+              <Link
+                to="/cart"
                 onClick={() => setIsOpen(false)}
                 className="btn-hover flex items-center justify-center py-3 px-4 border-2 border-brand text-brand font-bold rounded-sm hover:bg-brand hover:text-white transition-all"
               >
                 Xem giỏ hàng
               </Link>
-              <Link 
-                to="/checkout" 
+              <Link
+                to="/checkout"
                 onClick={() => setIsOpen(false)}
-                className="btn-hover flex items-center justify-center py-3 px-4 bg-brand text-white font-bold rounded-sm hover:bg-brand-dark transition-all shadow-lg shadow-brand/20"
+                className="btn-hover flex items-center justify-center py-3 px-4 bg-brand text-white font-bold rounded-sm hover:bg-brand-dark transition-all  shadow-brand/20"
               >
                 Thanh toán <ArrowRight className="w-4 h-4 ml-2" />
               </Link>

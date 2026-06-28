@@ -16,7 +16,11 @@ interface ProductVoucherModalProps {
   voucher: VoucherData | null;
 }
 
-export function ProductVoucherModal({ isOpen, onClose, voucher }: ProductVoucherModalProps) {
+export function ProductVoucherModal({
+  isOpen,
+  onClose,
+  voucher,
+}: ProductVoucherModalProps) {
   if (!voucher) return null;
 
   const handleCopy = () => {
@@ -28,11 +32,12 @@ export function ProductVoucherModal({ isOpen, onClose, voucher }: ProductVoucher
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-sm w-[95vw] p-0 overflow-hidden rounded-sm bg-white shadow-ui-card border-none [&>button]:hidden">
-        
         {/* Header */}
         <div className="bg-[#fff0f0] px-4 py-4 flex items-center justify-between relative">
-          <h2 className="text-[#8b0000] font-bold text-base uppercase tracking-wide">Giảm giá đơn hàng</h2>
-          <button 
+          <h2 className="text-[#8b0000] font-bold text-base uppercase tracking-wide">
+            Giảm giá đơn hàng
+          </h2>
+          <button
             onClick={onClose}
             className="text-ink-muted hover:text-ink transition-colors"
           >
@@ -43,21 +48,26 @@ export function ProductVoucherModal({ isOpen, onClose, voucher }: ProductVoucher
         {/* Content */}
         <div className="p-6 flex flex-col items-center">
           <h3 className="text-xl font-bold text-ink mb-6">{voucher.title}</h3>
-          
+
           <div className="w-full space-y-4 mb-6">
             <div className="flex items-center">
               <span className="text-ink-muted w-16 text-sm">Mã:</span>
               <div className="flex items-center gap-2 font-bold text-ink text-sm">
-                {voucher.code} 
-                <button onClick={handleCopy} className="text-ink-muted hover:text-ink transition-colors">
+                {voucher.code}
+                <button
+                  onClick={handleCopy}
+                  className="text-ink-muted hover:text-ink transition-colors"
+                >
                   <Copy className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            
+
             <div className="flex items-center">
               <span className="text-ink-muted w-16 text-sm">HSD:</span>
-              <span className="font-bold text-ink text-sm">{voucher.expiry}</span>
+              <span className="font-bold text-ink text-sm">
+                {voucher.expiry}
+              </span>
             </div>
           </div>
 
@@ -71,14 +81,13 @@ export function ProductVoucherModal({ isOpen, onClose, voucher }: ProductVoucher
             </div>
           )}
 
-          <button 
+          <button
             onClick={handleCopy}
             className="w-full bg-[#8b0000] hover:bg-[#700000] text-white font-bold py-3 rounded-sm transition-colors uppercase text-sm"
           >
             Sao chép
           </button>
         </div>
-
       </DialogContent>
     </Dialog>
   );

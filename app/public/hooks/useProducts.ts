@@ -1,5 +1,10 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { getProducts, getProductBySlug, getRecommendedProducts, type ProductQuery } from "../services/product.service";
+import {
+  getProducts,
+  getProductBySlug,
+  getRecommendedProducts,
+  type ProductQuery,
+} from "../services/product.service";
 import { QK } from "@/lib/queryKeys";
 
 export function useProducts(query: ProductQuery = {}) {

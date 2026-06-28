@@ -4,10 +4,10 @@ import {
   LoaderCircle,
   OctagonX,
   TriangleAlert,
-} from "lucide-react"
-import { Toaster as Sonner } from "sonner"
+} from "lucide-react";
+import { Toaster as Sonner } from "sonner";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>
+type ToasterProps = React.ComponentProps<typeof Sonner>;
 
 /**
  * Toaster — mount một lần duy nhất trong root.tsx.
@@ -31,18 +31,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group border border-border bg-surface text-ink shadow-md rounded-sm text-sm font-medium",
+            "group border border-border bg-surface text-ink  rounded-sm text-sm font-medium",
           description: "text-ink-muted text-xs",
           success: "!text-success !border-success",
           error: "!text-danger !border-border",
           warning: "!text-warning !border-warning",
           actionButton: "bg-brand text-white rounded-sm text-xs px-3 py-1",
-          cancelButton: "bg-surface-muted text-ink-muted rounded-sm text-xs px-3 py-1",
+          cancelButton:
+            "bg-surface-muted text-ink-muted rounded-sm text-xs px-3 py-1",
         },
       }}
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

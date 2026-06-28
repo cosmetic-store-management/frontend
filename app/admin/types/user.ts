@@ -18,9 +18,8 @@ export interface User {
   dob?: Date | string;
   gender?: "male" | "female" | "other";
   addresses?: any[];
-  hasPassword?: boolean;
+  hasOnlineAccount?: boolean;
   internalNotes?: string;
   favorites?: any[];
   recentlyViewed?: any[];
 }
-

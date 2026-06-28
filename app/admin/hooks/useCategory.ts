@@ -33,16 +33,23 @@ export function useCreateCategory() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: Omit<Category, "id" | "slug">) => createCategory(data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
   });
 }
 
 export function useUpdateCategory() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<Category, "id" | "slug">> }) =>
-      updateCategory(id, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<Omit<Category, "id" | "slug">>;
+    }) => updateCategory(id, data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
   });
 }
 
@@ -51,7 +58,8 @@ export function useUpdateCategoryStatus() {
   return useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       updateCategoryStatus(id, isActive),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
   });
 }
 
@@ -59,6 +67,7 @@ export function useDeleteCategory() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteCategory(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: ["admin", "categories"] }),
   });
 }

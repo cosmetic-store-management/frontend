@@ -8,6 +8,7 @@ export interface Review {
   rating: number;
   comment: string;
   images?: string[];
+  videos?: string[];
   adminReply?: string;
   isVerifiedPurchase?: boolean;
   createdAt: string;
@@ -35,9 +36,16 @@ export interface CreateReviewPayload {
   rating: number;
   comment?: string;
   images?: string[];
+  videos?: string[];
 }
 
-export const getProductReviews = async (productId: string, page = 1, limit = 5, rating?: number, hasImage?: boolean) => {
+export const getProductReviews = async (
+  productId: string,
+  page = 1,
+  limit = 5,
+  rating?: number,
+  hasImage?: boolean,
+) => {
   let url = `/reviews/product/${productId}?page=${page}&limit=${limit}`;
   if (rating) url += `&rating=${rating}`;
   if (hasImage) url += `&hasImage=true`;
@@ -45,11 +53,29 @@ export const getProductReviews = async (productId: string, page = 1, limit = 5, 
 };
 
 export const createReview = async (payload: CreateReviewPayload) => {
-  return apiClient.post<{ message: string; review: Review }>("/reviews", payload);
+  return apiClient.post<{ message: string; review: Review }>(
+    "/reviews",
+    payload,
+  );
 };
 
-export const updateReview = async (reviewId: string, payload: { rating: number; comment?: string; images?: string[] }) => {
-  return apiClient.patch<{ message: string; review: Review }>(`/reviews/${reviewId}`, payload);
+export const uploadMedia = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return apiClient.post<{ message: string; url: string }>(
+    "/upload/media",
+    formData,
+  );
+};
+
+export const updateReview = async (
+  reviewId: string,
+  payload: { rating: number; comment?: string; images?: string[] },
+) => {
+  return apiClient.patch<{ message: string; review: Review }>(
+    `/reviews/${reviewId}`,
+    payload,
+  );
 };
 
 export const deleteReview = async (reviewId: string) => {

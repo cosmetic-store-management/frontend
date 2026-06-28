@@ -15,27 +15,40 @@ export interface PublicVoucher {
 }
 
 export function getPublicVouchers() {
-  return apiClient.get<{ vouchers: PublicVoucher[] }>("/vouchers/public")
-    .then(res => res.vouchers);
+  return apiClient
+    .get<{ vouchers: PublicVoucher[] }>("/vouchers/public")
+    .then((res) => res.vouchers);
 }
 
 export function validateVoucher(code: string, subtotal: number) {
-  return apiClient.post<{ message: string; result: any }>("/vouchers/validate", {
-    code,
-    subtotal
-  });
+  return apiClient.post<{ message: string; result: any }>(
+    "/vouchers/validate",
+    {
+      code,
+      subtotal,
+    },
+  );
 }
 
 export function getWalletVouchers() {
-  return apiClient.get<{ message: string; vouchers: any[] }>("/vouchers/wallet");
+  return apiClient.get<{ message: string; vouchers: any[] }>(
+    "/vouchers/wallet",
+  );
 }
 
 export function getAllWalletVouchers() {
-  return apiClient.get<{ message: string; vouchers: (PublicVoucher & { status: "valid" | "used" | "expired" | "exhausted" })[] }>("/vouchers/wallet/all");
+  return apiClient.get<{
+    message: string;
+    vouchers: (PublicVoucher & {
+      status: "valid" | "used" | "expired" | "exhausted";
+    })[];
+  }>("/vouchers/wallet/all");
 }
 
 export function collectVoucher(code: string) {
-  return apiClient.post<{ message: string; voucher: PublicVoucher }>(`/vouchers/collect/${code}`);
+  return apiClient.post<{ message: string; voucher: PublicVoucher }>(
+    `/vouchers/collect/${code}`,
+  );
 }
 
 export function uncollectVoucher(code: string) {

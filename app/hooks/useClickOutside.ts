@@ -2,13 +2,13 @@ import { useEffect, type RefObject } from "react";
 
 /**
  * Hook bắt sự kiện click ra ngoài một Element (VD: Click ra ngoài Menu để đóng Menu)
- * 
+ *
  * @param ref Tham chiếu (Ref) đến thẻ HTML chứa UI
  * @param handler Hàm sẽ chạy khi user click ra ngoài
  */
 export function useClickOutside<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T | null>,
-  handler: (event: MouseEvent | TouchEvent) => void
+  handler: (event: MouseEvent | TouchEvent) => void,
 ) {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {

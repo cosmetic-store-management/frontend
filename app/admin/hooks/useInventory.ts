@@ -6,16 +6,23 @@ import {
   createSupplier,
   createGoodsReceipt,
   adjustStock,
+  updateMinStock,
 } from "@/admin/services/inventory.service";
 
-export function useInventoryStock(params: { search?: string; page?: number; limit?: number } = {}) {
+export function useInventoryStock(
+  params: { search?: string; cursor?: string; limit?: number } = {},
+) {
   return useQuery({
     queryKey: ["stock", params],
     queryFn: () => getStockList(params),
   });
 }
 
-export function useInventoryTransactions(params: { page?: number; limit?: number }) {
+export function useInventoryTransactions(params: {
+  cursor?: string;
+  limit: number;
+  type?: string;
+}) {
   return useQuery({
     queryKey: ["transactions", params],
     queryFn: () => getTransactions(params),
@@ -60,6 +67,17 @@ export function useAdjustStock() {
       queryClient.invalidateQueries({ queryKey: ["stock"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["pos-products"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
+    },
+  });
+}
+
+export function useUpdateMinStock() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateMinStock,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
     },
   });
