@@ -139,7 +139,7 @@ export function UserPage() {
 
   if (!isManager && !isOwner) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8 bg-surface border border-border rounded-sm shadow-ui-soft animate-page-enter">
+      <div className="flex flex-col items-center justify-center min-h-100 text-center p-8 bg-surface border border-border rounded-sm shadow-ui-soft animate-page-enter">
         <div className="p-3 bg-brand-light text-brand rounded-full mb-4">
           <ShieldAlert className="w-8 h-8" />
         </div>
@@ -285,7 +285,7 @@ export function UserPage() {
       {/* Staff List Table */}
       <div className="premium-card rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <Table className="min-w-[800px]">
+          <Table className="min-w-200">
             <TableHeader>
               <TableRow className="bg-surface-muted text-left border-b border-border">
                 <TableHead className="w-[35%]">Nhân viên</TableHead>

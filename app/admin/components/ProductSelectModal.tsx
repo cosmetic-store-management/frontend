@@ -101,7 +101,6 @@ export function ProductSelectModal({
     queryFn: () =>
       getAdminProducts({
         search: debouncedSearch,
-        page,
         limit: 10,
         category: categoryId === "all" ? undefined : categoryId,
         brandId: brandId === "all" ? undefined : brandId,
@@ -161,7 +160,7 @@ export function ProductSelectModal({
         <div className="flex flex-col flex-1 overflow-hidden bg-background min-h-0">
           <div className="px-6 py-4 border-b bg-muted/10">
             <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-              <div className="group relative w-full sm:w-[280px]">
+              <div className="group relative w-full sm:w-70">
                 <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
                 <Input
                   placeholder="Tìm tên sản phẩm hoặc SKU..."
@@ -181,7 +180,7 @@ export function ProductSelectModal({
               </div>
               <div className="w-full sm:w-auto">
                 <Select value={categoryId} onValueChange={setCategoryId}>
-                  <SelectTrigger className="w-full sm:w-[160px] h-10 bg-background border-border">
+                  <SelectTrigger className="w-full sm:w-40 h-10 bg-background border-border">
                     <SelectValue placeholder="Danh mục" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
@@ -196,7 +195,7 @@ export function ProductSelectModal({
               </div>
               <div className="w-full sm:w-auto">
                 <Select value={brandId} onValueChange={setBrandId}>
-                  <SelectTrigger className="w-full sm:w-[160px] h-10 bg-background border-border">
+                  <SelectTrigger className="w-full sm:w-40 h-10 bg-background border-border">
                     <SelectValue placeholder="Thương hiệu" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
@@ -209,7 +208,7 @@ export function ProductSelectModal({
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full sm:w-[100px]">
+              <div className="w-full sm:w-25">
                 <Input
                   type="number"
                   placeholder="Tồn kho..."
@@ -229,10 +228,10 @@ export function ProductSelectModal({
                   <TableRow>
                     <TableHead className="w-12 text-center bg-muted/30"></TableHead>
                     <TableHead className="bg-muted/30">Sản phẩm</TableHead>
-                    <TableHead className="text-center w-[100px] bg-muted/30">
+                    <TableHead className="text-center w-25 bg-muted/30">
                       Tồn Kho
                     </TableHead>
-                    <TableHead className="text-center w-[150px] bg-muted/30">
+                    <TableHead className="text-center w-37.5 bg-muted/30">
                       Giá gốc
                     </TableHead>
                   </TableRow>
@@ -377,7 +376,7 @@ export function ProductSelectModal({
                                 {variant.stock}
                               </TableCell>
                               <TableCell className="text-center whitespace-nowrap">
-                                {formatCurrency(variant.price || product.price)}
+                                {formatCurrency(variant.price || (product as any).price)}
                               </TableCell>
                             </TableRow>
                           );
@@ -387,7 +386,8 @@ export function ProductSelectModal({
                 </TableBody>
               </Table>
             </div>
-            {data?.pagination && data.pagination.totalPages > 1 && (
+            {/* Cursor pagination will be implemented later
+            data?.pagination && data.pagination.totalPages > 1 && (
               <div className="py-4 flex justify-center">
                 <Pagination
                   currentPage={data.pagination.page}
@@ -395,7 +395,7 @@ export function ProductSelectModal({
                   onPageChange={setPage}
                 />
               </div>
-            )}
+            )*/}
           </div>
         </div>
 

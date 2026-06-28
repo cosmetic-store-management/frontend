@@ -278,7 +278,7 @@ export const ProductCard = React.memo(function ProductCard({
             aria-label="Lưu yêu thích"
           >
             <Heart
-              className={`w-[18px] h-[18px] ${isFavorite ? "fill-[#C81D25] text-[#C81D25]" : "text-ink-muted/60"}`}
+              className={`w-4.5 h-4.5 ${isFavorite ? "fill-[#C81D25] text-[#C81D25]" : "text-ink-muted/60"}`}
               strokeWidth={1.5}
             />
           </button>

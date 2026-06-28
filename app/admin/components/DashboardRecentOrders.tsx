@@ -50,7 +50,7 @@ export default function DashboardRecentOrders({
                     <td className="py-3 font-medium text-ink whitespace-nowrap">
                       {order.customer || "Khách vãng lai"}
                     </td>
-                    <td className="py-3 text-ink-muted max-w-[180px] truncate">
+                    <td className="py-3 text-ink-muted max-w-45 truncate">
                       {order.items || "Không rõ"}
                     </td>
                     <td className="py-3 text-right font-medium text-ink whitespace-nowrap">

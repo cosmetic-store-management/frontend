@@ -51,12 +51,12 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
         }`}
     >
       {/* Logo area — always white bg so logo image shows correctly */}
-      <div className="w-full aspect-[4/3] flex items-center justify-center p-5 bg-white overflow-hidden">
+      <div className="w-full aspect-4/3 flex items-center justify-center p-5 bg-white overflow-hidden">
         {brand.imageUrl && !imgFailed ? (
           <img
             src={brand.imageUrl}
             alt={brand.name}
-            className="max-w-full max-h-[90px] object-contain transition-transform duration-300 group-hover:scale-105"
+            className="max-w-full max-h-22.5 object-contain transition-transform duration-300 group-hover:scale-105"
             onError={() => setImgFailed(true)}
           />
         ) : (
@@ -147,7 +147,7 @@ export default function BrandsPage() {
           THƯƠNG HIỆU NỔI BẬT — dark section
       ══════════════════════════════════════════════════════════════ */}
       <div className="bg-[#1a1a1a] py-8 px-4">
-        <div className="max-w-[1200px] mx-auto">
+        <div className="max-w-300 mx-auto">
           <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">
             Thương Hiệu Nổi Bật
           </h2>
@@ -163,13 +163,13 @@ export default function BrandsPage() {
                 ? Array.from({ length: 5 }).map((_, i) => (
                     <div
                       key={i}
-                      className="min-w-[200px] flex-1 aspect-[4/3] bg-[#2a2a2a] animate-pulse"
+                      className="min-w-50 flex-1 aspect-4/3 bg-[#2a2a2a] animate-pulse"
                     />
                   ))
                 : featured.map((brand: any) => (
                     <div
                       key={brand.id}
-                      className="min-w-[200px] flex-1"
+                      className="min-w-50 flex-1"
                       style={{ scrollSnapAlign: "start" }}
                     >
                       <BrandCard brand={brand} dark />
@@ -198,7 +198,7 @@ export default function BrandsPage() {
           XEM TẤT CẢ X THƯƠNG HIỆU
       ══════════════════════════════════════════════════════════════ */}
       <div className="bg-white border-b border-[#e8e8e8] py-6 px-4">
-        <div className="max-w-[1200px] mx-auto">
+        <div className="max-w-300 mx-auto">
           {/* Count heading */}
           <p className="text-center font-black text-[15px] uppercase tracking-widest text-ink mb-5">
             {isLoading
@@ -232,11 +232,11 @@ export default function BrandsPage() {
       {/* ══════════════════════════════════════════════════════════════
           Brand grid grouped by letter
       ══════════════════════════════════════════════════════════════ */}
-      <div className="max-w-[1200px] mx-auto px-4 py-8">
+      <div className="max-w-300 mx-auto px-4 py-8">
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="aspect-[4/3] skeleton" />
+              <div key={i} className="aspect-4/3 skeleton" />
             ))}
           </div>
         ) : brands.length === 0 ? (

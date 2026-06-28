@@ -164,7 +164,7 @@ export function AdminAccountTab() {
           <div className="pt-2">
             <Button
               type="submit"
-              className="min-w-[120px]"
+              className="min-w-30"
               disabled={changePasswordMutation.isPending}
             >
               {changePasswordMutation.isPending ? (

@@ -498,7 +498,7 @@ export function BulkRestockModal({
               </div>
             ) : (
               <div className="border border-border rounded-sm overflow-x-auto bg-surface">
-                <table className="w-full text-left border-collapse text-sm min-w-[900px]">
+                <table className="w-full text-left border-collapse text-sm min-w-225">
                   <thead className="bg-surface-soft text-ink-muted font-semibold text-xs border-b border-border">
                     <tr>
                       <th className="py-2.5 px-3">Sản phẩm / Biến thể</th>
@@ -507,7 +507,7 @@ export function BulkRestockModal({
                         Đơn giá (đ)
                       </th>
                       <th className="py-2.5 px-3 w-32 text-center">Mã lô</th>
-                      <th className="py-2.5 px-3 w-[140px] text-center">
+                      <th className="py-2.5 px-3 w-35 text-center">
                         NSX & HSD
                       </th>
                       <th className="py-2.5 px-3 w-32 text-right">
@@ -526,7 +526,7 @@ export function BulkRestockModal({
                           key={index}
                           className="bg-surface hover:bg-surface-soft/50 transition-colors"
                         >
-                          <td className="p-2 whitespace-normal min-w-[200px]">
+                          <td className="p-2 whitespace-normal min-w-50">
                             <p className="text-sm font-semibold text-ink line-clamp-2 leading-tight">
                               {stockInfo?.name || "Sản phẩm không rõ"}
                             </p>
@@ -582,7 +582,7 @@ export function BulkRestockModal({
                               required
                             />
                           </td>
-                          <td className="p-2 flex flex-col gap-1 min-w-[130px]">
+                          <td className="p-2 flex flex-col gap-1 min-w-32.5">
                             <Input
                               type="date"
                               value={

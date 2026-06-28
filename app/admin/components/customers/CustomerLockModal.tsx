@@ -26,7 +26,7 @@ export function CustomerLockModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader className="pr-6">
           <DialogTitle>
             Xác nhận {target?.isActive ? "khóa" : "mở khóa"} tài khoản

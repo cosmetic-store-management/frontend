@@ -53,7 +53,7 @@ export function CustomerPointsModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader className="pr-6">
           <DialogTitle>Điều chỉnh điểm thưởng</DialogTitle>
           <DialogDescription>

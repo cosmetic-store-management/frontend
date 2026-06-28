@@ -263,7 +263,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
         {/* Left & Middle Group */}
         <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-16 w-full">
           {/* Left: Average Score */}
-          <div className="flex flex-col items-center justify-center min-w-[150px] mb-6 md:mb-0">
+          <div className="flex flex-col items-center justify-center min-w-37.5 mb-6 md:mb-0">
             <div className="flex items-center gap-3">
               <Star className="w-12 h-12 fill-[#FACC15] text-[#FACC15]" />
               <span className="text-[42px] font-bold text-ink leading-none">
@@ -276,7 +276,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
           </div>
 
           {/* Middle: Rating Breakdown */}
-          <div className="flex-1 max-w-[400px] mb-6 md:mb-0">
+          <div className="flex-1 max-w-100 mb-6 md:mb-0">
             {[5, 4, 3, 2, 1].map((star) => {
               const count =
                 ratingCounts[star as keyof typeof ratingCounts] || 0;
@@ -287,7 +287,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                   key={star}
                   className="flex items-center gap-3 mb-2 last:mb-0"
                 >
-                  <div className="flex items-center gap-1 w-[80px]">
+                  <div className="flex items-center gap-1 w-20">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <Star
                         key={s}
@@ -301,7 +301,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                       style={{ width: `${percent}%` }}
                     />
                   </div>
-                  <span className="text-[13px] text-ink-muted min-w-[20px]">
+                  <span className="text-[13px] text-ink-muted min-w-5">
                     {count}
                   </span>
                 </div>
@@ -310,7 +310,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
           </div>
         </div>
         {/* Right: Write Review Button */}
-        <div className="flex flex-col items-start justify-center min-w-[250px] md:pl-8 mt-6 md:mt-0">
+        <div className="flex flex-col items-start justify-center min-w-62.5 md:pl-8 mt-6 md:mt-0">
           <span className="text-[14px] text-ink mb-3 font-medium">
             Đánh giá sản phẩm
           </span>
@@ -654,7 +654,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
       {viewImage &&
         createPortal(
           <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4 animate-in fade-in duration-200"
+            className="fixed inset-0 z-9999 flex items-center justify-center bg-black/90 p-4 animate-in fade-in duration-200"
             onClick={() => setViewImage(null)}
           >
             <div
@@ -667,7 +667,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                 className="max-w-full max-h-[85vh] object-contain rounded-sm "
               />
               <button
-                className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-[10000] text-white hover:text-brand bg-black/70 hover:bg-black border border-white/20 rounded-full transition-all p-1.5 "
+                className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-10000 text-white hover:text-brand bg-black/70 hover:bg-black border border-white/20 rounded-full transition-all p-1.5 "
                 onClick={() => setViewImage(null)}
                 title="Đóng"
               >
@@ -777,13 +777,13 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                       ACCEPTED_VIDEO_TYPES.includes(mediaFile.type) ? (
                         <video
                           src={mediaPreviewUrl}
-                          className="h-[84px] w-[84px] object-cover rounded-sm border border-border"
+                          className="h-21 w-21 object-cover rounded-sm border border-border"
                         />
                       ) : (
                         <img
                           src={mediaPreviewUrl}
                           alt="Preview"
-                          className="h-[84px] w-[84px] object-cover rounded-sm border border-border"
+                          className="h-21 w-21 object-cover rounded-sm border border-border"
                         />
                       )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-sm">
@@ -812,7 +812,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                       />
                       <label
                         htmlFor="review-image-modal-upload"
-                        className="inline-flex items-center justify-center w-[84px] h-[84px] cursor-pointer border-[1.5px] border-dashed border-[#C81D25] hover:bg-[#C81D25]/5 transition-all text-[#C81D25]"
+                        className="inline-flex items-center justify-center w-21 h-21 cursor-pointer border-[1.5px] border-dashed border-[#C81D25] hover:bg-[#C81D25]/5 transition-all text-[#C81D25]"
                       >
                         <Plus className="w-6 h-6 stroke-[2.5px]" />
                       </label>

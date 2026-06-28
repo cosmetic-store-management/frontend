@@ -54,7 +54,7 @@ export function CartPage() {
   /* ── Empty state ─────────────────────────────────────────── */
   if (items.length === 0) {
     return (
-      <div className="max-w-[1200px] w-full mx-auto px-4 py-6 animate-page-enter">
+      <div className="max-w-300 w-full mx-auto px-4 py-6 animate-page-enter">
         <div className="premium-card p-16 text-center">
           <div className="w-20 h-20 bg-surface-soft rounded-full flex items-center justify-center mx-auto mb-5">
             <ShoppingBag className="w-10 h-10 text-border" />
@@ -76,7 +76,7 @@ export function CartPage() {
 
   /* ── Main layout ─────────────────────────────────────────── */
   return (
-    <div className="max-w-[1200px] w-full mx-auto px-4 py-6 animate-page-enter">
+    <div className="max-w-300 w-full mx-auto px-4 py-6 animate-page-enter">
       {/* Back link */}
       <Link
         to="/products"

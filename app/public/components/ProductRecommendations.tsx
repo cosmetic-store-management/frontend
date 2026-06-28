@@ -95,7 +95,7 @@ export function ProductRecommendations({
         {recommendations.map((product) => (
           <div
             key={product.id}
-            className="w-[180px] min-w-[180px] sm:w-[200px] sm:min-w-[200px] md:w-[calc((100%-48px)/4)] md:min-w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)] lg:min-w-[calc((100%-64px)/5)] snap-start shrink-0"
+            className="w-45 min-w-45 sm:w-50 sm:min-w-50 md:w-[calc((100%-48px)/4)] md:min-w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)] lg:min-w-[calc((100%-64px)/5)] snap-start shrink-0"
           >
             <ProductCard product={product} />
           </div>

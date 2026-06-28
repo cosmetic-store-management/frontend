@@ -108,7 +108,7 @@ export function DateTimePicker({
             placeholder="00:00"
             value={time}
             onChange={handleTimeChange}
-            className="w-[80px] h-8 text-sm bg-surface border-border text-center"
+            className="w-20 h-8 text-sm bg-surface border-border text-center"
           />
         </div>
       </PopoverContent>

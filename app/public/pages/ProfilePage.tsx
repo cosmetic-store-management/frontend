@@ -84,7 +84,7 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="max-w-[1200px] w-full mx-auto px-4 py-8 animate-page-enter">
+    <div className="max-w-300 w-full mx-auto px-4 py-8 animate-page-enter">
       <div className="flex flex-col md:flex-row gap-6">
         <Sidebar
           user={user}

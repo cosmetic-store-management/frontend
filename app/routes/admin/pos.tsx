@@ -17,7 +17,7 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center min-h-[400px]">
+    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center min-h-100">
       <div className="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-4">
         <span className="text-2xl">⚠️</span>
       </div>

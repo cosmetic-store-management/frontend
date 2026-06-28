@@ -64,7 +64,7 @@ interface FallbackProps {
 
 function DefaultErrorFallback({ error, onReset }: FallbackProps) {
   return (
-    <div className="min-h-[400px] flex items-center justify-center px-4">
+    <div className="min-h-100 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center space-y-6">
         {/* Icon */}
         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-brand/10 text-brand mx-auto">

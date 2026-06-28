@@ -231,7 +231,7 @@ export function FlashSalePage() {
               <button
                 key={fs._id}
                 onClick={() => setActiveTabIndex(index)}
-                className={`flex-1 flex-shrink-0 flex flex-col items-center justify-center px-8 py-4 transition-colors cursor-pointer border-r border-border/40 min-w-[140px] last:border-r-0
+                className={`flex-1 shrink-0 flex flex-col items-center justify-center px-8 py-4 transition-colors cursor-pointer border-r border-border/40 min-w-35 last:border-r-0
                   ${isSelected ? "bg-brand text-white" : "bg-transparent text-ink hover:bg-surface-soft"}`}
               >
                 <span className="text-xl md:text-2xl font-black">

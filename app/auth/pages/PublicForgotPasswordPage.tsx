@@ -36,7 +36,7 @@ export default function PublicForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+      <div className="w-full max-w-125 mx-auto py-20 px-4">
         <div className="w-full text-center">
           <div className="mb-4 text-4xl">📧</div>
           <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333] mb-4">
@@ -59,7 +59,7 @@ export default function PublicForgotPasswordPage() {
   }
 
   return (
-    <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+    <div className="w-full max-w-125 mx-auto py-20 px-4">
       <div className="w-full">
         <div className="text-center mb-8">
           <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333]">
@@ -80,7 +80,7 @@ export default function PublicForgotPasswordPage() {
               type="email"
               placeholder="Nhập email của bạn"
               {...register("email")}
-              className={`w-full h-[48px] px-4 bg-white border ${
+              className={`w-full h-12 px-4 bg-white border ${
                 errors.email
                   ? "border-danger focus:border-danger"
                   : "border-[#cccccc] focus:border-[#333333]"
@@ -97,7 +97,7 @@ export default function PublicForgotPasswordPage() {
             <button
               type="submit"
               disabled={isSubmitting || forgotPasswordMutation.isPending}
-              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-[50px] flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
+              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-12.5 flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
             >
               {isSubmitting || forgotPasswordMutation.isPending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

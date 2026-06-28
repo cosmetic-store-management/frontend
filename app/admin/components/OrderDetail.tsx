@@ -302,13 +302,13 @@ export default function OrderDetail({
                   <p className="text-sm text-ink font-medium">
                     {order.returnReason}
                   </p>
-                  {order.returnRejectReason && (
+                  {(order as any).returnRejectReason && (
                     <div className="mt-3 pt-3 border-t border-warning/20">
                       <p className="text-xs font-bold text-danger mb-1">
                         Lý do từ chối:
                       </p>
                       <p className="text-sm text-ink font-medium">
-                        {order.returnRejectReason}
+                        {(order as any).returnRejectReason}
                       </p>
                     </div>
                   )}

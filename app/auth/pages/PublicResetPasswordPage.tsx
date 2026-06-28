@@ -47,7 +47,7 @@ export default function PublicResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+      <div className="w-full max-w-125 mx-auto py-20 px-4">
         <div className="w-full text-center">
           <h1 className="text-xl uppercase tracking-widest font-semibold text-[#8A151B] mb-2">
             Lỗi
@@ -61,7 +61,7 @@ export default function PublicResetPasswordPage() {
   }
 
   return (
-    <div className="w-full max-w-[500px] mx-auto py-20 px-4">
+    <div className="w-full max-w-125 mx-auto py-20 px-4">
       <div className="w-full">
         <div className="text-center mb-8">
           <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333]">
@@ -82,7 +82,7 @@ export default function PublicResetPasswordPage() {
               type="password"
               placeholder="Mật khẩu mới"
               {...register("password")}
-              className={`w-full h-[48px] px-4 bg-white border ${
+              className={`w-full h-12 px-4 bg-white border ${
                 errors.password
                   ? "border-danger focus:border-danger"
                   : "border-[#cccccc] focus:border-[#333333]"
@@ -100,7 +100,7 @@ export default function PublicResetPasswordPage() {
               type="password"
               placeholder="Xác nhận mật khẩu mới"
               {...register("confirmPassword")}
-              className={`w-full h-[48px] px-4 bg-white border ${
+              className={`w-full h-12 px-4 bg-white border ${
                 errors.confirmPassword
                   ? "border-danger focus:border-danger"
                   : "border-[#cccccc] focus:border-[#333333]"
@@ -117,7 +117,7 @@ export default function PublicResetPasswordPage() {
             <button
               type="submit"
               disabled={isSubmitting || resetPasswordMutation.isPending}
-              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-[50px] flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
+              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-12.5 flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
             >
               {isSubmitting || resetPasswordMutation.isPending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

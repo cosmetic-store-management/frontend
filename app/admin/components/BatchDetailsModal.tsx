@@ -81,7 +81,7 @@ export default function BatchDetailsModal({
         </DialogHeader>
 
         <div className="mt-2 overflow-x-auto">
-          <div className="border border-border rounded-sm overflow-hidden bg-surface min-w-[900px]">
+          <div className="border border-border rounded-sm overflow-hidden bg-surface min-w-225">
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="bg-surface-soft/50 border-b border-border text-ink-muted">

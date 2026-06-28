@@ -44,7 +44,7 @@ export function AuditLogPage() {
 
   if (!isOwner) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8 bg-surface border border-border rounded-sm shadow-ui-soft animate-page-enter">
+      <div className="flex flex-col items-center justify-center min-h-100 text-center p-8 bg-surface border border-border rounded-sm shadow-ui-soft animate-page-enter">
         <div className="p-3 bg-brand-light text-brand rounded-full mb-4">
           <ShieldAlert className="w-8 h-8" />
         </div>
@@ -66,7 +66,7 @@ export function AuditLogPage() {
         description="Theo dõi và truy vết hoạt động cấu hình hệ thống, quản lý và bảo mật dữ liệu"
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative max-w-sm flex-1 min-w-[200px]">
+            <div className="group relative max-w-sm flex-1 min-w-50">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 placeholder="Tìm tài khoản, nội dung..."
@@ -117,7 +117,7 @@ export function AuditLogPage() {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full sm:w-[150px] pl-9 h-10 rounded-md bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
+                  className="w-full sm:w-37.5 pl-9 h-10 rounded-md bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
                   title="Từ ngày"
                 />
               </div>
@@ -138,7 +138,7 @@ export function AuditLogPage() {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full sm:w-[150px] pl-9 h-10 rounded-md bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
+                  className="w-full sm:w-37.5 pl-9 h-10 rounded-md bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
                   title="Đến ngày"
                 />
               </div>
@@ -150,7 +150,7 @@ export function AuditLogPage() {
 
       {/* Logs Table */}
       <div className="premium-card rounded-sm overflow-hidden">
-        <Table className="min-w-[800px] table-fixed">
+        <Table className="min-w-200 table-fixed">
           <TableHeader>
             <TableRow className="bg-surface-muted text-left border-b border-border">
               <TableHead className="w-[15%] text-ink-muted font-medium">

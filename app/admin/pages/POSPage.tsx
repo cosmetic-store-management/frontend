@@ -241,7 +241,7 @@ export function POSPage() {
   return (
     <div className="flex-1 flex flex-col lg:flex-row gap-5 min-h-0 animate-page-enter">
       {/* Left panel: Products */}
-      <div className="flex-1 flex flex-col min-h-[500px] bg-surface border border-border rounded-sm p-5 shadow-ui-soft">
+      <div className="flex-1 flex flex-col min-h-125 bg-surface border border-border rounded-sm p-5 shadow-ui-soft">
         {/* Search */}
         <div className="relative mb-5">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
@@ -284,7 +284,7 @@ export function POSPage() {
                       </span>
                     )}
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-[40px] leading-tight">
+                  <h4 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-10 leading-tight">
                     {p.name || "Sản phẩm không tên"}
                   </h4>
                   <div className="mt-auto w-full pt-2 flex justify-between items-end">

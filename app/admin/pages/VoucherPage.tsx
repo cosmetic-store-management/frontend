@@ -185,7 +185,7 @@ export function VoucherPage() {
         }
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}

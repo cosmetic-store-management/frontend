@@ -42,6 +42,11 @@ export function CheckoutPage() {
   const [previewData, setPreviewData] = useState<any>(null);
   const [usedPoints, setUsedPoints] = useState(0);
 
+  const pageContainerClassName =
+    "w-full max-w-300 mx-auto px-4 py-6 relative animate-page-enter";
+  const summaryItemsClassName =
+    "px-5 py-4 overflow-y-auto max-h-55 space-y-3";
+
   // Stripe states
   const [stripeModalOpen, setStripeModalOpen] = useState(false);
   const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(
@@ -258,7 +263,7 @@ export function CheckoutPage() {
     msg ? <p className="text-xs text-danger mt-1">{msg}</p> : null;
 
   return (
-    <div className="max-w-[1200px] w-full mx-auto px-4 py-6 animate-page-enter relative">
+    <div className={pageContainerClassName}>
       {/* Full-screen Loading Overlay to prevent any interaction during submission */}
       {createOrderMutation.isPending && (
         <div className="fixed inset-0 z-50 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center">
@@ -497,7 +502,7 @@ export function CheckoutPage() {
             </div>
 
             {/* Items */}
-            <div className="px-5 py-4 max-h-[220px] overflow-y-auto space-y-3">
+            <div className={summaryItemsClassName}>
               {/* Build map variantId → unitPrice từ backend (source of truth) */}
               {(() => {
                 const priceMap: Record<string, number> = {};

@@ -150,7 +150,7 @@ export function OrderSuccessPage() {
     queryKey: ["order-track", code],
     queryFn: async () => {
       if (!code) return null;
-      const res = await api.get(`/orders/track/${code}`);
+      const res = await api.get<any>(`/orders/track/${code}`);
       return res.data?.order;
     },
     refetchInterval: (query) => {

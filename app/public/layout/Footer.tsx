@@ -8,7 +8,7 @@ export default function PublicFooter() {
   return (
     <footer className="dark bg-black mt-auto border-t border-white/10 text-foreground">
       {/* Main Footer */}
-      <div className="max-w-[1200px] w-full mx-auto px-4 py-16">
+      <div className="max-w-300 w-full mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
           {/* Brand Info */}
           <div className="lg:col-span-4 space-y-6">
@@ -253,7 +253,7 @@ export default function PublicFooter() {
 
       {/* Bottom Bar */}
       <div className="border-t border-white/10 bg-black">
-        <div className="max-w-[1200px] w-full mx-auto px-4 py-6">
+        <div className="max-w-300 w-full mx-auto px-4 py-6">
           <div className="text-center">
             <p className="text-xs text-gray-500">
               © {new Date().getFullYear()}{" "}

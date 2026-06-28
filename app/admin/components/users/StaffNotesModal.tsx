@@ -57,7 +57,7 @@ export function StaffNotesModal({
 
   return (
     <Dialog open={!!user} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] animate-scale-in text-left">
+      <DialogContent className="sm:max-w-125 animate-scale-in text-left">
         <DialogHeader>
           <DialogTitle className="text-base font-bold text-ink">
             Ghi chú nội bộ

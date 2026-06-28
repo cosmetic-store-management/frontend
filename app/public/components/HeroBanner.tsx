@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export function HeroBanner() {
   return (
-    <section className="relative w-full h-[85vh] min-h-[600px] bg-ink overflow-hidden flex items-center">
+    <section className="relative w-full h-[85vh] min-h-150 bg-ink overflow-hidden flex items-center">
       {/* Background Video/Image */}
       <div className="absolute inset-0 z-0">
         <img

@@ -208,7 +208,6 @@ export function useProducts(filters: ProductFilters) {
       // Fetch all products with current filters
       const allData = await getAdminProducts({
         ...queryParams,
-        page: 1,
         limit: 9999, // Fetch virtually all
       });
 

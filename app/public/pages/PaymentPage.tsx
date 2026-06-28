@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import {
   CheckCircle2,
-  Banknote,
   Copy,
-  ShoppingBag,
-  ClipboardList,
   Loader2,
   Clock,
   ChevronLeft,
   Timer,
-  AlertTriangle,
 } from "lucide-react";
 import { usePublicSettings } from "@/public/hooks/usePublicSettings";
 import { toast } from "@/lib/toast";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { apiClient as api } from "@/lib/client";
 import { useCartStore } from "@/store/cart.store";
 import DeleteModal from "@/components/ui/delete-modal";
@@ -55,7 +51,7 @@ function BankTransferInfo({
   const finalQrUrl = dynamicQrUrl || settings?.bankQrCodeUrl;
 
   return (
-    <div className="max-w-[420px] mx-auto bg-white rounded shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-8">
+    <div className="mx-auto max-w-105 bg-white rounded shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-8">
       {finalQrUrl && (
         <div className="flex flex-col items-center justify-center mb-8">
           <img
@@ -139,13 +135,11 @@ export function PaymentPage() {
   });
   const banks = banksData?.data || [];
 
-  const queryClient = useQueryClient();
-
   const { data: orderTrack } = useQuery({
     queryKey: ["order-track", code],
     queryFn: async () => {
       if (!code) return null;
-      const res = await api.get(`/orders/track/${code}`);
+      const res = await api.get<any>(`/orders/track/${code}`);
       return res.data?.order;
     },
     refetchInterval: (query) => {
@@ -160,7 +154,7 @@ export function PaymentPage() {
   const { clearCart } = useCartStore();
 
   const [timeLeft, setTimeLeft] = useState(15 * 60);
-  const [hasAutoCancelled, setHasAutoCancelled] = useState(false);
+  const hasAutoCancelled = useRef(false);
   const [isConfirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
@@ -178,14 +172,11 @@ export function PaymentPage() {
 
   // Hết giờ tự động hủy
   useEffect(() => {
-    if (timeLeft <= 0 && !isPaid && !isCancelled && !hasAutoCancelled && code) {
-      {
-        /* eslint-disable-next-line  */
-      }
-      setHasAutoCancelled(true);
+    if (timeLeft <= 0 && !isPaid && !isCancelled && !hasAutoCancelled.current && code) {
+      hasAutoCancelled.current = true;
       api.patch(`/checkout/${code}/cancel`).catch(console.error);
     }
-  }, [timeLeft, isPaid, isCancelled, hasAutoCancelled, code]);
+  }, [timeLeft, isPaid, isCancelled, code]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -212,7 +203,7 @@ export function PaymentPage() {
   };
 
   return (
-    <div className="max-w-[1200px] w-full mx-auto px-4 py-8 sm:py-12 animate-page-enter">
+    <div className="w-full max-w-300 mx-auto px-4 py-8 sm:py-12 animate-page-enter">
       {/* Back Button */}
       <div className="mb-4 sm:mb-8">
         <button
@@ -251,7 +242,7 @@ export function PaymentPage() {
         {/* Bank Transfer Details */}
         {paymentMethod === "bank" &&
           (isPaid ? (
-            <div className="mt-8 bg-green-50 border border-green-200 rounded-sm overflow-hidden max-w-[420px] mx-auto p-8 animate-pulse-soft">
+            <div className="mt-8 bg-green-50 border border-green-200 rounded-sm overflow-hidden mx-auto max-w-105 p-8 animate-pulse-soft">
               <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
               <h3 className="font-bold text-green-700 text-xl mb-2">
                 Thanh toán thành công!
@@ -266,7 +257,7 @@ export function PaymentPage() {
               <span className="text-sm">Đang tải thông tin ngân hàng...</span>
             </div>
           ) : timeLeft <= 0 ? (
-            <div className="mt-8 bg-red-50 border border-red-200 rounded-sm max-w-[420px] mx-auto p-8">
+            <div className="mt-8 bg-red-50 border border-red-200 rounded-sm mx-auto max-w-105 p-8">
               <p className="text-red-600 font-bold mb-2">
                 Đã hết thời gian thanh toán
               </p>
@@ -288,8 +279,8 @@ export function PaymentPage() {
                 settings={settings}
                 banks={banks}
               />
-              <div className="flex items-center gap-2 bg-[#fff7ed] text-[#ea580c] px-6 py-3 rounded-sm font-semibold text-[15px] w-full max-w-[420px] justify-center">
-                <Timer className="w-[18px] h-[18px]" strokeWidth={2.5} />
+              <div className="flex items-center gap-2 bg-[#fff7ed] text-[#ea580c] px-6 py-3 rounded-sm font-semibold text-[15px] w-full max-w-105 justify-center">
+                <Timer className="h-4.5 w-4.5" strokeWidth={2.5} />
                 <span>Đơn hàng sẽ hết hạn sau: {formatTime(timeLeft)}</span>
               </div>
             </div>

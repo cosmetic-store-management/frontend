@@ -71,7 +71,7 @@ export function CustomerFormModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-150">
         <DialogHeader className="pr-6">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>

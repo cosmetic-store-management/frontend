@@ -49,7 +49,7 @@ export function VouchersPage() {
             {t.label}
             {t.count > 0 && (
               <span
-                className={`inline-flex items-center justify-center h-4 min-w-[16px] px-1 text-[10px] font-bold rounded-full ${
+                className={`inline-flex items-center justify-center h-4 min-w-4 px-1 text-[10px] font-bold rounded-full ${
                   tab === t.key
                     ? "bg-brand text-white"
                     : "bg-border/70 text-ink-muted"

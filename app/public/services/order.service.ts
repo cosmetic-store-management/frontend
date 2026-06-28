@@ -44,12 +44,7 @@ export function previewOrder(payload: PreviewOrderPayload) {
   return apiClient.post<any>("/checkout/preview", payload);
 }
 
-export function createPaymentUrl(orderId: string) {
-  return apiClient.post<{ paymentUrl: string }>(
-    `/orders/${orderId}/create-payment-url`,
-    {},
-  );
-}
+
 
 export function cancelMyOrder(orderId: string) {
   return apiClient.patch<{ message: string; order: any }>(

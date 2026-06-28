@@ -73,7 +73,7 @@ export default function PublicHeader() {
       <header
         className={`bg-white sticky top-0 z-50 transition-shadow ${isScrolled ? "shadow-md" : "border-b border-border"}`}
       >
-        <div className="max-w-[1200px] w-full mx-auto px-4 py-3 flex items-center gap-4">
+        <div className="max-w-300 w-full mx-auto px-4 py-3 flex items-center gap-4">
           {/* Mobile Menu Toggle */}
           <button
             className="lg:hidden text-ink p-1"
@@ -85,7 +85,7 @@ export default function PublicHeader() {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center justify-center shrink-0 w-[72px] h-[72px] overflow-hidden rounded-full hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center shrink-0 w-18 h-18 overflow-hidden rounded-full hover:opacity-90 transition-opacity"
           >
             <img
               src="/logo.png"
@@ -94,7 +94,7 @@ export default function PublicHeader() {
             />
           </Link>
 
-          <div className="hidden lg:block flex-1 max-w-[600px] mx-auto px-4">
+          <div className="hidden lg:block flex-1 max-w-150 mx-auto px-4">
             <form
               onSubmit={handleSearch}
               className="flex items-center w-full relative h-10 border-b-2 border-brand"
@@ -110,7 +110,7 @@ export default function PublicHeader() {
                 type="submit"
                 className="absolute right-0 text-ink hover:text-brand transition-colors p-2"
               >
-                <Search className="w-[22px] h-[22px]" strokeWidth={1.5} />
+                <Search className="w-5.5 h-5.5" strokeWidth={1.5} />
               </button>
             </form>
           </div>
@@ -144,7 +144,7 @@ export default function PublicHeader() {
               className="p-1 hover:text-brand transition-colors relative"
             >
               <ShoppingBag className="w-7 h-7" strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 w-[18px] h-[18px] bg-brand text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-brand text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {cartCount > 99 ? "99+" : cartCount}
               </span>
             </Link>
@@ -155,7 +155,7 @@ export default function PublicHeader() {
             TIER 3: CATEGORY NAVIGATION BAR
             ========================================= */}
         <nav className="hidden lg:flex bg-surface relative z-40 border-t border-border">
-          <div className="max-w-[1200px] w-full mx-auto px-4 flex items-stretch gap-8 text-[13px] font-bold text-ink">
+          <div className="max-w-300 w-full mx-auto px-4 flex items-stretch gap-8 text-[13px] font-bold text-ink">
             {/* Mega Menu Trigger (DANH MỤC SẢN PHẨM) */}
             <div
               className="relative group flex items-center"
@@ -163,7 +163,7 @@ export default function PublicHeader() {
               onMouseLeave={closeMegaMenu}
             >
               <button
-                className={`flex items-center h-full py-4 gap-2 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-brand after:scale-x-0 after:transition-transform after:origin-center ${isMegaMenuOpen ? "after:scale-x-100 text-brand" : "group-hover:after:scale-x-100"}`}
+                className={`flex items-center h-full py-4 gap-2 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 after:transition-transform after:origin-center ${isMegaMenuOpen ? "after:scale-x-100 text-brand" : "group-hover:after:scale-x-100"}`}
               >
                 <Menu className="w-5 h-5" />
                 DANH MỤC SẢN PHẨM
@@ -171,10 +171,10 @@ export default function PublicHeader() {
 
               {/* Vertical Mega Menu Dropdown */}
               <div
-                className={`absolute top-full left-0 w-[1000px] min-h-[400px] flex bg-surface transition-all duration-300 ease-out z-50 border border-border shadow-ui-card rounded-sm overflow-hidden origin-top ${isMegaMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-3"}`}
+                className={`absolute top-full left-0 w-250 min-h-100 flex bg-surface transition-all duration-300 ease-out z-50 border border-border shadow-ui-card rounded-sm overflow-hidden origin-top ${isMegaMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-3"}`}
               >
                 {/* Left Column: Level 1 Categories */}
-                <div className="w-[260px] shrink-0 border-r border-border py-2 bg-surface flex flex-col">
+                <div className="w-65 shrink-0 border-r border-border py-2 bg-surface flex flex-col">
                   {categories.length > 0
                     ? categories
                         .filter(
@@ -273,7 +273,7 @@ export default function PublicHeader() {
                         </div>
                         {/* Banner */}
                         {activeCat.bannerUrl && (
-                          <div className="w-[220px] shrink-0">
+                          <div className="w-55 shrink-0">
                             <Link
                               onClick={() => setIsMegaMenuOpen(false)}
                               to={`/products?category=${activeCat.slug}`}
@@ -302,7 +302,7 @@ export default function PublicHeader() {
                 >
                   <Link
                     to={`/products?category=${cat.slug}`}
-                    className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
+                    className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
                   >
                     {cat.name}
                     {cat.children && cat.children.length > 0 && (
@@ -312,7 +312,7 @@ export default function PublicHeader() {
 
                   {/* Subcategory Dropdown */}
                   {cat.children && cat.children.length > 0 && (
-                    <div className="absolute top-full left-0 min-w-[240px] bg-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border shadow-ui-card rounded-sm">
+                    <div className="absolute top-full left-0 min-w-60 bg-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border shadow-ui-card rounded-sm">
                       {cat.children.map((child: any) => (
                         <div
                           key={child.id || child._id}
@@ -330,7 +330,7 @@ export default function PublicHeader() {
 
                           {/* Level 3 Subcategory Flyout (if any) */}
                           {child.children && child.children.length > 0 && (
-                            <div className="absolute top-0 left-full min-w-[200px] bg-surface opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-50 py-2 border border-border shadow-ui-card rounded-sm">
+                            <div className="absolute top-0 left-full min-w-50 bg-surface opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-50 py-2 border border-border shadow-ui-card rounded-sm">
                               {child.children.map((sub: any) => (
                                 <Link
                                   key={sub.id || sub._id}
@@ -352,7 +352,7 @@ export default function PublicHeader() {
               <div className="relative group flex items-center">
                 <Link
                   to="/products?sort=newest"
-                  className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
+                  className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
                 >
                   HÀNG MỚI
                 </Link>
@@ -361,13 +361,13 @@ export default function PublicHeader() {
               <div className="relative group flex items-center">
                 <Link
                   to="/brands"
-                  className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-brand after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:origin-center"
+                  className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:origin-center"
                 >
                   THƯƠNG HIỆU <ChevronDown className="w-4 h-4 ml-1" />
                 </Link>
 
                 {/* Brand Mega Menu */}
-                <div className="absolute top-full left-0 w-[500px] bg-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6">
+                <div className="absolute top-full left-0 w-125 bg-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6">
                   <h4 className="font-bold text-ink mb-4 pb-2 uppercase tracking-wide">
                     Thương hiệu nổi bật
                   </h4>
@@ -403,7 +403,7 @@ export default function PublicHeader() {
           MOBILE MENU OVERLAY
           ========================================= */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] flex lg:hidden">
+        <div className="fixed inset-0 z-100 flex lg:hidden">
           {/* eslint-disable-next-line  */}
           {/* eslint-disable-next-line  */}
           <div

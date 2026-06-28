@@ -121,13 +121,12 @@ export function ReviewPage() {
         description="Xem và kiểm duyệt các đánh giá từ khách hàng về sản phẩm. Bạn có thể xóa các đánh giá spam hoặc vi phạm tiêu chuẩn cộng đồng."
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={filterProductName}
                 onChange={(e) => {
                   setFilterProductName(e.target.value);
-                  setCursors([]);
                 }}
                 placeholder="Tìm theo sản phẩm..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
@@ -137,7 +136,6 @@ export function ReviewPage() {
                   type="button"
                   onClick={() => {
                     setFilterProductName("");
-                    setCursors([]);
                   }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
                   title="Xóa tìm kiếm"
@@ -152,7 +150,6 @@ export function ReviewPage() {
                 value={filterRating}
                 onValueChange={(val) => {
                   setFilterRating(val);
-                  setCursors([]);
                 }}
               >
                 <SelectTrigger className="w-fit px-3 h-10 border-border bg-surface text-sm text-ink-muted rounded-sm focus:ring-brand">
@@ -172,7 +169,6 @@ export function ReviewPage() {
                 value={filterReplied}
                 onValueChange={(val) => {
                   setFilterReplied(val);
-                  setCursors([]);
                 }}
               >
                 <SelectTrigger className="w-fit px-3 h-10 border-border bg-surface text-sm text-ink-muted rounded-sm focus:ring-brand">
@@ -192,7 +188,7 @@ export function ReviewPage() {
       <div className="premium-card">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <Table className="min-w-[800px] table-fixed">
+            <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border text-left">
                   <TableHead

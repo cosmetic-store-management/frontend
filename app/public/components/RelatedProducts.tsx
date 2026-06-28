@@ -74,7 +74,7 @@ export function RelatedProducts({
         {products.map((product) => (
           <div
             key={product.id}
-            className="w-[180px] min-w-[180px] sm:w-[200px] sm:min-w-[200px] md:w-[calc((100%-48px)/4)] md:min-w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)] lg:min-w-[calc((100%-64px)/5)] shrink-0 snap-start"
+            className="w-45 min-w-45 sm:w-50 sm:min-w-50 md:w-[calc((100%-48px)/4)] md:min-w-[calc((100%-48px)/4)] lg:w-[calc((100%-64px)/5)] lg:min-w-[calc((100%-64px)/5)] shrink-0 snap-start"
           >
             <ProductCard product={product} />
           </div>

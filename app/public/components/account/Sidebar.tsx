@@ -38,7 +38,7 @@ export function Sidebar({
         <div className="p-4 flex items-center gap-3 border-b border-border/50">
           <div
             data-testid="sidebar-avatar"
-            className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-border"
+            className="w-12 h-12 rounded-full overflow-hidden shrink-0 border-2 border-border"
           >
             {user.avatar ? (
               <img

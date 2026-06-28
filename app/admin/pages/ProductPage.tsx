@@ -234,7 +234,7 @@ export function ProductPage() {
         }
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={keyword}
@@ -301,7 +301,7 @@ export function ProductPage() {
                 setStatus(v === "all" ? "" : (v as "active" | "inactive"))
               }
             >
-              <SelectTrigger className="h-10 w-[150px] border-border bg-surface text-sm text-ink-muted">
+              <SelectTrigger className="h-10 w-37.5 border-border bg-surface text-sm text-ink-muted">
                 <SelectValue placeholder="Trạng thái" />
               </SelectTrigger>
               <SelectContent>
@@ -317,7 +317,7 @@ export function ProductPage() {
       <div className="premium-card">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <Table className="min-w-[900px] table-fixed">
+            <Table className="min-w-225 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                   <TableHead className="px-5 w-[28%] text-left">

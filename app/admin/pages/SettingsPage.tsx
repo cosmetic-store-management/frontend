@@ -187,7 +187,7 @@ export function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-2">
+      <div className="flex flex-col items-center justify-center min-h-100 gap-2">
         <Loader2 className="w-8 h-8 animate-spin text-brand" />
         <p className="text-sm text-ink-muted">Đang tải cấu hình hệ thống...</p>
       </div>
@@ -489,7 +489,7 @@ export function SettingsPage() {
                                 <SelectTrigger className="w-full h-10 [&>span]:w-full [&>span]:overflow-hidden [&>span]:block">
                                   <SelectValue placeholder="Chọn ngân hàng" />
                                 </SelectTrigger>
-                                <SelectContent className="max-h-[300px]">
+                                <SelectContent className="max-h-75">
                                   {banks.map((bank: any) => (
                                     <SelectItem key={bank.bin} value={bank.bin} className="w-full">
                                       <div className="flex items-center gap-2 w-full overflow-hidden">

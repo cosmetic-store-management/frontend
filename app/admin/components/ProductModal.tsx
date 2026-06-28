@@ -102,7 +102,7 @@ export default function ProductModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-[1100px] w-[95vw] h-[92vh] p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border flex flex-col">
+      <DialogContent className="max-w-275 w-[95vw] h-[92vh] p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border flex flex-col">
         <DialogHeader className="px-7 py-4 border-b border-border bg-surface shrink-0">
           <DialogTitle className="text-lg font-bold text-ink">
             {mode === "create" ? "Thêm sản phẩm mới" : "Chỉnh sửa sản phẩm"}

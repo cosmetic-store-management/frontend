@@ -24,7 +24,7 @@ export function SlideOutCart() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex justify-end">
+    <div className="fixed inset-0 z-999 flex justify-end">
       {/* Backdrop */}
       {/* eslint-disable-next-line  */}
       {/* eslint-disable-next-line  */}

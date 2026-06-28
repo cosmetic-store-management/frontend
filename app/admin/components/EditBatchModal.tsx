@@ -77,7 +77,7 @@ export default function EditBatchModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.3">
         <DialogHeader>
           <DialogTitle>Chỉnh sửa lô hàng</DialogTitle>
         </DialogHeader>

@@ -353,7 +353,7 @@ export function AddressPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-ink-muted flex-shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 text-ink-muted shrink-0" />
                       <span className="text-sm font-semibold text-ink">
                         {user.name}
                       </span>
@@ -372,7 +372,7 @@ export function AddressPage() {
                       {address.province}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
+                  <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => {
                         reset({

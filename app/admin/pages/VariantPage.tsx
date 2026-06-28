@@ -127,7 +127,7 @@ export function VariantPage() {
         }
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 placeholder="Tìm thuộc tính..."

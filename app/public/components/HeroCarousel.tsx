@@ -53,7 +53,7 @@ export function HeroCarousel() {
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <section className="relative w-full h-[500px] sm:h-[600px] bg-ink overflow-hidden group">
+    <section className="relative w-full h-125 sm:h-150 bg-ink overflow-hidden group">
       {slides.map((slide, index) => (
         <div
           key={slide.id}

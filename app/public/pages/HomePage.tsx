@@ -61,7 +61,7 @@ export default function HomePage() {
       {/* 1. HERO CAROUSEL */}
       <HeroCarousel />
 
-      <div className="flex flex-col gap-8 pt-6 pb-12 animate-page-enter max-w-[1200px] w-full mx-auto px-4">
+      <div className="flex flex-col gap-8 pt-6 pb-12 animate-page-enter max-w-300 w-full mx-auto px-4">
         {/* 2. VOUCHERS */}
         <HomeVouchers />
 
@@ -136,7 +136,7 @@ export default function HomePage() {
                 <Link
                   key={brand.id || brand._id}
                   to={`/products?brandId=${brand.id || brand._id}`}
-                  className="group rounded-lg overflow-hidden border border-border/40 aspect-[2/1] bg-surface flex items-center justify-center p-4 hover:border-brand/50 hover:shadow-md hover:-translate-y-1 transition-all"
+                  className="group rounded-lg overflow-hidden border border-border/40 aspect-2/1 bg-surface flex items-center justify-center p-4 hover:border-brand/50 hover:shadow-md hover:-translate-y-1 transition-all"
                 >
                   {(brand.imageUrl || brand.logoUrl) &&
                   !(brand.imageUrl || brand.logoUrl || "").includes(

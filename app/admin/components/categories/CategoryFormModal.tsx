@@ -143,7 +143,7 @@ export function CategoryFormModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[850px] w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-xl bg-surface shadow-ui-card border-border gap-0">
+      <DialogContent className="sm:max-w-212.5 w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-xl bg-surface shadow-ui-card border-border gap-0">
         <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
           <DialogTitle className="text-xl font-bold text-ink">
             {editing ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
@@ -264,7 +264,7 @@ export function CategoryFormModal({
                   />
                   {bannerUrl && (
                     <div className="relative mt-1.5 rounded-md overflow-hidden border border-border bg-surface-muted w-full">
-                      <div className="aspect-[3/1] w-full">
+                      <div className="aspect-3/1 w-full">
                         <img
                           src={bannerUrl}
                           alt="Banner preview"

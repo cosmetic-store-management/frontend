@@ -19,7 +19,7 @@ export default function ProductDetailVariants({
         Phân loại hàng
       </p>
       <div className="overflow-x-auto border border-border rounded-sm">
-        <table className="w-full text-left text-sm min-w-[400px]">
+        <table className="w-full text-left text-sm min-w-100">
           <thead className="bg-surface-soft text-ink-muted">
             <tr>
               <th className="px-3 py-2 font-medium">Tên</th>

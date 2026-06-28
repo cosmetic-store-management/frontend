@@ -535,8 +535,8 @@ export function PersonalInfoPage() {
       {/* OTP Modal */}
       {otpModalData &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 px-4">
-            <div className="bg-surface w-full max-w-[420px] rounded-lg p-6 shadow-xl border border-border/50 animate-scale-up">
+          <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4">
+            <div className="bg-surface w-full max-w-105 rounded-lg p-6 shadow-xl border border-border/50 animate-scale-up">
               <h3 className="text-lg font-bold text-ink mb-1">
                 Xác thực Email
               </h3>

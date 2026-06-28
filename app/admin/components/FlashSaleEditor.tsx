@@ -65,7 +65,7 @@ export function FlashSaleEditor({
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   const form = useForm<FlashSaleFormData>({
-    resolver: zodResolver(flashSaleSchema),
+    resolver: zodResolver(flashSaleSchema) as any,
     defaultValues: initialData || {
       name: "",
       startTime: "",
@@ -326,7 +326,7 @@ export function FlashSaleEditor({
               ) : (
                 <div className="space-y-6">
                   <div className="p-5 rounded-sm border flex flex-col sm:flex-row items-end gap-6 mb-2">
-                    <div className="space-y-2 flex-1 sm:max-w-[220px]">
+                    <div className="space-y-2 flex-1 sm:max-w-55">
                       {/* eslint-disable-next-line  */}
                       <label className="text-sm font-bold flex items-center gap-2">
                         <Percent className="w-4 h-4 text-muted-foreground" />
@@ -342,7 +342,7 @@ export function FlashSaleEditor({
                         className="bg-muted border-0 rounded-sm focus-visible:ring-1"
                       />
                     </div>
-                    <div className="space-y-2 flex-1 sm:max-w-[220px]">
+                    <div className="space-y-2 flex-1 sm:max-w-55">
                       {/* eslint-disable-next-line  */}
                       <label className="text-sm font-bold flex items-center gap-2">
                         <Package className="w-4 h-4 text-muted-foreground" />
@@ -378,10 +378,10 @@ export function FlashSaleEditor({
                           <TableHead className="whitespace-nowrap text-center">
                             Tồn Kho
                           </TableHead>
-                          <TableHead className="w-[180px] whitespace-nowrap text-center">
+                          <TableHead className="w-45 whitespace-nowrap text-center">
                             Giá Flash Sale
                           </TableHead>
-                          <TableHead className="w-[150px] whitespace-nowrap text-center">
+                          <TableHead className="w-37.5 whitespace-nowrap text-center">
                             SL Flash Sale
                           </TableHead>
                           <TableHead className="w-12 text-center"></TableHead>
@@ -391,7 +391,7 @@ export function FlashSaleEditor({
                         {fields.map((field, index) => (
                           <TableRow key={field.id}>
                             <TableCell>
-                              <div className="flex items-center gap-3 min-w-[200px]">
+                              <div className="flex items-center gap-3 min-w-50">
                                 <img
                                   src={field.productImage || "/placeholder.jpg"}
                                   alt={field.variantName}
@@ -481,7 +481,7 @@ export function FlashSaleEditor({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="min-w-[150px] shadow-sm bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-none font-bold"
+              className="min-w-37.5 shadow-sm bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-none font-bold"
             >
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -88,7 +88,7 @@ const SelectContent = React.forwardRef<
         className={cn(
           "p-1 overflow-y-scroll max-h-[var(--radix-select-content-available-height)]",
           // Custom thin scrollbar
-          "[&::-webkit-scrollbar]:w-[5px]",
+          "[&::-webkit-scrollbar]:w-1.3",
           "[&::-webkit-scrollbar-track]:bg-transparent",
           "[&::-webkit-scrollbar-thumb]:rounded-full",
           "[&::-webkit-scrollbar-thumb]:bg-border",

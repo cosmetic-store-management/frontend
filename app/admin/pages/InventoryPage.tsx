@@ -276,7 +276,7 @@ export function InventoryPage() {
         }
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 placeholder="Tìm tên sản phẩm, mã SKU..."
@@ -315,7 +315,7 @@ export function InventoryPage() {
           {/* Stock Table */}
           <div className="premium-card overflow-hidden">
             <div className="overflow-x-auto">
-              <Table className="min-w-[820px] table-fixed">
+              <Table className="min-w-205 table-fixed">
                 <TableHeader>
                   <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                     <TableHead className="w-[28%]">
@@ -392,7 +392,7 @@ export function InventoryPage() {
                                   {item.expiringBatchesCount &&
                                     item.expiringBatchesCount > 0 ? (
                                     <span title={`Có ${item.expiringBatchesCount} lô hàng sắp hết hạn (< 3 tháng)!`}>
-                                      <AlertCircle className="w-4 h-4 text-danger flex-shrink-0 cursor-help" />
+                                      <AlertCircle className="w-4 h-4 text-danger shrink-0 cursor-help" />
                                     </span>
                                   ) : null}
                                 </div>
@@ -539,7 +539,7 @@ export function InventoryPage() {
         /* Transactions List */
         <div className="premium-card overflow-hidden">
           <div className="overflow-x-auto">
-            <Table className="min-w-[800px] table-fixed">
+            <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                   <TableHead className="w-[18%]">
@@ -1107,7 +1107,7 @@ export function InventoryPage() {
                     {...field}
                     id="reason"
                     placeholder="Ví dụ: Hư hỏng, đếm sai, thất lạc..."
-                    className="min-h-[100px] resize-none"
+                    className="min-h-25 resize-none"
                   />
                 )}
               />

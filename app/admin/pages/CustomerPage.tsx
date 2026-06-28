@@ -359,7 +359,7 @@ export function CustomerPage() {
         description="Theo dõi và chăm sóc thành viên của hệ thống GlowUp, quản lý thông tin liên hệ và lịch sử mua hàng."
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}
@@ -459,7 +459,7 @@ export function CustomerPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-brand/10 text-brand flex flex-shrink-0 items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-brand/10 text-brand flex shrink-0 items-center justify-center">
             <Users className="w-6 h-6" />
           </div>
           <div>
@@ -473,7 +473,7 @@ export function CustomerPage() {
         </div>
 
         <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-success/10 text-success flex flex-shrink-0 items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-success/10 text-success flex shrink-0 items-center justify-center">
             <UserPlus className="w-6 h-6" />
           </div>
           <div>
@@ -487,7 +487,7 @@ export function CustomerPage() {
         </div>
 
         <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-gold/10 text-gold flex flex-shrink-0 items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-gold/10 text-gold flex shrink-0 items-center justify-center">
             <Repeat className="w-6 h-6" />
           </div>
           <div>
@@ -501,7 +501,7 @@ export function CustomerPage() {
         </div>
 
         <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-orange-500/10 text-orange-600 flex flex-shrink-0 items-center justify-center">
+          <div className="w-14 h-14 rounded-full bg-orange-500/10 text-orange-600 flex shrink-0 items-center justify-center">
             <Moon className="w-6 h-6" />
           </div>
           <div>
@@ -518,7 +518,7 @@ export function CustomerPage() {
       <div className="premium-card">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <Table className="min-w-[1000px] table-fixed">
+            <Table className="min-w-250 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                   <TableHead className="px-5 w-[25%]">Khách hàng</TableHead>
@@ -594,7 +594,7 @@ export function CustomerPage() {
                           <div className="flex flex-col gap-2 text-sm">
                             <div className="flex items-center gap-2.5 text-ink-muted">
                               <Mail className="w-4 h-4 opacity-70" />
-                              <span className="truncate max-w-[180px] font-medium">
+                              <span className="truncate max-w-45 font-medium">
                                 {cust.email || "—"}
                               </span>
                             </div>
@@ -778,7 +778,7 @@ export function CustomerPage() {
         open={isFormOpen}
         onOpenChange={(o) => !o && setIsFormOpen(false)}
       >
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-150">
           <DialogHeader className="pr-6">
             <DialogTitle>
               {editingId ? "Cập nhật thông tin" : "Thêm khách hàng mới"}
@@ -1081,7 +1081,7 @@ export function CustomerPage() {
         open={!!lockTarget}
         onOpenChange={(o) => !o && setLockTarget(null)}
       >
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader className="pr-6">
             <DialogTitle>
               Xác nhận {lockTarget?.isActive ? "khóa" : "mở khóa"} tài khoản
@@ -1130,7 +1130,7 @@ export function CustomerPage() {
         open={!!notesTarget}
         onOpenChange={(o) => !o && setNotesTarget(null)}
       >
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader className="pr-6">
             <DialogTitle>Ghi chú nội bộ</DialogTitle>
             <DialogDescription>
@@ -1188,7 +1188,7 @@ export function CustomerPage() {
         open={!!pointsTarget}
         onOpenChange={(o) => !o && setPointsTarget(null)}
       >
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader className="pr-6">
             <DialogTitle>Điều chỉnh điểm thưởng</DialogTitle>
             <DialogDescription>

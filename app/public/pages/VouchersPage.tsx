@@ -285,7 +285,7 @@ export function VouchersPage() {
             <Wallet className="w-4 h-4" />
             Kho của tôi
             {walletVouchers && walletVouchers.length > 0 && (
-              <span className="ml-1 min-w-[18px] h-[18px] inline-flex items-center justify-center text-[10px] font-black bg-white text-brand rounded-full px-1">
+              <span className="ml-1 min-w-4.5 h-4.5 inline-flex items-center justify-center text-[10px] font-black bg-white text-brand rounded-full px-1">
                 {walletVouchers.length}
               </span>
             )}

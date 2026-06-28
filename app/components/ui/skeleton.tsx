@@ -122,7 +122,7 @@ export function StatGridSkeleton({ count = 4 }: { count?: number }) {
 
 export function ProductDetailSkeleton() {
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
+    <div className="max-w-300 mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-12 animate-pulse">
       {/* Image gallery placeholder */}
       <div className="space-y-4">
         <Skeleton className="aspect-square w-full rounded-sm" />

@@ -39,7 +39,7 @@ export default function DeleteModal({
 }: DeleteModalProps) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="animate-scale-in sm:max-w-[480px] p-6">
+      <DialogContent className="animate-scale-in sm:max-w-120 p-6">
         <DialogHeader className="flex flex-row items-start gap-4 space-y-0 text-left">
           <div className="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center shrink-0 mt-0.5">
             <AlertCircle className="w-6 h-6 text-danger" />

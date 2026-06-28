@@ -66,7 +66,7 @@ function HomeSingleVoucher({
   const saved = isSaved || justSaved;
 
   return (
-    <div className="bg-brand/5 border border-brand/20 rounded-sm p-3 flex flex-col relative shrink-0 min-w-[180px] max-w-[220px]">
+    <div className="bg-brand/5 border border-brand/20 rounded-sm p-3 flex flex-col relative shrink-0 min-w-45 max-w-55">
       <div className="absolute top-1/2 -left-2 w-4 h-4 bg-bg rounded-full -translate-y-1/2 border-r border-brand/20" />
       <div className="absolute top-1/2 -right-2 w-4 h-4 bg-bg rounded-full -translate-y-1/2 border-l border-brand/20" />
 
@@ -147,7 +147,7 @@ export function HomeVouchers() {
           ? [...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="min-w-[180px] h-[88px] bg-surface-soft border border-border rounded-sm animate-pulse shrink-0"
+                className="min-w-45 h-22 bg-surface-soft border border-border rounded-sm animate-pulse shrink-0"
               />
             ))
           : vouchers!.map((v) => (

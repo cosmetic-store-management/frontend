@@ -224,7 +224,7 @@ export function ProductBasicInfo({
       {/* Mô tả */}
       <div className="space-y-1.5">
         <Label className="text-sm font-semibold text-ink">Mô tả sản phẩm</Label>
-        <div className="min-h-[200px] [&_.ql-editor]:min-h-[150px]">
+        <div className="min-h-50 [&_.ql-editor]:min-h-37.5">
           <Controller
             control={control}
             name="description"

@@ -167,7 +167,7 @@ export function TierPage() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           {t.isCurrent && (
-                            <CheckCircle className="w-3.5 h-3.5 text-brand flex-shrink-0" />
+                            <CheckCircle className="w-3.5 h-3.5 text-brand shrink-0" />
                           )}
                           <span
                             className={`font-semibold text-sm ${t.isCurrent ? "text-brand" : "text-ink"}`}

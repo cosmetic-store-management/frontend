@@ -173,7 +173,7 @@ export function ProductDetailPage() {
   };
 
   return (
-    <div className="max-w-[1200px] w-full mx-auto px-4 py-8 animate-page-enter">
+    <div className="max-w-300 w-full mx-auto px-4 py-8 animate-page-enter">
       {/* Breadcrumb / Back Button */}
       <div className="flex items-center text-[13px] text-muted-foreground mb-8">
         <button
@@ -385,7 +385,7 @@ export function ProductDetailPage() {
       </div>
 
       {/* Mobile Fixed Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-surface border-t border-border shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-[100] md:hidden flex gap-3">
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-surface border-t border-border shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-100 md:hidden flex gap-3">
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock || !product.isActive}
@@ -411,7 +411,7 @@ export function ProductDetailPage() {
       )}
 
       {/* Khối 3 & 4: Chi tiết sản phẩm & Đánh giá */}
-      <div className="mt-4 premium-card !overflow-visible p-6 md:p-10">
+      <div className="mt-4 premium-card overflow-visible! p-6 md:p-10">
         <h2 className="text-2xl font-black text-ink mb-6 uppercase tracking-wider text-center">
           Chi Tiết Sản Phẩm
         </h2>

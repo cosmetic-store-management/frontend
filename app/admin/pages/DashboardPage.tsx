@@ -25,7 +25,7 @@ export function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-2">
+      <div className="flex flex-col items-center justify-center min-h-100 gap-2">
         <Loader2 className="w-8 h-8 animate-spin text-brand" />
         <p className="text-sm text-ink-muted">Đang tải số liệu thống kê...</p>
       </div>
@@ -189,7 +189,7 @@ export function DashboardPage() {
       </div>
 
       {/* Tables Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-[400px]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 flex-1 min-h-100">
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col">
           <div className="flex-1 flex flex-col">
@@ -244,7 +244,7 @@ export function DashboardPage() {
                         <td className="py-3 font-medium text-ink">
                           {order.customer || "Khách vãng lai"}
                         </td>
-                        <td className="py-3 text-ink-muted max-w-[180px] truncate">
+                        <td className="py-3 text-ink-muted max-w-45 truncate">
                           {order.items || "Không rõ"}
                         </td>
                         <td className="py-3 text-right font-medium text-ink">

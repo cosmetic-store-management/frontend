@@ -336,7 +336,7 @@ export function CategoryPage() {
         }
         filters={
           <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
-            <div className="group relative w-full sm:w-[320px]">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}
@@ -359,7 +359,7 @@ export function CategoryPage() {
       ) : (
         <div className="premium-card">
           <div className="overflow-x-auto">
-            <Table className="min-w-[750px] table-fixed">
+            <Table className="min-w-187.5 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                   <TableHead className="w-[38%] pl-4 text-left">
@@ -668,7 +668,7 @@ export function CategoryPage() {
                     />
                     {bannerUrl && (
                       <div className="relative mt-2 rounded-md overflow-hidden border border-border bg-surface-muted">
-                        <div className="aspect-[3/1] w-full">
+                        <div className="aspect-3/1 w-full">
                           <img
                             src={bannerUrl}
                             alt="Banner preview"

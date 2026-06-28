@@ -149,7 +149,7 @@ export function OrdersPage() {
               orders.filter((o: any) => o.orderStatus === tab.key).length >
                 0 && (
                 <span
-                  className={`flex-shrink-0 inline-flex items-center justify-center w-[18px] h-[18px] text-[10px] font-bold rounded-full ${
+                  className={`shrink-0 inline-flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold rounded-full ${
                     statusTab === tab.key
                       ? "bg-brand text-white"
                       : "bg-border/70 text-ink-muted"
@@ -245,10 +245,10 @@ export function OrdersPage() {
                             <img
                               src={item.imageUrl}
                               alt={item.productName}
-                              className="w-10 h-10 rounded-sm object-cover border border-border flex-shrink-0"
+                              className="w-10 h-10 rounded-sm object-cover border border-border shrink-0"
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-sm bg-surface-soft border border-border flex-shrink-0 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-sm bg-surface-soft border border-border shrink-0 flex items-center justify-center">
                               <Package className="w-4 h-4 text-ink-muted/50" />
                             </div>
                           )}
@@ -458,7 +458,7 @@ export function OrdersPage() {
                                 Lý do trả hàng/hoàn tiền:
                               </p>
                               <textarea
-                                className="w-full text-sm border border-border rounded-sm p-2 focus:outline-none focus:border-brand min-h-[60px]"
+                                className="w-full text-sm border border-border rounded-sm p-2 focus:outline-none focus:border-brand min-h-15"
                                 placeholder="Nhập lý do và mô tả tình trạng sản phẩm..."
                                 value={returnReason}
                                 onChange={(e) =>

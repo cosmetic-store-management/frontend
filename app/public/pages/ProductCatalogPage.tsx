@@ -45,10 +45,10 @@ export function ProductCatalogPage() {
 
   return (
     <div className="bg-white w-full flex-1">
-      <div className="max-w-[1200px] w-full mx-auto px-4 py-8 animate-page-enter">
+      <div className="max-w-300 w-full mx-auto px-4 py-8 animate-page-enter">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filter (Desktop) */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
+          <aside className="hidden lg:block w-64 shrink-0">
             {/* CATEGORY CONTEXT */}
             <div className="mb-6 border-b border-transparent lg:border-border/50 pb-4">
               <span className="text-sm text-ink-muted">Danh mục</span>
@@ -282,7 +282,7 @@ export function ProductCatalogPage() {
 
         {/* Mobile Filter Drawer */}
         {isMobileFilterOpen && (
-          <div className="fixed inset-0 z-[60] bg-black/50 lg:hidden flex justify-end animate-fade-in">
+          <div className="fixed inset-0 z-60 bg-black/50 lg:hidden flex justify-end animate-fade-in">
             <div className="w-4/5 max-w-sm bg-surface h-full  flex flex-col animate-slide-in-right">
               <div className="p-4 flex items-center justify-between border-b border-border">
                 <span className="font-bold text-lg">Bộ lọc</span>

@@ -55,7 +55,6 @@ export function DatePicker({ value, onChange, disabled }: DatePickerProps) {
             // Delay closing to prevent Radix UI Dialog from falsely detecting an outside click when the popover unmounts
             setTimeout(() => setOpen(false), 10);
           }}
-          initialFocus
         />
       </PopoverContent>
     </Popover>

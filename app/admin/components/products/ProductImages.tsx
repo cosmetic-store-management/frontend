@@ -44,7 +44,7 @@ export function ProductImages({
   };
 
   return (
-    <div className="w-full lg:w-[300px] xl:w-[340px] bg-bg border-t lg:border-t-0 lg:border-l border-border overflow-y-auto shrink-0">
+    <div className="w-full lg:w-75 xl:w-85 bg-bg border-t lg:border-t-0 lg:border-l border-border overflow-y-auto shrink-0">
       <div className="p-5 space-y-5">
         {/* Ảnh đại diện */}
         <div className="space-y-2">

@@ -260,7 +260,7 @@ export function StaffFormModal({
                       : "custom"
                 }
               >
-                <SelectTrigger className="w-[200px] h-8 text-xs bg-surface border-input focus:ring-brand">
+                <SelectTrigger className="w-50 h-8 text-xs bg-surface border-input focus:ring-brand">
                   <SelectValue placeholder="-- Tùy chỉnh quyền --" />
                 </SelectTrigger>
                 <SelectContent>

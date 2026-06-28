@@ -52,7 +52,7 @@ export function CustomerNotesModal({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader className="pr-6">
           <DialogTitle>Ghi chú nội bộ</DialogTitle>
           <DialogDescription>
