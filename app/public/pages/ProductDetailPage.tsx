@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router";
-import * as HelmetAsync from "react-helmet-async";
-const Helmet = HelmetAsync.Helmet || (HelmetAsync as any).default?.Helmet;
+
 
 import { Star, ArrowLeft, Minus, Plus, ShoppingBag, Heart } from "lucide-react";
 import { useProduct } from "@/public/hooks/useProducts";
@@ -184,7 +183,7 @@ export function ProductDetailPage() {
         </button>
       </div>
 
-      <Helmet>
+      <>
         <title>
           {(product as any).metaTitle || `${product.name} | GlowUp Cosmetics`}
         </title>
@@ -211,7 +210,7 @@ export function ProductDetailPage() {
           }
         />
         <meta property="og:image" content={product.imageUrl} />
-      </Helmet>
+      </>
 
       <div className="premium-card p-4 sm:p-6 md:p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[45%_1fr] gap-8 md:gap-10 lg:gap-14">

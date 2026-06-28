@@ -10,8 +10,7 @@ import {
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/sonner";
-import * as HelmetAsync from "react-helmet-async";
-const HelmetProvider = HelmetAsync.HelmetProvider || (HelmetAsync as any).default?.HelmetProvider;
+
 import React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -165,11 +164,9 @@ export default function App() {
           CartProvider đã được xóa — cart state dùng Zustand (store/cart.store.ts).
           Không cần Provider wrapper; useCartStore() có thể dùng ở bất kỳ đâu.
         */}
-        <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <Outlet />
           </QueryClientProvider>
-        </HelmetProvider>
 
         <Toaster />
         <ScrollRestoration />
