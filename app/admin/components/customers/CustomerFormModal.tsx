@@ -218,7 +218,7 @@ export function CustomerFormModal({
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang lưu...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...
                 </>
               ) : (
                 "Xác nhận"

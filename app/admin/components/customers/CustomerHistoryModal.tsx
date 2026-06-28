@@ -24,10 +24,10 @@ import type { Order } from "@/admin/types/order";
 import type { Customer } from "@/admin/services/user.service";
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: "Chờ xử lý",
-  shipping: "Đang giao",
-  completed: "Hoàn thành",
-  cancelled: "Đã huỷ",
+  processing: "Processing",
+  shipping: "Shipping",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
@@ -64,11 +64,11 @@ export function CustomerHistoryModal({
       <DialogContent className="sm:max-w-3xl">
         <DialogHeader className="pr-6">
           <DialogTitle>
-            Lịch sử mua hàng:{" "}
+            Order History:{" "}
             <span className="text-brand">{customer?.name}</span>
           </DialogTitle>
           <DialogDescription>
-            SĐT: <span className="font-medium text-ink">{customer?.phone}</span>{" "}
+            Phone: <span className="font-medium text-ink">{customer?.phone}</span>{" "}
             | Email:{" "}
             <span className="font-medium text-ink">
               {customer?.email || "N/A"}
@@ -78,11 +78,9 @@ export function CustomerHistoryModal({
 
         <div className="mt-2">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <Loader2 className="w-6 h-6 animate-spin text-brand" />
-              <span className="text-sm text-ink-muted">
-                Đang tải lịch sử đơn hàng...
-              </span>
+            <div className="py-8 text-center text-ink-muted text-sm flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading order history...
             </div>
           ) : orders.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 gap-3">

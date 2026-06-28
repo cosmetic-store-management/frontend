@@ -128,8 +128,8 @@ export function VoucherPage() {
       ...data,
       maxDiscount:
         data.discountType === "percent" &&
-        data.maxDiscount &&
-        data.maxDiscount > 0
+          data.maxDiscount &&
+          data.maxDiscount > 0
           ? data.maxDiscount
           : undefined,
       startDate: new Date(data.startDate).toISOString(),
@@ -141,12 +141,12 @@ export function VoucherPage() {
       : createMutation.mutateAsync(payload);
 
     toast.promise(action, {
-      loading: editing ? "Đang cập nhật..." : "Đang tạo...",
-      success: editing ? "Cập nhật thành công!" : "Tạo mã giảm giá thành công!",
-      error: (e: unknown) => (e instanceof Error ? e.message : "Có lỗi xảy ra"),
+      loading: editing ? "Updating..." : "Creating...",
+      success: editing ? "Update successful!" : "Voucher created successfully!",
+      error: (e: unknown) => (e instanceof Error ? e.message : "An error occurred"),
     });
 
-    await action.then(() => setIsFormOpen(false)).catch(() => {});
+    await action.then(() => setIsFormOpen(false)).catch(() => { });
   };
 
   const confirmDelete = () => {
@@ -156,10 +156,10 @@ export function VoucherPage() {
         .mutateAsync(deleteTarget.id)
         .then(() => setDeleteTarget(null)),
       {
-        loading: "Đang xoá...",
-        success: `Đã xoá mã "${deleteTarget.code}"`,
+        loading: "Deleting...",
+        success: `Deleted voucher "${deleteTarget.code}"`,
         error: (e: unknown) =>
-          e instanceof Error ? e.message : "Có lỗi xảy ra",
+          e instanceof Error ? e.message : "An error occurred",
       },
     );
   };
@@ -169,8 +169,8 @@ export function VoucherPage() {
   return (
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
-        title="Quản lý Mã giảm giá"
-        description="Quản lý các chương trình khuyến mãi, mã giảm giá cho khách hàng."
+        title="Voucher Management"
+        description="Manage promotional campaigns and discount codes for customers."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -180,17 +180,17 @@ export function VoucherPage() {
               setIsFormOpen(true);
             }}
           >
-            <Plus className="size-4 mr-2" /> Thêm Voucher
+            <Plus className="size-4 mr-2" /> New Voucher
           </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm theo mã Voucher..."
+                placeholder="Search by voucher code..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
@@ -203,20 +203,20 @@ export function VoucherPage() {
           <Loader2 className="w-8 h-8 animate-spin text-brand" />
         </div>
       ) : (
-        <div className="premium-card">
-          <Table>
+        <div className="premium-card rounded-sm overflow-hidden">
+          <Table className="table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead>Mã Voucher</TableHead>
-                <TableHead>Loại giảm</TableHead>
-                <TableHead className="text-right">Mức giảm</TableHead>
-                <TableHead className="text-right">Đơn tối thiểu</TableHead>
-                <TableHead className="text-center">
-                  Số lượng / Đã dùng
+                <TableHead className="w-[15%] text-left pl-4">Voucher Code</TableHead>
+                <TableHead className="w-[12%] text-center">Discount Type</TableHead>
+                <TableHead className="w-[12%] text-center">Discount Value</TableHead>
+                <TableHead className="w-[12%] text-center">Min Order</TableHead>
+                <TableHead className="w-[12%] text-center">
+                  Usage Limit / Used
                 </TableHead>
-                <TableHead>Thời gian</TableHead>
-                <TableHead className="text-center">Trạng thái</TableHead>
-                <TableHead className="text-center w-24">Thao tác</TableHead>
+                <TableHead className="w-[15%] text-center">Validity Period</TableHead>
+                <TableHead className="w-[12%] text-center">Status</TableHead>
+                <TableHead className="w-[10%] text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -229,38 +229,40 @@ export function VoucherPage() {
                   <TableCell className="font-bold text-ink uppercase">
                     {voucher.code}
                   </TableCell>
-                  <TableCell>
-                    {voucher.discountType === "percent" && "Theo %"}
-                    {voucher.discountType === "fixed" && "Tiền mặt"}
+                  <TableCell className="text-center">
+                    {voucher.discountType === "percent" && "Percent"}
+                    {voucher.discountType === "fixed" && "Fixed Amount"}
                     {voucher.discountType === "freeship" && "Freeship"}
                   </TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="text-center font-medium">
                     {voucher.discountType === "percent"
                       ? `${voucher.discountValue}%`
                       : `${voucher.discountValue.toLocaleString("vi-VN")}₫`}
                   </TableCell>
-                  <TableCell className="text-right text-ink-muted">
+                  <TableCell className="text-center text-ink-muted">
                     {voucher.minOrderValue.toLocaleString("vi-VN")}₫
                   </TableCell>
                   <TableCell className="text-center text-sm">
                     {voucher.usedCount} /{" "}
                     {voucher.usageLimit === 0 ? "∞" : voucher.usageLimit}
                   </TableCell>
-                  <TableCell className="text-xs text-ink-muted">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />{" "}
-                      {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
-                    </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Calendar className="w-3 h-3" />{" "}
-                      {new Date(voucher.endDate).toLocaleDateString("vi-VN")}
+                  <TableCell className="text-xs text-ink-muted text-center">
+                    <div className="flex flex-col w-fit mx-auto">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />{" "}
+                        {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
+                      </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        <Calendar className="w-3 h-3" />{" "}
+                        {new Date(voucher.endDate).toLocaleDateString("vi-VN")}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="text-center">
                     <span
                       className={`px-2.5 py-1 text-[11px] uppercase font-bold rounded-sm ${voucher.isActive ? "bg-success/10 text-success" : "bg-ink-muted/10 text-ink-muted"}`}
                     >
-                      {voucher.isActive ? "Hoạt động" : "Tạm ngừng"}
+                      {voucher.isActive ? "Active" : "Paused"}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
@@ -287,14 +289,14 @@ export function VoucherPage() {
                             }}
                           >
                             <Edit className="w-4 h-4 mr-2.5" />
-                            Chỉnh sửa
+                            Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
                             onClick={() => setDeleteTarget(voucher)}
                           >
                             <Trash2 className="w-4 h-4 mr-2.5" />
-                            Xóa
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -306,12 +308,12 @@ export function VoucherPage() {
           </Table>
           {(!vouchers || vouchers.length === 0) && (
             <p className="py-8 text-center text-sm text-ink-muted">
-              Chưa có mã giảm giá nào
+              No vouchers found
             </p>
           )}
           {vouchers && vouchers.length > 0 && filteredVouchers.length === 0 && (
             <p className="py-8 text-center text-sm text-ink-muted">
-              Không tìm thấy mã nào phù hợp
+              No matching vouchers found
             </p>
           )}
         </div>
@@ -321,7 +323,7 @@ export function VoucherPage() {
         <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-md bg-surface shadow-ui-card border-border">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
             <DialogTitle className="text-xl font-bold text-ink">
-              {editing ? "Sửa mã giảm giá" : "Thêm mã giảm giá mới"}
+              {editing ? "Edit Voucher" : "Add New Voucher"}
             </DialogTitle>
           </DialogHeader>
 
@@ -336,7 +338,7 @@ export function VoucherPage() {
                     htmlFor="code"
                     className="text-sm font-semibold text-ink"
                   >
-                    Mã Voucher <span className="text-danger">*</span>
+                    Voucher Code <span className="text-danger">*</span>
                   </Label>
                   <Input
                     id="code"
@@ -354,7 +356,7 @@ export function VoucherPage() {
                     htmlFor="discountType"
                     className="text-sm font-semibold text-ink"
                   >
-                    Loại giảm giá <span className="text-brand">*</span>
+                    Discount Type <span className="text-brand">*</span>
                   </Label>
                   <Controller
                     name="discountType"
@@ -366,15 +368,15 @@ export function VoucherPage() {
                         value={field.value}
                       >
                         <SelectTrigger className="h-10 bg-surface border-border focus:ring-brand focus:border-brand">
-                          <SelectValue placeholder="Chọn loại giảm giá" />
+                          <SelectValue placeholder="Select discount type" />
                         </SelectTrigger>
                         <SelectContent className="bg-surface border-border">
-                          <SelectItem value="percent">Giảm theo %</SelectItem>
+                          <SelectItem value="percent">Percentage %</SelectItem>
                           <SelectItem value="fixed">
-                            Giảm số tiền cố định
+                            Fixed Amount
                           </SelectItem>
                           <SelectItem value="freeship">
-                            Miễn phí vận chuyển (Freeship)
+                            Free Shipping
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -392,7 +394,7 @@ export function VoucherPage() {
                     htmlFor="discountValue"
                     className="text-sm font-semibold text-ink"
                   >
-                    Mức giảm <span className="text-brand">*</span>
+                    Discount Value <span className="text-brand">*</span>
                   </Label>
                   <Input
                     id="discountValue"
@@ -414,13 +416,13 @@ export function VoucherPage() {
                       htmlFor="maxDiscount"
                       className="text-sm font-semibold text-ink"
                     >
-                      Giảm tối đa (₫)
+                      Max Discount ($)
                     </Label>
                     <Input
                       id="maxDiscount"
                       type="number"
                       min="0"
-                      placeholder="0 = Không giới hạn"
+                      placeholder="0 = Unlimited"
                       {...register("maxDiscount", { valueAsNumber: true })}
                       aria-invalid={!!errors.maxDiscount}
                       className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
@@ -440,7 +442,7 @@ export function VoucherPage() {
                     htmlFor="minOrderValue"
                     className="text-sm font-semibold text-ink"
                   >
-                    Đơn tối thiểu (₫) <span className="text-brand">*</span>
+                    Min Order Value ($) <span className="text-brand">*</span>
                   </Label>
                   <Input
                     id="minOrderValue"
@@ -461,13 +463,13 @@ export function VoucherPage() {
                     htmlFor="usageLimit"
                     className="text-sm font-semibold text-ink"
                   >
-                    Giới hạn lượt dùng
+                    Usage Limit
                   </Label>
                   <Input
                     id="usageLimit"
                     type="number"
                     min="0"
-                    placeholder="0 = Vô hạn"
+                    placeholder="0 = Unlimited"
                     {...register("usageLimit", { valueAsNumber: true })}
                     aria-invalid={!!errors.usageLimit}
                     className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
@@ -484,7 +486,7 @@ export function VoucherPage() {
                     htmlFor="startDate"
                     className="text-sm font-semibold text-ink"
                   >
-                    Từ ngày <span className="text-brand">*</span>
+                    Start Date <span className="text-brand">*</span>
                   </Label>
                   <Input
                     id="startDate"
@@ -504,7 +506,7 @@ export function VoucherPage() {
                     htmlFor="endDate"
                     className="text-sm font-semibold text-ink"
                   >
-                    Đến ngày <span className="text-brand">*</span>
+                    End Date <span className="text-brand">*</span>
                   </Label>
                   <Input
                     id="endDate"
@@ -527,7 +529,7 @@ export function VoucherPage() {
                     htmlFor="isActive"
                     className="text-sm font-semibold text-ink cursor-pointer"
                   >
-                    Trạng thái hoạt động
+                    Active Status
                   </Label>
                   <Controller
                     name="isActive"
@@ -542,7 +544,7 @@ export function VoucherPage() {
                   />
                 </div>
                 <p className="text-xs text-ink-muted mt-2">
-                  Kích hoạt mã giảm giá ngay lập tức cho người dùng
+                  Activate voucher immediately for customers
                 </p>
               </div>
             </div>
@@ -554,14 +556,14 @@ export function VoucherPage() {
                 className="h-11 bg-surface"
                 onClick={() => setIsFormOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button
                 type="submit"
                 className="h-11 bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                Xác nhận
+                Confirm
               </Button>
             </DialogFooter>
           </form>
@@ -571,21 +573,21 @@ export function VoucherPage() {
       <Dialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
         <DialogContent className="animate-scale-in">
           <DialogHeader>
-            <DialogTitle>Xoá Mã giảm giá</DialogTitle>
+            <DialogTitle>Delete Voucher</DialogTitle>
           </DialogHeader>
           <DialogDescription>
-            Xoá vĩnh viễn mã <strong>{deleteTarget?.code}</strong>?
+            Permanently delete voucher <strong>{deleteTarget?.code}</strong>?
           </DialogDescription>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Huỷ
+              Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={confirmDelete}
               disabled={deleteMutation.isPending}
             >
-              Xác nhận
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

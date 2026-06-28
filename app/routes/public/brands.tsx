@@ -4,11 +4,11 @@ import BrandsPage from "@/public/pages/BrandsPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Thương hiệu",
+    title: "Brands",
     description:
-      "Khám phá các thương hiệu mỹ phẩm hàng đầu tại GlowUp: L'Oréal, Innisfree, Cetaphil, Romand, Some By Mi và nhiều thương hiệu nổi tiếng khác.",
+      "Discover top cosmetics brands at GlowUp: L'Oréal, Innisfree, Cetaphil, Romand, Some By Mi and many more.",
     keywords:
-      "thương hiệu mỹ phẩm, Innisfree, Cetaphil, Romand, L'Oréal, GlowUp",
+      "cosmetics brands, Innisfree, Cetaphil, Romand, L'Oréal, GlowUp",
     canonical: "/brands",
   });
 

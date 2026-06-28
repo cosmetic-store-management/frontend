@@ -149,7 +149,7 @@ export function ProductPage() {
         }))
         : [
           {
-            name: "Mặc định",
+            name: "Default",
             sku: "",
             price: "0",
             discountPrice: "",
@@ -188,8 +188,8 @@ export function ProductPage() {
   return (
     <section className="space-y-4 animate-page-enter">
       <PageHeader
-        title="Quản lý sản phẩm"
-        description="Quản lý thông tin sản phẩm, danh mục, giá bán và tồn kho."
+        title="Product Management"
+        description="Manage products, categories, pricing, and inventory."
         error={error}
         onClearError={clearError}
         onRetry={refresh}
@@ -209,7 +209,7 @@ export function ProductPage() {
               onClick={() => exportToExcel()}
               disabled={submitting}
             >
-              <Download className="size-4 mr-2" /> Xuất Excel
+              <Download className="size-4 mr-1.5" /> Export
             </Button>
             <Button
               className="h-10 shrink-0 px-4 shadow-none"
@@ -218,7 +218,7 @@ export function ProductPage() {
               onClick={() => fileInputRef.current?.click()}
               disabled={submitting}
             >
-              <Upload className="size-4 mr-2" /> Nhập Excel
+              <Upload className="size-4 mr-1.5" /> Import
             </Button>
             <Button
               className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -228,118 +228,121 @@ export function ProductPage() {
                 setModal({ type: "create" });
               }}
             >
-              <Plus className="size-4 mr-2" /> Thêm sản phẩm
+              <Plus className="size-4 mr-1.5" /> Add Product
             </Button>
           </>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
+            {/* Search */}
             <div className="group relative w-full sm:w-80">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
               <Input
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Tìm theo tên sản phẩm..."
+                placeholder="Search by product name..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {keyword && (
                 <button
                   type="button"
                   onClick={() => setKeyword("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="size-4" />
                 </button>
               )}
             </div>
 
-            <Select
-              value={brandId || "all"}
-              onValueChange={(v) => setBrandId(v === "all" ? "" : v)}
-            >
-              <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted px-3">
-                <SelectValue placeholder="Thương hiệu" />
-              </SelectTrigger>
-              <SelectContent className="max-h-48 overflow-y-auto">
-                <SelectItem value="all">Tất cả thương hiệu</SelectItem>
-                {brandsWithProducts.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>
-                    {b.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {/* Filters row */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Select
+                value={brandId || "all"}
+                onValueChange={(v) => setBrandId(v === "all" ? "" : v)}
+              >
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Brand" />
+                </SelectTrigger>
+                <SelectContent className="max-h-48 overflow-y-auto">
+                  <SelectItem value="all">All brands</SelectItem>
+                  {brandsWithProducts.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={categoryId || "all"}
-              onValueChange={(v) => setCategoryId(v === "all" ? "" : v)}
-            >
-              <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted px-3">
-                <SelectValue placeholder="Danh mục" />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                <SelectItem value="all">Tất cả danh mục</SelectItem>
-                {buildFlatCatOptions(categories).map((opt) => (
-                  <SelectItem key={opt.id} value={opt.id}>
-                    <span
-                      style={{ paddingLeft: `${opt.depth * 14}px` }}
-                      className="flex items-center gap-1"
-                    >
-                      {opt.depth > 0 && (
-                        <span className="text-ink-muted/50 text-xs">└</span>
-                      )}
-                      {opt.label}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Select
+                value={categoryId || "all"}
+                onValueChange={(v) => setCategoryId(v === "all" ? "" : v)}
+              >
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent className="max-h-60">
+                  <SelectItem value="all">All categories</SelectItem>
+                  {buildFlatCatOptions(categories).map((opt) => (
+                    <SelectItem key={opt.id} value={opt.id}>
+                      <span
+                        style={{ paddingLeft: `${opt.depth * 14}px` }}
+                        className="flex items-center gap-1"
+                      >
+                        {opt.depth > 0 && (
+                          <span className="text-muted-foreground/50 text-xs">└</span>
+                        )}
+                        {opt.label}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            <Select
-              value={status || "all"}
-              onValueChange={(v) =>
-                setStatus(v === "all" ? "" : (v as "active" | "inactive"))
-              }
-            >
-              <SelectTrigger className="h-10 w-37.5 border-border bg-surface text-sm text-ink-muted">
-                <SelectValue placeholder="Trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả</SelectItem>
-                <SelectItem value="active">Đang bán</SelectItem>
-                <SelectItem value="inactive">Ngừng bán</SelectItem>
-              </SelectContent>
-            </Select>
+              <div className="flex items-center gap-1 p-1 bg-surface-muted rounded-sm">
+                {(["all", "active", "inactive"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setStatus(s === "all" ? "" : s)}
+                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${(s === "all" && !status) || status === s
+                      ? "bg-surface text-brand shadow-sm"
+                      : "text-ink-muted hover:text-ink"
+                      }`}
+                  >
+                    {s === "all" ? "All" : s === "active" ? "Active" : "Inactive"}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         }
       />
 
-      <div className="premium-card">
+      <div className="premium-card overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table className="min-w-225 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="px-5 w-[28%] text-left">
-                    Sản phẩm
+                  <TableHead className="px-5 w-[25%] text-left">
+                    Product
                   </TableHead>
-                  <TableHead className="px-5 w-[16%] text-left">
-                    Thương hiệu
+                  <TableHead className="px-5 w-[14%] text-left ml-4">
+                    Brand
                   </TableHead>
-                  <TableHead className="px-5 w-[16%] text-left">
-                    Danh mục
+                  <TableHead className="px-5 w-[14%] text-left">
+                    Category
                   </TableHead>
                   <TableHead className="px-5 w-[12%] text-center">
-                    Trạng thái
+                    Status
                   </TableHead>
-                  <TableHead className="px-5 w-[14%] text-center">
-                    Khoảng giá
+                  <TableHead className="px-5 w-[15%] text-center">
+                    Price Range
                   </TableHead>
-                  <TableHead className="px-5 w-[8%] text-center">
-                    Tồn kho
+                  <TableHead className="px-5 w-[10%] text-center">
+                    Stock
                   </TableHead>
-                  <TableHead className="px-5 w-24 text-center">
-                    Thao tác
+                  <TableHead className="px-5 w-[10%] text-center">
+                    Actions
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -351,7 +354,7 @@ export function ProductPage() {
                       colSpan={7}
                       className="px-4 py-12 text-center text-sm text-ink-muted"
                     >
-                      Đang tải dữ liệu sản phẩm...
+                      Loading products...
                     </TableCell>
                   </TableRow>
                 )}
@@ -463,7 +466,7 @@ export function ProductPage() {
                                 {totalStock.toLocaleString("vi-VN")}
                               </span>
                               <span className="text-[10px] text-ink-muted mt-0.5">
-                                {variantCount} loại
+                                {variantCount} variants
                               </span>
                             </div>
                           );
@@ -495,7 +498,7 @@ export function ProductPage() {
                                 }}
                               >
                                 <Edit className="w-4 h-4 mr-2.5" />
-                                Chỉnh sửa
+                                Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
@@ -505,7 +508,7 @@ export function ProductPage() {
                                 }}
                               >
                                 <Trash2 className="w-4 h-4 mr-2.5" />
-                                Xóa
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -521,8 +524,8 @@ export function ProductPage() {
                       className="px-4 py-12 text-center text-sm text-ink-muted"
                     >
                       {hasActiveFilter
-                        ? "Không tìm thấy sản phẩm nào."
-                        : "Chưa có sản phẩm nào."}
+                        ? "No products found."
+                        : "No products yet."}
                     </TableCell>
                   </TableRow>
                 )}
@@ -531,13 +534,13 @@ export function ProductPage() {
           </div>
 
           {(cursors.length > 0 || pagination.hasNextPage) && (
-            <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
+            <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border rounded-b-sm">
               <div className="text-sm text-ink-muted font-medium">
-                Trang {cursors.length + 1}
+                Page {cursors.length + 1}
                 {pagination.total > 0 && (
                   <>
                     <span className="mx-2 text-border">|</span>
-                    Tổng: {pagination.total} sản phẩm
+                    Total: {pagination.total} products
                   </>
                 )}
               </div>
@@ -545,20 +548,20 @@ export function ProductPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
+                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                   onClick={handlePrev}
                   disabled={cursors.length === 0}
                 >
-                  Trước
+                  Previous
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
+                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                   onClick={handleNext}
                   disabled={!pagination.hasNextPage}
                 >
-                  Sau
+                  Next
                 </Button>
               </div>
             </div>
@@ -569,9 +572,9 @@ export function ProductPage() {
       {/* Modals */}
       <DeleteModal
         open={modal.type === "delete"}
-        title="Xóa sản phẩm"
-        description={`Sản phẩm "${modal.type === "delete" ? modal.product.name : ""}" sẽ bị xóa vĩnh viễn.`}
-        confirmText="Xóa sản phẩm"
+        title="Delete Product"
+        description={`Product "${modal.type === "delete" ? modal.product.name : ""}" will be permanently deleted.`}
+        confirmText="Delete product"
         loading={submitting}
         submitError={error}
         onClose={closeModal}
@@ -585,7 +588,7 @@ export function ProductPage() {
           modal.type === "detail"
             ? (modal.product.category?.name ??
               categoryNameById[modal.product.categoryId] ??
-              "Chưa phân loại")
+              "Uncategorized")
             : undefined
         }
         onClose={closeModal}

@@ -14,32 +14,32 @@ function getVoucherMeta(voucher: PublicVoucher) {
   if (voucher.discountType === "freeship") {
     return {
       icon: <Truck className="w-3.5 h-3.5" />,
-      title: "Freeship",
+      title: "Free Shipping",
       desc:
         voucher.minOrderValue > 0
-          ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K`
-          : "Tất cả đơn hàng",
+          ? `Orders over ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+          : "All orders",
     };
   }
   if (voucher.discountType === "percent") {
     return {
       icon: <Tag className="w-3.5 h-3.5" />,
-      title: `Giảm ${voucher.discountValue}%`,
+      title: `${voucher.discountValue}% off`,
       desc:
         voucher.maxDiscount && voucher.maxDiscount > 0
-          ? `Tối đa ${(voucher.maxDiscount / 1000).toFixed(0)}K`
+          ? `Up to ${(voucher.maxDiscount / 1000).toFixed(0)}K off`
           : voucher.minOrderValue > 0
-            ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K`
-            : "Mọi đơn hàng",
+            ? `Min. ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+            : "Any order",
     };
   }
   return {
     icon: <Ticket className="w-3.5 h-3.5" />,
-    title: `Giảm ${(voucher.discountValue / 1000).toFixed(0)}K`,
+    title: `${(voucher.discountValue / 1000).toFixed(0)}K off`,
     desc:
       voucher.minOrderValue > 0
-        ? `Đơn từ ${(voucher.minOrderValue / 1000).toFixed(0)}K`
-        : "Mọi đơn hàng",
+        ? `Min. ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+        : "Any order",
   };
 }
 
@@ -90,11 +90,11 @@ function HomeSingleVoucher({
         >
           {saved ? (
             <>
-              <Check className="w-2.5 h-2.5" /> Đã lưu
+              <Check className="w-2.5 h-2.5" /> Saved
             </>
           ) : (
             <>
-              <Gift className="w-2.5 h-2.5" /> Lưu mã
+              <Gift className="w-2.5 h-2.5" /> Save
             </>
           )}
         </button>
@@ -113,14 +113,14 @@ export function HomeVouchers() {
 
   const handleCollect = (code: string) => {
     if (!user) {
-      toast.error("Vui lòng đăng nhập để lưu mã giảm giá");
+      toast.error("Sign in to save vouchers");
       return;
     }
     collectMutation.mutate(code, {
-      onSuccess: () => toast.success("Đã lưu vào Kho Voucher của bạn!"),
+      onSuccess: () => toast.success("Voucher saved to your wallet!"),
       onError: (e: any) => {
         if (!e?.message?.includes("đã lưu")) {
-          toast.error(e?.message || "Không thể lưu mã");
+          toast.error(e?.message || "Unable to save voucher");
         }
       },
     });
@@ -130,14 +130,14 @@ export function HomeVouchers() {
     <section>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-          Mã Giảm Giá
+          Deals & Vouchers
         </h2>
         {user && (
           <Link
             to="/account?view=coupon"
             className="text-sm font-semibold text-brand underline flex items-center gap-1 transition-colors"
           >
-            Kho của tôi <ChevronRight className="w-4 h-4" />
+            My wallet <ChevronRight className="w-4 h-4" />
           </Link>
         )}
       </div>

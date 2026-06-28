@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router";
-import { Mail, Lock, User, UserPlus, Phone, Loader2 } from "lucide-react";
+import { Loader2, Sparkles, Eye, EyeOff, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "@/auth/hooks/usePublicAuth";
@@ -8,10 +8,20 @@ import {
   type PublicRegisterForm,
 } from "../schemas/public-auth.schema";
 import { toast } from "@/lib/toast";
+import { useState } from "react";
+
+const PERKS = [
+  "Earn points on every purchase",
+  "Exclusive member-only offers",
+  "Early access to new arrivals",
+  "Easy order tracking & returns",
+];
 
 export default function PublicRegisterPage() {
   const registerMutation = useRegister();
   const navigate = useNavigate();
+  const [showPw, setShowPw] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const {
     register,
@@ -36,166 +46,291 @@ export default function PublicRegisterPage() {
         phone: data.phone,
         password: data.password,
       });
-      toast.success("Đăng ký thành công! Chào mừng bạn đến với GlowUp 🌸");
+      toast.success("Welcome to GlowUp! 🌸 Your account has been created.");
       navigate("/");
     } catch (err: any) {
-      toast.error(err instanceof Error ? err.message : "Đăng ký thất bại");
+      toast.error(err instanceof Error ? err.message : "Registration failed. Please try again.");
     }
   };
 
+  const isPending = isSubmitting || registerMutation.isPending;
+
+  const Field = ({
+    label,
+    name,
+    type = "text",
+    placeholder,
+    error,
+    rightEl,
+  }: {
+    label: string;
+    name: any;
+    type?: string;
+    placeholder: string;
+    error?: string;
+    rightEl?: React.ReactNode;
+  }) => (
+    <div className="space-y-1.5">
+      <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          type={type}
+          placeholder={placeholder}
+          {...register(name)}
+          className={`w-full h-11 px-4 ${rightEl ? "pr-11" : ""} rounded-xl border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
+            error
+              ? "border-destructive focus:ring-2 focus:ring-destructive/20"
+              : "border-border focus:border-brand focus:ring-2 focus:ring-brand/15"
+          }`}
+        />
+        {rightEl && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            {rightEl}
+          </div>
+        )}
+      </div>
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+
   return (
-    <div className="w-full max-w-125 mx-auto py-20 px-4">
-      <div className="w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333]">
-            Đăng ký
-          </h1>
-          <p className="text-sm text-[#757575] mt-3">
-            Tạo tài khoản để nhận nhiều ưu đãi hấp dẫn và theo dõi đơn hàng dễ
-            dàng.
+    <div className="min-h-screen flex">
+      {/* ── Left: Brand Panel ── */}
+      <div
+        className="hidden lg:flex lg:w-5/12 flex-col items-center justify-center relative overflow-hidden"
+        style={{
+          background:
+            "linear-gradient(150deg, hsl(20, 70%, 16%) 0%, hsl(352, 65%, 22%) 50%, hsl(345, 50%, 30%) 100%)",
+        }}
+      >
+        {/* Decorative blobs */}
+        <div
+          className="absolute top-[-80px] right-[-80px] w-72 h-72 rounded-full opacity-20"
+          style={{ background: "hsl(352, 72%, 52%)" }}
+        />
+        <div
+          className="absolute bottom-[-60px] left-[-60px] w-64 h-64 rounded-full opacity-15"
+          style={{ background: "hsl(20, 80%, 50%)" }}
+        />
+
+        <div className="relative z-10 text-center px-12 max-w-xs">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <div
+              className="w-11 h-11 rounded-2xl flex items-center justify-center"
+              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}
+            >
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <span
+              className="text-2xl font-bold text-white tracking-tight"
+              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            >
+              GlowUp
+            </span>
+          </div>
+
+          <h2
+            className="text-3xl font-bold text-white mb-3 leading-tight"
+            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+          >
+            Join the glow
+            <br />
+            <em>community.</em>
+          </h2>
+
+          <p className="text-sm leading-relaxed mb-8" style={{ color: "rgba(255,255,255,0.6)" }}>
+            Create your free account and unlock a world of beauty perks.
           </p>
+
+          <ul className="space-y-3 text-left">
+            {PERKS.map((perk) => (
+              <li key={perk} className="flex items-center gap-3">
+                <div
+                  className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: "rgba(255,255,255,0.15)" }}
+                >
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+                <span className="text-sm" style={{ color: "rgba(255,255,255,0.75)" }}>
+                  {perk}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
+      </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
-          noValidate
-        >
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Họ và tên"
-              {...register("name")}
-              className={`w-full h-12 px-4 bg-white border ${
-                errors.name
-                  ? "border-danger focus:border-danger"
-                  : "border-[#cccccc] focus:border-[#333333]"
-              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
-            />
-            {errors.name && (
-              <p className="text-xs text-danger mt-1.5">
-                {errors.name.message}
-              </p>
-            )}
+      {/* ── Right: Form Panel ── */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-background overflow-y-auto">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="flex lg:hidden items-center gap-2 mb-6">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: "hsl(352, 72%, 52%)" }}
+            >
+              <Sparkles className="w-4 h-4 text-white" />
+            </div>
+            <span
+              className="text-xl font-bold"
+              style={{
+                fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)",
+                color: "hsl(352, 72%, 38%)",
+              }}
+            >
+              GlowUp
+            </span>
           </div>
 
-          <div className="relative">
-            <input
+          <div className="mb-7">
+            <h1
+              className="text-2xl font-bold text-foreground"
+              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            >
+              Create account
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1.5">
+              It's free and only takes a minute.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+            <Field
+              label="Full Name"
+              name="name"
+              placeholder="Nguyễn Thị Lan"
+              error={errors.name?.message}
+            />
+            <Field
+              label="Email"
+              name="email"
               type="email"
-              placeholder="Email"
-              {...register("email")}
-              className={`w-full h-12 px-4 bg-white border ${
-                errors.email
-                  ? "border-danger focus:border-danger"
-                  : "border-[#cccccc] focus:border-[#333333]"
-              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+              placeholder="hello@example.com"
+              error={errors.email?.message}
             />
-            {errors.email && (
-              <p className="text-xs text-danger mt-1.5">
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          <div className="relative">
-            <input
+            <Field
+              label="Phone Number"
+              name="phone"
               type="tel"
-              placeholder="Số điện thoại"
-              {...register("phone")}
-              className={`w-full h-12 px-4 bg-white border ${
-                errors.phone
-                  ? "border-danger focus:border-danger"
-                  : "border-[#cccccc] focus:border-[#333333]"
-              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+              placeholder="0901 234 567"
+              error={errors.phone?.message}
             />
-            {errors.phone && (
-              <p className="text-xs text-danger mt-1.5">
-                {errors.phone.message}
-              </p>
-            )}
-          </div>
-
-          <div className="relative">
-            <input
-              type="password"
-              placeholder="Mật khẩu"
-              {...register("password")}
-              className={`w-full h-12 px-4 bg-white border ${
-                errors.password
-                  ? "border-danger focus:border-danger"
-                  : "border-[#cccccc] focus:border-[#333333]"
-              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+            <Field
+              label="Password"
+              name="password"
+              type={showPw ? "text" : "password"}
+              placeholder="Min. 6 characters"
+              error={errors.password?.message}
+              rightEl={
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
-            {errors.password && (
-              <p className="text-xs text-danger mt-1.5">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-
-          <div className="relative">
-            <input
-              type="password"
-              placeholder="Xác nhận mật khẩu"
-              {...register("confirmPassword")}
-              className={`w-full h-12 px-4 bg-white border ${
-                errors.confirmPassword
-                  ? "border-danger focus:border-danger"
-                  : "border-[#cccccc] focus:border-[#333333]"
-              } text-[#333333] placeholder:text-[#757575] focus:ring-0 outline-none text-sm`}
+            <Field
+              label="Confirm Password"
+              name="confirmPassword"
+              type={showConfirm ? "text" : "password"}
+              placeholder="Repeat your password"
+              error={errors.confirmPassword?.message}
+              rightEl={
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              }
             />
-            {errors.confirmPassword && (
-              <p className="text-xs text-danger mt-1.5">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
 
-          <div className="mt-6 flex flex-col gap-2">
+            <p className="text-xs text-muted-foreground pt-1">
+              By creating an account, you agree to our{" "}
+              <Link to="#" className="underline hover:opacity-80" style={{ color: "hsl(352, 72%, 48%)" }}>
+                Terms of Use
+              </Link>{" "}
+              and{" "}
+              <Link to="#" className="underline hover:opacity-80" style={{ color: "hsl(352, 72%, 48%)" }}>
+                Privacy Policy
+              </Link>
+              .
+            </p>
+
+            {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting || registerMutation.isPending}
-              className="w-full bg-[#8A151B] hover:bg-[#7a1218] text-[#f8f8f8] h-12.5 flex items-center justify-center font-medium uppercase text-sm disabled:opacity-70"
+              disabled={isPending}
+              className="w-full h-11 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99] mt-1"
+              style={{ background: "hsl(352, 72%, 52%)" }}
             >
-              {isSubmitting || registerMutation.isPending ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                "Đăng ký"
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Create my account
+                </>
               )}
             </button>
 
-            <a
-              href={`${import.meta.env.VITE_API_URL}/auth/facebook`}
-              className="w-full bg-[#3b5998] hover:bg-[#2d4373] text-[#f8f8f8] h-12.5 font-medium flex items-center justify-center gap-4"
-            >
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.324V1.325C24 .597 23.403 0 22.675 0z" />
-              </svg>
-              Đăng nhập Facebook
-            </a>
+            {/* Divider */}
+            <div className="relative my-3">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-3 bg-background text-xs text-muted-foreground">
+                  or sign up with
+                </span>
+              </div>
+            </div>
 
-            <a
-              href={`${import.meta.env.VITE_API_URL}/auth/google`}
-              className="w-full bg-[#db4437] hover:bg-[#c23321] text-[#f8f8f8] h-12.5 font-medium flex items-center justify-center gap-4"
-            >
-              <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
-              </svg>
-              Đăng nhập Google
-            </a>
+            {/* Social */}
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href={`${import.meta.env.VITE_API_URL}/auth/facebook`}
+                className="h-11 rounded-xl border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-[#1877F2]/40"
+              >
+                <svg className="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
+                  <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.324V1.325C24 .597 23.403 0 22.675 0z" />
+                </svg>
+                Facebook
+              </a>
+              <a
+                href={`${import.meta.env.VITE_API_URL}/auth/google`}
+                className="h-11 rounded-xl border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-red-300/50"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Google
+              </a>
+            </div>
+          </form>
+
+          {/* Login CTA */}
+          <div className="mt-7 text-center">
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                to="/login"
+                className="font-semibold transition-colors"
+                style={{ color: "hsl(352, 72%, 48%)" }}
+              >
+                Sign in
+              </Link>
+            </p>
           </div>
-        </form>
-
-        <div className="mt-12 text-center">
-          <h2 className="text-sm uppercase tracking-widest font-semibold text-[#333333] mb-4">
-            Đã có tài khoản?
-          </h2>
-          <Link
-            to="/login"
-            className="block w-full bg-white hover:bg-gray-50 border border-[#e5e5e5] text-[#333333] h-12 px-4 flex items-center justify-center font-medium"
-          >
-            Đăng nhập ngay
-          </Link>
         </div>
       </div>
     </div>

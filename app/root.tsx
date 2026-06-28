@@ -141,7 +141,7 @@ export function ErrorBoundary() {
 
 export default function App() {
   return (
-    <html lang="vi">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -152,8 +152,14 @@ export default function App() {
           href="https://fonts.gstatic.com"
           crossOrigin=""
         />
+        {/* Playfair Display — expressive headings */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+          rel="stylesheet"
+        />
+        {/* DM Sans — clean readable body */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap"
           rel="stylesheet"
         />
         <Meta />

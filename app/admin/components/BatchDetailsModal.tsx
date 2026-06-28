@@ -112,7 +112,7 @@ export default function BatchDetailsModal({
                 {isLoading ? (
                   <tr>
                     <td colSpan={6} className="py-8 text-center text-ink-muted">
-                      Đang tải dữ liệu...
+                      Loading data...
                     </td>
                   </tr>
                 ) : batches.length === 0 ? (

@@ -58,15 +58,15 @@ import { StaffNotesModal } from "../components/users/StaffNotesModal";
 
 const ROLE_BADGE: Record<string, { label: string; className: string }> = {
   owner: {
-    label: "Chủ cửa hàng",
+    label: "Store Owner",
     className: "bg-surface-soft text-violet-600 font-bold uppercase",
   },
   manager: {
-    label: "Quản lý",
+    label: "Manager",
     className: "bg-surface-soft text-danger font-bold uppercase",
   },
   staff: {
-    label: "Nhân viên",
+    label: "Staff",
     className: "bg-surface-soft text-ink-muted font-bold uppercase",
   },
 };
@@ -144,11 +144,10 @@ export function UserPage() {
           <ShieldAlert className="w-8 h-8" />
         </div>
         <h3 className="text-lg font-bold text-ink">
-          Quyền truy cập bị hạn chế
+          Access Restricted
         </h3>
         <p className="text-sm text-ink-muted mt-2 max-w-md">
-          Chức năng quản lý nhân sự chỉ khả dụng đối với tài khoản Quản lý
-          (Manager) hoặc Chủ cửa hàng (Owner).
+          Staff management is only available for Manager or Store Owner accounts.
         </p>
       </div>
     );
@@ -168,16 +167,16 @@ export function UserPage() {
         .mutateAsync(formData)
         .then(() => setIsFormOpen(false)),
       {
-        loading: "Đang tạo tài khoản nhân viên...",
-        success: "Đã tạo tài khoản nhân viên thành công!",
-        error: (err: any) => err.message || "Lỗi tạo tài khoản",
+        loading: "Creating staff account...",
+        success: "Staff account created successfully!",
+        error: (err: any) => err.message || "Creation error",
       },
     );
   };
 
   const handleToggleStatus = (user: User) => {
     if (user.role === "owner") {
-      toast.error("Không thể khóa tài khoản Chủ cửa hàng!");
+      toast.error("Cannot lock Store Owner account!");
       return;
     }
     toast.promise(
@@ -186,9 +185,9 @@ export function UserPage() {
         isActive: !user.isActive,
       }),
       {
-        loading: "Đang cập nhật trạng thái...",
-        success: `Tài khoản ${user.name} đã được ${!user.isActive ? "MỞ KHÓA" : "KHÓA"} thành công.`,
-        error: (err: any) => err.message || "Lỗi cập nhật trạng thái",
+        loading: "Updating status...",
+        success: `Account ${user.name} has been successfully ${!user.isActive ? "UNLOCKED" : "LOCKED"}.`,
+        error: (err: any) => err.message || "Status update error",
       },
     );
   };
@@ -200,9 +199,9 @@ export function UserPage() {
         .mutateAsync(resetTarget.id)
         .then(() => setResetTarget(null)),
       {
-        loading: "Đang đặt lại mật khẩu...",
-        success: `Mật khẩu của ${resetTarget.name} đã được đặt lại thành công.`,
-        error: (err: any) => err.message || "Lỗi đặt lại mật khẩu",
+        loading: "Resetting password...",
+        success: `Password for ${resetTarget.name} has been successfully reset.`,
+        error: (err: any) => err.message || "Password reset error",
       },
     );
   };
@@ -218,9 +217,9 @@ export function UserPage() {
         })
         .then(() => setEditTarget(null)),
       {
-        loading: "Đang cập nhật quyền...",
-        success: "Đã cập nhật phân quyền thành công!",
-        error: (err: any) => err.message || "Lỗi cập nhật quyền",
+        loading: "Updating permissions...",
+        success: "Permissions updated successfully!",
+        error: (err: any) => err.message || "Permission update error",
       },
     );
   };
@@ -228,22 +227,26 @@ export function UserPage() {
   return (
     <div className="flex flex-col gap-6 animate-page-enter text-left w-full pb-12">
       <PageHeader
-        title="Quản lý nhân viên"
-        description="Quản trị và phân quyền cho nhân viên làm việc tại hệ thống cửa hàng."
+        title="Staff Management"
+        description="Manage and assign permissions for store employees."
         actions={
-          <Button onClick={openCreate} className="gap-2">
-            <UserPlus className="w-4 h-4" /> Thêm nhân viên
+          <Button
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            size="sm"
+            onClick={openCreate}
+          >
+            <UserPlus className="size-4 mr-2" /> Add Staff
           </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-focus-within:text-brand" />
               <Input
-                placeholder="Tìm theo tên, email, SĐT..."
+                placeholder="Search by name, email, phone..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-9 h-10 border-border bg-surface text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
+                className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {search && (
                 <button
@@ -256,28 +259,30 @@ export function UserPage() {
               )}
             </div>
 
-            <Select value={roleFilter} onValueChange={handleRoleChange}>
-              <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                <SelectValue placeholder="Vai trò" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả vai trò</SelectItem>
-                <SelectItem value="owner">Chủ cửa hàng</SelectItem>
-                <SelectItem value="manager">Quản lý</SelectItem>
-                <SelectItem value="staff">Nhân viên</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={roleFilter} onValueChange={handleRoleChange}>
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="owner">Store Owner</SelectItem>
+                  <SelectItem value="manager">Manager</SelectItem>
+                  <SelectItem value="staff">Staff</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select value={statusFilter} onValueChange={handleStatusChange}>
-              <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                <SelectValue placeholder="Trạng thái" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                <SelectItem value="active">Đang hoạt động</SelectItem>
-                <SelectItem value="inactive">Đã khóa</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={statusFilter} onValueChange={handleStatusChange}>
+                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Locked</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         }
       />
@@ -285,19 +290,19 @@ export function UserPage() {
       {/* Staff List Table */}
       <div className="premium-card rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <Table className="min-w-200">
+          <Table className="min-w-200 table-fixed">
             <TableHeader>
-              <TableRow className="bg-surface-muted text-left border-b border-border">
-                <TableHead className="w-[35%]">Nhân viên</TableHead>
-                <TableHead className="w-[25%]">Liên hệ</TableHead>
-                <TableHead className="text-center w-[15%]">
-                  Vai trò
+              <TableRow className="bg-surface-muted border-b border-border">
+                <TableHead className="w-[25%] text-left pl-4">Staff</TableHead>
+                <TableHead className="w-[25%] text-center">Contact</TableHead>
+                <TableHead className="text-center w-[20%]">
+                  Role
                 </TableHead>
-                <TableHead className="text-center w-[15%]">
-                  Trạng thái
+                <TableHead className="text-center w-[20%]">
+                  Status
                 </TableHead>
-                <TableHead className="text-center w-32">
-                  Thao tác
+                <TableHead className="text-center w-[10%]">
+                  Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -310,7 +315,7 @@ export function UserPage() {
                   >
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                      <span>Đang tải danh sách nhân viên...</span>
+                      <span>Loading staff list...</span>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -320,7 +325,7 @@ export function UserPage() {
                     colSpan={5}
                     className="py-12 text-center text-ink-muted"
                   >
-                    Không tìm thấy tài khoản nhân viên nào phù hợp.
+                    No matching staff accounts found.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -330,13 +335,13 @@ export function UserPage() {
                     className={`hover:bg-bg/40 ${user.isActive === false ? "opacity-60 bg-surface-muted/30" : ""}`}
                     style={{ "--i": i } as React.CSSProperties}
                   >
-                    <TableCell className="align-middle">
+                    <TableCell className="align-middle pl-4">
                       <span className="font-medium text-ink-muted text-base leading-tight">
                         {user.name}
                       </span>
                     </TableCell>
-                    <TableCell className="align-middle">
-                      <div className="flex flex-col">
+                    <TableCell className="align-middle text-center">
+                      <div className="flex flex-col w-fit mx-auto text-left">
                         <span className="text-sm font-medium text-ink-muted">
                           {user.email}
                         </span>
@@ -357,13 +362,13 @@ export function UserPage() {
                         <span
                           className="inline-flex items-center rounded-sm bg-surface-soft text-success px-2.5 py-0.5 text-[10px] font-bold uppercase"
                         >
-                          Hoạt động
+                          Active
                         </span>
                       ) : (
                         <span
                           className="inline-flex items-center rounded-sm bg-surface-soft text-danger px-2.5 py-0.5 text-[10px] font-bold uppercase"
                         >
-                          Đã khóa
+                          Locked
                         </span>
                       )}
                     </TableCell>
@@ -389,7 +394,7 @@ export function UserPage() {
                                 onClick={() => setInfoTarget(user)}
                               >
                                 <Settings2 className="w-4 h-4 mr-2.5" />
-                                Sửa thông tin
+                                Edit Info
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
@@ -400,21 +405,21 @@ export function UserPage() {
                                 }}
                               >
                                 <ShieldAlert className="w-4 h-4 mr-2.5" />
-                                Phân quyền nhân sự
+                                Manage Permissions
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => setNotesTarget(user)}
                               >
                                 <MoreVertical className="w-4 h-4 mr-2.5" />
-                                Ghi chú nội bộ
+                                Internal Notes
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => setResetTarget(user)}
                               >
                                 <KeyRound className="w-4 h-4 mr-2.5" />
-                                Đặt lại mật khẩu
+                                Reset Password
                               </DropdownMenuItem>
                               <DropdownMenuSeparator className="bg-border" />
                               <DropdownMenuItem
@@ -423,13 +428,11 @@ export function UserPage() {
                               >
                                 {user.isActive !== false ? (
                                   <>
-                                    <Lock className="w-4 h-4 mr-2.5" /> Khóa tài
-                                    khoản
+                                    <Lock className="w-4 h-4 mr-2.5" /> Lock Account
                                   </>
                                 ) : (
                                   <>
-                                    <Unlock className="w-4 h-4 mr-2.5" /> Mở
-                                    khóa tài khoản
+                                    <Unlock className="w-4 h-4 mr-2.5" /> Unlock Account
                                   </>
                                 )}
                               </DropdownMenuItem>
@@ -447,12 +450,12 @@ export function UserPage() {
 
         {/* Pagination UI */}
         {(cursors.length > 0 || data?.hasNextPage) && (
-          <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
+          <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
             <div className="text-sm text-ink-muted font-medium">
-              Trang {cursors.length + 1}
+              Page {cursors.length + 1}
               {data?.total ? (
                 <>
-                  <span className="mx-2 text-border">|</span> Tổng: {data.total} nhân viên
+                  <span className="mx-2 text-border">|</span> Total: {data.total} staff
                 </>
               ) : null}
             </div>
@@ -460,20 +463,20 @@ export function UserPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-sm h-9 px-4 font-medium"
+                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                 onClick={handlePrev}
                 disabled={cursors.length === 0}
               >
-                Trước
+                Previous
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-sm h-9 px-4 font-medium"
+                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                 onClick={handleNext}
                 disabled={!data?.hasNextPage}
               >
-                Sau
+                Next
               </Button>
             </div>
           </div>
@@ -517,9 +520,9 @@ export function UserPage() {
               .mutateAsync({ id: infoTarget.id, data })
               .then(() => setInfoTarget(null)),
             {
-              loading: "Đang cập nhật...",
-              success: "Đã cập nhật thông tin nhân viên!",
-              error: (err: any) => err.message || "Lỗi cập nhật",
+              loading: "Updating...",
+              success: "Staff info updated successfully!",
+              error: (err: any) => err.message || "Failed to update",
             },
           );
         }}
@@ -539,9 +542,9 @@ export function UserPage() {
               })
               .then(() => setNotesTarget(null)),
             {
-              loading: "Đang lưu ghi chú...",
-              success: "Đã lưu ghi chú thành công!",
-              error: (err: any) => err.message || "Lỗi lưu ghi chú",
+              loading: "Saving notes...",
+              success: "Notes saved successfully!",
+              error: (err: any) => err.message || "Failed to save notes",
             },
           );
         }}

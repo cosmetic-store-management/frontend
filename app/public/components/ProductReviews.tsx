@@ -35,15 +35,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-/** Nhãn mô tả từng mức sao để hiện trong UI */
+/** Star label descriptions for each rating */
 const STAR_LABELS: Record<number, string> = {
-  5: "Tuyệt vời",
-  4: "Hài lòng",
-  3: "Bình thường",
-  2: "Không hài lòng",
-  1: "Rất tệ",
+  5: "Amazing",
+  4: "Satisfied",
+  3: "Okay",
+  2: "Disappointed",
+  1: "Very bad",
 };
-/** Định dạng file ảnh được chấp nhận cho review */
+/** Accepted image formats for reviews */
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -52,15 +52,15 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/quicktime"];
 const ACCEPTED_MEDIA_ACCEPT = ".jpg,.jpeg,.png,.webp,.mp4,.mov";
-/** Lựa chọn filter đánh giá */
+/** Review filter options */
 const FILTER_OPTIONS = [
-  "Từ mới đến cũ",
-  "Có hình ảnh",
-  "5 sao",
-  "4 sao",
-  "3 sao",
-  "2 sao",
-  "1 sao",
+  "Newest first",
+  "With photos",
+  "5 stars",
+  "4 stars",
+  "3 stars",
+  "2 stars",
+  "1 star",
 ] as const;
 
 interface ProductReviewsProps {
@@ -77,12 +77,12 @@ export function ProductReviews({ product }: ProductReviewsProps) {
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filterOption, setFilterOption] = useState("Từ mới đến cũ");
+  const [filterOption, setFilterOption] = useState("Newest first");
 
-  const parsedFilterRating = filterOption.includes("sao")
+  const parsedFilterRating = filterOption.includes("star")
     ? parseInt(filterOption.charAt(0))
     : undefined;
-  const parsedHasImage = filterOption === "Có hình ảnh" ? true : undefined;
+  const parsedHasImage = filterOption === "With photos" ? true : undefined;
 
   const { data, isLoading } = useProductReviews(
     productId,

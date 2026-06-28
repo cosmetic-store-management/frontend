@@ -61,21 +61,21 @@ function formatDate(value?: string) {
 function getPaymentMethodLabel(method?: PaymentMethod) {
   switch (method) {
     case "cod":
-      return "Thanh toán khi nhận hàng";
+      return "Cash on Delivery";
     case "qr":
-      return "QR";
+      return "QR Code";
     case "bank":
-      return "Chuyển khoản";
+      return "Bank Transfer";
     case "stripe":
-      return "Thẻ quốc tế";
+      return "Credit Card";
     case "cash":
-      return "Tiền mặt";
+      return "Cash";
     case "pos_card":
-      return "Quẹt thẻ";
+      return "POS Card";
     case "transfer":
-      return "Chuyển khoản";
+      return "Bank Transfer";
     case "ewallet":
-      return "Ví điện tử";
+      return "E-Wallet";
     default:
       return method || "—";
   }
@@ -84,11 +84,11 @@ function getPaymentMethodLabel(method?: PaymentMethod) {
 function getActionLabel(nextStatus: OrderStatus) {
   switch (nextStatus) {
     case "shipping":
-      return "Chuyển sang đang giao";
+      return "Mark as shipping";
     case "completed":
-      return "Đánh dấu hoàn tất";
+      return "Mark as completed";
     case "cancelled":
-      return "Hủy đơn";
+      return "Cancel order";
     default:
       return orderStatusMeta[nextStatus]?.label ?? nextStatus;
   }
@@ -142,15 +142,15 @@ export default function OrderModal({
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden sm:rounded-sm">
         <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
-          <DialogTitle>Cập nhật đơn hàng #{orderCode || "—"}</DialogTitle>
+          <DialogTitle>Update Order #{orderCode || "—"}</DialogTitle>
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto max-h-[75vh] bg-surface-soft/30 p-6 space-y-6">
-          {/* Thông tin cơ bản */}
+          {/* Basic info */}
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="bg-surface p-4 border border-border rounded-sm space-y-1">
               <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                <Calendar className="w-3.5 h-3.5" /> Ngày đặt
+                <Calendar className="w-3.5 h-3.5" /> Order Date
               </p>
               <p className="font-medium text-ink text-sm">
                 {formatDate(orderedAt)}
@@ -158,7 +158,7 @@ export default function OrderModal({
             </div>
             <div className="bg-surface p-4 border border-border rounded-sm space-y-1">
               <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                <CreditCard className="w-3.5 h-3.5" /> Thanh toán
+                <CreditCard className="w-3.5 h-3.5" /> Payment Method
               </p>
               <p className="font-medium text-ink text-sm">
                 {getPaymentMethodLabel(paymentMethod)}
@@ -166,7 +166,7 @@ export default function OrderModal({
             </div>
             <div className="bg-surface p-4 border border-border rounded-sm space-y-1">
               <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                <Package className="w-3.5 h-3.5" /> Tổng tiền
+                <Package className="w-3.5 h-3.5" /> Total Amount
               </p>
               <p className="font-semibold text-ink text-sm">
                 {formatCurrency(totalAmount)}
@@ -174,17 +174,17 @@ export default function OrderModal({
             </div>
           </div>
 
-          {/* Giao hàng */}
+          {/* Shipping */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
-              Thông tin giao hàng
+              Shipping Information
             </h3>
             <div className="grid gap-3 sm:grid-cols-2 bg-surface border border-border rounded-sm p-4">
               <div className="flex items-start gap-3">
                 <User className="w-4 h-4 text-ink-muted mt-0.5" />
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                    Tên khách hàng
+                    Customer Name
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-ink">
                     {receiverName || "—"}
@@ -195,7 +195,7 @@ export default function OrderModal({
                 <Phone className="w-4 h-4 text-ink-muted mt-0.5" />
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                    Số điện thoại
+                    Phone Number
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-ink">
                     {phone || "—"}
@@ -206,7 +206,7 @@ export default function OrderModal({
                 <MapPin className="w-4 h-4 text-ink-muted mt-0.5" />
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                    Địa chỉ
+                    Address
                   </p>
                   <p className="mt-0.5 text-sm font-medium text-ink">
                     {address || "—"}
@@ -216,7 +216,7 @@ export default function OrderModal({
               {note && (
                 <div className="sm:col-span-2 pt-2 border-t border-border">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                    Ghi chú
+                    Note
                   </p>
                   <p className="mt-0.5 text-sm text-ink-muted bg-surface-soft p-2 rounded-sm italic">
                     {note}
@@ -226,14 +226,14 @@ export default function OrderModal({
             </div>
           </section>
 
-          {/* Trạng thái */}
+          {/* Status */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
-              Trạng thái đơn hàng
+              Order Status
             </h3>
             <div className="bg-surface border border-border rounded-sm p-4 flex items-center justify-between">
               <span className="text-sm font-medium text-ink-muted">
-                Hiện tại:
+                Current:
               </span>
               <span
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-sm ${currentMeta.badgeClass}`}
@@ -246,20 +246,20 @@ export default function OrderModal({
             </div>
           </section>
 
-          {/* Hành động */}
+          {/* Action */}
           <section className="space-y-3">
             <h3 className="text-sm font-semibold text-ink uppercase tracking-wider">
-              Xử lý đơn hàng
+              Process Order
             </h3>
             {isReadOnly ? (
               <div className="bg-surface-soft border border-border rounded-sm px-4 py-3 text-sm text-ink-muted text-center italic">
                 {currentOrderStatus === "completed"
-                  ? "Đơn hàng đã hoàn tất. Không còn hành động xử lý tiếp theo."
-                  : "Đơn hàng đã bị hủy. Không còn hành động xử lý tiếp theo."}
+                  ? "Order has been completed. No further actions."
+                  : "Order has been cancelled. No further actions."}
               </div>
             ) : selectableStatuses.length === 0 ? (
               <div className="bg-surface-soft border border-border rounded-sm px-4 py-3 text-sm text-ink-muted text-center italic">
-                Không có hành động hợp lệ ở trạng thái hiện tại.
+                No valid actions for the current status.
               </div>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
@@ -297,7 +297,7 @@ export default function OrderModal({
 
         <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end">
           <Button type="button" variant="outline" onClick={onClose}>
-            Huỷ
+            Cancel
           </Button>
           <Button
             type="button"
@@ -305,7 +305,7 @@ export default function OrderModal({
             disabled={loading || !hasChanges || isReadOnly}
             className="bg-brand hover:bg-brand/90 text-white"
           >
-            {loading ? "Đang xử lý..." : "Xác nhận"}
+            {loading ? "Processing..." : "Confirm"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -42,8 +42,8 @@ export function SlideOutCart() {
               <ShoppingBag className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-ink">Giỏ hàng của bạn</h2>
-              <p className="text-xs text-ink-muted">{cartCount} sản phẩm</p>
+              <h2 className="text-lg font-bold text-ink">Your Cart</h2>
+              <p className="text-xs text-ink-muted">{cartCount} {cartCount === 1 ? "item" : "items"}</p>
             </div>
           </div>
           <button
@@ -62,16 +62,16 @@ export function SlideOutCart() {
                 <ShoppingBag className="w-10 h-10 text-border" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-ink">Giỏ hàng trống</h3>
+                <h3 className="text-lg font-bold text-ink">Your cart is empty</h3>
                 <p className="text-sm text-ink-muted mt-1">
-                  Chưa có sản phẩm nào trong giỏ hàng.
+                  Start adding products you love.
                 </p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
                 className="btn-hover mt-4 px-6 py-2.5 bg-brand text-white font-bold rounded-full hover:bg-brand-dark transition-colors"
               >
-                Tiếp tục mua sắm
+                Continue shopping
               </button>
             </div>
           ) : (
@@ -101,7 +101,7 @@ export function SlideOutCart() {
                           {item.name}
                         </h4>
                         <p className="text-xs text-ink-muted mt-1">
-                          Loại: {item.variantName}
+                          Variant: {item.variantName}
                         </p>
                       </div>
                       <button
@@ -159,13 +159,13 @@ export function SlideOutCart() {
         {items.length > 0 && (
           <div className="border-t border-border bg-surface-soft/30 p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between text-base">
-              <span className="font-semibold text-ink">Tổng cộng:</span>
+              <span className="font-semibold text-ink">Subtotal:</span>
               <span className="font-bold text-xl text-brand">
                 {getTotal().toLocaleString("vi-VN")}₫
               </span>
             </div>
             <p className="text-[11px] text-ink-muted text-center">
-              Phí vận chuyển và thuế sẽ được tính khi thanh toán.
+              Shipping and taxes calculated at checkout.
             </p>
             <div className="grid grid-cols-2 gap-3">
               <Link
@@ -173,14 +173,14 @@ export function SlideOutCart() {
                 onClick={() => setIsOpen(false)}
                 className="btn-hover flex items-center justify-center py-3 px-4 border-2 border-brand text-brand font-bold rounded-sm hover:bg-brand hover:text-white transition-all"
               >
-                Xem giỏ hàng
+                View cart
               </Link>
               <Link
                 to="/checkout"
                 onClick={() => setIsOpen(false)}
                 className="btn-hover flex items-center justify-center py-3 px-4 bg-brand text-white font-bold rounded-sm hover:bg-brand-dark transition-all  shadow-brand/20"
               >
-                Thanh toán <ArrowRight className="w-4 h-4 ml-2" />
+                Checkout <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </div>
           </div>

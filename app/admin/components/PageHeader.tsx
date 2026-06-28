@@ -48,7 +48,7 @@ export function PageHeader({
                     onClick={onClearError}
                     className="text-danger hover:underline"
                   >
-                    Đóng
+                    Dismiss
                   </button>
                 )}
                 {onRetry && (
@@ -57,7 +57,7 @@ export function PageHeader({
                     onClick={onRetry}
                     className="text-danger hover:underline"
                   >
-                    Thử lại
+                    Retry
                   </button>
                 )}
               </div>

@@ -123,8 +123,8 @@ export const ProductCard = React.memo(function ProductCard({
           )}
           {isOutOfStock && !isInactive && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-              <span className="bg-foreground text-white text-xs font-bold px-2 py-1 uppercase tracking-wider">
-                Hết hàng
+              <span className="bg-foreground text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wider">
+                Sold Out
               </span>
             </div>
           )}
@@ -209,18 +209,18 @@ export const ProductCard = React.memo(function ProductCard({
 
       {/* ── Content ── */}
       <div className="p-2.5 flex flex-col flex-1">
-        {/* Badges row: FREESHIP (linh hoạt) + NEW / HOT */}
+        {/* Badges row: FREESHIP + NEW / HOT */}
         <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-          <span className="bg-[#0b2b5e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight">
+          <span className="bg-[#0b2b5e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
             {getFreeshiplabel(product.id || product._id || product.name || "")}
           </span>
           {isNew && (
-            <span className="bg-[#C81D25] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight shadow-sm">
+            <span className="bg-brand text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
               NEW
             </span>
           )}
           {isHot && (
-            <span className="bg-[#f97316] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight shadow-sm">
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight" style={{background: "hsl(22, 90%, 50%)", color: "white"}}>
               HOT
             </span>
           )}
@@ -251,7 +251,10 @@ export const ProductCard = React.memo(function ProductCard({
             )}
           </div>
           {hasDiscount && (
-            <div className="w-8 h-8 rounded-full bg-[#84cc16] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mb-1">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 text-white"
+              style={{ background: "hsl(352, 72%, 52%)" }}
+            >
               -{discountPct}%
             </div>
           )}
@@ -259,23 +262,23 @@ export const ProductCard = React.memo(function ProductCard({
 
         {/* Sold count + heart (luôn hiện — giống Skinfood) */}
         <div className="mt-1 flex items-center justify-between">
-          <span className="text-[11px] text-ink-muted">
+          <span className="text-[11px] text-muted-foreground">
             {product.soldCount > 0 && (
               <>
-                <span className="font-semibold text-ink">
+                <span className="font-semibold text-foreground">
                   {product.soldCount >= 1000
                     ? (product.soldCount / 1000).toFixed(1).replace(".0", "") +
                       "k"
                     : product.soldCount}
                 </span>{" "}
-                Đã bán
+                sold
               </>
             )}
           </span>
           <button
             onClick={handleToggleFavorite}
             className="p-1 hover:scale-110 transition-transform -mr-0.5 shrink-0"
-            aria-label="Lưu yêu thích"
+            aria-label="Wishlist"
           >
             <Heart
               className={`w-4.5 h-4.5 ${isFavorite ? "fill-[#C81D25] text-[#C81D25]" : "text-ink-muted/60"}`}

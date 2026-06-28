@@ -232,7 +232,7 @@ export function ProductBasicInfo({
               <Suspense
                 fallback={
                   <div className="p-4 text-sm text-ink-muted">
-                    Đang tải trình soạn thảo...
+                    Loading editor...
                   </div>
                 }
               >

@@ -86,41 +86,60 @@ const V = ".png?v=3512";
 
 const COSMETICS_ICONS = [
   // Nhóm 1: 9 icon khớp với 9 danh mục chính
-  { url: CDN + "2" + V, label: "Da mặt", hint: "Chăm sóc da mặt" },
-  { url: CDN + "1" + V, label: "Trang điểm", hint: "Makeup, son, phấn" },
-  { url: CDN + "7" + V, label: "Chống nắng", hint: "Kem chống nắng" },
-  { url: CDN + "8" + V, label: "Môi", hint: "Chăm sóc môi" },
-  { url: CDN + "6" + V, label: "Nước hoa", hint: "Perfume" },
-  { url: CDN + "3" + V, label: "Cơ thể", hint: "Chăm sóc cơ thể" },
-  { url: CDN + "4" + V, label: "Tóc & đầu", hint: "Chăm sóc tóc" },
-  { url: CDN + "5" + V, label: "Cá nhân", hint: "Vệ sinh cá nhân" },
-  { url: CDN + "11" + V, label: "Thiết bị", hint: "Dụng cụ làm đẹp" },
+  { url: CDN + "2" + V, label: "Face", hint: "Face care" },
+  { url: CDN + "1" + V, label: "Makeup", hint: "Makeup, lipstick, powder" },
+  { url: CDN + "7" + V, label: "Sunscreen", hint: "Sunscreen" },
+  { url: CDN + "8" + V, label: "Lips", hint: "Lip care" },
+  { url: CDN + "6" + V, label: "Perfume", hint: "Perfume" },
+  { url: CDN + "3" + V, label: "Body", hint: "Body care" },
+  { url: CDN + "4" + V, label: "Hair", hint: "Hair care" },
+  { url: CDN + "5" + V, label: "Personal", hint: "Personal hygiene" },
+  { url: CDN + "11" + V, label: "Devices", hint: "Beauty tools" },
   // Nhóm 2: Icon bổ sung cho danh mục con
-  { url: CDN + "9" + V, label: "Dưỡng ẩm", hint: "Serum, toner" },
-  { url: CDN + "10" + V, label: "Làm sạch", hint: "Tẩy trang, sữa rửa" },
-  { url: CDN + "12" + V, label: "Mắt", hint: "Mascara, kẻ mắt" },
-  { url: CDN + "13" + V, label: "Nail", hint: "Sơn móng, nail art" },
-  { url: CDN + "15" + V, label: "Set quà", hint: "Gift set, combo" },
+  { url: CDN + "9" + V, label: "Moisturizer", hint: "Serum, toner" },
+  { url: CDN + "10" + V, label: "Cleanser", hint: "Makeup remover, cleanser" },
+  { url: CDN + "12" + V, label: "Eyes", hint: "Mascara, eyeliner" },
+  { url: CDN + "13" + V, label: "Nails", hint: "Nail polish, nail art" },
+  { url: CDN + "15" + V, label: "Gift Sets", hint: "Gift set, combo" },
 ];
 
 // Auto-suggest: gõ tên → tự động gợi ý icon phù hợp
 const NAME_TO_ICON: Record<string, string> = {
   "chăm sóc da mặt": CDN + "2" + V,
+  "face care": CDN + "2" + V,
+  "face": CDN + "2" + V,
   "trang điểm": CDN + "1" + V,
+  "makeup": CDN + "1" + V,
   "chống nắng": CDN + "7" + V,
+  "sunscreen": CDN + "7" + V,
   "chăm sóc môi": CDN + "8" + V,
+  "lips": CDN + "8" + V,
   "nước hoa": CDN + "6" + V,
+  "perfume": CDN + "6" + V,
   "chăm sóc cơ thể": CDN + "3" + V,
+  "body": CDN + "3" + V,
+  "body care": CDN + "3" + V,
   "chăm sóc tóc & da đầu": CDN + "4" + V,
   "chăm sóc tóc": CDN + "4" + V,
+  "hair": CDN + "4" + V,
+  "hair care": CDN + "4" + V,
   "chăm sóc cá nhân": CDN + "5" + V,
+  "personal care": CDN + "5" + V,
   "thiết bị làm đẹp": CDN + "11" + V,
   "dụng cụ làm đẹp": CDN + "11" + V,
+  "beauty tools": CDN + "11" + V,
+  "devices": CDN + "11" + V,
   "dưỡng ẩm": CDN + "9" + V,
+  "moisturizer": CDN + "9" + V,
   "làm sạch": CDN + "10" + V,
+  "cleanser": CDN + "10" + V,
   "chăm sóc mắt": CDN + "12" + V,
-  nail: CDN + "13" + V,
+  "eye care": CDN + "12" + V,
+  "eyes": CDN + "12" + V,
+  "nail": CDN + "13" + V,
+  "nails": CDN + "13" + V,
   "set quà": CDN + "15" + V,
+  "gift sets": CDN + "15" + V,
 };
 
 function buildTreeRows(
@@ -285,9 +304,9 @@ export function CategoryPage() {
       ? updateMutation.mutateAsync({ id: editing.id, data: formData as any })
       : createMutation.mutateAsync(formData as any);
     toast.promise(action, {
-      loading: editing ? "Đang cập nhật..." : "Đang tạo...",
-      success: editing ? "Cập nhật thành công!" : "Tạo danh mục thành công!",
-      error: (e: unknown) => (e instanceof Error ? e.message : "Có lỗi xảy ra"),
+      loading: editing ? "Updating..." : "Creating...",
+      success: editing ? "Update successful!" : "Category created successfully!",
+      error: (e: unknown) => (e instanceof Error ? e.message : "An error occurred"),
     });
     await action.then(() => setIsFormOpen(false)).catch(() => { });
   };
@@ -299,11 +318,11 @@ export function CategoryPage() {
         .mutateAsync(deleteTarget.id)
         .then(() => setDeleteTarget(null)),
       {
-        loading: "Đang xoá...",
-        success: `Đã xoá "${deleteTarget.name}"`,
+        loading: "Deleting...",
+        success: `Deleted "${deleteTarget.name}"`,
         error: (e: any) =>
           e?.response?.data?.message ||
-          (e instanceof Error ? e.message : "Có lỗi xảy ra"),
+          (e instanceof Error ? e.message : "An error occurred"),
       },
     );
   };
@@ -312,10 +331,10 @@ export function CategoryPage() {
     toast.promise(
       statusMutation.mutateAsync({ id: cat.id, isActive: !cat.isActive }),
       {
-        loading: "Đang cập nhật...",
-        success: "Đã thay đổi trạng thái!",
+        loading: "Updating...",
+        success: "Status changed successfully!",
         error: (e: unknown) =>
-          e instanceof Error ? e.message : "Lỗi cập nhật",
+          e instanceof Error ? e.message : "Update error",
       },
     );
   };
@@ -323,25 +342,25 @@ export function CategoryPage() {
   return (
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
-        title="Quản lý danh mục"
-        description="Quản lý ngành hàng và danh mục phụ theo cấu trúc cây."
+        title="Category Management"
+        description="Manage product categories and sub-categories in a tree structure."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
             size="sm"
             onClick={openCreate}
           >
-            <Plus className="size-4 mr-2" /> Thêm danh mục
+            <Plus className="size-4 mr-2" /> Add Category
           </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm theo tên danh mục..."
+                placeholder="Search by category name..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
@@ -357,21 +376,21 @@ export function CategoryPage() {
           ))}
         </div>
       ) : (
-        <div className="premium-card">
+        <div className="premium-card rounded-sm overflow-hidden">
           <div className="overflow-x-auto">
             <Table className="min-w-187.5 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[38%] pl-4 text-left">
-                    Danh mục
+                  <TableHead className="w-[28%] pl-4 text-left">
+                    Category
                   </TableHead>
-                  <TableHead className="w-[18%] text-left">
-                    Danh mục cha
+                  <TableHead className="w-[20%] text-center">
+                    Parent Category
                   </TableHead>
-                  <TableHead className="text-center w-20">Vị trí</TableHead>
-                  <TableHead className="text-center w-28">Sản phẩm</TableHead>
-                  <TableHead className="text-center w-28">Trạng thái</TableHead>
-                  <TableHead className="text-center w-24">Thao tác</TableHead>
+                  <TableHead className="w-[12%] text-center">Order</TableHead>
+                  <TableHead className="w-[14%] text-center">Products</TableHead>
+                  <TableHead className="w-[14%] text-center">Status</TableHead>
+                  <TableHead className="w-[12%] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -425,20 +444,20 @@ export function CategoryPage() {
                             </span>
                             {hasChildren && (
                               <span className="text-[10px] text-ink-muted/70">
-                                {childrenCount[cat.id]} danh mục con
+                                {childrenCount[cat.id]} sub-categories
                               </span>
                             )}
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm overflow-hidden max-w-0">
+                      <TableCell className="text-sm overflow-hidden max-w-0 text-center">
                         {cat.parentId ? (
                           <span className="inline-flex items-center px-2 py-0.5 bg-surface-muted rounded text-xs text-ink-muted truncate max-w-full">
                             {categoryNameById[cat.parentId] || "—"}
                           </span>
                         ) : (
                           <span className="text-xs text-ink-muted/40 italic">
-                            Gốc
+                            Root
                           </span>
                         )}
                       </TableCell>
@@ -479,14 +498,14 @@ export function CategoryPage() {
                                 onClick={() => openEdit(cat)}
                               >
                                 <Edit className="w-4 h-4 mr-2.5" />
-                                Chỉnh sửa
+                                Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
                                 onClick={() => setDeleteTarget(cat)}
                               >
                                 <Trash2 className="w-4 h-4 mr-2.5" />
-                                Xóa
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -500,17 +519,17 @@ export function CategoryPage() {
           </div>
           {categories.length === 0 && (
             <p className="py-8 text-center text-sm text-ink-muted">
-              Không có danh mục nào
+              No categories found
             </p>
           )}
           {(cursors.length > 0 || data?.pagination?.hasNextPage) && (
-            <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
+            <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
               <div className="text-sm text-ink-muted font-medium">
-                Trang {cursors.length + 1}
+                Page {cursors.length + 1}
                 {data?.pagination?.total ? (
                   <>
                     <span className="mx-2 text-border">|</span>
-                    Tổng: {data.pagination.total} danh mục
+                    Total: {data.pagination.total} categories
                   </>
                 ) : null}
               </div>
@@ -518,20 +537,20 @@ export function CategoryPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
+                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                   onClick={handlePrev}
                   disabled={cursors.length === 0}
                 >
-                  Trước
+                  Previous
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
+                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                   onClick={handleNext}
                   disabled={!data?.pagination?.hasNextPage}
                 >
-                  Sau
+                  Next
                 </Button>
               </div>
             </div>
@@ -547,7 +566,7 @@ export function CategoryPage() {
         <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
             <DialogTitle className="text-xl font-bold text-ink">
-              {editing ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
+              {editing ? "Edit Category" : "Add New Category"}
             </DialogTitle>
           </DialogHeader>
           <form
@@ -562,13 +581,13 @@ export function CategoryPage() {
                       htmlFor="catName"
                       className="text-sm font-semibold text-ink"
                     >
-                      Tên danh mục <span className="text-brand">*</span>
+                      Category Name <span className="text-brand">*</span>
                     </Label>
                     <Input
                       id="catName"
                       {...register("name")}
                       aria-invalid={!!errors.name}
-                      placeholder="VD: Chăm sóc da"
+                      placeholder="E.g. Skincare"
                       className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                     />
                     {errors.name && (
@@ -582,13 +601,13 @@ export function CategoryPage() {
                       htmlFor="catDesc"
                       className="text-sm font-semibold text-ink"
                     >
-                      Mô tả danh mục
+                      Description
                     </Label>
                     <Textarea
                       id="catDesc"
                       rows={4}
                       {...register("description")}
-                      placeholder="Nhập mô tả ngắn gọn..."
+                      placeholder="Enter short description..."
                       className="bg-surface border-border focus-visible:ring-brand focus-visible:border-brand resize-none"
                     />
                     {errors.description && (
@@ -600,7 +619,7 @@ export function CategoryPage() {
                   {/* Danh mục cha - tree indent */}
                   <div className="space-y-1.5">
                     <Label className="text-sm font-semibold text-ink">
-                      Danh mục cha
+                      Parent Category
                     </Label>
                     <Controller
                       name="parentId"
@@ -613,12 +632,12 @@ export function CategoryPage() {
                           }
                         >
                           <SelectTrigger className="w-full bg-surface border-border focus:ring-brand">
-                            <SelectValue placeholder="Chọn danh mục cha (Không bắt buộc)" />
+                            <SelectValue placeholder="Select parent category (Optional)" />
                           </SelectTrigger>
                           <SelectContent className="max-h-60">
                             <SelectItem value="none">
                               <span className="text-ink-muted">
-                                Không có (Danh mục gốc)
+                                None (Root Category)
                               </span>
                             </SelectItem>
                             {flatOptions
@@ -645,7 +664,7 @@ export function CategoryPage() {
                       )}
                     />
                     <p className="text-xs text-ink-muted">
-                      Để trống nếu đây là danh mục gốc (level 1)
+                      Leave blank if this is a root category (level 1)
                     </p>
                     {errors.parentId && (
                       <p className="text-xs text-danger">
@@ -658,12 +677,12 @@ export function CategoryPage() {
                       htmlFor="catBanner"
                       className="text-sm font-semibold text-ink"
                     >
-                      Banner Mega Menu
+                      Mega Menu Banner
                     </Label>
                     <Input
                       id="catBanner"
                       {...register("bannerUrl")}
-                      placeholder="Dán URL ảnh banner (tỉ lệ 3:1, VD: 900×300px)"
+                      placeholder="Paste banner URL (3:1 ratio, E.g. 900x300px)"
                       className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                     />
                     {bannerUrl && (
@@ -685,7 +704,7 @@ export function CategoryPage() {
                       </div>
                     )}
                     <p className="text-xs text-ink-muted">
-                      Chỉ dùng cho danh mục gốc. Tỉ lệ 3:1 khuyến nghị.
+                      Only used for root categories. 3:1 ratio recommended.
                     </p>
                   </div>
                   {/* Icon chỉ dùng cho danh mục gốc → nằm trong right column */}
@@ -695,7 +714,7 @@ export function CategoryPage() {
                   {!parentIdValue && (
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-ink">
-                        Icon danh mục chính
+                        Main Category Icon
                       </Label>
                       {/* Preview icon hiện tại */}
                       {iconUrl && (
@@ -719,7 +738,7 @@ export function CategoryPage() {
                       )}
                       {/* Group 1: 9 icon danh mục chính */}
                       <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-wide">
-                        Danh mục chính
+                        Main Categories
                       </p>
                       <div className="grid grid-cols-5 gap-1.5">
                         {COSMETICS_ICONS.slice(0, 9).map(
@@ -734,8 +753,8 @@ export function CategoryPage() {
                               }
                               title={`${label} — ${hint}`}
                               className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${iconUrl === url
-                                  ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
-                                  : "border-border bg-surface"
+                                ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
+                                : "border-border bg-surface"
                                 }`}
                             >
                               <img
@@ -752,7 +771,7 @@ export function CategoryPage() {
                       </div>
                       {/* Group 2: icon bổ sung cho danh mục con */}
                       <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-wide pt-1">
-                        Danh mục con
+                        Sub-categories
                       </p>
                       <div className="grid grid-cols-5 gap-1.5">
                         {COSMETICS_ICONS.slice(9).map(
@@ -767,8 +786,8 @@ export function CategoryPage() {
                               }
                               title={`${label} — ${hint}`}
                               className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${iconUrl === url
-                                  ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
-                                  : "border-border bg-surface"
+                                ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
+                                : "border-border bg-surface"
                                 }`}
                             >
                               <img
@@ -786,12 +805,12 @@ export function CategoryPage() {
                       {/* Custom URL input */}
                       <div className="space-y-1">
                         <p className="text-[11px] text-ink-muted font-medium">
-                          Hoặc dán URL icon tùy chỉnh (PNG/SVG nền trong suốt):
+                          Or paste a custom icon URL (PNG/SVG transparent background):
                         </p>
                         <Input
                           id="catIcon"
                           {...register("iconUrl")}
-                          placeholder="https://... (URL ảnh icon)"
+                          placeholder="https://... (Image URL)"
                           className="h-9 text-xs bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                         />
                       </div>
@@ -808,7 +827,7 @@ export function CategoryPage() {
                         htmlFor="catActive"
                         className="text-sm font-semibold text-ink cursor-pointer"
                       >
-                        Trạng thái
+                        Status
                       </Label>
                       <Controller
                         name="isActive"
@@ -823,7 +842,7 @@ export function CategoryPage() {
                       />
                     </div>
                     <p className="text-xs text-ink-muted mt-2">
-                      Cho phép hiển thị trên ứng dụng
+                      Show in application
                     </p>
                   </div>
                   <div className="space-y-1.5">
@@ -831,7 +850,7 @@ export function CategoryPage() {
                       htmlFor="catSort"
                       className="text-sm font-semibold text-ink"
                     >
-                      Thứ tự ưu tiên
+                      Priority Order
                     </Label>
                     <Input
                       id="catSort"
@@ -841,7 +860,7 @@ export function CategoryPage() {
                       className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand font-mono"
                     />
                     <p className="text-xs text-ink-muted">
-                      Số càng nhỏ ưu tiên càng cao
+                      Smaller number means higher priority
                     </p>
                     {errors.sortOrder && (
                       <p className="text-xs text-danger">
@@ -859,14 +878,14 @@ export function CategoryPage() {
                 className="h-11 bg-surface"
                 onClick={() => setIsFormOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button
                 type="submit"
                 className="h-11 bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                Xác nhận
+                Confirm
               </Button>
             </DialogFooter>
           </form>
@@ -880,25 +899,24 @@ export function CategoryPage() {
       >
         <DialogContent className="animate-scale-in">
           <DialogHeader>
-            <DialogTitle>Xoá danh mục</DialogTitle>
+            <DialogTitle>Delete Category</DialogTitle>
             <DialogDescription>
-              Bạn có chắc muốn xoá <strong>{deleteTarget?.name}</strong>? Hành
-              động này không thể hoàn tác.
+              Are you sure you want to delete <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
               <span className="block mt-1 text-xs text-danger">
-                Danh mục có sản phẩm sẽ bị từ chối xóa.
+                Categories with products cannot be deleted.
               </span>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Huỷ
+              Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={confirmDelete}
               disabled={deleteMutation.isPending}
             >
-              Xác nhận
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -248,44 +248,49 @@ export function VouchersPage() {
     <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-brand/10 text-brand mb-4">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4" style={{ background: "hsl(352, 72%, 52%, 0.1)", color: "hsl(352, 72%, 52%)" }}>
           <Ticket className="w-7 h-7" />
         </div>
-        <h1 className="text-2xl md:text-3xl font-black text-ink uppercase tracking-wide">
-          Kho Mã Giảm Giá
+        <h1
+          className="text-2xl md:text-3xl font-bold text-foreground"
+          style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+        >
+          Voucher Store
         </h1>
-        <p className="text-sm text-ink-muted mt-2">
-          Lưu mã giảm giá và sử dụng khi thanh toán
+        <p className="text-sm text-muted-foreground mt-2">
+          Save vouchers and use them at checkout
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-surface-soft border border-border rounded-sm p-1 mb-6 w-fit mx-auto">
+      <div className="flex gap-1 bg-muted border border-border rounded-xl p-1 mb-6 w-fit mx-auto">
         <button
           onClick={() => setTab("all")}
-          className={`px-6 py-2 text-sm font-semibold rounded-sm transition-all ${
+          className={`px-6 py-2 text-sm font-semibold rounded-lg transition-all ${
             tab === "all"
-              ? "bg-brand text-white "
-              : "text-ink-muted hover:text-ink"
+              ? "text-white shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
+          style={tab === "all" ? { background: "hsl(352, 72%, 52%)" } : {}}
         >
           <span className="flex items-center gap-1.5">
-            <Gift className="w-4 h-4" /> Tất cả mã
+            <Gift className="w-4 h-4" /> All vouchers
           </span>
         </button>
         <button
           onClick={() => setTab("wallet")}
-          className={`px-6 py-2 text-sm font-semibold rounded-sm transition-all ${
+          className={`px-6 py-2 text-sm font-semibold rounded-lg transition-all ${
             tab === "wallet"
-              ? "bg-brand text-white "
-              : "text-ink-muted hover:text-ink"
+              ? "text-white shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
           }`}
+          style={tab === "wallet" ? { background: "hsl(352, 72%, 52%)" } : {}}
         >
           <span className="flex items-center gap-1.5">
             <Wallet className="w-4 h-4" />
-            Kho của tôi
+            My wallet
             {walletVouchers && walletVouchers.length > 0 && (
-              <span className="ml-1 min-w-4.5 h-4.5 inline-flex items-center justify-center text-[10px] font-black bg-white text-brand rounded-full px-1">
+              <span className="ml-1 min-w-4.5 h-4.5 inline-flex items-center justify-center text-[10px] font-black bg-white rounded-full px-1" style={{ color: "hsl(352, 72%, 52%)" }}>
                 {walletVouchers.length}
               </span>
             )}
@@ -304,9 +309,10 @@ export function VouchersPage() {
           </p>
           <Link
             to="/auth/login"
-            className="px-6 py-2.5 bg-brand text-white font-bold rounded-sm hover:bg-brand-dark transition-colors text-sm"
+            className="px-6 py-2.5 text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-sm text-sm"
+            style={{ background: "hsl(352, 72%, 52%)" }}
           >
-            Đăng nhập ngay
+            Sign in
           </Link>
         </div>
       )}
@@ -339,9 +345,10 @@ export function VouchersPage() {
             {tab === "wallet" && (
               <button
                 onClick={() => setTab("all")}
-                className="px-5 py-2 bg-brand text-white rounded-sm font-semibold text-sm hover:bg-brand-dark transition-colors"
+                className="px-5 py-2 text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
+                style={{ background: "hsl(352, 72%, 52%)" }}
               >
-                Khám phá mã ngay
+                Explore vouchers
               </button>
             )}
           </div>

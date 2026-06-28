@@ -47,7 +47,7 @@ export default function ProductDetailInfo({
         <p
           className={`mt-1.5 text-sm font-medium ${product.isActive ? "text-success" : "text-ink-muted"}`}
         >
-          {product.isActive ? "Đang bán" : "Ngừng bán"}
+          {product.isActive ? "Active" : "Inactive"}
         </p>
       </div>
 

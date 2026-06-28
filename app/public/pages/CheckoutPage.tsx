@@ -103,7 +103,7 @@ export function CheckoutPage() {
   // Redirect nếu chưa đăng nhập
   useEffect(() => {
     if (!isLoggedIn) {
-      toast.error("Vui lòng đăng nhập để thanh toán!");
+      toast.error("Please sign in to checkout.");
       navigate("/login", { state: { from: location } });
     }
   }, [isLoggedIn, navigate, location]);
@@ -293,7 +293,7 @@ export function CheckoutPage() {
           ══════════════════════════════════════════════════ */}
           <div className="flex flex-col gap-4">
             {/* ── Card 1: Thông tin + Địa chỉ ───────────────── */}
-            <div className="bg-white rounded-sm border border-border overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
               <div className="p-5">
                 {/* Header */}
                 <div className="flex items-center gap-2 mb-5">
@@ -375,21 +375,18 @@ export function CheckoutPage() {
                           .join(", ")}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-3 py-6 text-center border border-dashed border-border rounded-sm bg-surface-soft/50">
-                        <MapPin className="w-7 h-7 text-ink-muted/40" />
+                      <div className="flex flex-col items-center gap-3 py-6 text-center border border-dashed border-border rounded-xl bg-muted/40">
+                        <MapPin className="w-7 h-7 text-muted-foreground/40" />
                         <div>
-                          <p className="text-sm font-medium text-ink mb-0.5">
-                            Chưa có địa chỉ giao hàng
-                          </p>
-                          <p className="text-xs text-ink-muted">
-                            Vui lòng thêm địa chỉ để tiếp tục đặt hàng
-                          </p>
+                          <p className="text-sm font-medium text-foreground mb-0.5">No delivery address</p>
+                          <p className="text-xs text-muted-foreground">Please add an address to continue</p>
                         </div>
                         <Link
                           to="/account?view=address"
-                          className="inline-flex items-center gap-1.5 bg-brand hover:bg-brand-dark text-white text-xs font-bold px-4 py-2 rounded-sm transition-colors"
+                          className="inline-flex items-center gap-1.5 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm"
+                          style={{ background: "hsl(352, 72%, 52%)" }}
                         >
-                          <ExternalLink className="w-3 h-3" /> Thêm địa chỉ ngay
+                          <ExternalLink className="w-3 h-3" /> Add address
                         </Link>
                       </div>
                     )}

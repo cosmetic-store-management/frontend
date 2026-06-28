@@ -141,7 +141,7 @@ export default function EditBatchModal({
               Huỷ
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Đang xử lý..." : "Xác nhận"}
+              {isSubmitting ? "Processing..." : "Confirm"}
             </Button>
           </DialogFooter>
         </form>

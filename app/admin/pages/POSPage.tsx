@@ -116,7 +116,7 @@ export function POSPage() {
             v.discountPrice && v.discountPrice > 0 ? v.discountPrice : v.price,
           imageUrl: v.imageUrl || p.imageUrl,
           stock: v.stock,
-          category: p.category?.name || "Mỹ phẩm",
+          category: p.category?.name || "Cosmetics",
         });
       });
     }
@@ -124,13 +124,13 @@ export function POSPage() {
 
   const addToCart = (product: POSProduct) => {
     if (product.stock <= 0) {
-      toast.error("Sản phẩm đã hết hàng!");
+      toast.error("Product is out of stock!");
       return;
     }
     const existing = cart.find((item) => item.product.id === product.id);
     if (existing) {
       if (existing.quantity >= product.stock) {
-        toast.warning(`Chỉ còn ${product.stock} sản phẩm trong kho`);
+        toast.warning(`Only ${product.stock} items left in stock`);
         return;
       }
       setCart(
@@ -152,7 +152,7 @@ export function POSPage() {
           if (item.product.id === id) {
             const nextQty = item.quantity + amount;
             if (nextQty > item.product.stock) {
-              toast.warning(`Chỉ còn ${item.product.stock} sản phẩm trong kho`);
+              toast.warning(`Only ${item.product.stock} items left in stock`);
               return item;
             }
             return { ...item, quantity: nextQty };
@@ -180,14 +180,14 @@ export function POSPage() {
 
   const handleCheckout = () => {
     if (cart.length === 0) {
-      toast.error("Giỏ hàng trống!");
+      toast.error("Cart is empty!");
       return;
     }
     if (
       paymentMethod === "cash" &&
       (!receivedCash || Number(receivedCash) < total)
     ) {
-      toast.error("Vui lòng nhập đúng số tiền khách đưa!");
+      toast.error("Please enter correct received amount!");
       return;
     }
 
@@ -202,7 +202,7 @@ export function POSPage() {
       usedPoints: usedPoints > 0 ? usedPoints : 0,
       note:
         discount > 0
-          ? `Giảm giá: ${discount.toLocaleString("vi-VN")}₫`
+          ? `Discount: ${discount.toLocaleString("vi-VN")}₫`
           : undefined,
       customerPhone: customerPhone || undefined,
       customerName: !matchedCustomer && customerName ? customerName : undefined,
@@ -214,9 +214,9 @@ export function POSPage() {
         setIsSuccessOpen(true);
       }),
       {
-        loading: "Đang thanh toán đơn hàng...",
-        success: "Đã xử lý đơn hàng thành công!",
-        error: (err: any) => err.message || "Lỗi thanh toán đơn hàng",
+        loading: "Processing order...",
+        success: "Order processed successfully!",
+        error: (err: any) => err.message || "Failed to process order",
       },
     );
   };
@@ -246,7 +246,7 @@ export function POSPage() {
         <div className="relative mb-5">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
           <Input
-            placeholder="Tìm sản phẩm..."
+            placeholder="Search products..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -257,11 +257,11 @@ export function POSPage() {
         <div className="flex-1 overflow-y-auto pr-1">
           {isLoading ? (
             <div className="py-10 flex items-center justify-center text-gray-500">
-              <span className="animate-pulse">Đang tải sản phẩm...</span>
+              <span className="animate-pulse">Loading products...</span>
             </div>
           ) : products.length === 0 ? (
             <div className="py-10 flex items-center justify-center text-gray-500">
-              Không tìm thấy sản phẩm
+              No products found
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -280,12 +280,12 @@ export function POSPage() {
                       />
                     ) : (
                       <span className="text-xs text-gray-400">
-                        Không có ảnh
+                        No Image
                       </span>
                     )}
                   </div>
                   <h4 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-10 leading-tight">
-                    {p.name || "Sản phẩm không tên"}
+                    {p.name || "Unnamed product"}
                   </h4>
                   <div className="mt-auto w-full pt-2 flex justify-between items-end">
                     <span className="text-red-600 font-bold">
@@ -308,10 +308,10 @@ export function POSPage() {
         <div className="px-5 py-4 border-b border-border flex justify-between items-center">
           <div className="flex items-center gap-2">
             <ShoppingCart className="w-4 h-4 text-brand" />
-            <h3 className="font-semibold text-ink">Đơn hàng hiện tại</h3>
+            <h3 className="font-semibold text-ink">Current Order</h3>
           </div>
           <span className="text-xs font-semibold bg-brand-light text-brand px-2 py-0.5 rounded-full">
-            {cart.reduce((sum, item) => sum + item.quantity, 0)} món
+            {cart.reduce((sum, item) => sum + item.quantity, 0)} items
           </span>
         </div>
 
@@ -362,7 +362,7 @@ export function POSPage() {
           {cart.length === 0 && (
             <div className="h-full flex flex-col items-center justify-center text-center py-16 text-ink-muted gap-3">
               <ShoppingCart className="w-8 h-8 text-border" />
-              <p className="text-xs">Chọn sản phẩm bên trái để thanh toán</p>
+              <p className="text-xs">Select products to checkout</p>
             </div>
           )}
         </div>
@@ -372,10 +372,10 @@ export function POSPage() {
           {/* Customer Phone Search */}
           <div className="space-y-1.5 text-left">
             <span className="text-[10px] font-semibold text-ink-muted uppercase tracking-wider">
-              Khách hàng thành viên
+              Member Customer
             </span>
             <Input
-              placeholder="Số điện thoại (ví dụ: 0901234567)..."
+              placeholder="Phone number (e.g. 0901234567)..."
               value={customerPhone}
               onChange={(e) => setCustomerPhone(e.target.value)}
               className="h-8 text-xs"
@@ -385,13 +385,13 @@ export function POSPage() {
                 {matchedCustomer ? (
                   <div className="text-success text-[11px] font-medium mt-1 flex items-center gap-1 bg-success/10 px-2 py-0.5 rounded border border-success animate-scale-in">
                     <span>
-                      ✓ Khách hàng: {matchedCustomer.name} - Điểm:{" "}
+                      ✓ Customer: {matchedCustomer.name} - Points:{" "}
                       {userPoints.toLocaleString("vi-VN")}
                     </span>
                   </div>
                 ) : (
                   <Input
-                    placeholder="Tên khách hàng mới (*)..."
+                    placeholder="New customer name (*)..."
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="h-8 text-xs mt-2 animate-scale-in"
@@ -403,7 +403,7 @@ export function POSPage() {
 
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-ink-muted">
-              <span>Tạm tính</span>
+              <span>Subtotal</span>
               <span>
                 {previewData?.subtotal?.toLocaleString("vi-VN") || 0}₫
               </span>
@@ -411,7 +411,7 @@ export function POSPage() {
 
             {previewData?.tierDiscountAmount > 0 && (
               <div className="flex justify-between text-xs text-brand font-medium">
-                <span>Chiết khấu hạng thẻ</span>
+                <span>Membership Discount</span>
                 <span>
                   -{previewData.tierDiscountAmount.toLocaleString("vi-VN")}₫
                 </span>
@@ -419,7 +419,7 @@ export function POSPage() {
             )}
 
             <div className="flex justify-between items-center text-xs text-ink-muted">
-              <span>Giảm giá (Thủ công)</span>
+              <span>Discount (Manual)</span>
               <Input
                 type="number"
                 min="0"
@@ -438,7 +438,7 @@ export function POSPage() {
               <div className="bg-brand/5 p-2 rounded border border-brand/20 mt-1">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-xs font-semibold text-brand">
-                    Dùng điểm
+                    Use points
                   </span>
                 </div>
                 <div className="flex gap-2">
@@ -454,12 +454,12 @@ export function POSPage() {
                     onClick={() => setUsedPoints(maxCanUse)}
                     className="bg-brand text-white text-[10px] font-bold px-2 rounded hover:bg-brand-dark"
                   >
-                    Tối đa
+                    Max
                   </button>
                 </div>
                 {previewData?.actualUsedPoints > 0 && (
                   <div className="flex justify-between text-xs mt-1 text-success font-medium">
-                    <span>Quy đổi:</span>
+                    <span>Convert:</span>
                     <span>
                       -{previewData.actualUsedPoints.toLocaleString("vi-VN")}₫
                     </span>
@@ -469,7 +469,7 @@ export function POSPage() {
             )}
 
             <div className="flex justify-between font-bold text-sm text-ink pt-2 border-t border-border/80">
-              <span>Tổng cộng</span>
+              <span>Total</span>
               <span className="text-brand text-base">
                 {total.toLocaleString("vi-VN")}₫
               </span>
@@ -479,7 +479,7 @@ export function POSPage() {
           {/* Payment Method */}
           <div className="space-y-1.5">
             <span className="text-[10px] font-semibold text-ink-muted uppercase tracking-wider">
-              Phương thức thanh toán
+              Payment Method
             </span>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -490,7 +490,7 @@ export function POSPage() {
                     : "border-border text-ink-muted bg-surface hover:bg-surface-muted/50 hover:border-border/80"
                 }`}
               >
-                <DollarSign className="w-4 h-4" /> Tiền mặt
+                <DollarSign className="w-4 h-4" /> Cash
               </button>
               <button
                 onClick={() => setPaymentMethod("pos_card")}
@@ -500,7 +500,7 @@ export function POSPage() {
                     : "border-border text-ink-muted bg-surface hover:bg-surface-muted/50 hover:border-border/80"
                 }`}
               >
-                <CreditCard className="w-4 h-4" /> Quẹt thẻ
+                <CreditCard className="w-4 h-4" /> Card
               </button>
               <button
                 onClick={() => setPaymentMethod("transfer")}
@@ -510,7 +510,7 @@ export function POSPage() {
                     : "border-border text-ink-muted bg-surface hover:bg-surface-muted/50 hover:border-border/80"
                 }`}
               >
-                <QrCode className="w-4 h-4" /> Mã QR
+                <QrCode className="w-4 h-4" /> QR Code
               </button>
             </div>
           </div>
@@ -519,7 +519,7 @@ export function POSPage() {
           {paymentMethod === "cash" && (
             <div className="space-y-2 animate-scale-in">
               <div className="flex justify-between items-center gap-3">
-                <span className="text-xs text-ink-muted">Khách đưa</span>
+                <span className="text-xs text-ink-muted">Cash Received</span>
                 <Input
                   type="number"
                   min="0"
@@ -535,7 +535,7 @@ export function POSPage() {
               </div>
               {Number(receivedCash) >= total && (
                 <div className="flex justify-between text-xs font-medium text-success">
-                  <span>Tiền thừa trả khách</span>
+                  <span>Change</span>
                   <span>{changeDue.toLocaleString("vi-VN")}₫</span>
                 </div>
               )}
@@ -547,7 +547,7 @@ export function POSPage() {
             disabled={cart.length === 0}
             className="w-full h-11 text-sm font-semibold"
           >
-            Thanh toán
+            Checkout
           </Button>
         </div>
       </div>
@@ -561,26 +561,26 @@ export function POSPage() {
           <DialogHeader className="flex flex-col items-center">
             <CheckCircle className="w-16 h-16 text-success mb-4 animate-bounce" />
             <DialogTitle className="text-lg font-bold text-ink">
-              Thanh toán thành công!
+              Payment Successful!
             </DialogTitle>
             <DialogDescription className="text-sm text-ink-muted mt-2">
-              Đơn hàng của bạn đã được ghi nhận và in hóa đơn thành công.
+              Your order has been recorded and the receipt is printed successfully.
             </DialogDescription>
           </DialogHeader>
 
           <div className="bg-surface-soft rounded-sm border border-border p-4 my-4 space-y-2.5 text-left text-xs">
             <div className="flex justify-between text-ink-muted">
-              <span>Phương thức:</span>
+              <span>Method:</span>
               <span className="font-semibold text-ink">
                 {paymentMethod === "cash"
-                  ? "Tiền mặt"
+                  ? "Cash"
                   : paymentMethod === "pos_card"
-                    ? "Quẹt thẻ"
-                    : "Chuyển khoản QR"}
+                    ? "Card"
+                    : "QR Transfer"}
               </span>
             </div>
             <div className="flex justify-between text-ink-muted">
-              <span>Tổng đơn hàng:</span>
+              <span>Order Total:</span>
               <span className="font-bold text-brand">
                 {total.toLocaleString("vi-VN")}₫
               </span>
@@ -588,13 +588,13 @@ export function POSPage() {
             {paymentMethod === "cash" && (
               <>
                 <div className="flex justify-between text-ink-muted">
-                  <span>Khách đưa:</span>
+                  <span>Cash Received:</span>
                   <span className="font-semibold text-ink">
                     {Number(receivedCash).toLocaleString("vi-VN")}₫
                   </span>
                 </div>
                 <div className="flex justify-between text-success font-semibold">
-                  <span>Tiền thối:</span>
+                  <span>Change:</span>
                   <span>{changeDue.toLocaleString("vi-VN")}₫</span>
                 </div>
               </>
@@ -602,8 +602,8 @@ export function POSPage() {
 
             {(lastOrder?.earnedPoints || 0) > 0 && (
               <div className="flex justify-between text-brand font-semibold pt-2 border-t border-border mt-2">
-                <span>Điểm tích lũy từ đơn này:</span>
-                <span>+{lastOrder!.earnedPoints} điểm</span>
+                <span>Points earned from this order:</span>
+                <span>+{lastOrder!.earnedPoints} points</span>
               </div>
             )}
           </div>
@@ -614,10 +614,10 @@ export function POSPage() {
               variant="outline"
               className="gap-2 border-dashed"
             >
-              <Printer className="w-4 h-4 text-ink-muted" /> In hoá đơn
+              <Printer className="w-4 h-4 text-ink-muted" /> Print Receipt
             </Button>
             <Button onClick={handleSuccessClose} className="px-8 font-medium">
-              Xác nhận
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

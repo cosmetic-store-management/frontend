@@ -33,25 +33,25 @@ export default function NotFoundPage() {
         {/* Message */}
         <div className="space-y-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-ink tracking-tight">
-            Trang không tồn tại
+            Page not found
           </h1>
           <p className="text-base text-ink-muted max-w-md mx-auto leading-relaxed">
-            Oops! Trang bạn đang tìm kiếm đã bị xóa, đổi tên hoặc chưa từng tồn
-            tại. Hãy kiểm tra lại URL hoặc khám phá các trang khác của GlowUp.
+            Oops! This page has been removed, renamed, or never existed.
+            Check the URL or explore GlowUp.
           </p>
         </div>
 
         {/* Quick links */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
           {[
-            { label: "Trang chủ", to: "/", icon: <Home className="w-4 h-4" /> },
+            { label: "Home", to: "/", icon: <Home className="w-4 h-4" /> },
             {
-              label: "Sản phẩm",
+              label: "Products",
               to: "/products",
               icon: <Search className="w-4 h-4" />,
             },
             {
-              label: "Danh mục",
+              label: "Categories",
               to: "/categories",
               icon: <Search className="w-4 h-4" />,
             },
@@ -74,20 +74,20 @@ export default function NotFoundPage() {
             className="btn-hover flex items-center gap-2 px-6 py-3 rounded-sm border border-border bg-white text-sm font-medium text-ink hover:bg-surface-muted transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Quay lại
+            Go back
           </button>
           <Link
             to="/"
             className="btn-hover flex items-center gap-2 px-6 py-3 rounded-sm bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors "
           >
             <Home className="w-4 h-4" />
-            Về trang chủ
+            Back to home
           </Link>
         </div>
 
         {/* Brand */}
         <p className="text-xs text-ink-muted/50 pt-4">
-          GlowUp Cosmetics · Mã lỗi 404
+          GlowUp Cosmetics · Error 404
         </p>
       </div>
     </div>

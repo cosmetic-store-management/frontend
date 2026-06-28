@@ -19,11 +19,125 @@ import {
   Ticket,
   MessageSquare,
   ServerCog,
-  HelpCircle,
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/auth/hooks/useAdminAuth";
+
+// ── Nav item helpers ──────────────────────────────────────────────────────────
+
+function NavItem({
+  to,
+  icon: Icon,
+  label,
+  active,
+}: {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "relative flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-medium transition-all duration-200",
+        active
+          ? "bg-brand/10 text-brand shadow-sm"
+          : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+      )}
+    >
+      {active && (
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-brand rounded-r-sm" />
+      )}
+      <Icon className={cn("w-4 h-4 shrink-0", active && "text-brand")} />
+      <span>{label}</span>
+    </Link>
+  );
+}
+
+function SubNavItem({
+  to,
+  icon: Icon,
+  label,
+  active,
+}: {
+  to: string;
+  icon: React.ElementType;
+  label: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "flex items-center gap-2.5 py-1.5 px-2.5 rounded-sm text-xs font-medium transition-all duration-150",
+        active
+          ? "bg-brand/10 text-brand"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+      )}
+    >
+      <Icon className={cn("w-3.5 h-3.5 shrink-0", active && "text-brand")} />
+      {label}
+    </Link>
+  );
+}
+
+function NavGroup({
+  icon: Icon,
+  label,
+  isActive,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  icon: React.ElementType;
+  label: string;
+  isActive: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-0.5">
+      <button
+        onClick={onToggle}
+        className={cn(
+          "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-sm text-sm font-medium transition-all duration-200",
+          isActive
+            ? "text-brand"
+            : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <Icon className={cn("w-4 h-4 shrink-0", isActive && "text-brand")} />
+          <span>{label}</span>
+        </div>
+        {isOpen ? (
+          <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+        ) : (
+          <ChevronRight className="w-3.5 h-3.5 opacity-40" />
+        )}
+      </button>
+
+      {isOpen && (
+        <div className="pl-3 ml-4 space-y-0.5 border-l-2 border-border/60">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SectionLabel({ label }: { label: string }) {
+  return (
+    <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 select-none">
+      {label}
+    </p>
+  );
+}
+
+// ── Main Sidebar ──────────────────────────────────────────────────────────────
 
 export default function AdminSidebar() {
   const { pathname } = useLocation();
@@ -56,7 +170,6 @@ export default function AdminSidebar() {
   const [marketingOpen, setMarketingOpen] = useState(isMarketingRoute);
   const [systemOpen, setSystemOpen] = useState(isSystemRoute);
 
-  // Sync open state when path changes externally
   useEffect(() => {
     {
       /* eslint-disable-next-line  */
@@ -76,365 +189,219 @@ export default function AdminSidebar() {
   ]);
 
   return (
-    <aside className="w-64 shrink-0 bg-card text-foreground border-r border-border flex flex-col z-20 shadow-ui-soft">
-      {/* Logo / Header */}
-      <div className="px-6 py-5 border-b border-border flex items-center gap-3.5">
-        <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full flex items-center justify-center shadow-sm ring-1 ring-border/50">
-          <img
-            src="/logo.png"
-            alt="GlowUp Logo"
-            className="w-full h-full object-cover scale-[1.45]"
-          />
+    <aside className="w-64 shrink-0 flex flex-col z-20 border-r border-border bg-card">
+      {/* ── Logo ── */}
+      <div className="px-5 py-5 border-b border-border">
+        <div className="flex items-center gap-3">
+          <img src="/logo.png" alt="GlowUp Logo" className="w-11 h-11 object-contain rounded-full mix-blend-multiply" />
+          <div>
+            <p
+              className="font-bold text-xl tracking-wide text-ink leading-none"
+              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            >
+              GlowUp.
+            </p>
+          </div>
         </div>
-        <span className="font-bold text-xl tracking-wide text-ink">GlowUp</span>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 pb-8 space-y-1 overflow-y-auto scrollbar-thin">
-        {/* DASHBOARD */}
-        <Link
+      {/* ── Navigation ── */}
+      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-0.5">
+        {/* MAIN */}
+        <SectionLabel label="Main" />
+        <NavItem
           to="/admin"
-          className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand",
-            pathname === "/admin"
-              ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-              : "text-muted-foreground",
-          )}
-        >
-          <LayoutDashboard className="w-4 h-4" />
-          Dashboard
-        </Link>
+          icon={LayoutDashboard}
+          label="Dashboard"
+          active={pathname === "/admin"}
+        />
 
-        {/* ORDER GROUP */}
+        {/* ORDERS */}
         {(hasPerm("orders.view") || hasPerm("pos.access")) && (
-          <div className="space-y-0.5 pt-1">
-            <button
-              onClick={() => setOrderOpen(!orderOpen)}
-              className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
-                isOrderRoute && "text-brand font-semibold",
-              )}
+          <>
+            <SectionLabel label="Sales" />
+            <NavGroup
+              icon={ShoppingCart}
+              label="Orders"
+              isActive={isOrderRoute}
+              isOpen={orderOpen}
+              onToggle={() => setOrderOpen(!orderOpen)}
             >
-              <div className="flex items-center gap-3">
-                <ShoppingCart className="w-4 h-4" />
-                <span>Đơn hàng</span>
-              </div>
-              {orderOpen ? (
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+              {hasPerm("pos.access") && (
+                <SubNavItem
+                  to="/admin/pos"
+                  icon={CreditCard}
+                  label="Point of Sale"
+                  active={pathname === "/admin/pos"}
+                />
               )}
-            </button>
-            {orderOpen && (
-              <div className="pl-4 pr-1 py-1 ml-4 space-y-1 bg-muted/40 rounded-sm border-l border-border animate-slide-down">
-                {hasPerm("pos.access") && (
-                  <Link
-                    to="/admin/pos"
-                    className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                      pathname === "/admin/pos"
-                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    Bán hàng tại quầy (POS)
-                  </Link>
-                )}
-                {hasPerm("orders.view") && (
-                  <Link
-                    to="/admin/orders"
-                    className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                      pathname === "/admin/orders"
-                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                    Tất cả đơn hàng
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
+              {hasPerm("orders.view") && (
+                <SubNavItem
+                  to="/admin/orders"
+                  icon={ShoppingCart}
+                  label="All Orders"
+                  active={pathname === "/admin/orders"}
+                />
+              )}
+            </NavGroup>
+          </>
         )}
 
-        {/* CATALOG GROUP */}
+        {/* CATALOG */}
         {hasPerm("products.view") && (
-          <div className="space-y-0.5 pt-1">
-            <button
-              onClick={() => setCatalogOpen(!catalogOpen)}
-              className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
-                isCatalogRoute && "text-brand font-semibold",
-              )}
+          <>
+            <SectionLabel label="Catalog" />
+            <NavGroup
+              icon={Package}
+              label="Products"
+              isActive={isCatalogRoute}
+              isOpen={catalogOpen}
+              onToggle={() => setCatalogOpen(!catalogOpen)}
             >
-              <div className="flex items-center gap-3">
-                <Package className="w-4 h-4" />
-                <span>Sản phẩm</span>
-              </div>
-              {catalogOpen ? (
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              )}
-            </button>
-
-            {catalogOpen && (
-              <div className="pl-4 pr-1 py-1 ml-4 space-y-1 bg-muted/40 rounded-sm border-l border-border animate-slide-down">
-                <Link
-                  to="/admin/products"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/products"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Package className="w-3.5 h-3.5" />
-                  Danh sách sản phẩm
-                </Link>
-                <Link
-                  to="/admin/inventory"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/inventory"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Box className="w-3.5 h-3.5" />
-                  Tồn kho
-                </Link>
-                <Link
-                  to="/admin/categories"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/categories"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <FolderTree className="w-3.5 h-3.5" />
-                  Danh mục
-                </Link>
-                <Link
-                  to="/admin/brands"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/brands"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Bookmark className="w-3.5 h-3.5" />
-                  Thương hiệu
-                </Link>
-              </div>
-            )}
-          </div>
+              <SubNavItem
+                to="/admin/products"
+                icon={Package}
+                label="Product List"
+                active={pathname === "/admin/products"}
+              />
+              <SubNavItem
+                to="/admin/inventory"
+                icon={Box}
+                label="Inventory"
+                active={pathname === "/admin/inventory"}
+              />
+              <SubNavItem
+                to="/admin/categories"
+                icon={FolderTree}
+                label="Categories"
+                active={pathname === "/admin/categories"}
+              />
+              <SubNavItem
+                to="/admin/brands"
+                icon={Bookmark}
+                label="Brands"
+                active={pathname === "/admin/brands"}
+              />
+            </NavGroup>
+          </>
         )}
 
-        {/* CUSTOMER GROUP */}
+        {/* CUSTOMERS */}
         {(hasPerm("customers.view") || hasPerm("reviews.manage")) && (
-          <div className="space-y-0.5 pt-1">
-            <button
-              onClick={() => setCustomerOpen(!customerOpen)}
-              className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
-                isCustomerRoute && "text-brand font-semibold",
-              )}
+          <>
+            <SectionLabel label="Customers" />
+            <NavGroup
+              icon={Users}
+              label="Customers"
+              isActive={isCustomerRoute}
+              isOpen={customerOpen}
+              onToggle={() => setCustomerOpen(!customerOpen)}
             >
-              <div className="flex items-center gap-3">
-                <Users className="w-4 h-4" />
-                <span>Khách hàng</span>
-              </div>
-              {customerOpen ? (
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+              {hasPerm("customers.view") && (
+                <SubNavItem
+                  to="/admin/customers"
+                  icon={Users}
+                  label="Customer List"
+                  active={pathname === "/admin/customers"}
+                />
               )}
-            </button>
-            {customerOpen && (
-              <div className="pl-4 pr-1 py-1 ml-4 space-y-1 bg-muted/40 rounded-sm border-l border-border animate-slide-down">
-                {hasPerm("customers.view") && (
-                  <Link
-                    to="/admin/customers"
-                    className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                      pathname === "/admin/customers"
-                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <Users className="w-3.5 h-3.5" />
-                    Danh sách khách hàng
-                  </Link>
-                )}
-                {hasPerm("reviews.manage") && (
-                  <Link
-                    to="/admin/reviews"
-                    className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                      pathname === "/admin/reviews"
-                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    Đánh giá
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
+              {hasPerm("reviews.manage") && (
+                <SubNavItem
+                  to="/admin/reviews"
+                  icon={MessageSquare}
+                  label="Reviews"
+                  active={pathname === "/admin/reviews"}
+                />
+              )}
+            </NavGroup>
+          </>
         )}
 
-        {/* MARKETING GROUP */}
+        {/* MARKETING */}
         {(hasPerm("vouchers.view") ||
           hasPerm("flash_sales.view") ||
           isOwner) && (
-          <div className="space-y-0.5 pt-1">
-            <button
-              onClick={() => setMarketingOpen(!marketingOpen)}
-              className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
-                isMarketingRoute && "text-brand font-semibold",
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <Ticket className="w-4 h-4" />
-                <span>Khuyến mãi</span>
-              </div>
-              {marketingOpen ? (
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              )}
-            </button>
-            {marketingOpen && (
-              <div className="pl-4 pr-1 py-1 ml-4 space-y-1 bg-muted/40 rounded-sm border-l border-border animate-slide-down">
-                <Link
+            <>
+              <SectionLabel label="Marketing" />
+              <NavGroup
+                icon={Ticket}
+                label="Promotions"
+                isActive={isMarketingRoute}
+                isOpen={marketingOpen}
+                onToggle={() => setMarketingOpen(!marketingOpen)}
+              >
+                <SubNavItem
                   to="/admin/vouchers"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/vouchers"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Ticket className="w-3.5 h-3.5" />
-                  Mã giảm giá
-                </Link>
-                <Link
+                  icon={Ticket}
+                  label="Vouchers"
+                  active={pathname === "/admin/vouchers"}
+                />
+                <SubNavItem
                   to="/admin/flash-sales"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/flash-sales"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <Zap className="w-3.5 h-3.5" />
-                  Flash Sale
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
+                  icon={Zap}
+                  label="Flash Sale"
+                  active={pathname === "/admin/flash-sales"}
+                />
+              </NavGroup>
+            </>
+          )}
 
-        {/* REPORTS */}
+        {/* ANALYTICS */}
         {hasPerm("reports.view") && (
-          <div className="pt-1">
-            <Link
+          <>
+            <SectionLabel label="Analytics" />
+            <NavItem
               to="/admin/reports"
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand",
-                pathname === "/admin/reports"
-                  ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                  : "text-muted-foreground",
-              )}
-            >
-              <BarChart3 className="w-4 h-4" />
-              Thống kê
-            </Link>
-          </div>
+              icon={BarChart3}
+              label="Reports"
+              active={pathname === "/admin/reports"}
+            />
+          </>
         )}
 
-        {/* SYSTEM GROUP */}
+        {/* SYSTEM */}
         {(isManager || isOwner) && (
-          <div className="space-y-0.5 pt-1">
-            <button
-              onClick={() => setSystemOpen(!systemOpen)}
-              className={cn(
-                "w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 hover:bg-brand/5 hover:text-brand text-muted-foreground",
-                isSystemRoute && "text-brand font-semibold",
-              )}
+          <>
+            <SectionLabel label="System" />
+            <NavGroup
+              icon={ServerCog}
+              label="System"
+              isActive={isSystemRoute}
+              isOpen={systemOpen}
+              onToggle={() => setSystemOpen(!systemOpen)}
             >
-              <div className="flex items-center gap-3">
-                <ServerCog className="w-4 h-4" />
-                <span>Hệ thống</span>
-              </div>
-              {systemOpen ? (
-                <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+              <SubNavItem
+                to="/admin/staff"
+                icon={UserCog}
+                label="Staff"
+                active={pathname === "/admin/staff"}
+              />
+              {isOwner && (
+                <SubNavItem
+                  to="/admin/audit-logs"
+                  icon={History}
+                  label="Audit Logs"
+                  active={pathname === "/admin/audit-logs"}
+                />
               )}
-            </button>
-            {systemOpen && (
-              <div className="pl-4 pr-1 py-1 ml-4 space-y-1 bg-muted/40 rounded-sm border-l border-border animate-slide-down">
-                <Link
-                  to="/admin/staff"
-                  className={cn(
-                    "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                    pathname === "/admin/staff"
-                      ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                      : "text-muted-foreground",
-                  )}
-                >
-                  <UserCog className="w-3.5 h-3.5" />
-                  Nhân viên
-                </Link>
-                {isOwner && (
-                  <Link
-                    to="/admin/audit-logs"
-                    className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                      pathname === "/admin/audit-logs"
-                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <History className="w-3.5 h-3.5" />
-                    Nhật ký
-                  </Link>
-                )}
-                {isOwner && (
-                  <Link
-                    to="/admin/settings"
-                    className={cn(
-                      "flex items-center gap-2.5 py-1.5 px-2 rounded-sm text-xs transition-colors hover:text-brand hover:bg-brand/5",
-                      pathname === "/admin/settings"
-                        ? "bg-brand/10 text-brand font-semibold shadow-ui-soft"
-                        : "text-muted-foreground",
-                    )}
-                  >
-                    <Settings className="w-3.5 h-3.5" />
-                    Cài đặt chung
-                  </Link>
-                )}
-              </div>
-            )}
-          </div>
+              {isOwner && (
+                <SubNavItem
+                  to="/admin/settings"
+                  icon={Settings}
+                  label="Settings"
+                  active={pathname === "/admin/settings"}
+                />
+              )}
+            </NavGroup>
+          </>
         )}
       </nav>
 
-      {/* Footer / Logout */}
-      <div className="px-3 py-4 border-t border-border">
+      {/* ── User Footer ── */}
+      <div className="border-t border-border p-3">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-sm text-sm text-muted-foreground hover:bg-muted hover:text-destructive transition-all duration-200"
+          className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 font-medium"
         >
           <LogOut className="w-4 h-4" />
           Log Out

@@ -64,7 +64,7 @@ export function VariantPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !code.trim()) {
-      toast.error("Vui lòng điền đầy đủ các thông tin bắt buộc!");
+      toast.error("Please fill in all required fields!");
       return;
     }
 
@@ -82,9 +82,9 @@ export function VariantPage() {
           })
           .then(() => setIsFormOpen(false)),
         {
-          loading: "Đang cập nhật...",
-          success: "Cập nhật thuộc tính biến thể thành công!",
-          error: (err: any) => err.message || "Lỗi cập nhật",
+          loading: "Updating...",
+          success: "Variant attribute updated successfully!",
+          error: (err: any) => err.message || "Update error",
         },
       );
     } else {
@@ -97,20 +97,20 @@ export function VariantPage() {
           })
           .then(() => setIsFormOpen(false)),
         {
-          loading: "Đang tạo...",
-          success: "Tạo thuộc tính biến thể mới thành công!",
-          error: (err: any) => err.message || "Lỗi tạo mới",
+          loading: "Creating...",
+          success: "New variant attribute created successfully!",
+          error: (err: any) => err.message || "Creation error",
         },
       );
     }
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xoá thuộc tính này?")) {
+    if (window.confirm("Are you sure you want to delete this attribute?")) {
       toast.promise(deleteMutation.mutateAsync(id), {
-        loading: "Đang xoá...",
-        success: "Đã xoá thuộc tính biến thể!",
-        error: (err: any) => err.message || "Lỗi xoá thuộc tính",
+        loading: "Deleting...",
+        success: "Variant attribute deleted!",
+        error: (err: any) => err.message || "Deletion error",
       });
     }
   };
@@ -118,22 +118,26 @@ export function VariantPage() {
   return (
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
-        title="Thuộc tính biến thể"
-        description="Định nghĩa các thuộc tính biến thể sản phẩm (Kích thước, Màu sắc...)"
+        title="Variant Attributes"
+        description="Define product variant attributes (Size, Color...)"
         actions={
-          <Button onClick={openCreate} size="sm" className="gap-2 bg-brand text-white hover:bg-brand-hover shadow-none">
-            <Plus className="w-4 h-4" /> Thêm thuộc tính
+          <Button
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            size="sm"
+            onClick={openCreate}
+          >
+            <Plus className="size-4 mr-2" /> Add Attribute
           </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
-                placeholder="Tìm thuộc tính..."
+                placeholder="Search attributes..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-10 border-border bg-surface text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
+                className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
           </div>
@@ -160,7 +164,7 @@ export function VariantPage() {
                       {attr.name}
                     </h3>
                     <span className="text-[10px] font-mono bg-surface-muted text-ink-muted px-1.5 py-0.5 rounded mt-1 inline-block">
-                      Mã code: {attr.code}
+                      Code: {attr.code}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
@@ -196,7 +200,7 @@ export function VariantPage() {
                   ))}
                   {attr.values.length === 0 && (
                     <span className="text-xs text-ink-muted italic">
-                      Chưa có giá trị nào
+                      No values yet
                     </span>
                   )}
                 </div>
@@ -205,7 +209,7 @@ export function VariantPage() {
           ))}
           {filteredAttributes.length === 0 && (
             <p className="col-span-2 py-8 text-center text-sm text-ink-muted">
-              Không tìm thấy thuộc tính nào
+              No attributes found
             </p>
           )}
         </div>
@@ -220,37 +224,37 @@ export function VariantPage() {
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-ink">
               {editing
-                ? "Chỉnh sửa thuộc tính"
-                : "Thêm thuộc tính biến thể mới"}
+                ? "Edit Attribute"
+                : "Add New Variant Attribute"}
             </DialogTitle>
             <DialogDescription className="text-xs text-ink-muted mt-1">
-              Định nghĩa các thông số biến thể cho sản phẩm bán lẻ.
+              Define variant parameters for retail products.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
             <div className="space-y-1.5">
               <Label htmlFor="aName" className="text-xs font-semibold text-ink">
-                Tên thuộc tính *
+                Attribute Name *
               </Label>
               <Input
                 id="aName"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ví dụ: Dung tích (Volume)"
+                placeholder="E.g., Volume"
                 required
               />
             </div>
 
             <div className="space-y-1.5">
               <Label htmlFor="aCode" className="text-xs font-semibold text-ink">
-                Mã Code thuộc tính *
+                Attribute Code *
               </Label>
               <Input
                 id="aCode"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="Ví dụ: volume (không dấu, viết liền)"
+                placeholder="E.g., volume (no spaces)"
                 required
                 disabled={!!editing}
               />
@@ -261,13 +265,13 @@ export function VariantPage() {
                 htmlFor="aValues"
                 className="text-xs font-semibold text-ink"
               >
-                Các giá trị cấu hình (phân cách bằng dấu phẩy)
+                Configuration Values (comma separated)
               </Label>
               <Input
                 id="aValues"
                 value={valuesInput}
                 onChange={(e) => setValuesInput(e.target.value)}
-                placeholder="Ví dụ: 50ml, 100ml, 250ml"
+                placeholder="E.g., 50ml, 100ml, 250ml"
               />
             </div>
 
@@ -277,9 +281,9 @@ export function VariantPage() {
                 variant="outline"
                 onClick={() => setIsFormOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
-              <Button type="submit">Xác nhận</Button>
+              <Button type="submit">Confirm</Button>
             </DialogFooter>
           </form>
         </DialogContent>

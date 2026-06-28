@@ -121,16 +121,16 @@ const getTierInfo = (points: number) => {
     };
   return {
     label: "Member",
-    color: "bg-surface text-ink-muted border-border border-dashed font-medium",
+    color: "bg-surface text-ink-muted border-border font-medium",
     icon: "🥉",
   };
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: "Chờ xử lý",
-  shipping: "Đang giao",
-  completed: "Hoàn thành",
-  cancelled: "Đã huỷ",
+  pending: "Pending",
+  shipping: "Shipping",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };
 
 type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
@@ -286,11 +286,11 @@ export function CustomerPage() {
           id: editingId,
           data,
         });
-        toast.success("Cập nhật thông tin khách hàng thành công!");
+        toast.success("Customer information updated successfully!");
       }
       setIsFormOpen(false);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi khi lưu thông tin khách hàng!");
+      toast.error(err.message || "Error saving customer information!");
     }
   };
 
@@ -298,10 +298,10 @@ export function CustomerPage() {
     if (!deleteTargetId) return;
     try {
       await deleteCustomerMutation.mutateAsync(deleteTargetId);
-      toast.success("Đã xoá thông tin khách hàng!");
+      toast.success("Customer deleted!");
       setDeleteTargetId(null);
     } catch (err: any) {
-      toast.error(err.message || "Không thể xoá khách hàng!");
+      toast.error(err.message || "Could not delete customer!");
     }
   };
 
@@ -314,12 +314,12 @@ export function CustomerPage() {
       });
       toast.success(
         lockTarget.isActive
-          ? "Đã khóa tài khoản khách hàng"
-          : "Đã mở khóa khách hàng",
+          ? "Customer account locked"
+          : "Customer account unlocked",
       );
       setLockTarget(null);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi khi cập nhật trạng thái");
+      toast.error(err.message || "Error updating status");
     }
   };
 
@@ -330,10 +330,10 @@ export function CustomerPage() {
         id: notesTarget.id,
         internalNotes: data.internalNotes || "",
       });
-      toast.success("Cập nhật ghi chú thành công!");
+      toast.success("Notes updated successfully!");
       setNotesTarget(null);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi khi cập nhật ghi chú!");
+      toast.error(err.message || "Error updating notes!");
     }
   };
 
@@ -345,26 +345,26 @@ export function CustomerPage() {
         pointsChanged: Number(data.pointsChanged),
         reason: data.reason,
       });
-      toast.success("Cập nhật điểm thành công!");
+      toast.success("Points updated successfully!");
       setPointsTarget(null);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi khi cập nhật điểm!");
+      toast.error(err.message || "Error updating points!");
     }
   };
 
   return (
     <section className="space-y-4 animate-page-enter text-left pb-12">
       <PageHeader
-        title="Quản lý khách hàng"
-        description="Theo dõi và chăm sóc thành viên của hệ thống GlowUp, quản lý thông tin liên hệ và lịch sử mua hàng."
+        title="Customer Management"
+        description="Monitor and care for GlowUp members, manage contact information and purchase history."
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm theo tên, email hoặc SĐT..."
+                placeholder="Search by name, email or phone..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {search && (
@@ -372,7 +372,7 @@ export function CustomerPage() {
                   type="button"
                   onClick={() => setSearch("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
-                  title="Xóa tìm kiếm"
+                  title="Clear search"
                 >
                   <X className="size-4" />
                 </button>
@@ -381,26 +381,26 @@ export function CustomerPage() {
 
             <div className="flex flex-wrap items-center gap-2">
               <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                  <SelectValue placeholder="Loại khách hàng" />
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Source" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="all">All sources</SelectItem>
                   <SelectItem value="web">Online</SelectItem>
-                  <SelectItem value="pos">Offline</SelectItem>
+                  <SelectItem value="pos">Offline (POS)</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={spendingFilter} onValueChange={setSpendingFilter}>
-                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                  <SelectValue placeholder="Mức chi tiêu" />
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Spending" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả chi tiêu</SelectItem>
-                  <SelectItem value="0">Chưa mua (0đ)</SelectItem>
-                  <SelectItem value="under_1m">Dưới 1 triệu</SelectItem>
-                  <SelectItem value="1m_to_5m">Từ 1 - 5 triệu</SelectItem>
-                  <SelectItem value="over_5m">Trên 5 triệu</SelectItem>
+                  <SelectItem value="all">All spending</SelectItem>
+                  <SelectItem value="0">No purchase (0₫)</SelectItem>
+                  <SelectItem value="under_1m">Under 1M</SelectItem>
+                  <SelectItem value="1m_to_5m">1M – 5M</SelectItem>
+                  <SelectItem value="over_5m">Over 5M</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -408,48 +408,44 @@ export function CustomerPage() {
                 value={lastPurchaseFilter}
                 onValueChange={setLastPurchaseFilter}
               >
-                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                  <SelectValue placeholder="Ngày mua gần nhất" />
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Last purchase" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả thời gian</SelectItem>
-                  <SelectItem value="30_days">Dưới 30 ngày</SelectItem>
-                  <SelectItem value="90_days">Từ 30 - 90 ngày</SelectItem>
-                  <SelectItem value="180_days">Từ 3 - 6 tháng</SelectItem>
-                  <SelectItem value="365_days">Từ 6 - 12 tháng</SelectItem>
-                  <SelectItem value="over_365_days">Trên 1 năm</SelectItem>
+                  <SelectItem value="all">All time</SelectItem>
+                  <SelectItem value="30_days">Within 30 days</SelectItem>
+                  <SelectItem value="90_days">30 – 90 days</SelectItem>
+                  <SelectItem value="180_days">3 – 6 months</SelectItem>
+                  <SelectItem value="365_days">6 – 12 months</SelectItem>
+                  <SelectItem value="over_365_days">Over 1 year</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={tierFilter} onValueChange={setTierFilter}>
-                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                  <SelectValue placeholder="Hạng thành viên" />
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Tier" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả hạng</SelectItem>
-                  <SelectItem value="diamond">Diamond</SelectItem>
-                  <SelectItem value="gold">Gold</SelectItem>
-                  <SelectItem value="silver">Silver</SelectItem>
-                  <SelectItem value="member">Member</SelectItem>
+                  <SelectItem value="all">All tiers</SelectItem>
+                  <SelectItem value="diamond">💎 Diamond</SelectItem>
+                  <SelectItem value="gold">🥇 Gold</SelectItem>
+                  <SelectItem value="silver">🥈 Silver</SelectItem>
+                  <SelectItem value="member">🥉 Member</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
                   <div className="flex items-center gap-2">
-                    <ArrowUpDown className="w-4 h-4 text-ink-muted" />
-                    <SelectValue placeholder="Sắp xếp" />
+                    <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+                    <SelectValue placeholder="Sort" />
                   </div>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new_customer">Mới nhất</SelectItem>
-                  <SelectItem value="spent_desc">Chi tiêu cao nhất</SelectItem>
-                  <SelectItem value="last_purchase_desc">
-                    Mua hàng gần đây
-                  </SelectItem>
-                  <SelectItem value="last_purchase_asc">
-                    Lâu chưa mua hàng
-                  </SelectItem>
+                  <SelectItem value="new_customer">Newest</SelectItem>
+                  <SelectItem value="spent_desc">Highest spending</SelectItem>
+                  <SelectItem value="last_purchase_desc">Recent purchase</SelectItem>
+                  <SelectItem value="last_purchase_asc">Inactive longest</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -457,56 +453,50 @@ export function CustomerPage() {
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-brand/10 text-brand flex shrink-0 items-center justify-center">
-            <Users className="w-6 h-6" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-card border border-border p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="w-12 h-12 rounded-sm flex shrink-0 items-center justify-center" style={{ background: "hsl(352, 72%, 52%, 0.1)", color: "hsl(352, 72%, 52%)" }}>
+            <Users className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-ink-muted font-medium mb-1">
-              Tổng khách hàng
-            </p>
-            <div className="text-3xl font-bold text-ink tracking-tight">
+            <p className="text-xs text-muted-foreground font-medium mb-0.5">Total customers</p>
+            <div className="text-2xl font-bold text-foreground tracking-tight">
               {overview.totalCustomers || 0}
             </div>
           </div>
         </div>
 
-        <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-success/10 text-success flex shrink-0 items-center justify-center">
-            <UserPlus className="w-6 h-6" />
+        <div className="bg-card border border-border p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="w-12 h-12 rounded-sm flex shrink-0 items-center justify-center" style={{ background: "hsl(142, 60%, 52%, 0.1)", color: "hsl(142, 60%, 42%)" }}>
+            <UserPlus className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-ink-muted font-medium mb-1">
-              Khách mới (30 ngày)
-            </p>
-            <div className="text-3xl font-bold text-ink tracking-tight">
+            <p className="text-xs text-muted-foreground font-medium mb-0.5">New (30 days)</p>
+            <div className="text-2xl font-bold text-foreground tracking-tight">
               {overview.newCustomers || 0}
             </div>
           </div>
         </div>
 
-        <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-gold/10 text-gold flex shrink-0 items-center justify-center">
-            <Repeat className="w-6 h-6" />
+        <div className="bg-card border border-border p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
+          <div className="w-12 h-12 rounded-sm flex shrink-0 items-center justify-center" style={{ background: "hsl(43, 90%, 50%, 0.1)", color: "hsl(43, 90%, 42%)" }}>
+            <Repeat className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-ink-muted font-medium mb-1">
-              Khách mua lại
-            </p>
-            <div className="text-3xl font-bold text-ink tracking-tight">
+            <p className="text-xs text-muted-foreground font-medium mb-0.5">Returning</p>
+            <div className="text-2xl font-bold text-foreground tracking-tight">
               {overview.returningCustomers || 0}
             </div>
           </div>
         </div>
 
         <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-orange-500/10 text-orange-600 flex shrink-0 items-center justify-center">
+          <div className="w-14 h-14 rounded-sm bg-orange-500/10 text-orange-600 flex shrink-0 items-center justify-center">
             <Moon className="w-6 h-6" />
           </div>
           <div>
             <p className="text-sm text-ink-muted font-medium mb-1">
-              Khách ngủ đông
+              Churning Customers
             </p>
             <div className="text-3xl font-bold text-ink tracking-tight">
               {overview.churningCustomers || 0}
@@ -515,25 +505,25 @@ export function CustomerPage() {
         </div>
       </div>
 
-      <div className="premium-card">
+      <div className="premium-card rounded-sm overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table className="min-w-250 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="px-5 w-[25%]">Khách hàng</TableHead>
-                  <TableHead className="px-5 w-[22%]">Liên hệ</TableHead>
+                  <TableHead className="px-5 w-[25%] text-left">Customer</TableHead>
+                  <TableHead className="px-5 w-[25%] text-center">Contact</TableHead>
                   <TableHead className="px-5 text-center w-[15%]">
-                    Xếp hạng
+                    Tier
                   </TableHead>
-                  <TableHead className="px-5 text-right w-[15%]">
-                    Chi tiêu
+                  <TableHead className="px-5 text-center w-[15%]">
+                    Spent
                   </TableHead>
-                  <TableHead className="px-5 text-center w-32 whitespace-nowrap">
-                    Trạng thái
+                  <TableHead className="px-5 text-center w-[10%] whitespace-nowrap">
+                    Status
                   </TableHead>
-                  <TableHead className="px-5 text-center w-32">
-                    Thao tác
+                  <TableHead className="px-5 text-center w-[10%]">
+                    Actions
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -546,7 +536,7 @@ export function CustomerPage() {
                     >
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                        <span>Đang tải danh sách khách hàng...</span>
+                        <span>Loading customers...</span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -556,7 +546,7 @@ export function CustomerPage() {
                       colSpan={6}
                       className="py-12 text-center text-ink-muted"
                     >
-                      Không tìm thấy khách hàng nào phù hợp.
+                      No matching customers found.
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -570,7 +560,7 @@ export function CustomerPage() {
                       >
                         <TableCell className="px-5 py-4 align-middle">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm">
+                            <div className="w-10 h-10 rounded-sm bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm">
                               <span className="text-brand font-bold">
                                 {cust.name
                                   ? cust.name.charAt(0).toUpperCase()
@@ -583,15 +573,15 @@ export function CustomerPage() {
                               </span>
                               <Badge
                                 variant="outline"
-                                className={`mt-1 text-[10px] px-2 py-0 font-medium ${cust.hasOnlineAccount ? "bg-brand/5 text-brand border-brand/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20"}`}
+                                className={`mt-1 text-xs px-2 py-0.5 font-medium ${cust.hasOnlineAccount ? "bg-brand/5 text-brand border-brand/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20"}`}
                               >
                                 {cust.hasOnlineAccount ? "Online" : "Offline"}
                               </Badge>
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell className="px-5 py-4 align-middle">
-                          <div className="flex flex-col gap-2 text-sm">
+                        <TableCell className="px-5 py-4 align-middle text-center">
+                          <div className="flex flex-col w-fit mx-auto gap-2 text-sm">
                             <div className="flex items-center gap-2.5 text-ink-muted">
                               <Mail className="w-4 h-4 opacity-70" />
                               <span className="truncate max-w-45 font-medium">
@@ -616,22 +606,22 @@ export function CustomerPage() {
                               {tier.label}
                             </Badge>
                             <span className="text-xs font-mono text-ink-muted font-medium">
-                              {cust.points.toLocaleString()} điểm
+                              {cust.points.toLocaleString()} points
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell className="px-5 py-4 align-middle text-right">
-                          <div className="flex flex-col items-end gap-1">
+                        <TableCell className="px-5 py-4 align-middle text-center">
+                          <div className="flex flex-col items-center gap-1">
                             <span
                               className={`text-base font-bold ${!cust.totalSpent ? "text-ink-muted/50" : "text-ink"}`}
                             >
                               {(cust.totalSpent || 0).toLocaleString("vi-VN")}₫
                             </span>
                             <span
-                              className={`text-xs flex items-center gap-1.5 px-2 py-0.5 rounded-full w-fit ${!cust.orderCount ? "bg-surface-muted text-ink-muted/50" : "bg-brand/5 text-brand"}`}
+                              className={`text-xs flex items-center gap-1.5 px-2 py-0.5 rounded-sm w-fit ${!cust.orderCount ? "bg-surface-muted text-ink-muted/50" : "bg-brand/5 text-brand"}`}
                             >
                               <ShoppingBag className="w-3.5 h-3.5" />{" "}
-                              {cust.orderCount || 0} đơn
+                              {cust.orderCount || 0} orders
                             </span>
                           </div>
                         </TableCell>
@@ -641,7 +631,7 @@ export function CustomerPage() {
                               variant="outline"
                               className={`text-xs px-2.5 py-0.5 font-medium whitespace-nowrap shrink-0 min-w-max ${cust.isActive ? "text-success border-success/30 bg-success/10" : "text-danger border-danger/30 bg-danger/10"}`}
                             >
-                              {cust.isActive ? "Hoạt động" : "Bị khóa"}
+                              {cust.isActive ? "Active" : "Locked"}
                             </Badge>
                           </div>
                         </TableCell>
@@ -666,14 +656,14 @@ export function CustomerPage() {
                                   onClick={() => openEdit(cust)}
                                 >
                                   <Edit2 className="w-4 h-4 mr-2.5" />
-                                  Sửa thông tin
+                                  Edit Info
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                   onClick={() => setSelectedCustomer(cust)}
                                 >
                                   <History className="w-4 h-4 mr-2.5" />
-                                  Lịch sử giao dịch
+                                  Order History
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator className="bg-border" />
                                 <DropdownMenuItem
@@ -686,7 +676,7 @@ export function CustomerPage() {
                                   }}
                                 >
                                   <StickyNote className="w-4 h-4 mr-2.5" />
-                                  Ghi chú nội bộ
+                                  Internal Notes
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
@@ -699,7 +689,7 @@ export function CustomerPage() {
                                   }}
                                 >
                                   <Coins className="w-4 h-4 mr-2.5" />
-                                  Điều chỉnh điểm
+                                  Adjust Points
                                 </DropdownMenuItem>
 
                                 <DropdownMenuItem
@@ -713,13 +703,11 @@ export function CustomerPage() {
                                 >
                                   {cust.isActive !== false ? (
                                     <>
-                                      <Lock className="w-4 h-4 mr-2.5" /> Khóa
-                                      tài khoản
+                                      <Lock className="w-4 h-4 mr-2.5" /> Lock Account
                                     </>
                                   ) : (
                                     <>
-                                      <Unlock className="w-4 h-4 mr-2.5" /> Mở
-                                      khóa tài khoản
+                                      <Unlock className="w-4 h-4 mr-2.5" /> Unlock Account
                                     </>
                                   )}
                                 </DropdownMenuItem>
@@ -729,7 +717,7 @@ export function CustomerPage() {
                                   className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
                                 >
                                   <Trash2 className="w-4 h-4 mr-2.5" />
-                                  Xóa khách hàng
+                                  Delete Customer
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -744,28 +732,28 @@ export function CustomerPage() {
           </div>
           {/* Pagination UI */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
+            <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
               <div className="text-sm text-ink-muted font-medium">
-                Trang {metaPage} / {totalPages}
+                Page {metaPage} / {totalPages}
               </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
+                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  Trước
+                  Previous
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
+                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
-                  Sau
+                  Next
                 </Button>
               </div>
             </div>
@@ -781,10 +769,10 @@ export function CustomerPage() {
         <DialogContent className="sm:max-w-150">
           <DialogHeader className="pr-6">
             <DialogTitle>
-              {editingId ? "Cập nhật thông tin" : "Thêm khách hàng mới"}
+              {editingId ? "Update Information" : "Add New Customer"}
             </DialogTitle>
             <DialogDescription>
-              Nhập đầy đủ các thông tin cá nhân và liên hệ của khách hàng.
+              Enter the customer's personal and contact information.
             </DialogDescription>
           </DialogHeader>
 
@@ -795,7 +783,7 @@ export function CustomerPage() {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="cName">
-                  Họ tên khách hàng <span className="text-danger">*</span>
+                  Customer Name <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={customerControl}
@@ -804,7 +792,7 @@ export function CustomerPage() {
                     <Input
                       {...field}
                       id="cName"
-                      placeholder="Ví dụ: Trần Thị Mai"
+                      placeholder="E.g., Jane Doe"
                       className="focus-visible:ring-brand"
                     />
                   )}
@@ -818,7 +806,7 @@ export function CustomerPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="cEmail">
-                  Email liên hệ <span className="text-danger">*</span>
+                  Contact Email <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={customerControl}
@@ -828,7 +816,7 @@ export function CustomerPage() {
                       {...field}
                       type="email"
                       id="cEmail"
-                      placeholder="Ví dụ: mail.tt@gmail.com"
+                      placeholder="E.g., jane@example.com"
                       className="focus-visible:ring-brand"
                     />
                   )}
@@ -842,7 +830,7 @@ export function CustomerPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="cPhone">
-                  Số điện thoại <span className="text-danger">*</span>
+                  Phone Number <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={customerControl}
@@ -851,7 +839,7 @@ export function CustomerPage() {
                     <Input
                       {...field}
                       id="cPhone"
-                      placeholder="VD: 0901234567"
+                      placeholder="E.g., 0901234567"
                       className="focus-visible:ring-brand"
                     />
                   )}
@@ -865,7 +853,7 @@ export function CustomerPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="cProvince">Tỉnh/Thành</Label>
+                  <Label htmlFor="cProvince">Province/City</Label>
                   <Controller
                     control={customerControl}
                     name="province"
@@ -873,14 +861,14 @@ export function CustomerPage() {
                       <Input
                         {...field}
                         id="cProvince"
-                        placeholder="VD: Hà Nội"
+                        placeholder="E.g., Hanoi"
                         className="focus-visible:ring-brand"
                       />
                     )}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="cDistrict">Quận/Huyện</Label>
+                  <Label htmlFor="cDistrict">District</Label>
                   <Controller
                     control={customerControl}
                     name="district"
@@ -888,7 +876,7 @@ export function CustomerPage() {
                       <Input
                         {...field}
                         id="cDistrict"
-                        placeholder="VD: Cầu Giấy"
+                        placeholder="E.g., Cau Giay"
                         className="focus-visible:ring-brand"
                       />
                     )}
@@ -897,7 +885,7 @@ export function CustomerPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="cWard">Phường/Xã</Label>
+                  <Label htmlFor="cWard">Ward</Label>
                   <Controller
                     control={customerControl}
                     name="ward"
@@ -905,14 +893,14 @@ export function CustomerPage() {
                       <Input
                         {...field}
                         id="cWard"
-                        placeholder="VD: Dịch Vọng"
+                        placeholder="E.g., Dich Vong"
                         className="focus-visible:ring-brand"
                       />
                     )}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="cStreet">Số nhà, đường</Label>
+                  <Label htmlFor="cStreet">Street Address</Label>
                   <Controller
                     control={customerControl}
                     name="street"
@@ -920,7 +908,7 @@ export function CustomerPage() {
                       <Input
                         {...field}
                         id="cStreet"
-                        placeholder="VD: 123 Xuân Thủy"
+                        placeholder="E.g., 123 Xuan Thuy"
                         className="focus-visible:ring-brand"
                       />
                     )}
@@ -935,16 +923,15 @@ export function CustomerPage() {
                 variant="outline"
                 onClick={() => setIsFormOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button type="submit" disabled={updateCustomerMutation.isPending}>
                 {updateCustomerMutation.isPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang
-                    lưu...
+                    Saving...
                   </>
                 ) : (
-                  "Xác nhận"
+                  "Confirm"
                 )}
               </Button>
             </DialogFooter>
@@ -952,7 +939,7 @@ export function CustomerPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Lịch sử mua hàng Dialog */}
+      {/* Order History Dialog */}
       <Dialog
         open={!!selectedCustomer}
         onOpenChange={(o) => !o && setSelectedCustomer(null)}
@@ -960,11 +947,11 @@ export function CustomerPage() {
         <DialogContent className="sm:max-w-3xl">
           <DialogHeader className="pr-6">
             <DialogTitle>
-              Lịch sử mua hàng:{" "}
+              Order History:{" "}
               <span className="text-brand">{selectedCustomer?.name}</span>
             </DialogTitle>
             <DialogDescription>
-              SĐT:{" "}
+              Phone:{" "}
               <span className="font-medium text-ink">
                 {selectedCustomer?.phone}
               </span>{" "}
@@ -980,14 +967,14 @@ export function CustomerPage() {
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <Loader2 className="w-6 h-6 animate-spin text-brand" />
                 <span className="text-sm text-ink-muted">
-                  Đang tải lịch sử đơn hàng...
+                  Loading order history...
                 </span>
               </div>
             ) : customerOrders.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 gap-3">
                 <History className="w-12 h-12 text-ink-muted/30" />
                 <p className="text-center text-sm text-ink-muted">
-                  Khách hàng chưa có giao dịch nào.
+                  No order history.
                 </p>
               </div>
             ) : (
@@ -995,15 +982,15 @@ export function CustomerPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-bg/50 border-b border-border">
-                      <TableHead className="px-4 w-[25%]">Mã đơn</TableHead>
-                      <TableHead className="px-4 w-[15%]">Kênh</TableHead>
+                      <TableHead className="px-4 w-[25%]">Order ID</TableHead>
+                      <TableHead className="px-4 w-[15%]">Channel</TableHead>
                       <TableHead className="px-4 text-center w-[20%]">
-                        Tổng tiền
+                        Total Amount
                       </TableHead>
                       <TableHead className="px-4 text-center w-[20%]">
-                        Trạng thái
+                        Status
                       </TableHead>
-                      <TableHead className="px-4 w-[20%]">Thời gian</TableHead>
+                      <TableHead className="px-4 w-[20%]">Date</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1061,7 +1048,7 @@ export function CustomerPage() {
               variant="outline"
               onClick={() => setSelectedCustomer(null)}
             >
-              Xác nhận
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1071,8 +1058,8 @@ export function CustomerPage() {
       <DeleteModal
         open={!!deleteTargetId}
         loading={deleteCustomerMutation.isPending}
-        title="Xác nhận xóa khách hàng"
-        description="Bạn có chắc chắn muốn xoá khách hàng này khỏi hệ thống? Hành động này không thể hoàn tác."
+        title="Confirm Delete"
+        description="Are you sure you want to delete this customer? This action cannot be undone."
         onClose={() => setDeleteTargetId(null)}
         onConfirm={confirmDelete}
       />
@@ -1084,17 +1071,17 @@ export function CustomerPage() {
         <DialogContent className="sm:max-w-125">
           <DialogHeader className="pr-6">
             <DialogTitle>
-              Xác nhận {lockTarget?.isActive ? "khóa" : "mở khóa"} tài khoản
+              Confirm {lockTarget?.isActive ? "Lock" : "Unlock"} Account
             </DialogTitle>
             <DialogDescription>
-              Bạn có chắc chắn muốn {lockTarget?.isActive ? "khóa" : "mở khóa"}{" "}
-              tài khoản này không?
+              Are you sure you want to {lockTarget?.isActive ? "lock" : "unlock"}{" "}
+              this account?
             </DialogDescription>
           </DialogHeader>
 
           {lockTarget?.isActive && (
             <div className="bg-danger/10 text-danger text-sm border border-danger/20 p-3 rounded-sm">
-              Khách hàng sẽ không thể đăng nhập hoặc mua sắm sau khi bị khóa.
+              Customer will not be able to login or purchase after being locked.
             </div>
           )}
 
@@ -1104,7 +1091,7 @@ export function CustomerPage() {
               variant="outline"
               onClick={() => setLockTarget(null)}
             >
-              Huỷ
+              Cancel
             </Button>
             <Button
               type="button"
@@ -1114,11 +1101,10 @@ export function CustomerPage() {
             >
               {updateStatusMutation.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang xử
-                  lý...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...
                 </>
               ) : (
-                "Xác nhận"
+                "Confirm"
               )}
             </Button>
           </DialogFooter>
@@ -1132,10 +1118,9 @@ export function CustomerPage() {
       >
         <DialogContent className="sm:max-w-125">
           <DialogHeader className="pr-6">
-            <DialogTitle>Ghi chú nội bộ</DialogTitle>
+            <DialogTitle>Internal Notes</DialogTitle>
             <DialogDescription>
-              Ghi chú về sở thích, thói quen mua sắm, hoặc các vấn đề của khách
-              hàng.
+              Notes about customer preferences, shopping habits, or issues.
             </DialogDescription>
           </DialogHeader>
           <form
@@ -1143,7 +1128,7 @@ export function CustomerPage() {
             className="space-y-4"
           >
             <Label htmlFor="internalNotes" className="sr-only">
-              Nội dung ghi chú
+              Note Content
             </Label>
             <Controller
               control={notesControl}
@@ -1152,7 +1137,7 @@ export function CustomerPage() {
                 <Textarea
                   {...field}
                   id="internalNotes"
-                  placeholder="Ví dụ: Khách hay mua son màu đỏ, từng phàn nàn về giao hàng..."
+                  placeholder="E.g. Prefers red lipstick, complained about shipping..."
                   rows={5}
                   className="resize-none focus-visible:ring-brand"
                 />
@@ -1169,13 +1154,13 @@ export function CustomerPage() {
                 variant="outline"
                 onClick={() => setNotesTarget(null)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button type="submit" disabled={updateNotesMutation.isPending}>
                 {updateNotesMutation.isPending ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                  "Xác nhận"
+                  "Confirm"
                 )}
               </Button>
             </DialogFooter>
@@ -1190,9 +1175,9 @@ export function CustomerPage() {
       >
         <DialogContent className="sm:max-w-125">
           <DialogHeader className="pr-6">
-            <DialogTitle>Điều chỉnh điểm thưởng</DialogTitle>
+            <DialogTitle>Adjust Points</DialogTitle>
             <DialogDescription>
-              Cộng hoặc trừ điểm thưởng của{" "}
+              Add or deduct points for{" "}
               <strong className="text-brand">{pointsTarget?.name}</strong>.
             </DialogDescription>
           </DialogHeader>
@@ -1201,13 +1186,13 @@ export function CustomerPage() {
             className="space-y-4"
           >
             <div className="bg-brand/5 text-brand text-sm border border-brand/20 p-3 rounded-sm flex justify-between items-center">
-              <span>Điểm hiện tại:</span>
+              <span>Current Points:</span>
               <span className="font-bold text-lg">{pointsTarget?.points}</span>
             </div>
             <div className="space-y-4">
               <div className="space-y-3">
                 <Label htmlFor="pointsChanged">
-                  Số điểm (+/-) <span className="text-danger">*</span>
+                  Points (+/-) <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={pointsControl}
@@ -1217,7 +1202,7 @@ export function CustomerPage() {
                       {...field}
                       id="pointsChanged"
                       type="number"
-                      placeholder="Ví dụ: -500"
+                      placeholder="E.g. -500"
                       className="focus-visible:ring-brand"
                     />
                   )}
@@ -1230,7 +1215,7 @@ export function CustomerPage() {
               </div>
               <div className="space-y-3">
                 <Label htmlFor="pointsReason">
-                  Lý do điều chỉnh <span className="text-danger">*</span>
+                  Reason <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={pointsControl}
@@ -1239,7 +1224,7 @@ export function CustomerPage() {
                     <Textarea
                       {...field}
                       id="pointsReason"
-                      placeholder="Ví dụ: Đổi trả đơn hàng #12345"
+                      placeholder="E.g. Returned order #12345"
                       className="resize-none focus-visible:ring-brand"
                     />
                   )}
@@ -1257,13 +1242,13 @@ export function CustomerPage() {
                 variant="outline"
                 onClick={() => setPointsTarget(null)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button type="submit" disabled={adjustPointsMutation.isPending}>
                 {adjustPointsMutation.isPending ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                  "Xác nhận"
+                  "Confirm"
                 )}
               </Button>
             </DialogFooter>

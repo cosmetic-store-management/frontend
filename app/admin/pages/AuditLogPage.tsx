@@ -49,11 +49,10 @@ export function AuditLogPage() {
           <ShieldAlert className="w-8 h-8" />
         </div>
         <h3 className="text-lg font-bold text-ink">
-          Quyền truy cập bị hạn chế
+          Access Restricted
         </h3>
         <p className="text-sm text-ink-muted mt-2 max-w-md">
-          Nhật ký hoạt động hệ thống (Audit Logs) chỉ khả dụng đối với tài khoản
-          Chủ cửa hàng (Owner). Nhân viên không có quyền xem thông tin này.
+          System Audit Logs are only available for Store Owner accounts. Staff members do not have permission to view this information.
         </p>
       </div>
     );
@@ -62,88 +61,89 @@ export function AuditLogPage() {
   return (
     <div className="space-y-4 animate-page-enter">
       <PageHeader
-        title="Nhật ký hệ thống"
-        description="Theo dõi và truy vết hoạt động cấu hình hệ thống, quản lý và bảo mật dữ liệu"
+        title="System Logs"
+        description="Monitor and trace system configuration activities, management, and data security"
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative max-w-sm flex-1 min-w-50">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
-                placeholder="Tìm tài khoản, nội dung..."
+                placeholder="Search account, content..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-9 h-10 rounded-md bg-surface border-border focus-visible:ring-brand/20 focus-visible:border-brand"
+                className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
-                  title="Xóa tìm kiếm"
+                  title="Clear search"
                 >
                   <X className="size-4" />
                 </button>
               )}
             </div>
 
-            <Select value={domainFilter} onValueChange={setDomainFilter}>
-              <SelectTrigger className="w-fit px-3 h-10 rounded-sm bg-surface border-border focus:ring-brand">
-                <SelectValue placeholder="Tất cả phân vùng" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tất cả phân vùng</SelectItem>
-                <SelectItem value="catalog">Catalog (Sản phẩm)</SelectItem>
-                <SelectItem value="inventory">Inventory (Kho hàng)</SelectItem>
-                <SelectItem value="sales">Sales (Bán hàng)</SelectItem>
-                <SelectItem value="identity">Identity (Bảo mật)</SelectItem>
-                <SelectItem value="settings">Settings (Hệ thống)</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select value={domainFilter} onValueChange={setDomainFilter}>
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="All domains" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All domains</SelectItem>
+                  <SelectItem value="catalog">Catalog</SelectItem>
+                  <SelectItem value="inventory">Inventory</SelectItem>
+                  <SelectItem value="sales">Sales</SelectItem>
+                  <SelectItem value="identity">Identity</SelectItem>
+                  <SelectItem value="settings">Settings</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <div className="flex items-center gap-2">
-              <div
-                className="relative group cursor-pointer flex-1"
-                onClick={() => {
-                  try {
-                    if (startDateRef.current && 'showPicker' in HTMLInputElement.prototype) {
-                      startDateRef.current.showPicker();
-                    }
-                  } catch (err) {}
-                }}
-              >
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
-                <Input
-                  ref={startDateRef}
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full sm:w-37.5 pl-9 h-10 rounded-md bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
-                  title="Từ ngày"
-                />
-              </div>
-              <span className="text-ink-muted">-</span>
-              <div
-                className="relative group cursor-pointer flex-1"
-                onClick={() => {
-                  try {
-                    if (endDateRef.current && 'showPicker' in HTMLInputElement.prototype) {
-                      endDateRef.current.showPicker();
-                    }
-                  } catch (err) {}
-                }}
-              >
-                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
-                <Input
-                  ref={endDateRef}
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full sm:w-37.5 pl-9 h-10 rounded-md bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
-                  title="Đến ngày"
-                />
+              <div className="flex items-center gap-2">
+                <div
+                  className="relative group cursor-pointer flex-1"
+                  onClick={() => {
+                    try {
+                      if (startDateRef.current && 'showPicker' in HTMLInputElement.prototype) {
+                        startDateRef.current.showPicker();
+                      }
+                    } catch (err) { }
+                  }}
+                >
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
+                  <Input
+                    ref={startDateRef}
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full sm:w-37.5 pl-9 h-9 rounded-sm bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
+                    title="From date"
+                  />
+                </div>
+                <span className="text-ink-muted">-</span>
+                <div
+                  className="relative group cursor-pointer flex-1"
+                  onClick={() => {
+                    try {
+                      if (endDateRef.current && 'showPicker' in HTMLInputElement.prototype) {
+                        endDateRef.current.showPicker();
+                      }
+                    } catch (err) { }
+                  }}
+                >
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
+                  <Input
+                    ref={endDateRef}
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full sm:w-37.5 pl-9 h-9 rounded-sm bg-surface border-border text-ink-muted focus:ring-brand focus:border-brand cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden"
+                    title="To date"
+                  />
+                </div>
               </div>
             </div>
-
           </div>
         }
       />
@@ -152,21 +152,21 @@ export function AuditLogPage() {
       <div className="premium-card rounded-sm overflow-hidden">
         <Table className="min-w-200 table-fixed">
           <TableHeader>
-            <TableRow className="bg-surface-muted text-left border-b border-border">
-              <TableHead className="w-[15%] text-ink-muted font-medium">
-                Tài khoản
+            <TableRow className="bg-surface-muted border-b border-border">
+              <TableHead className="w-[20%] text-left text-ink-muted font-medium pl-4">
+                Account
+              </TableHead>
+              <TableHead className="text-center w-[12%] text-ink-muted font-medium">
+                Action
+              </TableHead>
+              <TableHead className="text-center w-[13%] text-ink-muted font-medium">
+                Domain
+              </TableHead>
+              <TableHead className="text-center w-[40%] text-ink-muted font-medium">
+                Details
               </TableHead>
               <TableHead className="text-center w-[15%] text-ink-muted font-medium">
-                Thao tác
-              </TableHead>
-              <TableHead className="text-center w-[15%] text-ink-muted font-medium">
-                Phân vùng
-              </TableHead>
-              <TableHead className="w-[40%] text-ink-muted font-medium">
-                Nội dung chi tiết
-              </TableHead>
-              <TableHead className="w-[15%] text-ink-muted font-medium">
-                Thời gian
+                Timestamp
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -176,14 +176,14 @@ export function AuditLogPage() {
                 <TableCell colSpan={5} className="py-8 text-center text-ink-muted">
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                    <span>Đang tải nhật ký hệ thống...</span>
+                    <span>Loading system logs...</span>
                   </div>
                 </TableCell>
               </TableRow>
             ) : logs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="py-8 text-center text-ink-muted">
-                  Không tìm thấy nhật ký hoạt động nào
+                  No activity logs found
                 </TableCell>
               </TableRow>
             ) : (
@@ -191,7 +191,7 @@ export function AuditLogPage() {
                 <TableRow
                   key={log.id}
                 >
-                  <TableCell className="font-medium text-ink-muted">
+                  <TableCell className="font-medium text-ink-muted pl-4">
                     {log.userName}
                   </TableCell>
                   <TableCell className="text-center">
@@ -199,24 +199,24 @@ export function AuditLogPage() {
                       className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase ${["create", "add", "import"].includes(
                         log.action.toLowerCase(),
                       )
-                          ? "bg-emerald-100 text-emerald-700"
-                          : ["update", "edit", "modify"].includes(
+                        ? "bg-emerald-100 text-emerald-700"
+                        : ["update", "edit", "modify"].includes(
+                          log.action.toLowerCase(),
+                        )
+                          ? "bg-amber-100 text-amber-700"
+                          : ["delete", "remove", "destroy"].includes(
                             log.action.toLowerCase(),
                           )
-                            ? "bg-amber-100 text-amber-700"
-                            : ["delete", "remove", "destroy"].includes(
+                            ? "bg-red-100 text-red-700"
+                            : ["login", "logout"].includes(
                               log.action.toLowerCase(),
                             )
-                              ? "bg-red-100 text-red-700"
-                              : ["login", "logout"].includes(
+                              ? "bg-blue-100 text-blue-700"
+                              : ["export", "download"].includes(
                                 log.action.toLowerCase(),
                               )
-                                ? "bg-blue-100 text-blue-700"
-                                : ["export", "download"].includes(
-                                  log.action.toLowerCase(),
-                                )
-                                  ? "bg-indigo-100 text-indigo-700"
-                                  : "bg-gray-100 text-gray-700"
+                                ? "bg-indigo-100 text-indigo-700"
+                                : "bg-gray-100 text-gray-700"
                         }`}
                     >
                       {log.action}
@@ -225,10 +225,10 @@ export function AuditLogPage() {
                   <TableCell className="text-ink-muted font-medium capitalize text-center">
                     {log.domain}
                   </TableCell>
-                  <TableCell className="font-medium text-ink-muted break-words max-w-xs">
+                  <TableCell className="font-medium text-ink-muted break-words max-w-xs text-center">
                     {log.description}
                   </TableCell>
-                  <TableCell className="text-ink-muted text-xs font-medium">
+                  <TableCell className="text-ink-muted text-xs font-medium text-center">
                     {log.timestamp}
                   </TableCell>
                 </TableRow>
@@ -241,7 +241,7 @@ export function AuditLogPage() {
       {(cursors.length > 0 || pagination?.hasNextPage) && (
         <div className="flex items-center justify-between p-5 bg-surface border border-border rounded-sm">
           <div className="text-sm text-ink-muted font-medium">
-            Trang {cursors.length + 1}
+            Page {cursors.length + 1}
           </div>
           <div className="flex gap-2">
             <Button

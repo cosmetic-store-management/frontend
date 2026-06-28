@@ -23,19 +23,20 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
     <section className="container mx-auto px-4 md:px-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
         <div>
-          <h2 className="text-3xl md:text-4xl font-bold text-ink tracking-tight mb-2">
-            Mua sắm theo danh mục
+          <span className="text-xs uppercase tracking-widest font-semibold mb-2 block" style={{ color: "hsl(352, 72%, 52%)" }}>Browse</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight mb-2"
+            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}>
+            Shop by Category
           </h2>
-          <p className="text-ink-muted text-base max-w-2xl">
-            Lựa chọn các sản phẩm chăm sóc da và làm đẹp phù hợp với nhu cầu của
-            bạn từ các danh mục được tuyển chọn cẩn thận.
+          <p className="text-muted-foreground text-base max-w-2xl">
+            From skincare essentials to color cosmetics — curated picks for every routine.
           </p>
         </div>
         <Link
           to="/products"
           className="inline-flex items-center gap-2 font-semibold text-brand hover:text-brand-dark group whitespace-nowrap"
         >
-          Xem tất cả{" "}
+          Browse all{" "}
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
@@ -46,7 +47,7 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
         {bentoCategories[0] && (
           <Link
             to={`/products?category=${bentoCategories[0].slug}`}
-            className="md:col-span-2 md:row-span-2 relative rounded-sm overflow-hidden group shadow-ui-soft border border-border"
+            className="md:col-span-2 md:row-span-2 relative rounded-2xl overflow-hidden group shadow-sm border border-border"
           >
             <img
               src={
@@ -64,7 +65,7 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
               </h3>
               <p className="text-white/80 max-w-sm mb-4 line-clamp-2">
                 {bentoCategories[0].description ||
-                  "Chăm sóc làn da hoàn hảo mỗi ngày."}
+                  "Daily skincare essentials."}
               </p>
               <div className="btn-hover inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-ink group-hover:bg-brand group-hover:text-white transition-colors">
                 <ArrowRight className="w-5 h-5" />
@@ -77,7 +78,7 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
         {bentoCategories[1] && (
           <Link
             to={`/products?category=${bentoCategories[1].slug}`}
-            className="md:col-span-2 relative rounded-sm overflow-hidden group shadow-ui-soft border border-border"
+            className="md:col-span-2 relative rounded-2xl overflow-hidden group shadow-sm border border-border"
           >
             <img
               src={
@@ -93,8 +94,8 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
               <h3 className="text-2xl font-bold text-white mb-1">
                 {bentoCategories[1].name}
               </h3>
-              <span className="text-sm text-white/80 flex items-center gap-1 group-hover:text-gold-light transition-colors">
-                Khám phá ngay <ArrowRight className="w-3 h-3" />
+              <span className="text-sm text-white/80 flex items-center gap-1 group-hover:text-white transition-colors">
+                Explore <ArrowRight className="w-3 h-3" />
               </span>
             </div>
           </Link>
@@ -104,7 +105,7 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
         {bentoCategories[2] && (
           <Link
             to={`/products?category=${bentoCategories[2].slug}`}
-            className="relative rounded-sm overflow-hidden group shadow-ui-soft border border-border"
+            className="relative rounded-2xl overflow-hidden group shadow-sm border border-border"
           >
             <img
               src={
@@ -128,7 +129,7 @@ export function BentoCategories({ categories }: BentoCategoriesProps) {
         {bentoCategories[3] && (
           <Link
             to={`/products?category=${bentoCategories[3].slug}`}
-            className="relative rounded-sm overflow-hidden group shadow-ui-soft border border-border"
+            className="relative rounded-2xl overflow-hidden group shadow-sm border border-border"
           >
             <img
               src={

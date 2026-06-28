@@ -144,11 +144,11 @@ export function BrandPage() {
   const handleToggleStatus = (id: string, currentStatus: boolean) => {
     const next = !currentStatus;
     toast.promise(toggleMutation.mutateAsync({ id, isActive: next }), {
-      loading: "Đang xử lý...",
+      loading: "Processing...",
       success: next
-        ? "Thương hiệu đã hiển thị lại trên bộ lọc công khai."
-        : "Đã ẩn thương hiệu. Sản phẩm thuộc thương hiệu này vẫn hiển thị bình thường.",
-      error: "Cập nhật thất bại!",
+        ? "Brand is now visible in public filters."
+        : "Brand hidden. Products under this brand will still be displayed.",
+      error: "Update failed!",
     });
   };
 
@@ -159,9 +159,9 @@ export function BrandPage() {
           .mutateAsync({ id: editing.id, data: formData as any })
           .then(() => setIsFormOpen(false)),
         {
-          loading: "Đang lưu...",
-          success: "Cập nhật thương hiệu thành công!",
-          error: (e: any) => e.message || "Lỗi cập nhật",
+          loading: "Saving...",
+          success: "Brand updated successfully!",
+          error: (e: any) => e.message || "Update error",
         },
       );
     } else {
@@ -170,9 +170,9 @@ export function BrandPage() {
           .mutateAsync(formData as any)
           .then(() => setIsFormOpen(false)),
         {
-          loading: "Đang tạo...",
-          success: "Thêm thương hiệu mới thành công!",
-          error: (e: any) => e.message || "Lỗi tạo mới",
+          loading: "Creating...",
+          success: "Brand created successfully!",
+          error: (e: any) => e.message || "Creation error",
         },
       );
     }
@@ -186,9 +186,9 @@ export function BrandPage() {
         .mutateAsync(deleteTarget.id)
         .then(() => setDeleteTarget(null)),
       {
-        loading: "Đang xoá...",
-        success: "Đã xoá thương hiệu!",
-        error: (e: any) => e.message || "Lỗi xoá thương hiệu",
+        loading: "Deleting...",
+        success: "Brand deleted!",
+        error: (e: any) => e.message || "Delete error",
       },
     );
   };
@@ -196,45 +196,44 @@ export function BrandPage() {
   return (
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
-        title="Quản lý thương hiệu"
-        description="Quản lý danh sách thương hiệu sản phẩm. Ẩn thương hiệu chỉ xoá khỏi bộ lọc công khai — sản phẩm không bị ảnh hưởng."
+        title="Brand Management"
+        description="Manage product brands. Hiding a brand removes it from public filters — products are not affected."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
             size="sm"
             onClick={openCreate}
           >
-            <Plus className="size-4 mr-2" /> Thêm thương hiệu
+            <Plus className="size-4 mr-2" /> Add Brand
           </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm theo tên thương hiệu..."
+                placeholder="Search by brand name..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {(
                 [
-                  ["", "Tất cả"],
-                  ["active", "Đang hoạt động"],
-                  ["inactive", "Tạm dừng"],
+                  ["", "All"],
+                  ["active", "Active"],
+                  ["inactive", "Inactive"],
                 ] as const
               ).map(([val, label]) => (
                 <button
                   key={val}
                   type="button"
                   onClick={() => setStatusFilter(val)}
-                  className={`inline-flex h-9 items-center gap-1.5 border px-3.5 text-xs font-semibold transition-colors rounded-sm ${
-                    statusFilter === val
+                  className={`inline-flex h-9 items-center gap-1.5 border px-3.5 text-xs font-semibold transition-colors rounded-sm ${statusFilter === val
                       ? "border-brand bg-brand/10 text-brand"
                       : "border-border bg-surface text-ink-muted hover:border-brand hover:text-brand"
-                  }`}
+                    }`}
                 >
                   {val === "active" && <CheckCircle2 className="w-3.5 h-3.5" />}
                   {val === "inactive" && <XCircle className="w-3.5 h-3.5" />}
@@ -252,21 +251,21 @@ export function BrandPage() {
           {
             icon: <Store className="w-5 h-5 text-brand" />,
             bg: "bg-brand/10",
-            label: "Tổng thương hiệu",
+            label: "Total Brands",
             val: totalCount,
             cls: "text-ink",
           },
           {
             icon: <CheckCircle2 className="w-5 h-5 text-success" />,
             bg: "bg-success/10",
-            label: "Đang hoạt động",
+            label: "Active",
             val: activeCount,
             cls: "text-success",
           },
           {
             icon: <XCircle className="w-5 h-5 text-danger" />,
             bg: "bg-danger/10",
-            label: "Tạm dừng",
+            label: "Inactive",
             val: inactiveCount,
             cls: "text-danger",
           },
@@ -289,7 +288,7 @@ export function BrandPage() {
       </div>
 
       {/* ── Brand Table ─────────────────────────────────── */}
-      <div className="premium-card overflow-hidden">
+      <div className="premium-card rounded-sm overflow-hidden">
         {isLoading ? (
           <div className="p-8 space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -301,24 +300,23 @@ export function BrandPage() {
             <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  {/* Columns follow WooCommerce Brands + Magento admin standard */}
-                  <TableHead className="py-4 px-5 w-[32%] text-left">
-                    Thương hiệu
+                  <TableHead className="py-4 px-5 w-[25%] text-left">
+                    Brand
                   </TableHead>
-                  <TableHead className="py-4 px-5 w-[13%] text-left">
-                    Xuất xứ
+                  <TableHead className="py-4 px-5 w-[15%] text-left">
+                    Origin
                   </TableHead>
-                  <TableHead className="py-4 px-5 w-[28%] text-left">
-                    Mô tả
+                  <TableHead className="py-4 px-5 w-[30%] text-left">
+                    Description
                   </TableHead>
-                  <TableHead className="py-4 px-5 text-center w-[13%]">
-                    Sản phẩm
+                  <TableHead className="py-4 px-5 text-center w-[12%]">
+                    Products
                   </TableHead>
-                  <TableHead className="py-4 px-5 text-center w-[7%]">
-                    Hiển thị
+                  <TableHead className="py-4 px-5 text-center w-[10%]">
+                    Visibility
                   </TableHead>
-                  <TableHead className="py-4 px-5 text-center w-[7%]">
-                    Thao tác
+                  <TableHead className="py-4 px-5 text-center w-[8%]">
+                    Actions
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -373,7 +371,7 @@ export function BrandPage() {
                       >
                         {brand.description || (
                           <span className="italic text-ink-muted/40">
-                            Chưa có mô tả
+                            No description
                           </span>
                         )}
                       </span>
@@ -382,11 +380,10 @@ export function BrandPage() {
                     {/* Product count — industry standard (dynamic, per-brand) */}
                     <TableCell className="py-3.5 px-5 text-center">
                       <span
-                        className={`inline-flex items-center gap-1 text-sm font-semibold tabular-nums ${
-                          (brand.productCount ?? 0) > 0
+                        className={`inline-flex items-center gap-1 text-sm font-semibold tabular-nums ${(brand.productCount ?? 0) > 0
                             ? "text-ink"
                             : "text-ink-muted/40"
-                        }`}
+                          }`}
                       >
                         <Package className="w-3.5 h-3.5 opacity-60" />
                         {brand.productCount ?? 0}
@@ -402,8 +399,8 @@ export function BrandPage() {
                         }
                         title={
                           brand.isActive
-                            ? "Đang hiển thị — nhấn để ẩn"
-                            : "Đang ẩn — nhấn để hiển thị"
+                            ? "Visible — click to hide"
+                            : "Hidden — click to show"
                         }
                       />
                     </TableCell>
@@ -430,14 +427,14 @@ export function BrandPage() {
                               onClick={() => openEdit(brand)}
                             >
                               <Edit className="w-4 h-4 mr-2.5" />
-                              Chỉnh sửa
+                              Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
                               onClick={() => setDeleteTarget(brand)}
                             >
                               <Trash2 className="w-4 h-4 mr-2.5" />
-                              Xóa
+                              Delete
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -456,12 +453,12 @@ export function BrandPage() {
             <Store className="w-10 h-10 text-ink-muted/20 mx-auto mb-3" />
             <p className="text-sm font-semibold text-ink-muted">
               {debouncedSearch
-                ? `Không tìm thấy thương hiệu khớp với "${debouncedSearch}"`
+                ? `No brands found matching "${debouncedSearch}"`
                 : statusFilter === "active"
-                  ? "Không có thương hiệu nào đang hoạt động"
+                  ? "No active brands"
                   : statusFilter === "inactive"
-                    ? "Không có thương hiệu nào đang tạm dừng"
-                    : "Chưa có thương hiệu nào"}
+                    ? "No inactive brands"
+                    : "No brands available"}
             </p>
             {!debouncedSearch && !statusFilter && (
               <button
@@ -469,7 +466,7 @@ export function BrandPage() {
                 onClick={openCreate}
                 className="mt-3 text-xs text-brand hover:underline font-medium"
               >
-                + Thêm thương hiệu đầu tiên
+                + Add your first brand
               </button>
             )}
           </div>
@@ -479,11 +476,11 @@ export function BrandPage() {
         {(cursors.length > 0 || data?.pagination?.hasNextPage) && (
           <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
             <div className="text-sm text-ink-muted font-medium">
-              Trang {cursors.length + 1}
+              Page {cursors.length + 1}
               {data?.pagination?.total ? (
                 <>
                   <span className="mx-2 text-border">|</span>
-                  Tổng: {data.pagination.total} thương hiệu
+                  Total: {data.pagination.total} brands
                 </>
               ) : null}
             </div>
@@ -495,7 +492,7 @@ export function BrandPage() {
                 onClick={handlePrev}
                 disabled={cursors.length === 0}
               >
-                Trước
+                Previous
               </Button>
               <Button
                 variant="outline"
@@ -504,7 +501,7 @@ export function BrandPage() {
                 onClick={handleNext}
                 disabled={!data?.pagination?.hasNextPage}
               >
-                Sau
+                Next
               </Button>
             </div>
           </div>
@@ -519,7 +516,7 @@ export function BrandPage() {
         <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
             <DialogTitle className="text-xl font-bold text-ink">
-              {editing ? "Chỉnh sửa thương hiệu" : "Thêm thương hiệu mới"}
+              {editing ? "Edit Brand" : "Add New Brand"}
             </DialogTitle>
             {editing && (
               <p className="text-xs text-ink-muted mt-0.5">
@@ -528,8 +525,7 @@ export function BrandPage() {
                   {editing.slug}
                 </code>
                 {" · "}
-                <span className="text-ink">{editing.productCount}</span> sản
-                phẩm đang liên kết
+                <span className="text-ink">{editing.productCount}</span> linked products
               </p>
             )}
           </DialogHeader>
@@ -544,11 +540,8 @@ export function BrandPage() {
                 <div className="md:col-span-2 space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="bName"
-                        className="text-sm font-semibold text-ink"
-                      >
-                        Tên thương hiệu <span className="text-brand">*</span>
+                      <Label htmlFor="bName" className="text-sm font-semibold text-ink">
+                        Brand Name <span className="text-brand">*</span>
                       </Label>
                       <Controller
                         control={control}
@@ -557,7 +550,7 @@ export function BrandPage() {
                           <Input
                             {...field}
                             id="bName"
-                            placeholder="Ví dụ: La Roche-Posay"
+                            placeholder="E.g., La Roche-Posay"
                             className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                           />
                         )}
@@ -570,11 +563,8 @@ export function BrandPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label
-                        htmlFor="bCountry"
-                        className="text-sm font-semibold text-ink"
-                      >
-                        Quốc gia / Xuất xứ
+                      <Label htmlFor="bCountry" className="text-sm font-semibold text-ink">
+                        Country / Origin
                       </Label>
                       <Controller
                         control={control}
@@ -583,7 +573,7 @@ export function BrandPage() {
                           <Input
                             {...field}
                             id="bCountry"
-                            placeholder="Ví dụ: Pháp"
+                            placeholder="E.g., France"
                             className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                           />
                         )}
@@ -597,11 +587,8 @@ export function BrandPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="bDesc"
-                      className="text-sm font-semibold text-ink"
-                    >
-                      Mô tả thương hiệu
+                    <Label htmlFor="bDesc" className="text-sm font-semibold text-ink">
+                      Brand Description
                     </Label>
                     <Controller
                       control={control}
@@ -611,7 +598,7 @@ export function BrandPage() {
                           {...field}
                           id="bDesc"
                           rows={5}
-                          placeholder="Mô tả tóm tắt thương hiệu sản phẩm..."
+                          placeholder="Short description for the brand..."
                           className="bg-surface border-border focus-visible:ring-brand focus-visible:border-brand resize-none"
                         />
                       )}
@@ -628,7 +615,7 @@ export function BrandPage() {
                 <div className="md:col-span-1 space-y-5">
                   <div className="space-y-1.5">
                     <Label className="text-sm font-semibold text-ink">
-                      Logo thương hiệu
+                      Brand Logo
                     </Label>
                     <Controller
                       control={control}
@@ -645,11 +632,8 @@ export function BrandPage() {
 
                   <div className="p-4 rounded-sm border border-border bg-bg/50 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label
-                        htmlFor="bActive"
-                        className="text-sm font-semibold text-ink cursor-pointer"
-                      >
-                        Hiển thị công khai
+                      <Label htmlFor="bActive" className="text-sm font-semibold text-ink">
+                        Publicly Visible
                       </Label>
                       <Controller
                         control={control}
@@ -664,8 +648,7 @@ export function BrandPage() {
                       />
                     </div>
                     <p className="text-xs text-ink-muted">
-                      Ẩn thương hiệu chỉ xoá khỏi bộ lọc sidebar — sản phẩm
-                      không bị ẩn theo.
+                      Hiding a brand removes it from sidebar filters — products are not hidden.
                     </p>
                   </div>
                 </div>
@@ -679,14 +662,14 @@ export function BrandPage() {
                 className="h-10 bg-surface"
                 onClick={() => setIsFormOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button
                 type="submit"
                 className="h-10 bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                Xác nhận
+                Confirm
               </Button>
             </DialogFooter>
           </form>
@@ -702,32 +685,30 @@ export function BrandPage() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-ink">
               <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
-              Xoá thương hiệu
+              Delete Brand
             </DialogTitle>
             <DialogDescription className="text-left text-sm text-ink-muted mt-2 space-y-2">
               <span>
-                Bạn có chắc muốn xoá thương hiệu{" "}
+                Are you sure you want to delete the brand{" "}
                 <strong className="text-ink">{deleteTarget?.name}</strong>?
               </span>
               {deleteTarget && (deleteTarget.productCount ?? 0) > 0 && (
                 <span className="flex items-start gap-1.5 mt-2 p-2.5 rounded-sm bg-danger/5 border border-danger/20 text-danger text-xs font-medium">
-                  <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                  Thương hiệu này đang có{" "}
-                  <strong>{deleteTarget.productCount} sản phẩm</strong>. Hệ
-                  thống sẽ từ chối — bạn phải chuyển hoặc xoá sản phẩm trước.
+                  This brand has{" "}
+                  <strong>{deleteTarget.productCount} products</strong>. The
+                  system will reject this — you must move or delete the products first.
                 </span>
               )}
               {deleteTarget && (deleteTarget.productCount ?? 0) === 0 && (
                 <span className="block mt-1 text-xs text-ink-muted/70">
-                  Thương hiệu không có sản phẩm nào. Hành động này không thể
-                  hoàn tác.
+                  Brand has no products. This action cannot be undone.
                 </span>
               )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Huỷ
+              Cancel
             </Button>
             <Button
               variant="destructive"
@@ -737,7 +718,7 @@ export function BrandPage() {
                 (deleteTarget?.productCount ?? 0) > 0
               }
             >
-              Xác nhận
+              Confirm
             </Button>
           </DialogFooter>
         </DialogContent>

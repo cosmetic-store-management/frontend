@@ -4,8 +4,8 @@ import { ProfilePage } from "../../public/pages/ProfilePage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Tài khoản của tôi",
-    noindex: true, // Profile page không cần index
+    title: "My Account",
+    noindex: true, // Profile page does not need indexing
   });
 
 export default function ProfileRoute() {

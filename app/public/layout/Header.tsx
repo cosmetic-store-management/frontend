@@ -71,9 +71,13 @@ export default function PublicHeader() {
           TIER 2: MAIN HEADER
           ========================================= */}
       <header
-        className={`bg-white sticky top-0 z-50 transition-shadow ${isScrolled ? "shadow-md" : "border-b border-border"}`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-border/50"
+            : "bg-white border-b border-border"
+        }`}
       >
-        <div className="max-w-300 w-full mx-auto px-4 py-3 flex items-center gap-4">
+        <div className="max-w-300 w-full mx-auto px-4 py-2.5 flex items-center gap-4">
           {/* Mobile Menu Toggle */}
           <button
             className="lg:hidden text-ink p-1"
@@ -97,21 +101,24 @@ export default function PublicHeader() {
           <div className="hidden lg:block flex-1 max-w-150 mx-auto px-4">
             <form
               onSubmit={handleSearch}
-              className="flex items-center w-full relative h-10 border-b-2 border-brand"
+              className="flex items-center w-full relative h-9 bg-muted/60 rounded-full border border-border/80 hover:border-brand/40 focus-within:border-brand focus-within:bg-white transition-all duration-200"
             >
+              <Search className="absolute left-3 w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn"
-                className="w-full h-full bg-transparent py-0 pl-2 pr-10 text-[15px] text-ink focus:outline-none placeholder:text-ink-muted/80"
+                placeholder="Search products, brands..."
+                className="w-full h-full bg-transparent py-0 pl-9 pr-4 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/70"
               />
-              <button
-                type="submit"
-                className="absolute right-0 text-ink hover:text-brand transition-colors p-2"
-              >
-                <Search className="w-5.5 h-5.5" strokeWidth={1.5} />
-              </button>
+              {searchTerm && (
+                <button
+                  type="submit"
+                  className="absolute right-3 text-xs font-semibold text-brand hover:text-brand/80 transition-colors"
+                >
+                  Go
+                </button>
+              )}
             </form>
           </div>
 
@@ -141,12 +148,14 @@ export default function PublicHeader() {
             {/* Cart Button → /cart route */}
             <Link
               to="/cart"
-              className="p-1 hover:text-brand transition-colors relative"
+              className="relative p-1.5 rounded-full hover:bg-brand/8 transition-colors group"
             >
-              <ShoppingBag className="w-7 h-7" strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-brand text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                {cartCount > 99 ? "99+" : cartCount}
-              </span>
+              <ShoppingBag className="w-6 h-6 text-foreground group-hover:text-brand transition-colors" strokeWidth={1.5} />
+              {cartCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-brand text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>
@@ -154,24 +163,28 @@ export default function PublicHeader() {
         {/* =========================================
             TIER 3: CATEGORY NAVIGATION BAR
             ========================================= */}
-        <nav className="hidden lg:flex bg-surface relative z-40 border-t border-border">
-          <div className="max-w-300 w-full mx-auto px-4 flex items-stretch gap-8 text-[13px] font-bold text-ink">
-            {/* Mega Menu Trigger (DANH MỤC SẢN PHẨM) */}
+        <nav className="hidden lg:flex bg-background/80 backdrop-blur-sm relative z-40 border-t border-border/60">
+          <div className="max-w-300 w-full mx-auto px-4 flex items-stretch gap-6 text-[13px] font-semibold text-foreground">
+            {/* Mega Menu Trigger */}
             <div
               className="relative group flex items-center"
               onMouseEnter={openMegaMenu}
               onMouseLeave={closeMegaMenu}
             >
               <button
-                className={`flex items-center h-full py-4 gap-2 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 after:transition-transform after:origin-center ${isMegaMenuOpen ? "after:scale-x-100 text-brand" : "group-hover:after:scale-x-100"}`}
+                className={`flex items-center h-full py-3 gap-2 font-semibold transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 after:transition-transform after:origin-center ${
+                  isMegaMenuOpen ? "after:scale-x-100 text-brand" : "text-foreground hover:text-brand group-hover:after:scale-x-100"
+                }`}
               >
-                <Menu className="w-5 h-5" />
-                DANH MỤC SẢN PHẨM
+                <Menu className="w-4 h-4" />
+                All Categories
               </button>
 
-              {/* Vertical Mega Menu Dropdown */}
+              {/* Mega Menu Dropdown */}
               <div
-                className={`absolute top-full left-0 w-250 min-h-100 flex bg-surface transition-all duration-300 ease-out z-50 border border-border shadow-ui-card rounded-sm overflow-hidden origin-top ${isMegaMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-3"}`}
+                className={`absolute top-full left-0 w-250 min-h-100 flex bg-white transition-all duration-300 ease-out z-50 border border-border/60 shadow-xl rounded-xl overflow-hidden origin-top mt-1 ${
+                  isMegaMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
+                }`}
               >
                 {/* Left Column: Level 1 Categories */}
                 <div className="w-65 shrink-0 border-r border-border py-2 bg-surface flex flex-col">
@@ -294,7 +307,7 @@ export default function PublicHeader() {
             </div>
 
             {/* Nav Items */}
-            <div className="flex items-stretch gap-8 flex-1">
+            <div className="flex items-stretch gap-6 flex-1">
               {categories.slice(0, 2).map((cat: any) => (
                 <div
                   key={cat.id || cat._id}
@@ -302,17 +315,17 @@ export default function PublicHeader() {
                 >
                   <Link
                     to={`/products?category=${cat.slug}`}
-                    className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
+                    className="flex items-center h-full py-3 font-semibold text-foreground hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
                   >
                     {cat.name}
                     {cat.children && cat.children.length > 0 && (
-                      <ChevronDown className="w-4 h-4 ml-1" />
+                      <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-60" />
                     )}
                   </Link>
 
                   {/* Subcategory Dropdown */}
                   {cat.children && cat.children.length > 0 && (
-                    <div className="absolute top-full left-0 min-w-60 bg-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border shadow-ui-card rounded-sm">
+                    <div className="absolute top-full left-0 min-w-60 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border/60 shadow-xl rounded-xl mt-1">
                       {cat.children.map((child: any) => (
                         <div
                           key={child.id || child._id}
@@ -352,44 +365,44 @@ export default function PublicHeader() {
               <div className="relative group flex items-center">
                 <Link
                   to="/products?sort=newest"
-                  className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
+                  className="flex items-center h-full py-3 font-semibold text-foreground hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
                 >
-                  HÀNG MỚI
+                  New Arrivals
                 </Link>
               </div>
 
               <div className="relative group flex items-center">
                 <Link
                   to="/brands"
-                  className="flex items-center h-full py-4 uppercase hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:origin-center"
+                  className="flex items-center h-full py-3 font-semibold text-foreground hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:origin-center"
                 >
-                  THƯƠNG HIỆU <ChevronDown className="w-4 h-4 ml-1" />
+                  Brands <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-60" />
                 </Link>
 
-                {/* Brand Mega Menu */}
-                <div className="absolute top-full left-0 w-125 bg-surface opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6">
-                  <h4 className="font-bold text-ink mb-4 pb-2 uppercase tracking-wide">
-                    Thương hiệu nổi bật
-                  </h4>
-                  <div className="grid grid-cols-3 gap-4">
+                {/* Brand Dropdown */}
+                <div className="absolute top-full left-0 w-72 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-5 border border-border/60 shadow-xl rounded-xl mt-1">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                    Featured Brands
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
                     {brands.length > 0
-                      ? brands.slice(0, 9).map((brand: any) => (
+                      ? brands.slice(0, 8).map((brand: any) => (
                           <Link
                             key={brand.id || brand._id}
                             to={`/products?brandId=${brand.id || brand._id}`}
-                            className="text-[14px] text-ink-muted hover:text-brand transition-colors truncate"
+                            className="text-sm text-foreground hover:text-brand font-medium transition-colors truncate py-1"
                           >
                             {brand.name}
                           </Link>
                         ))
                       : null}
                   </div>
-                  <div className="mt-5 pt-4 border-t border-border/50 text-center">
+                  <div className="mt-4 pt-3 border-t border-border/50">
                     <Link
                       to="/brands"
-                      className="text-[14px] font-bold text-brand hover:underline"
+                      className="text-sm font-semibold text-brand hover:underline"
                     >
-                      Xem tất cả thương hiệu &rarr;
+                      View all brands →
                     </Link>
                   </div>
                 </div>
@@ -436,10 +449,10 @@ export default function PublicHeader() {
                         onClick={() => setMobileMenuOpen(false)}
                         className="font-bold text-brand text-sm hover:underline"
                       >
-                        Đăng nhập
+                        Sign in
                       </Link>
                       <p className="text-[11px] text-ink-muted">
-                        Để nhận nhiều ưu đãi
+                        Get exclusive deals
                       </p>
                     </div>
                   </>
@@ -457,20 +470,20 @@ export default function PublicHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-3 font-bold text-ink border-b border-border"
                 >
-                  Trang chủ
+                  Home
                 </Link>
                 <Link
                   to="/products"
                   onClick={() => setMobileMenuOpen(false)}
                   className="block py-3 font-bold text-ink border-b border-border"
                 >
-                  Tất cả sản phẩm
+                  All Products
                 </Link>
               </div>
 
               <div className="p-4">
                 <h4 className="font-bold text-ink-muted text-xs uppercase mb-3">
-                  Danh mục sản phẩm
+                  Categories
                 </h4>
                 <div className="space-y-1">
                   {categories.map((cat) => (
@@ -494,7 +507,7 @@ export default function PublicHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="block w-full text-center py-2.5 mb-2 font-bold text-ink bg-surface-soft rounded-sm"
                 >
-                  Quản lý tài khoản
+                  My Account
                 </Link>
                 <button
                   onClick={() => {
@@ -503,7 +516,7 @@ export default function PublicHeader() {
                   }}
                   className="block w-full text-center py-2.5 font-bold text-danger bg-danger/10 rounded-sm"
                 >
-                  Đăng xuất
+                  Sign Out
                 </button>
               </div>
             )}

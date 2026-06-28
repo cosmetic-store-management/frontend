@@ -24,12 +24,12 @@ export default function AdminLoginPage() {
   const onSubmit = (data: LoginForm) => {
     loginMutation.mutate(data, {
       onSuccess: () => {
-        toast.success("Đăng nhập thành công!");
+        toast.success("Signed in successfully!");
         // Use hard redirect to ensure clean mount for Admin Dashboard with SSR
         window.location.href = "/admin";
       },
       onError: (err) => {
-        toast.error(err instanceof Error ? err.message : "Đăng nhập thất bại");
+        toast.error(err instanceof Error ? err.message : "Sign in failed");
       },
     });
   };
@@ -39,9 +39,9 @@ export default function AdminLoginPage() {
   return (
     <div className="w-full animate-page-enter">
       <div className="mb-8">
-        <h1 className="text-heading-1">Đăng nhập</h1>
+        <h1 className="text-heading-1">Sign In</h1>
         <p className="text-body-sm mt-2">
-          Vui lòng nhập thông tin đăng nhập của bạn
+          Enter your admin credentials to continue
         </p>
       </div>
 
@@ -73,7 +73,7 @@ export default function AdminLoginPage() {
             id="password"
             type="password"
             autoComplete="current-password"
-            placeholder="Mật khẩu"
+            placeholder="Password"
             className="h-12 bg-white border-zinc-200 focus:bg-white focus:border-brand focus:ring-1 focus:ring-brand transition-colors [&:-webkit-autofill]:bg-white [&:-webkit-autofill]:shadow-[0_0_0_30px_white_inset] [&:-webkit-autofill]:text-ink"
             {...register("password")}
             aria-invalid={!!errors.password}
@@ -90,7 +90,7 @@ export default function AdminLoginPage() {
           disabled={isSubmitting}
           className="btn-primary w-full h-12 mt-4 text-[15px]"
         >
-          {isSubmitting ? "Đang xử lý..." : "Đăng nhập"}
+          {isSubmitting ? "Signing in..." : "Sign In"}
         </Button>
       </form>
     </div>

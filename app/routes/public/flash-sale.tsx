@@ -4,10 +4,10 @@ import { FlashSalePage } from "../../public/pages/FlashSalePage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Flash Sale - Săn Deal Khủng",
+    title: "Flash Sale - Best Deals Today",
     description:
-      "Săn deal mỹ phẩm giảm giá siêu hot mỗi ngày tại GlowUp. Hàng ngàn sản phẩm có giá cực sốc.",
-    keywords: "flash sale, deal mỹ phẩm, giảm giá, khuyến mãi",
+      "Shop hot cosmetics deals every day at GlowUp. Thousands of products at amazing prices.",
+    keywords: "flash sale, cosmetics deals, discount, promotions",
     canonical: "/flash-sale",
   });
 

@@ -1,4 +1,4 @@
-import { Search, Edit, Ban, X } from "lucide-react";
+import { Search, Edit, Ban, X, MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
@@ -20,6 +20,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import DeleteModal from "@/components/ui/delete-modal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import OrderDetail, { formatVnd } from "../components/OrderDetail";
 import { orderStatusMeta } from "../types/order-meta";
@@ -33,13 +39,13 @@ const STATUS_TABS: {
   key: FilterKey | "processing" | "returned";
   label: string;
 }[] = [
-    { key: "all", label: "Tất cả" },
-    { key: "pending", label: "Chờ xác nhận" },
-    { key: "processing", label: "Đang xử lý" },
-    { key: "shipping", label: "Đang giao" },
-    { key: "completed", label: "Hoàn tất" },
-    { key: "returned", label: "Trả hàng" },
-    { key: "cancelled", label: "Đã hủy" },
+    { key: "all", label: "All" },
+    { key: "pending", label: "Pending" },
+    { key: "processing", label: "Processing" },
+    { key: "shipping", label: "Shipping" },
+    { key: "completed", label: "Completed" },
+    { key: "returned", label: "Returned" },
+    { key: "cancelled", label: "Cancelled" },
   ];
 
 function fmtDate(v?: string) {
@@ -103,12 +109,12 @@ export function OrderPage() {
   return (
     <section className="space-y-4 animate-page-enter">
       <PageHeader
-        title="Quản lý đơn hàng"
-        description="Theo dõi thông tin đơn hàng, khách hàng, tổng tiền và trạng thái xử lý."
+        title="Order Management"
+        description="Track order information, customers, totals, and processing status."
         error={error}
         onClearError={clearError}
         actions={
-          <button
+          <Button
             onClick={() => {
               {
                 const data = orders.map((o) => ({
@@ -123,75 +129,77 @@ export function OrderPage() {
                 exportToCSV(
                   data,
                   [
-                    { key: "code", label: "Mã Đơn" },
-                    { key: "customer", label: "Khách Hàng" },
-                    { key: "phone", label: "SĐT" },
-                    { key: "date", label: "Ngày Đặt" },
-                    { key: "status", label: "Trạng Thái" },
-                    { key: "total", label: "Tổng Tiền" },
-                    { key: "payment", label: "Phương Thức" },
+                    { key: "code", label: "Order ID" },
+                    { key: "customer", label: "Customer" },
+                    { key: "phone", label: "Phone" },
+                    { key: "date", label: "Date" },
+                    { key: "status", label: "Status" },
+                    { key: "total", label: "Total" },
+                    { key: "payment", label: "Payment" },
                   ],
-                  "Danh_sach_don_hang",
+                  "orders_export",
                 );
               }
             }}
-            className="inline-flex h-10 items-center justify-center rounded-sm bg-brand px-4 text-xs font-semibold text-white shadow-none hover:bg-brand/90 transition-colors"
+            size="sm"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
           >
-            Xuất Excel
-          </button>
+            Export CSV
+          </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
+            {/* Search */}
             <div className="group relative w-full sm:w-80">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
               <Input
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Tìm theo mã đơn, khách hàng, số điện thoại..."
+                placeholder="Search by order code, customer, phone..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {keyword && (
                 <button
                   type="button"
                   onClick={() => setKeyword("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-muted"
-                  title="Xóa tìm kiếm"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="size-4" />
                 </button>
               )}
             </div>
 
+            {/* Pill Tabs + Date/Payment filters */}
             <div className="flex flex-wrap items-center gap-2">
-              <Select
-                value={filter}
-                onValueChange={(v) => setFilter(v as FilterKey)}
-              >
-                <SelectTrigger className="h-10 w-fit text-xs border-border bg-surface text-ink-muted">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {STATUS_TABS.map((tab) => (
-                    <SelectItem key={tab.key} value={tab.key}>
-                      {tab.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {/* Status pill tabs */}
+              <div className="flex items-center gap-1 p-1 bg-surface-muted rounded-sm">
+                {STATUS_TABS.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setFilter(tab.key as FilterKey)}
+                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${filter === tab.key
+                      ? "bg-surface text-brand shadow-sm"
+                      : "text-ink-muted hover:text-ink"
+                      }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
 
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-10 text-xs font-normal border-border bg-surface text-ink-muted"
+                    className="h-9 rounded-sm text-xs font-normal border-border bg-surface text-ink-muted"
                   >
                     <span className="whitespace-nowrap">
                       {dateRange?.from && dateRange?.to
                         ? `${format(dateRange.from, "dd/MM/yyyy")} — ${format(dateRange.to, "dd/MM/yyyy")}`
                         : dateRange?.from
-                          ? `Từ ${format(dateRange.from, "dd/MM/yyyy")} …`
-                          : "Lọc theo ngày"}
+                          ? `From ${format(dateRange.from, "dd/MM/yyyy")} …`
+                          : "Date range"}
                     </span>
                     {dateRange?.from && (
                       <span
@@ -200,7 +208,7 @@ export function OrderPage() {
                           e.stopPropagation();
                           setDateRange(undefined);
                         }}
-                        className="ml-1 hover:text-ink transition-colors"
+                        className="ml-1 hover:text-foreground transition-colors"
                       >
                         <X className="w-3.5 h-3.5" />
                       </span>
@@ -222,15 +230,15 @@ export function OrderPage() {
                 value={paymentFilter || "all"}
                 onValueChange={(v) => setPaymentFilter(v === "all" ? "" : v)}
               >
-                <SelectTrigger className="h-10 w-fit text-xs border-border bg-surface text-ink-muted">
+                <SelectTrigger className="h-9 rounded-sm w-fit text-xs border-border bg-surface text-ink-muted">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả thanh toán</SelectItem>
-                  <SelectItem value="pending">Chờ thanh toán</SelectItem>
-                  <SelectItem value="paid">Đã thanh toán</SelectItem>
-                  <SelectItem value="refund_pending">Cần hoàn tiền</SelectItem>
-                  <SelectItem value="failed">Thất bại</SelectItem>
+                  <SelectItem value="all">All payments</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="refund_pending">Refund pending</SelectItem>
+                  <SelectItem value="failed">Failed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -238,58 +246,59 @@ export function OrderPage() {
         }
       />
 
-      <div className="premium-card">
+      <div className="premium-card rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
           <Table className="min-w-250 table-fixed">
             <TableHeader>
-              <TableRow className="bg-surface-muted text-ink-muted border-b border-border text-left">
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                 <TableHead
                   style={{ width: "16%" }}
                   className="px-4 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
                 >
-                  Mã đơn
+                  Order ID
                 </TableHead>
                 <TableHead
                   style={{ width: "18%" }}
-                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
                 >
-                  Khách hàng
+                  Customer
                 </TableHead>
                 <TableHead
                   style={{ width: "13%" }}
-                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
-                  Số điện thoại
+                  Phone
                 </TableHead>
                 <TableHead
                   style={{ width: "14%" }}
-                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
-                  Ngày đặt
+                  Date
                 </TableHead>
                 <TableHead
                   style={{ width: "13%" }}
-                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
-                  Thanh toán
+                  Payment
                 </TableHead>
                 <TableHead
                   style={{ width: "12%" }}
                   className="px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
-                  Trạng thái
+                  Status
                 </TableHead>
                 <TableHead
                   style={{ width: "14%" }}
-                  className="px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Tổng tiền
-                </TableHead>
-                <TableHead
-                  style={{ width: "7%" }}
+                  style={{ width: "15%" }}
                   className="px-4 text-right text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
-                  Thao tác
+                  Total
+                </TableHead>
+                <TableHead
+                  style={{ width: "2%" }}
+                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
+                >
+                  Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -301,7 +310,7 @@ export function OrderPage() {
                     colSpan={8}
                     className="px-4 py-12 text-center text-sm text-ink-muted"
                   >
-                    Đang tải dữ liệu đơn hàng...
+                    Loading orders...
                   </TableCell>
                 </TableRow>
               )}
@@ -348,26 +357,26 @@ export function OrderPage() {
                       <TableCell className="px-3.5 py-3.5 align-middle text-center">
                         {/* Payment status badge */}
                         {item.paymentStatus === "paid" ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-success/10 text-success">
-                            Đã TT
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-success/10 text-success">
+                            Paid
                           </span>
                         ) : item.paymentStatus === "refund_pending" ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 border border-purple-500/20">
-                            Cần Hoàn Tiền
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-purple-500/10 text-purple-600 border border-purple-500/20">
+                            Refund pending
                           </span>
                         ) : item.paymentStatus === "failed" ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-danger/10 text-danger">
-                            Thất bại
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-danger/10 text-danger">
+                            Failed
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning">
-                            Chờ TT
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-warning/10 text-warning">
+                            Pending
                           </span>
                         )}
                       </TableCell>
                       <TableCell className="px-3.5 py-3.5 text-center align-middle">
                         <span
-                          className={`inline-flex min-h-8 items-center gap-1.5 px-3 py-1 text-xs font-semibold ${meta.badgeClass}`}
+                          className={`inline-flex min-h-8 items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-sm ${meta.badgeClass}`}
                         >
                           <StatusIcon className="h-3 w-3" />
                           {meta.label}
@@ -376,33 +385,47 @@ export function OrderPage() {
                       <TableCell className="px-4 py-3.5 text-right align-middle font-semibold tabular-nums text-ink">
                         {formatVnd(item.totalAmount ?? 0)}
                       </TableCell>
-                      <TableCell className="px-4 py-3.5 text-right align-middle">
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            title="Cập nhật trạng thái"
-                            onClick={() => {
-                              clearError();
-                              setModal({ type: "edit", order: item });
-                            }}
-                            className="rounded p-1.5 text-ink-muted transition-colors hover:bg-surface-soft hover:text-danger"
-                          >
-                            <Edit className="size-4" />
-                          </button>
-                          {item.orderStatus !== "cancelled" &&
-                            item.orderStatus !== "completed" && (
-                              <button
-                                type="button"
-                                title="Hủy đơn hàng"
+                      <TableCell className="px-4 py-3.5 text-center align-middle">
+                        <div className="flex items-center justify-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                className="h-8 w-8 text-ink-muted hover:text-ink hover:bg-surface-muted data-[state=open]:bg-surface-muted data-[state=open]:text-ink"
+                              >
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-48 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
+                            >
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => {
                                   clearError();
-                                  setModal({ type: "cancel", order: item });
+                                  setModal({ type: "edit", order: item });
                                 }}
-                                className="rounded p-1.5 text-ink-muted transition-colors hover:bg-surface-soft hover:text-danger"
                               >
-                                <Ban className="size-4" />
-                              </button>
-                            )}
+                                <Edit className="w-4 h-4 mr-2.5" />
+                                Edit
+                              </DropdownMenuItem>
+                              {item.orderStatus !== "cancelled" &&
+                                item.orderStatus !== "completed" && (
+                                  <DropdownMenuItem
+                                    className="cursor-pointer rounded-sm text-danger focus:bg-danger/10 focus:text-danger"
+                                    onClick={() => {
+                                      clearError();
+                                      setModal({ type: "cancel", order: item });
+                                    }}
+                                  >
+                                    <Ban className="w-4 h-4 mr-2.5" />
+                                    Cancel
+                                  </DropdownMenuItem>
+                                )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -417,7 +440,7 @@ export function OrderPage() {
                   >
                     {keyword.trim() ? (
                       <span>
-                        Không tìm thấy đơn hàng nào khớp với{" "}
+                        No orders found matching{" "}
                         <span className="font-medium text-ink-muted">
                           "{keyword.trim()}"
                         </span>
@@ -427,22 +450,22 @@ export function OrderPage() {
                           onClick={() => setKeyword("")}
                           className="text-danger hover:underline"
                         >
-                          Xóa tìm kiếm
+                          Clear search
                         </button>
                       </span>
                     ) : filter !== "all" ? (
                       <span>
-                        Không có đơn hàng nào ở trạng thái này.{" "}
+                        No orders with this status.{" "}
                         <button
                           type="button"
                           onClick={() => setFilter("all")}
                           className="text-danger hover:underline"
                         >
-                          Xem tất cả
+                          View all
                         </button>
                       </span>
                     ) : (
-                      "Chưa có đơn hàng nào."
+                      "No orders yet."
                     )}
                   </TableCell>
                 </TableRow>
@@ -451,13 +474,13 @@ export function OrderPage() {
           </Table>
         </div>
         {(cursors.length > 0 || pagination?.hasNextPage) && (
-          <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
+          <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border rounded-b-sm">
             <div className="text-sm text-ink-muted font-medium">
-              Trang {cursors.length + 1}
+              Page {cursors.length + 1}
               {pagination?.total > 0 && (
                 <>
                   <span className="mx-2 text-border">|</span>
-                  Tổng: {pagination.total} đơn hàng
+                  Total: {pagination.total} orders
                 </>
               )}
             </div>
@@ -465,20 +488,20 @@ export function OrderPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-sm h-9 px-4 font-medium"
+                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                 onClick={handlePrev}
                 disabled={cursors.length === 0}
               >
-                Trước
+                Previous
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-sm h-9 px-4 font-medium"
+                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
                 onClick={handleNext}
                 disabled={!pagination?.hasNextPage}
               >
-                Sau
+                Next
               </Button>
             </div>
           </div>
@@ -487,10 +510,10 @@ export function OrderPage() {
 
       <DeleteModal
         open={modal.type === "cancel"}
-        title="Hủy đơn hàng"
-        description={`Đơn hàng "${modal.type === "cancel" ? modal.order.code : ""
-          }" sẽ bị hủy và tồn kho sẽ được hoàn lại.`}
-        confirmText="Xác nhận hủy"
+        title="Cancel Order"
+        description={`Order "${modal.type === "cancel" ? modal.order.code : ""
+          }" will be cancelled and stock will be restored.`}
+        confirmText="Confirm cancel"
         loading={submitting}
         submitError={error}
         onClose={closeModal}

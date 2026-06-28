@@ -4,10 +4,10 @@ import { VouchersPage } from "@/public/pages/VouchersPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Kho mã giảm giá",
+    title: "My Vouchers",
     description:
-      "Lưu và sử dụng mã giảm giá khi mua sắm tại GlowUp Cosmetics. Freeship, giảm phần trăm và nhiều ưu đãi hấp dẫn.",
-    keywords: "mã giảm giá, voucher, khuyến mãi, GlowUp",
+      "Save and use vouchers when shopping at GlowUp Cosmetics. Free shipping, percentage off, and more great deals.",
+    keywords: "voucher codes, discount, promotions, GlowUp",
     canonical: "/vouchers",
   });
 

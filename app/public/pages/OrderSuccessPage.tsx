@@ -49,18 +49,18 @@ function BankTransferInfo({
   const finalQrUrl = dynamicQrUrl || settings?.bankQrCodeUrl;
 
   return (
-    <div className="mt-8 bg-surface border border-brand/20 rounded-sm overflow-hidden max-w-md mx-auto shadow-ui-card">
-      <div className="bg-brand/5 px-6 py-4 border-b border-brand/10 flex items-center gap-2">
-        <Banknote className="w-5 h-5 text-brand" />
-        <h3 className="font-bold text-brand">Thông tin chuyển khoản</h3>
+    <div className="mt-8 bg-card border border-brand/20 rounded-2xl overflow-hidden max-w-md mx-auto shadow-md">
+      <div className="px-6 py-4 border-b border-brand/10 flex items-center gap-2" style={{ background: "hsl(352, 72%, 52%, 0.05)" }}>
+        <Banknote className="w-5 h-5" style={{ color: "hsl(352, 72%, 52%)" }} />
+        <h3 className="font-bold" style={{ color: "hsl(352, 72%, 52%)" }}>Bank transfer details</h3>
       </div>
       <div className="p-6 space-y-4 text-sm">
         {finalQrUrl && (
           <div className="flex flex-col items-center justify-center mb-6">
             <img
               src={finalQrUrl}
-              alt="QR Code Chuyển Khoản"
-              className="w-64 h-64 sm:w-72 sm:h-72 object-contain rounded-sm border border-border/50 p-2 bg-white"
+              alt="QR Code"
+              className="w-64 h-64 sm:w-72 sm:h-72 object-contain rounded-xl border border-border/50 p-2 bg-white"
             />
             <p className="text-xs text-ink-muted mt-2">
               Mở app Ngân hàng để quét mã QR
@@ -202,21 +202,24 @@ export function OrderSuccessPage() {
       </div>
 
       {/* Title */}
-      <h1 className="text-3xl font-bold text-ink mb-3">
+      <h1
+        className="text-3xl font-bold text-foreground mb-3"
+        style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+      >
         {paymentMethod === "bank" && !isPaid
-          ? "Đơn hàng đang chờ thanh toán"
-          : "Đặt hàng thành công!"}
+          ? "Waiting for payment"
+          : "Order placed! 🎉"}
       </h1>
       <p className="text-ink-muted mb-2">
         {paymentMethod === "bank" && !isPaid
           ? "Vui lòng quét mã QR bên dưới để hoàn tất thanh toán. Mã đơn hàng của bạn là:"
           : "Cảm ơn bạn đã tin tưởng GlowUp. Mã đơn hàng của bạn là:"}
       </p>
-      <div className="inline-flex items-center gap-2 bg-surface border border-border rounded-sm px-4 py-2 mb-4">
-        <span className="font-mono font-bold text-ink text-lg">#{code}</span>
+      <div className="inline-flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2 mb-4 shadow-sm">
+        <span className="font-mono font-bold text-foreground text-lg">#{code}</span>
         <button
           onClick={() => copyText(`#${code}`)}
-          className="text-ink-muted hover:text-brand transition-colors"
+          className="text-muted-foreground hover:text-brand transition-colors"
         >
           <Copy className="w-4 h-4" />
         </button>
@@ -233,14 +236,10 @@ export function OrderSuccessPage() {
       {/* Bank Transfer Details */}
       {paymentMethod === "bank" &&
         (isPaid ? (
-          <div className="mt-8 bg-success/10 border border-success/30 rounded-sm overflow-hidden max-w-md mx-auto p-6 animate-pulse-soft">
+          <div className="mt-8 bg-success/10 border border-success/30 rounded-2xl overflow-hidden max-w-md mx-auto p-6">
             <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-3" />
-            <h3 className="font-bold text-success text-xl mb-1">
-              Thanh toán thành công!
-            </h3>
-            <p className="text-sm text-ink">
-              Hệ thống đã nhận được tiền chuyển khoản của bạn.
-            </p>
+            <h3 className="font-bold text-success text-xl mb-1">Payment confirmed!</h3>
+            <p className="text-sm text-foreground">We've received your bank transfer.</p>
           </div>
         ) : settingsLoading ? (
           <div className="mt-8 flex items-center justify-center gap-2 text-ink-muted">
@@ -260,17 +259,18 @@ export function OrderSuccessPage() {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10">
         <button
           onClick={() => navigate("/account?view=orders")}
-          className="btn-hover flex items-center gap-2 bg-brand hover:bg-brand-dark text-white font-bold py-3 px-8 rounded-sm transition-colors shadow-ui-soft"
+          className="btn-hover flex items-center gap-2 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.99]"
+          style={{ background: "hsl(352, 72%, 52%)" }}
         >
           <ClipboardList className="w-4 h-4" />
-          Xem đơn hàng của tôi
+          My orders
         </button>
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 border border-border text-ink-muted hover:text-ink hover:border-border-dark font-semibold py-3 px-8 rounded-sm transition-colors"
+          className="flex items-center gap-2 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 font-semibold py-3 px-8 rounded-xl transition-all"
         >
           <ShoppingBag className="w-4 h-4" />
-          Tiếp tục mua sắm
+          Continue shopping
         </button>
       </div>
     </div>

@@ -9,25 +9,25 @@ export default function DashboardRecentOrders({
     <div className="lg:col-span-2 premium-card p-6 flex flex-col">
       <div className="flex-1 flex flex-col">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-semibold text-ink">Đơn hàng gần đây</h2>
+          <h2 className="text-lg font-semibold text-ink">Recent Orders</h2>
           <span className="text-xs text-ink-muted font-medium">
-            Bán tại quầy & online
+            POS & Online
           </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="border-b border-border text-ink-muted">
-                <th className="pb-3 font-medium whitespace-nowrap">Mã đơn</th>
+                <th className="pb-3 font-medium whitespace-nowrap">Order ID</th>
                 <th className="pb-3 font-medium whitespace-nowrap">
-                  Khách hàng
+                  Customer
                 </th>
-                <th className="pb-3 font-medium whitespace-nowrap">Sản phẩm</th>
+                <th className="pb-3 font-medium whitespace-nowrap">Products</th>
                 <th className="pb-3 font-medium text-right whitespace-nowrap">
-                  Tổng tiền
+                  Total
                 </th>
                 <th className="pb-3 font-medium text-center whitespace-nowrap">
-                  Trạng thái
+                  Status
                 </th>
               </tr>
             </thead>
@@ -35,7 +35,7 @@ export default function DashboardRecentOrders({
               {recentOrders.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-ink-muted">
-                    Chưa có đơn hàng nào được tạo
+                    No orders yet
                   </td>
                 </tr>
               ) : (
@@ -48,10 +48,10 @@ export default function DashboardRecentOrders({
                       {order.id}
                     </td>
                     <td className="py-3 font-medium text-ink whitespace-nowrap">
-                      {order.customer || "Khách vãng lai"}
+                      {order.customer || "Walk-in"}
                     </td>
                     <td className="py-3 text-ink-muted max-w-45 truncate">
-                      {order.items || "Không rõ"}
+                      {order.items || "Unknown"}
                     </td>
                     <td className="py-3 text-right font-medium text-ink whitespace-nowrap">
                       {order.total}
@@ -60,9 +60,9 @@ export default function DashboardRecentOrders({
                       <Badge
                         variant="default"
                         className={
-                          order.status === "Hoàn thành"
+                          order.status === "Completed"
                             ? "bg-success/10 text-success border-success/20"
-                            : order.status === "Đang giao"
+                            : order.status === "Shipping"
                               ? "bg-warning/10 text-warning border-warning/20"
                               : "bg-danger/10 text-danger border-danger/20"
                         }

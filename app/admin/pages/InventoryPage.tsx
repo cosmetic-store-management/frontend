@@ -68,7 +68,7 @@ export function InventoryPage() {
   const debouncedSearch = useDebounce(search, 500);
   const [stockCursors, setStockCursors] = useState<string[]>([]);
   const currentStockCursor = stockCursors[stockCursors.length - 1] || undefined;
-  
+
   const [txCursors, setTxCursors] = useState<string[]>([]);
   const currentTxCursor = txCursors[txCursors.length - 1] || undefined;
   const [isRestockOpen, setIsRestockOpen] = useState(false);
@@ -187,11 +187,11 @@ export function InventoryPage() {
         });
       }
 
-      toast.success(`Đã cập nhật tồn kho cho ${selectedItem.name}`);
+      toast.success(`Inventory updated for ${selectedItem.name}`);
       setIsAdjustOpen(false);
       setSelectedItem(null);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi kiểm kho!");
+      toast.error(err.message || "Error adjusting stock!");
     }
   };
 
@@ -226,7 +226,7 @@ export function InventoryPage() {
         });
         finalSupplierId = created.id;
       } catch (err: any) {
-        toast.error(err.message || "Không thể tạo nhà cung cấp!");
+        toast.error(err.message || "Failed to create supplier!");
         return;
       }
     }
@@ -251,35 +251,35 @@ export function InventoryPage() {
       });
 
       toast.success(
-        `Đã bổ sung ${data.restockQty} chiếc cho sản phẩm ${selectedItem.name}`,
+        `Added ${data.restockQty} items for ${selectedItem.name}`,
       );
       setIsRestockOpen(false);
       setSelectedItem(null);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi nhập kho!");
+      toast.error(err.message || "Error importing stock!");
     }
   };
 
   return (
     <div className="flex flex-col gap-6 animate-page-enter text-left">
       <PageHeader
-        title="Quản lý kho hàng"
-        description="Theo dõi tồn kho, nhập hàng và lịch sử giao dịch kho"
+        title="Inventory Management"
+        description="Track stock, import goods, and view transaction history."
         actions={
           <Button
             className="gap-2 shrink-0 h-10 bg-brand text-white hover:bg-brand-hover shadow-none"
             size="sm"
             onClick={() => setIsBulkOpen(true)}
           >
-            <FilePlus className="w-4 h-4" /> Tạo phiếu nhập hàng
+            <FilePlus className="w-4 h-4" /> Import Stock
           </Button>
         }
         filters={
-          <div className="flex flex-col xl:flex-row items-start xl:items-center gap-3 w-full flex-wrap">
+          <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
-                placeholder="Tìm tên sản phẩm, mã SKU..."
+                placeholder="Search product name, SKU..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
@@ -289,21 +289,23 @@ export function InventoryPage() {
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => setActiveTab("stock")}
-                className={`inline-flex h-10 items-center gap-2 border px-3.5 text-sm font-semibold transition-colors rounded-sm sm:px-4 ${activeTab === "stock"
-                  ? "border-brand bg-brand/10 text-brand shadow-ui-soft"
-                  : "border-border bg-surface text-ink-muted hover:border-brand hover:text-ink-muted"
+                className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${activeTab === "stock"
+                    ? "border-brand/30 text-brand shadow-sm"
+                    : "border-border bg-surface text-ink-muted hover:border-brand/20 hover:text-ink"
                   }`}
+                style={activeTab === "stock" ? { background: "hsl(352, 72%, 52%, 0.08)" } : {}}
               >
-                Tồn kho hiện tại
+                Current stock
               </button>
               <button
                 onClick={() => setActiveTab("transactions")}
-                className={`inline-flex h-10 items-center gap-2 border px-3.5 text-sm font-semibold transition-colors rounded-sm sm:px-4 ${activeTab === "transactions"
-                  ? "border-brand bg-brand/10 text-brand shadow-ui-soft"
-                  : "border-border bg-surface text-ink-muted hover:border-brand hover:text-ink-muted"
+                className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${activeTab === "transactions"
+                    ? "border-brand/30 text-brand shadow-sm"
+                    : "border-border bg-surface text-ink-muted hover:border-brand/20 hover:text-ink"
                   }`}
+                style={activeTab === "transactions" ? { background: "hsl(352, 72%, 52%, 0.08)" } : {}}
               >
-                Lịch sử giao dịch kho
+                Transaction history
               </button>
             </div>
           </div>
@@ -313,31 +315,31 @@ export function InventoryPage() {
       {activeTab === "stock" ? (
         <div className="space-y-4">
           {/* Stock Table */}
-          <div className="premium-card overflow-hidden">
+          <div className="premium-card rounded-sm overflow-hidden">
             <div className="overflow-x-auto">
               <Table className="min-w-205 table-fixed">
                 <TableHeader>
                   <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                    <TableHead className="w-[28%]">
-                      Sản phẩm
+                    <TableHead className="w-[30%]">
+                      Product
                     </TableHead>
-                    <TableHead className="text-center w-[10%]">
-                      Tồn kho
+                    <TableHead className="text-center w-[11%]">
+                      Stock
                     </TableHead>
-                    <TableHead className="text-center w-[12%]">
-                      Hạn mức tối thiểu
+                    <TableHead className="text-center w-[13%]">
+                      Min Stock
                     </TableHead>
-                    <TableHead className="w-[14%] text-left">
-                      Thương hiệu
+                    <TableHead className="w-[16%]">
+                      Brand
                     </TableHead>
-                    <TableHead className="w-[12%] text-right">
-                      Giá nhập
+                    <TableHead className="w-[14%] text-right">
+                      Import Price
                     </TableHead>
-                    <TableHead className="w-[14%] text-center">
-                      NSX - HSD
+                    <TableHead className="w-[16%] text-center">
+                      MFG - EXP
                     </TableHead>
-                    <TableHead className="text-center w-[10%]">
-                      Thao tác
+                    <TableHead className="text-center w-24">
+                      Actions
                     </TableHead>
                   </TableRow>
                 </TableHeader>
@@ -350,7 +352,7 @@ export function InventoryPage() {
                       >
                         <div className="flex items-center justify-center gap-2">
                           <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                          <span>Đang tải danh sách tồn kho...</span>
+                          <span>Loading stock list...</span>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -360,7 +362,7 @@ export function InventoryPage() {
                         colSpan={7}
                         className="py-8 text-center text-ink-muted"
                       >
-                        Không tìm thấy sản phẩm nào
+                        No products found
                       </TableCell>
                     </TableRow>
                   ) : (
@@ -391,7 +393,7 @@ export function InventoryPage() {
                                   </span>
                                   {item.expiringBatchesCount &&
                                     item.expiringBatchesCount > 0 ? (
-                                    <span title={`Có ${item.expiringBatchesCount} lô hàng sắp hết hạn (< 3 tháng)!`}>
+                                    <span title={`${item.expiringBatchesCount} batches expiring soon (< 3 months)!`}>
                                       <AlertCircle className="w-4 h-4 text-danger shrink-0 cursor-help" />
                                     </span>
                                   ) : null}
@@ -473,21 +475,21 @@ export function InventoryPage() {
                                     onClick={() => handleRestockClick(item)}
                                   >
                                     <Plus className="w-4 h-4 mr-2.5" />
-                                    Nhập thêm hàng
+                                    Restock
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                     onClick={() => handleAdjustClick(item)}
                                   >
                                     <ClipboardCheck className="w-4 h-4 mr-2.5" />
-                                    Kiểm kho
+                                    Adjust Stock
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                     onClick={() => handleViewBatches(item)}
                                   >
                                     <History className="w-4 h-4 mr-2.5" />
-                                    Chi tiết lô hàng
+                                    Batch Details
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -503,11 +505,11 @@ export function InventoryPage() {
             {(stockCursors.length > 0 || stockPagination?.hasNextPage) && (
               <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
                 <div className="text-sm text-ink-muted font-medium">
-                  Trang {stockCursors.length + 1}
+                  Page {stockCursors.length + 1}
                   {stockPagination?.totalItems ? (
                     <>
                       <span className="mx-2 text-border">|</span>
-                      Tổng: {stockPagination.totalItems} sản phẩm
+                      Total: {stockPagination.totalItems} products
                     </>
                   ) : null}
                 </div>
@@ -519,7 +521,7 @@ export function InventoryPage() {
                     onClick={handleStockPrev}
                     disabled={stockCursors.length === 0}
                   >
-                    Trước
+                    Prev
                   </Button>
                   <Button
                     variant="outline"
@@ -528,7 +530,7 @@ export function InventoryPage() {
                     onClick={handleStockNext}
                     disabled={!stockPagination?.hasNextPage}
                   >
-                    Sau
+                    Next
                   </Button>
                 </div>
               </div>
@@ -537,28 +539,28 @@ export function InventoryPage() {
         </div>
       ) : (
         /* Transactions List */
-        <div className="premium-card overflow-hidden">
+        <div className="premium-card rounded-sm overflow-hidden">
           <div className="overflow-x-auto">
             <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[18%]">
-                    Mã GD
+                  <TableHead className="w-[20%]">
+                    TX ID
                   </TableHead>
                   <TableHead className="w-[15%]">
-                    Mã SKU
+                    SKU
                   </TableHead>
                   <TableHead className="text-center w-[18%]">
-                    Loại giao dịch
+                    Type
                   </TableHead>
                   <TableHead className="text-right w-[12%]">
-                    Số lượng
+                    Quantity
                   </TableHead>
-                  <TableHead className="w-[19%]">
-                    Người thực hiện
+                  <TableHead className="w-[20%]">
+                    Performer
                   </TableHead>
-                  <TableHead className="w-[18%]">
-                    Thời gian
+                  <TableHead className="w-[15%] text-center">
+                    Date
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -568,14 +570,14 @@ export function InventoryPage() {
                     <TableCell colSpan={6} className="py-8 text-center text-ink-muted">
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                        <span>Đang tải lịch sử giao dịch...</span>
+                        <span>Loading transaction history...</span>
                       </div>
                     </TableCell>
                   </TableRow>
                 ) : transactions.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="py-8 text-center text-ink-muted">
-                      Chưa có giao dịch kho nào được thực hiện
+                      No transactions found
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -601,17 +603,17 @@ export function InventoryPage() {
                           {tx.type === "in" ? (
                             <>
                               <ArrowDownRight className="w-3.5 h-3.5 text-success" />{" "}
-                              Nhập hàng
+                              Stock In
                             </>
                           ) : tx.type === "out" ? (
                             <>
                               <ArrowUpRight className="w-3.5 h-3.5 text-warning" />{" "}
-                              Xuất hàng
+                              Stock Out
                             </>
                           ) : (
                             <>
                               <AlertCircle className="w-3.5 h-3.5 text-blue-500" />{" "}
-                              Kiểm kho
+                              Adjustment
                             </>
                           )}
                         </span>
@@ -647,11 +649,11 @@ export function InventoryPage() {
           {(txCursors.length > 0 || txPagination?.hasNextPage) && (
             <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
               <div className="text-sm text-ink-muted font-medium">
-                Trang {txCursors.length + 1}
+                Page {txCursors.length + 1}
                 {txPagination?.totalItems ? (
                   <>
                     <span className="mx-2 text-border">|</span>
-                    Tổng: {txPagination.totalItems} giao dịch
+                    Total: {txPagination.totalItems} transactions
                   </>
                 ) : null}
               </div>
@@ -688,10 +690,10 @@ export function InventoryPage() {
         <DialogContent className="max-w-lg animate-scale-in text-left">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-ink">
-              Bổ sung số lượng tồn kho
+              Restock Items
             </DialogTitle>
             <DialogDescription className="text-xs text-ink-muted mt-1">
-              Nhập thêm số lượng hàng hóa vào kho của GlowUp từ nhà cung cấp.
+              Add new stock to GlowUp inventory from a supplier.
             </DialogDescription>
           </DialogHeader>
 
@@ -705,9 +707,9 @@ export function InventoryPage() {
                 <div className="flex justify-between text-ink-muted mt-2">
                   <span>{selectedItem.sku}</span>
                   <span>
-                    Hiện tại:{" "}
+                    Current:{" "}
                     <strong className="text-ink">
-                      {selectedItem.stock} chiếc
+                      {selectedItem.stock} items
                     </strong>
                   </span>
                 </div>
@@ -720,7 +722,7 @@ export function InventoryPage() {
                 htmlFor="supplier"
                 className="text-xs font-semibold text-ink"
               >
-                Nhà cung cấp <span className="text-danger">*</span>
+                Supplier <span className="text-danger">*</span>
               </Label>
               <Controller
                 control={restockControl}
@@ -741,14 +743,14 @@ export function InventoryPage() {
                     }}
                     value={isNewSupplier ? "new" : field.value}
                   >
-                    <option value="">-- Chọn nhà cung cấp --</option>
+                    <option value="">-- Select Supplier --</option>
                     {suppliers.map((sup: any) => (
                       <option key={sup.id} value={sup.id}>
                         {sup.name} ({sup.phone})
                       </option>
                     ))}
                     <option value="new" className="text-brand font-semibold">
-                      + Thêm nhà cung cấp mới...
+                      + Add New Supplier...
                     </option>
                   </select>
                 )}
@@ -764,7 +766,7 @@ export function InventoryPage() {
             {isNewSupplier && (
               <div className="border border-border/80 bg-surface-soft/50 rounded-sm p-3 space-y-3">
                 <p className="text-xs font-bold text-ink">
-                  Thông tin nhà cung cấp mới
+                  New Supplier Info
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
@@ -772,7 +774,7 @@ export function InventoryPage() {
                       htmlFor="sName"
                       className="text-[11px] font-semibold text-ink-muted"
                     >
-                      Tên nhà cung cấp <span className="text-danger">*</span>
+                      Supplier Name <span className="text-danger">*</span>
                     </Label>
                     <Controller
                       control={restockControl}
@@ -781,7 +783,7 @@ export function InventoryPage() {
                         <Input
                           {...field}
                           id="sName"
-                          placeholder="Tên nhà cung cấp..."
+                          placeholder="Supplier Name..."
                           className="h-8 text-xs"
                         />
                       )}
@@ -797,7 +799,7 @@ export function InventoryPage() {
                       htmlFor="sPhone"
                       className="text-[11px] font-semibold text-ink-muted"
                     >
-                      Số điện thoại <span className="text-danger">*</span>
+                      Phone Number <span className="text-danger">*</span>
                     </Label>
                     <Controller
                       control={restockControl}
@@ -806,7 +808,7 @@ export function InventoryPage() {
                         <Input
                           {...field}
                           id="sPhone"
-                          placeholder="Số điện thoại..."
+                          placeholder="Phone Number..."
                           className="h-8 text-xs"
                         />
                       )}
@@ -844,7 +846,7 @@ export function InventoryPage() {
                       htmlFor="sAddress"
                       className="text-[11px] font-semibold text-ink-muted"
                     >
-                      Địa chỉ
+                      Address
                     </Label>
                     <Controller
                       control={restockControl}
@@ -853,7 +855,7 @@ export function InventoryPage() {
                         <Input
                           {...field}
                           id="sAddress"
-                          placeholder="Địa chỉ..."
+                          placeholder="Address..."
                           className="h-8 text-xs"
                         />
                       )}
@@ -870,7 +872,7 @@ export function InventoryPage() {
                   htmlFor="batchCode"
                   className="text-xs font-semibold text-ink"
                 >
-                  Mã lô <span className="text-danger">*</span>
+                  Batch Code <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={restockControl}
@@ -879,7 +881,7 @@ export function InventoryPage() {
                     <Input
                       {...field}
                       id="batchCode"
-                      placeholder="VD: LOT-01"
+                      placeholder="E.g. LOT-01"
                       className="h-9 text-sm bg-surface"
                     />
                   )}
@@ -895,7 +897,7 @@ export function InventoryPage() {
                   htmlFor="manufactureDate"
                   className="text-xs font-semibold text-ink"
                 >
-                  Ngày sản xuất <span className="text-danger">*</span>
+                  Manufacture Date <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={restockControl}
@@ -918,7 +920,7 @@ export function InventoryPage() {
                   htmlFor="expiryDate"
                   className="text-xs font-semibold text-ink"
                 >
-                  Hạn sử dụng <span className="text-danger">*</span>
+                  Expiry Date <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={restockControl}
@@ -945,7 +947,7 @@ export function InventoryPage() {
                   htmlFor="importPrice"
                   className="text-xs font-semibold text-ink"
                 >
-                  Đơn giá nhập (đ) <span className="text-danger">*</span>
+                  Import Price ($) <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={restockControl}
@@ -963,7 +965,7 @@ export function InventoryPage() {
                         onBlur={onBlur}
                         id="importPrice"
                         type="text"
-                        placeholder="Ví dụ: 150.000"
+                        placeholder="E.g. 150000"
                         value={displayValue}
                         onChange={(e) => {
                           const rawValue = e.target.value.replace(/\./g, "");
@@ -984,7 +986,7 @@ export function InventoryPage() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="qty" className="text-xs font-semibold text-ink">
-                  Số lượng nhập <span className="text-danger">*</span>
+                  Restock Quantity <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={restockControl}
@@ -994,7 +996,7 @@ export function InventoryPage() {
                       {...field}
                       id="qty"
                       type="number"
-                      placeholder="Ví dụ: 50"
+                      placeholder="E.g. 50"
                     />
                   )}
                 />
@@ -1012,7 +1014,7 @@ export function InventoryPage() {
                 variant="outline"
                 onClick={() => setIsRestockOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button
                 type="submit"
@@ -1024,7 +1026,7 @@ export function InventoryPage() {
                   createSupplierMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Xác nhận"
+                  "Confirm"
                 )}
               </Button>
             </DialogFooter>
@@ -1040,10 +1042,10 @@ export function InventoryPage() {
         <DialogContent className="max-w-md w-full animate-scale-in text-left">
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-ink">
-              Kiểm kho sản phẩm
+              Adjust Stock
             </DialogTitle>
             <DialogDescription className="text-xs text-ink-muted mt-1">
-              Ghi nhận số lượng thực tế trên kệ nếu có sai lệch.
+              Record actual physical stock if there's a discrepancy.
             </DialogDescription>
           </DialogHeader>
 
@@ -1057,9 +1059,9 @@ export function InventoryPage() {
                 <div className="flex justify-between text-ink-muted mt-2">
                   <span>{selectedItem.sku}</span>
                   <span>
-                    Hiện tại:{" "}
+                    Current:{" "}
                     <strong className="text-ink">
-                      {selectedItem.stock} chiếc
+                      {selectedItem.stock} items
                     </strong>
                   </span>
                 </div>
@@ -1071,7 +1073,7 @@ export function InventoryPage() {
                 htmlFor="actualStock"
                 className="text-xs font-semibold text-ink"
               >
-                Tồn kho thực tế <span className="text-danger">*</span>
+                Actual Stock <span className="text-danger">*</span>
               </Label>
               <Controller
                 control={adjustControl}
@@ -1081,7 +1083,7 @@ export function InventoryPage() {
                     {...field}
                     id="actualStock"
                     type="number"
-                    placeholder="Ví dụ: 45"
+                    placeholder="E.g. 45"
                   />
                 )}
               />
@@ -1097,7 +1099,7 @@ export function InventoryPage() {
                 htmlFor="reason"
                 className="text-xs font-semibold text-ink"
               >
-                Lý do điều chỉnh
+                Reason for Adjustment
               </Label>
               <Controller
                 control={adjustControl}
@@ -1106,7 +1108,7 @@ export function InventoryPage() {
                   <Textarea
                     {...field}
                     id="reason"
-                    placeholder="Ví dụ: Hư hỏng, đếm sai, thất lạc..."
+                    placeholder="E.g. Damaged, miscounted, lost..."
                     className="min-h-25 resize-none"
                   />
                 )}
@@ -1124,13 +1126,13 @@ export function InventoryPage() {
                 variant="outline"
                 onClick={() => setIsAdjustOpen(false)}
               >
-                Huỷ
+                Cancel
               </Button>
               <Button type="submit" disabled={adjustMutation.isPending}>
                 {adjustMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Xác nhận"
+                  "Confirm"
                 )}
               </Button>
             </DialogFooter>

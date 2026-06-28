@@ -40,23 +40,23 @@ const formatDate = (v?: string) => {
 // ─── Journey steps derived from status ───────────────────────────────────
 
 const JOURNEY: { key: Order["orderStatus"] | "created"; label: string }[] = [
-  { key: "created", label: "Đơn hàng được đặt" },
-  { key: "pending", label: "Chờ xác nhận" },
-  { key: "processing", label: "Đang xử lý" },
-  { key: "shipping", label: "Đang giao hàng" },
-  { key: "completed", label: "Giao thành công" },
+  { key: "created", label: "Order Placed" },
+  { key: "pending", label: "Pending" },
+  { key: "processing", label: "Processing" },
+  { key: "shipping", label: "Shipping" },
+  { key: "completed", label: "Delivered" },
 ];
 
 function buildSteps(orderStatus: Order["orderStatus"]) {
   if (orderStatus === "cancelled" || orderStatus === "returned") {
     return [
-      { id: "created", title: "Đơn hàng được đặt", done: true, current: false },
+      { id: "created", title: "Order Placed", done: true, current: false },
       {
         id: orderStatus,
         title:
           orderStatus === "cancelled"
-            ? "Đơn hàng đã bị hủy"
-            : "Đơn hàng đã hoàn trả",
+            ? "Order Cancelled"
+            : "Order Returned",
         done: true,
         current: true,
       },
@@ -124,14 +124,14 @@ export default function OrderDetail({
                   </span>
                 </div>
                 <p className="mt-0.5 text-sm text-ink-muted">
-                  Đặt lúc: {formatDate(order.createdAt)}
+                  Ordered at: {formatDate(order.createdAt)}
                 </p>
               </div>
             </div>
 
             <div className="text-right pr-8 sm:pr-10">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-muted">
-                Tổng tiền
+                Total Amount
               </p>
               <p className="mt-0.5 text-xl font-bold leading-none text-brand sm:text-2xl">
                 {formatVnd(order.totalAmount)}
@@ -146,12 +146,12 @@ export default function OrderDetail({
             {/* Left: items + summary */}
             <div className="border-b border-border p-4 sm:p-5 lg:border-b-0 lg:border-r">
               <h4 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-                Sản phẩm
+                Products
               </h4>
 
               <div className="mt-3 space-y-2.5">
                 {order.items.length === 0 && (
-                  <p className="text-sm text-ink-muted">Không có sản phẩm.</p>
+                  <p className="text-sm text-ink-muted">No products.</p>
                 )}
                 {order.items.map((item, i) => (
                   <div
@@ -185,7 +185,7 @@ export default function OrderDetail({
                           </p>
                         )}
                         <p className="mt-1 text-xs text-ink-muted">
-                          SL: x{item.quantity}
+                          Qty: x{item.quantity}
                         </p>
                       </div>
                     </div>
@@ -200,13 +200,13 @@ export default function OrderDetail({
               <div className="mt-4 bg-surface border border-border rounded-sm p-5">
                 <div className="space-y-2 text-sm text-ink-muted">
                   <div className="flex items-center justify-between gap-4">
-                    <span>Tạm tính</span>
+                    <span>Subtotal</span>
                     <span className="text-ink">
                       {formatVnd(order.subtotal)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-4">
-                    <span>Phí vận chuyển</span>
+                    <span>Shipping Fee</span>
                     <span className="text-ink">
                       {formatVnd(order.shippingFee)}
                     </span>
@@ -215,7 +215,7 @@ export default function OrderDetail({
                 <div className="my-4 h-px bg-border" />
                 <div className="flex items-center justify-between gap-4">
                   <p className="text-base font-semibold text-ink sm:text-lg">
-                    Tổng thanh toán
+                    Total Payment
                   </p>
                   <p className="text-xl font-bold leading-none text-brand sm:text-2xl">
                     {formatVnd(order.totalAmount)}
@@ -223,13 +223,13 @@ export default function OrderDetail({
                 </div>
                 {order.note && (
                   <p className="mt-3 text-xs italic text-ink-muted bg-surface-soft p-2 rounded-sm">
-                    Ghi chú: {order.note}
+                    Note: {order.note}
                   </p>
                 )}
                 {order.returnReason && (
                   <div className="mt-3 bg-danger/5 border border-danger/20 p-3 rounded-sm">
                     <p className="text-xs font-semibold text-danger uppercase tracking-widest mb-1">
-                      Lý do yêu cầu trả hàng
+                      Return Reason
                     </p>
                     <p className="text-sm text-ink">{order.returnReason}</p>
                   </div>
@@ -242,7 +242,7 @@ export default function OrderDetail({
               {/* Thông tin nhận hàng */}
               <div className="border border-border bg-surface p-4 sm:p-5 rounded-sm">
                 <h4 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-                  Thông tin nhận hàng
+                  Shipping Information
                 </h4>
                 <div className="mt-3 bg-surface-soft p-4 rounded-sm">
                   <div className="flex items-start gap-2.5">
@@ -284,7 +284,7 @@ export default function OrderDetail({
                         <Package className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
                         <div>
                           <p className="text-sm font-semibold text-ink">
-                            Mã vận đơn: {order.trackingCode}
+                            Tracking Code: {order.trackingCode}
                           </p>
                         </div>
                       </div>
@@ -297,7 +297,7 @@ export default function OrderDetail({
               {order.returnReason && (
                 <div className="border border-warning/40 bg-warning/5 p-4 sm:p-5 rounded-sm">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-warning mb-2">
-                    Lý do yêu cầu trả hàng
+                    Return Request Reason
                   </h4>
                   <p className="text-sm text-ink font-medium">
                     {order.returnReason}
@@ -305,7 +305,7 @@ export default function OrderDetail({
                   {(order as any).returnRejectReason && (
                     <div className="mt-3 pt-3 border-t border-warning/20">
                       <p className="text-xs font-bold text-danger mb-1">
-                        Lý do từ chối:
+                        Reject Reason:
                       </p>
                       <p className="text-sm text-ink font-medium">
                         {(order as any).returnRejectReason}
@@ -318,7 +318,7 @@ export default function OrderDetail({
               {/* Hành trình đơn hàng */}
               <div className="border border-border bg-surface p-4 sm:p-5 rounded-sm">
                 <h4 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-                  Hành trình đơn hàng
+                  Order Journey
                 </h4>
                 <div className="mt-3 space-y-3 bg-surface-soft p-4 rounded-sm">
                   {steps.map((step, index) => (
@@ -360,7 +360,7 @@ export default function OrderDetail({
                   <div className="flex gap-2 items-center w-full sm:w-auto">
                     <input
                       type="text"
-                      placeholder="Lý do từ chối..."
+                      placeholder="Reject reason..."
                       className="border border-border text-sm px-2 py-1.5 w-full sm:w-48 outline-none focus:border-brand"
                       value={rejectReason}
                       onChange={(e) => setRejectReason(e.target.value)}
@@ -376,14 +376,14 @@ export default function OrderDetail({
                         setRejectReason("");
                       }}
                     >
-                      Xác nhận
+                      Confirm
                     </Button>
                     <Button
                       type="button"
                       variant="ghost"
                       onClick={() => setIsRejecting(false)}
                     >
-                      Huỷ
+                      Cancel
                     </Button>
                   </div>
                 ) : (
@@ -395,7 +395,7 @@ export default function OrderDetail({
                       disabled={loading}
                       onClick={() => setIsRejecting(true)}
                     >
-                      Từ chối trả hàng
+                      Reject Return
                     </Button>
                     <Button
                       type="button"
@@ -403,7 +403,7 @@ export default function OrderDetail({
                       disabled={loading}
                       onClick={() => onApproveReturn(order.id)}
                     >
-                      Duyệt yêu cầu
+                      Approve Return
                     </Button>
                   </>
                 )}
@@ -417,11 +417,11 @@ export default function OrderDetail({
               disabled={loading}
               onClick={() => onRefund(order.id)}
             >
-              {loading ? "Đang xử lý..." : "Xác nhận"}
+              {loading ? "Processing..." : "Confirm"}
             </Button>
           )}
           <Button type="button" variant="outline" onClick={onClose}>
-            Huỷ
+            Cancel
           </Button>
         </DialogFooter>
       </DialogContent>

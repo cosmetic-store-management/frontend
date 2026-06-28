@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight, Tag } from "lucide-react";
 import { useProducts } from "@/public/hooks/useProducts";
 import { useCategories } from "@/public/hooks/useCategories";
 import { usePublicBrands } from "@/public/hooks/useBrands";
@@ -57,7 +57,7 @@ export default function HomePage() {
   const showViewedSection = viewedProducts.length > 0;
 
   return (
-    <div className="bg-white w-full flex-1">
+    <div className="bg-background w-full flex-1">
       {/* 1. HERO CAROUSEL */}
       <HeroCarousel />
 
@@ -72,23 +72,24 @@ export default function HomePage() {
         {activeCategories.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-                Danh Mục Nổi Bật
+              <h2 className="text-2xl md:text-3xl text-section-heading">
+                Shop by Category
               </h2>
               <Link
                 to="/categories"
                 className="text-brand text-sm font-semibold underline flex items-center gap-1 hover:opacity-80 transition-opacity"
               >
-                Xem thêm <ChevronRight className="w-4 h-4" />
+                See all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-              {activeCategories.slice(0, 8).map((cat: any) => (
+              {activeCategories.slice(0, 8).map((cat: any, i: number) => (
                 <Link
                   key={cat.id || cat._id}
                   to={`/products?category=${cat.slug}`}
-                  className="group flex items-center gap-3 p-3 bg-surface border border-border/40 hover:border-brand/50 hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all rounded-lg"
+                  className="card-animate group flex items-center gap-3 p-3 bg-surface border border-border/40 hover:border-brand/50 hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all rounded-lg"
+                  style={{ "--card-i": i } as React.CSSProperties}
                 >
                   {/* Icon */}
                   <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-white/80 overflow-hidden rounded-sm">
@@ -99,7 +100,7 @@ export default function HomePage() {
                         className="w-8 h-8 object-contain"
                       />
                     ) : (
-                      <Sparkles className="w-5 h-5 text-brand" />
+                      <Tag className="w-5 h-5 text-brand" />
                     )}
                   </div>
                   {/* Text */}
@@ -108,7 +109,7 @@ export default function HomePage() {
                       {cat.name}
                     </p>
                     <p className="text-xs text-ink-muted mt-0.5">
-                      {cat.productCount} sản phẩm
+                      {cat.productCount} items
                     </p>
                   </div>
                 </Link>
@@ -121,14 +122,14 @@ export default function HomePage() {
         {featuredBrands.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-                Thương Hiệu Nổi Bật
+              <h2 className="text-2xl md:text-3xl text-section-heading">
+                Featured Brands
               </h2>
               <Link
                 to="/brands"
                 className="text-brand text-sm font-semibold underline flex items-center gap-1"
               >
-                Xem thêm <ChevronRight className="w-4 h-4" />
+                See all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
@@ -162,8 +163,8 @@ export default function HomePage() {
         {newArrivals.length > 0 && (
           <section>
             <div className="flex items-center mb-4">
-              <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-                Hàng Mới Về
+              <h2 className="text-2xl md:text-3xl text-section-heading">
+                Just Dropped
               </h2>
             </div>
             <ProductCarousel products={newArrivals} />
@@ -174,14 +175,14 @@ export default function HomePage() {
         {showViewedSection && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-                Xem lại gần đây
+              <h2 className="text-2xl md:text-3xl text-section-heading">
+                Recently Viewed
               </h2>
               <Link
                 to="/account?view=viewed"
                 className="text-brand text-sm font-semibold underline flex items-center gap-1"
               >
-                Xem tất cả <ChevronRight className="w-4 h-4" />
+                See all <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
             <ProductCarousel products={viewedProducts.slice(0, 10)} />
@@ -194,8 +195,8 @@ export default function HomePage() {
         {/* 8. GỢI Ý HÔM NAY (Khám phá chung) */}
         <section>
           <div className="flex items-center mb-4">
-            <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-              Gợi Ý Hôm Nay
+            <h2 className="text-2xl md:text-3xl text-section-heading">
+              The Edit
             </h2>
           </div>
 
@@ -203,8 +204,14 @@ export default function HomePage() {
             <ProductGridSkeleton count={10} />
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-              {discoverProducts.map((product: any) => (
-                <ProductCard key={product.id} product={product} />
+              {discoverProducts.map((product: any, i: number) => (
+                <div
+                  key={product.id}
+                  className="card-animate"
+                  style={{ "--card-i": Math.min(i, 9) } as React.CSSProperties}
+                >
+                  <ProductCard product={product} />
+                </div>
               ))}
             </div>
           )}
@@ -215,7 +222,7 @@ export default function HomePage() {
                 to="/products"
                 className="btn-outline px-12 py-3 rounded-full hover:shadow-md hover:-translate-y-1"
               >
-                Xem thêm sản phẩm
+                Keep exploring
               </Link>
             </div>
           )}

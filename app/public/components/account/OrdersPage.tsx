@@ -20,14 +20,14 @@ import { Link } from "react-router";
 import { toast } from "@/lib/toast";
 
 const ORDER_STATUS_TABS = [
-  { key: "all", label: "Tất cả" },
-  { key: "pending", label: "Chờ xác nhận" },
-  { key: "processing", label: "Đang xử lý" },
-  { key: "shipping", label: "Đang giao" },
-  { key: "completed", label: "Hoàn tất" },
-  { key: "cancelled", label: "Đã hủy" },
-  { key: "return_pending", label: "Yêu cầu trả hàng" },
-  { key: "returned", label: "Trả hàng" },
+  { key: "all", label: "All" },
+  { key: "pending", label: "Pending" },
+  { key: "processing", label: "Processing" },
+  { key: "shipping", label: "Shipping" },
+  { key: "completed", label: "Completed" },
+  { key: "cancelled", label: "Cancelled" },
+  { key: "return_pending", label: "Return Requested" },
+  { key: "returned", label: "Returned" },
 ];
 
 const STATUS_META: Record<
@@ -35,47 +35,47 @@ const STATUS_META: Record<
   { label: string; icon: any; className: string }
 > = {
   pending: {
-    label: "Chờ xác nhận",
+    label: "Pending",
     icon: Clock,
     className: "bg-warning/10 text-warning",
   },
   processing: {
-    label: "Đang xử lý",
+    label: "Processing",
     icon: Package,
     className: "bg-blue-500/10 text-blue-500",
   },
   shipping: {
-    label: "Đang giao",
+    label: "Out for delivery",
     icon: Truck,
     className: "bg-ink/5 text-ink-muted",
   },
   completed: {
-    label: "Hoàn tất",
+    label: "Delivered",
     icon: CheckCircle,
     className: "bg-success/10 text-success",
   },
-  cancelled: { label: "Đã hủy", icon: X, className: "bg-ink/5 text-ink-muted" },
+  cancelled: { label: "Cancelled", icon: X, className: "bg-ink/5 text-ink-muted" },
   return_pending: {
-    label: "Yêu cầu trả hàng",
+    label: "Return requested",
     icon: RotateCcw,
     className: "bg-warning/10 text-warning",
   },
   returned: {
-    label: "Trả hàng",
+    label: "Returned",
     icon: RotateCcw,
     className: "bg-danger/10 text-danger",
   },
 };
 
 const PAYMENT_LABEL: Record<string, string> = {
-  cod: "Thanh toán khi nhận hàng (COD)",
-  bank: "Chuyển khoản ngân hàng",
-  qr: "Chuyển khoản QR",
-  ewallet: "Ví điện tử",
-  stripe: "Thẻ quốc tế (Stripe)",
-  cash: "Tiền mặt (Tại quầy)",
-  pos_card: "Quẹt thẻ (Tại quầy)",
-  transfer: "Chuyển khoản (Tại quầy)",
+  cod: "Cash on Delivery (COD)",
+  bank: "Bank Transfer",
+  qr: "QR Transfer",
+  ewallet: "E-Wallet",
+  stripe: "International Card (Stripe)",
+  cash: "Cash (In-store)",
+  pos_card: "Card (In-store)",
+  transfer: "Transfer (In-store)",
 };
 
 export function OrdersPage() {

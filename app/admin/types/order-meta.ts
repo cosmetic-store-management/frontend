@@ -19,43 +19,43 @@ export const orderStatusMeta: Record<
   }
 > = {
   pending: {
-    label: "Chờ xác nhận",
+    label: "Pending",
     icon: Clock3,
     badgeClass: "bg-warning/10 text-warning",
     dotClass: "bg-warning",
   },
   processing: {
-    label: "Đang xử lý",
+    label: "Processing",
     icon: Package,
     badgeClass: "bg-blue-500/10 text-blue-500",
     dotClass: "bg-blue-500",
   },
   shipping: {
-    label: "Đang giao",
+    label: "Shipping",
     icon: Truck,
     badgeClass: "bg-surface-muted text-ink-muted",
     dotClass: "bg-ink-muted text-white",
   },
   completed: {
-    label: "Hoàn tất",
+    label: "Completed",
     icon: CheckCircle2,
     badgeClass: "bg-success/10 text-success",
     dotClass: "bg-success",
   },
   cancelled: {
-    label: "Đã hủy",
+    label: "Cancelled",
     icon: XCircle,
     badgeClass: "bg-ink/5 text-ink-muted",
     dotClass: "bg-ink-muted",
   },
   return_pending: {
-    label: "Yêu cầu trả hàng",
+    label: "Return Pending",
     icon: RotateCcw,
     badgeClass: "bg-warning/10 text-warning",
     dotClass: "bg-warning",
   },
   returned: {
-    label: "Đã trả hàng",
+    label: "Returned",
     icon: RotateCcw,
     badgeClass: "bg-danger/10 text-danger",
     dotClass: "bg-danger",
@@ -66,15 +66,15 @@ export const paymentMethodLabel: Record<
   Order["paymentMethod"] | "cash" | "card",
   string
 > = {
-  cod: "Thanh toán khi nhận hàng",
-  bank: "Chuyển khoản",
-  ewallet: "Ví điện tử",
-  qr: "Mã QR",
-  cash: "Tiền mặt",
-  card: "Quẹt thẻ",
-  stripe: "Thẻ quốc tế",
-  pos_card: "Quẹt thẻ",
-  transfer: "Chuyển khoản",
+  cod: "Cash on Delivery",
+  bank: "Bank Transfer",
+  ewallet: "E-Wallet",
+  qr: "QR Code",
+  cash: "Cash",
+  card: "Card",
+  stripe: "Stripe",
+  pos_card: "POS Card",
+  transfer: "Transfer",
 };
 
 export const paymentStatusMeta: Record<
@@ -82,16 +82,16 @@ export const paymentStatusMeta: Record<
   { label: string; badgeClass: string }
 > = {
   pending: {
-    label: "Chờ thanh toán",
+    label: "Pending",
     badgeClass: "bg-warning/10 text-warning",
   },
-  paid: { label: "Đã thanh toán", badgeClass: "bg-success/10 text-success" },
+  paid: { label: "Paid", badgeClass: "bg-success/10 text-success" },
   failed: {
-    label: "Chưa thanh toán",
+    label: "Unpaid",
     badgeClass: "bg-warning/10 text-warning",
   },
   refund_pending: {
-    label: "Cần hoàn tiền",
+    label: "Refund Pending",
     badgeClass: "bg-blue-500/10 text-blue-500",
   },
 };

@@ -16,13 +16,13 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { key: "profile", label: "Thông tin cá nhân", icon: User },
-  { key: "tier", label: "Hạng thành viên", icon: Award },
-  { key: "orders", label: "Quản lý đơn hàng", icon: Package },
-  { key: "vouchers", label: "Mã giảm giá", icon: Award },
-  { key: "address", label: "Địa chỉ", icon: MapPin },
-  { key: "viewed", label: "Sản phẩm đã xem", icon: FileText },
-  { key: "favorites", label: "Sản phẩm yêu thích", icon: Heart },
+  { key: "profile", label: "Personal Info", icon: User },
+  { key: "tier", label: "Member Tier", icon: Award },
+  { key: "orders", label: "My Orders", icon: Package },
+  { key: "vouchers", label: "Vouchers", icon: Award },
+  { key: "address", label: "Addresses", icon: MapPin },
+  { key: "viewed", label: "Recently Viewed", icon: FileText },
+  { key: "favorites", label: "Wishlist", icon: Heart },
 ] as const;
 
 export function Sidebar({
@@ -49,7 +49,7 @@ export function Sidebar({
               />
             ) : (
               <div className="w-full h-full bg-success text-white flex items-center justify-center font-bold text-lg">
-                {user.name?.substring(0, 2).toUpperCase() || "KH"}
+                {user.name?.substring(0, 2).toUpperCase() || "ME"}
               </div>
             )}
           </div>
@@ -79,7 +79,7 @@ export function Sidebar({
             onClick={onLogout}
             className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:text-brand transition-colors"
           >
-            <LogOut className="w-4 h-4" /> Đăng xuất
+            <LogOut className="w-4 h-4" /> Sign Out
           </button>
         </nav>
       </div>

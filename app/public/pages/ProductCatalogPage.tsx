@@ -44,15 +44,18 @@ export function ProductCatalogPage() {
   } = actions;
 
   return (
-    <div className="bg-white w-full flex-1">
+    <div className="bg-background w-full flex-1">
       <div className="max-w-300 w-full mx-auto px-4 py-8 animate-page-enter">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar Filter (Desktop) */}
           <aside className="hidden lg:block w-64 shrink-0">
             {/* CATEGORY CONTEXT */}
             <div className="mb-6 border-b border-transparent lg:border-border/50 pb-4">
-              <span className="text-sm text-ink-muted">Danh mục</span>
-              <h2 className="text-2xl font-black text-gradient uppercase mt-1 tracking-tight">
+              <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Category</span>
+              <h2
+                className="text-2xl font-bold text-foreground mt-1 tracking-tight"
+                style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+              >
                 {sidebarTitle}
               </h2>
             </div>
@@ -65,7 +68,7 @@ export function ProductCatalogPage() {
                     onClick={() => toggleFilter("categories")}
                     className="w-full font-bold text-[14px] mb-4 uppercase flex justify-between items-center hover:text-brand transition-colors"
                   >
-                    LOẠI SẢN PHẨM{" "}
+                    PRODUCT TYPE{" "}
                     <ChevronDown
                       className={`w-4 h-4 text-ink-muted transition-transform ${openFilters.categories ? "rotate-180" : ""}`}
                     />
@@ -104,7 +107,7 @@ export function ProductCatalogPage() {
                   onClick={() => toggleFilter("price")}
                   className="w-full font-bold text-[14px] mb-4 uppercase flex justify-between items-center hover:text-brand transition-colors"
                 >
-                  GIÁ{" "}
+                  PRICE{" "}
                   <ChevronDown
                     className={`w-4 h-4 text-ink-muted transition-transform ${openFilters.price ? "rotate-180" : ""}`}
                   />
@@ -117,22 +120,23 @@ export function ProductCatalogPage() {
                         placeholder="0"
                         value={minPriceInput}
                         onChange={handlePriceChange(setMinPriceInput)}
-                        className="w-full text-sm border border-border bg-surface-soft rounded-sm py-2 px-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+                        className="w-full text-sm border border-border bg-muted rounded-xl py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
                       />
-                      <span className="text-ink-muted">–</span>
+                      <span className="text-muted-foreground">–</span>
                       <input
                         type="text"
                         placeholder="100.000.000"
                         value={maxPriceInput}
                         onChange={handlePriceChange(setMaxPriceInput)}
-                        className="w-full text-sm border border-border bg-surface-soft rounded-sm py-2 px-3 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
+                        className="w-full text-sm border border-border bg-muted rounded-xl py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
                       />
                     </div>
                     <button
                       onClick={applyPriceFilter}
-                      className="w-full mt-4 bg-[#8A0000] hover:bg-brand-dark text-white font-bold py-2.5 rounded-sm transition-colors text-sm uppercase tracking-wide"
+                      className="w-full mt-4 text-white font-bold py-2.5 rounded-xl transition-all duration-150 text-sm shadow-sm hover:shadow-md active:scale-[0.99]"
+                      style={{ background: "hsl(352, 72%, 52%)" }}
                     >
-                      Áp dụng
+                      Apply
                     </button>
                   </div>
                 )}
@@ -145,7 +149,7 @@ export function ProductCatalogPage() {
                     onClick={() => toggleFilter("brands")}
                     className="w-full font-bold text-[14px] mb-4 uppercase flex justify-between items-center hover:text-brand transition-colors"
                   >
-                    THƯƠNG HIỆU{" "}
+                    BRAND{" "}
                     <ChevronDown
                       className={`w-4 h-4 text-ink-muted transition-transform ${openFilters.brands ? "rotate-180" : ""}`}
                     />
@@ -186,7 +190,7 @@ export function ProductCatalogPage() {
                             onClick={resetBrands}
                             className="text-brand hover:underline text-sm font-medium"
                           >
-                            Đặt lại
+                            Reset
                           </button>
                         </div>
                       )}
@@ -199,35 +203,37 @@ export function ProductCatalogPage() {
 
           {/* Main Content */}
           <div className="flex-1">
-            {/* Toolbar Tabs */}
-            <div className="flex items-center justify-between w-full mb-6 border-b border-border/50 pb-2.5 overflow-x-auto hide-scrollbar gap-4">
-              {/* Filter button for mobile only */}
+            {/* Sort Tabs */}
+            <div className="flex items-center gap-2 mb-6 flex-wrap">
+              {/* Mobile filter btn */}
               <button
-                className="lg:hidden flex items-center gap-2 text-sm font-medium text-ink whitespace-nowrap"
+                className="lg:hidden flex items-center gap-2 text-sm font-medium text-foreground whitespace-nowrap h-9 px-3 rounded-xl border border-border bg-muted hover:bg-muted/80 transition-colors"
                 onClick={() => setIsMobileFilterOpen(true)}
               >
-                <Filter className="w-4 h-4" /> Lọc
+                <Filter className="w-4 h-4" /> Filter
               </button>
 
-              {[
-                { id: "popular", label: "Phổ biến" },
-                { id: "newest", label: "Mới nhất" },
-                { id: "top_sales", label: "Bán chạy" },
-                { id: "price_asc", label: "Giá thấp" },
-                { id: "price_desc", label: "Giá cao" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setSortBy(tab.id)}
-                  className={`flex-1 text-center text-sm md:text-base font-medium whitespace-nowrap transition-colors ${
-                    sortBy === tab.id
-                      ? "text-brand"
-                      : "text-ink-muted hover:text-ink"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-xl flex-wrap">
+                {[
+                  { id: "popular", label: "Popular" },
+                  { id: "newest", label: "Newest" },
+                  { id: "top_sales", label: "Best seller" },
+                  { id: "price_asc", label: "Price ↑" },
+                  { id: "price_desc", label: "Price ↓" },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSortBy(tab.id)}
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
+                      sortBy === tab.id
+                        ? "bg-card shadow-sm text-brand"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Product Grid */}
@@ -237,10 +243,10 @@ export function ProductCatalogPage() {
               <div className="premium-card text-center py-20">
                 <Search className="w-12 h-12 mx-auto text-border mb-4" />
                 <h3 className="text-lg font-bold text-ink">
-                  Không tìm thấy sản phẩm
+                  No products found
                 </h3>
                 <p className="text-ink-muted mt-2">
-                  Vui lòng thử lại với từ khóa hoặc bộ lọc khác.
+                  Try adjusting your search or filters.
                 </p>
                 <button
                   onClick={() => {
@@ -249,7 +255,7 @@ export function ProductCatalogPage() {
                   }}
                   className="mt-6 text-brand font-medium hover:underline"
                 >
-                  Xóa tất cả bộ lọc
+                  Clear all filters
                 </button>
               </div>
             ) : (
@@ -283,21 +289,24 @@ export function ProductCatalogPage() {
         {/* Mobile Filter Drawer */}
         {isMobileFilterOpen && (
           <div className="fixed inset-0 z-60 bg-black/50 lg:hidden flex justify-end animate-fade-in">
-            <div className="w-4/5 max-w-sm bg-surface h-full  flex flex-col animate-slide-in-right">
+            <div className="w-4/5 max-w-sm bg-background h-full flex flex-col animate-slide-in-right rounded-l-2xl overflow-hidden">
               <div className="p-4 flex items-center justify-between border-b border-border">
-                <span className="font-bold text-lg">Bộ lọc</span>
+                <span
+                  className="font-bold text-lg"
+                  style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+                >Filter</span>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-1"
+                  className="p-1.5 rounded-lg hover:bg-muted transition-colors"
                 >
-                  <X className="w-5 h-5 text-ink-muted" />
+                  <X className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
               <div className="p-4 flex-1 overflow-y-auto space-y-8">
                 {/* Category Filter */}
                 <div>
                   <h3 className="font-bold text-base mb-4 pb-2 border-b border-border">
-                    Danh mục
+                    Category
                   </h3>
                   <div className="space-y-4">
                     <label className="flex items-center gap-3">
@@ -308,7 +317,7 @@ export function ProductCatalogPage() {
                         onChange={() => setSelectedCategory("all")}
                         className="w-4 h-4 text-brand"
                       />
-                      <span className="text-sm">Tất cả sản phẩm</span>
+                      <span className="text-sm">All products</span>
                     </label>
                     {categories.map((cat) => (
                       <label
@@ -331,9 +340,10 @@ export function ProductCatalogPage() {
               <div className="p-4 border-t border-border">
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="btn-hover w-full bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded-sm transition-colors"
+                  className="btn-hover w-full text-white font-bold py-3 rounded-xl transition-all shadow-sm"
+                  style={{ background: "hsl(352, 72%, 52%)" }}
                 >
-                  Áp dụng
+                  Show results
                 </button>
               </div>
             </div>

@@ -4,10 +4,10 @@ import { ProductCatalogPage } from "../../public/pages/ProductCatalogPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Sản phẩm",
+    title: "Products",
     description:
-      "Khám phá hàng ngàn mỹ phẩm chính hãng — skincare, makeup, chăm sóc tóc và cơ thể. Lọc theo danh mục, thương hiệu và giá.",
-    keywords: "mỹ phẩm, skincare, makeup, serum, kem dưỡng, son môi, GlowUp",
+      "Explore thousands of authentic cosmetics — skincare, makeup, haircare and body. Filter by category, brand and price.",
+    keywords: "cosmetics, skincare, makeup, serum, moisturizer, lipstick, GlowUp",
     canonical: "/products",
   });
 

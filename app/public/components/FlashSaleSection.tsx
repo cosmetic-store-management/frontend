@@ -149,7 +149,7 @@ export function FlashSaleSection() {
           to="/flash-sale"
           className="text-sm font-semibold text-brand hover:text-brand-dark flex items-center gap-1 transition-colors mt-2 md:mt-0 uppercase underline"
         >
-          Xem tất cả deal <ChevronRight className="w-4 h-4 no-underline" />
+          View all deals <ChevronRight className="w-4 h-4 no-underline" />
         </Link>
       </div>
 
@@ -272,7 +272,7 @@ export function FlashSaleSection() {
                           />
                         </div>
                         <p className="text-[10px] text-ink-muted font-medium mt-1.5 uppercase tracking-wide">
-                          Đang diễn ra{" "}
+                          Live{" "}
                           {Math.min(
                             100,
                             Math.round(

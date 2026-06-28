@@ -173,13 +173,13 @@ export function ProductDetailPage() {
 
   return (
     <div className="max-w-300 w-full mx-auto px-4 py-8 animate-page-enter">
-      {/* Breadcrumb / Back Button */}
-      <div className="flex items-center text-[13px] text-muted-foreground mb-8">
+      {/* Breadcrumb / Back */}
+      <div className="flex items-center text-[13px] text-muted-foreground mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="hover:text-primary transition-colors flex items-center gap-1 font-medium bg-muted px-2 py-1 rounded-sm"
+          className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Trở về
+          <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
       </div>
 
@@ -230,7 +230,10 @@ export function ProductDetailPage() {
 
           {/* Product Info */}
           <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-ink mb-3 leading-tight tracking-tight">
+            <h1
+              className="text-2xl sm:text-3xl font-bold text-foreground mb-3 leading-tight"
+              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            >
               {product.name}
             </h1>
 
@@ -271,16 +274,42 @@ export function ProductDetailPage() {
               </button>
             </div>
 
-            <div className="text-3xl font-black text-ink mb-2 tracking-tight">
-              {displayPrice}
+            {/* Price block */}
+            <div className="flex items-baseline gap-3 mb-4">
+              {selectedVariant?.discountPrice && selectedVariant.discountPrice < selectedVariant.price ? (
+                <>
+                  <span
+                    className="text-3xl font-black tracking-tight"
+                    style={{ color: "hsl(352, 72%, 48%)" }}
+                  >
+                    {selectedVariant.discountPrice.toLocaleString("vi-VN")}₫
+                  </span>
+                  <span className="text-lg text-muted-foreground line-through font-medium">
+                    {selectedVariant.price.toLocaleString("vi-VN")}₫
+                  </span>
+                  <span
+                    className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
+                    style={{ background: "hsl(352, 72%, 52%)" }}
+                  >
+                    -{Math.round((1 - selectedVariant.discountPrice / selectedVariant.price) * 100)}%
+                  </span>
+                </>
+              ) : (
+                <span className="text-3xl font-black text-foreground tracking-tight">
+                  {displayPrice}
+                </span>
+              )}
             </div>
 
             <ProductVouchers />
 
             {/* Variant Selection */}
             {variants.length > 1 && (
-              <div className="mt-6 mb-8">
-                <div className="flex flex-wrap gap-3">
+              <div className="mt-5 mb-6">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                  Select variant
+                </p>
+                <div className="flex flex-wrap gap-2">
                   {variants.map((v: any, idx: number) => (
                     <button
                       key={v.id || v.name || idx}
@@ -292,32 +321,24 @@ export function ProductDetailPage() {
                         );
                       }}
                       disabled={v.stock === 0}
-                      className={`flex items-stretch border transition-all h-10 ${
+                      className={`flex items-center gap-2 h-10 px-4 rounded-xl border-2 text-sm font-semibold transition-all duration-150 ${
                         selectedVariant?.id === v.id ||
                         (selectedVariant && selectedVariant.name === v.name)
-                          ? "border-brand "
+                          ? "border-brand bg-brand/5 text-brand shadow-sm"
                           : v.stock === 0
-                            ? "border-border opacity-50 cursor-not-allowed grayscale"
-                            : "border-border hover:border-brand"
+                            ? "border-border opacity-40 cursor-not-allowed"
+                            : "border-border hover:border-brand/50 text-foreground"
                       }`}
                     >
-                      <div className="w-10 h-full p-0.5 bg-white shrink-0 flex items-center justify-center">
+                      {v.imageUrl && (
                         <img
                           src={v.imageUrl || product.imageUrl}
-                          className="w-full h-full object-cover"
+                          className="w-6 h-6 rounded-md object-cover shrink-0"
                           alt=""
                         />
-                      </div>
-                      <div
-                        className={`px-4 flex items-center justify-center text-sm font-medium transition-colors ${
-                          selectedVariant?.id === v.id ||
-                          (selectedVariant && selectedVariant.name === v.name)
-                            ? "bg-brand text-white"
-                            : "bg-surface-soft text-ink"
-                        }`}
-                      >
-                        {v.name || v.sku || `0${idx + 1}`}
-                      </div>
+                      )}
+                      {v.name || v.sku || `0${idx + 1}`}
+                      {v.stock === 0 && <span className="text-[10px] ml-1 opacity-60">Out of stock</span>}
                     </button>
                   ))}
                 </div>
@@ -325,13 +346,14 @@ export function ProductDetailPage() {
             )}
 
             {/* Action Area */}
-            <div className="space-y-4 mt-6">
+            <div className="space-y-4 mt-6 pt-5 border-t border-border">
+              {/* Qty + Stock */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center border border-border rounded-sm h-12 w-32 ">
+                <div className="flex items-center border border-border rounded-xl h-11 w-32 overflow-hidden">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
-                    className="w-10 h-full flex items-center justify-center text-ink-muted hover:text-brand transition-colors disabled:opacity-50 disabled:hover:text-ink-muted"
+                    className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-brand transition-colors disabled:opacity-40"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -347,35 +369,42 @@ export function ProductDetailPage() {
                       if (!e.target.value || parseInt(e.target.value) < 1)
                         setQuantity(1);
                     }}
-                    className="flex-1 w-full h-full text-center font-semibold text-ink border-x border-border focus:outline-none bg-transparent"
+                    className="flex-1 w-full h-full text-center font-bold text-foreground border-x border-border focus:outline-none bg-transparent text-sm"
                   />
                   <button
                     onClick={() => setQuantity(Math.min(stock, quantity + 1))}
                     disabled={quantity >= stock}
-                    className="w-10 h-full flex items-center justify-center text-ink-muted hover:text-brand transition-colors disabled:opacity-50 disabled:hover:text-ink-muted"
+                    className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-brand transition-colors disabled:opacity-40"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="text-sm text-ink-muted">
-                  {selectedVariant ? `Còn ${stock} sản phẩm` : ""}
-                </div>
+                {selectedVariant && (
+                  <span className="text-sm text-muted-foreground">
+                    <span className={`font-semibold ${stock <= 5 ? "text-destructive" : "text-foreground"}`}>
+                      {stock}
+                    </span>{" "}
+                    in stock
+                  </span>
+                )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleAddToCart}
                   disabled={isOutOfStock || !product.isActive}
-                  className="flex-1 flex justify-center items-center gap-2 bg-surface-muted hover:bg-border text-ink font-bold py-3.5 px-6 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-xl transition-all duration-150 hover:bg-brand/5 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  <ShoppingBag className="w-5 h-5" /> Thêm vào giỏ
+                  <ShoppingBag className="w-5 h-5" /> Add to Cart
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={isOutOfStock || !product.isActive}
-                  className="btn-hover flex-1 bg-brand hover:bg-brand-dark text-white font-bold py-3.5 px-6 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-ui-soft"
+                  className="btn-hover flex-1 font-bold py-3.5 px-6 rounded-xl transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-[0.99]"
+                  style={{ background: "hsl(352, 72%, 52%)" }}
                 >
-                  Mua ngay
+                  Buy Now
                 </button>
               </div>
             </div>
@@ -383,21 +412,22 @@ export function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Mobile Fixed Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-surface border-t border-border shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-100 md:hidden flex gap-3">
+      {/* Mobile Fixed Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-100 md:hidden flex gap-3">
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock || !product.isActive}
-          className="flex-1 flex justify-center items-center gap-2 bg-surface-muted hover:bg-border text-ink font-bold py-3 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-xl transition-all disabled:opacity-40 text-sm"
         >
-          <ShoppingBag className="w-4 h-4" /> Thêm vào giỏ
+          <ShoppingBag className="w-4 h-4" /> Add to Cart
         </button>
         <button
           onClick={handleBuyNow}
           disabled={isOutOfStock || !product.isActive}
-          className="flex-1 bg-brand hover:bg-brand-dark text-white font-bold py-3 rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed  text-sm"
+          className="flex-1 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-40 text-sm"
+          style={{ background: "hsl(352, 72%, 52%)" }}
         >
-          Mua ngay
+          Buy Now
         </button>
       </div>
 
@@ -409,17 +439,20 @@ export function ProductDetailPage() {
         />
       )}
 
-      {/* Khối 3 & 4: Chi tiết sản phẩm & Đánh giá */}
+      {/* Product Detail + Reviews */}
       <div className="mt-4 premium-card overflow-visible! p-6 md:p-10">
-        <h2 className="text-2xl font-black text-ink mb-6 uppercase tracking-wider text-center">
-          Chi Tiết Sản Phẩm
+        <h2
+          className="text-2xl font-bold text-foreground mb-6 text-center"
+          style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+        >
+          Product Details
         </h2>
         <ExpandableContent maxHeight={250}>
           <div
-            className="prose prose-sm sm:prose-base max-w-none text-ink-muted leading-relaxed"
+            className="prose prose-sm sm:prose-base max-w-none text-muted-foreground leading-relaxed"
             dangerouslySetInnerHTML={{
               __html: sanitizeHtml(
-                product.description || "Chưa có thông tin chi tiết.",
+                product.description || "No product details available.",
               ),
             }}
           />

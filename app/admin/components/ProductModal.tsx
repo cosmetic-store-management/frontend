@@ -35,7 +35,7 @@ type ProductModalProps = {
 };
 
 const defaultVariant: VariantFormValues = {
-  name: "Mặc định",
+  name: "Default",
   sku: "",
   price: "0",
   discountPrice: "",
@@ -105,7 +105,7 @@ export default function ProductModal({
       <DialogContent className="max-w-275 w-[95vw] h-[92vh] p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border flex flex-col">
         <DialogHeader className="px-7 py-4 border-b border-border bg-surface shrink-0">
           <DialogTitle className="text-lg font-bold text-ink">
-            {mode === "create" ? "Thêm sản phẩm mới" : "Chỉnh sửa sản phẩm"}
+            {mode === "create" ? "Add New Product" : "Update Product"}
           </DialogTitle>
         </DialogHeader>
 
@@ -152,14 +152,14 @@ export default function ProductModal({
               onClick={onClose}
               className="h-10 px-5 bg-surface"
             >
-              Huỷ
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={loading}
               className="h-10 px-8 font-bold bg-brand text-white hover:bg-brand-dark transition-all"
             >
-              {loading ? "Đang xử lý..." : "Xác nhận"}
+              {loading ? "Processing..." : "Save Product"}
             </Button>
           </DialogFooter>
         </form>

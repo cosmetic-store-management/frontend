@@ -71,7 +71,7 @@ export function ReportPage() {
   if (isLoading || !data) {
     return (
       <div className="flex items-center justify-center h-64 text-ink-muted">
-        Đang tải dữ liệu...
+        Loading data...
       </div>
     );
   }
@@ -89,27 +89,27 @@ export function ReportPage() {
   ];
 
   const orderPieData = [
-    { name: "Hoàn thành", value: completionData?.completed || 0 },
-    { name: "Đã hủy", value: completionData?.cancelled || 0 },
-    { name: "Đang xử lý", value: completionData?.processing || 0 },
+    { name: "Completed", value: completionData?.completed || 0 },
+    { name: "Cancelled", value: completionData?.cancelled || 0 },
+    { name: "Processing", value: completionData?.processing || 0 },
   ].filter((d) => d.value > 0);
   const hasOrderData = orderPieData.length > 0;
 
   const voucherBarData = (voucherData || []).map((v) => ({
     name: v.code,
-    "Đã dùng": v.usedCount,
-    "Giới hạn": v.usageLimit > 0 ? v.usageLimit : 100, // fallback if unlimited for display
+    "Used": v.usedCount,
+    "Limit": v.usageLimit > 0 ? v.usageLimit : 100, // fallback if unlimited for display
   }));
 
   const methodNames: Record<string, string> = {
-    cod: "Nhận hàng COD",
+    cod: "COD",
     vnpay: "VNPAY",
-    card: "Thẻ Tín Dụng",
-    cash: "Tiền mặt",
-    qr: "Mã QR",
-    transfer: "Chuyển khoản ngân hàng",
-    pos_card: "Thanh toán quốc tế",
-    stripe: "Thanh toán quốc tế",
+    card: "Credit Card",
+    cash: "Cash",
+    qr: "QR Code",
+    transfer: "Bank Transfer",
+    pos_card: "International Payment",
+    stripe: "Stripe",
   };
 
   const paymentChartData = (paymentData || []).map((p) => ({
@@ -124,10 +124,10 @@ export function ReportPage() {
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-ink tracking-tight">
-            Báo cáo & Thống kê
+            Reports & Analytics
           </h1>
           <p className="text-sm text-ink-muted mt-1">
-            Phân tích hiệu suất doanh số và báo cáo vận hành của GlowUp
+            Analyze sales performance and operational reports for GlowUp
           </p>
         </div>
 
@@ -144,12 +144,12 @@ export function ReportPage() {
               }`}
             >
               {r === "today"
-                ? "Hôm nay"
+                ? "Today"
                 : r === "week"
-                  ? "Tuần này"
+                  ? "This Week"
                   : r === "month"
-                    ? "Tháng này"
-                    : "Năm nay"}
+                    ? "This Month"
+                    : "This Year"}
             </button>
           ))}
         </div>
@@ -163,7 +163,7 @@ export function ReportPage() {
               <DollarSign className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-medium text-ink-muted">Doanh thu</p>
+              <p className="text-xs font-medium text-ink-muted">Revenue</p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.totalRevenue.toLocaleString("vi-VN")}đ
               </h3>
@@ -178,10 +178,10 @@ export function ReportPage() {
             </div>
             <div>
               <p className="text-xs font-medium text-ink-muted">
-                Tổng lượng đơn
+                Total Orders
               </p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
-                {stats.ordersCount.toLocaleString("vi-VN")} đơn
+                {stats.ordersCount.toLocaleString("vi-VN")} orders
               </h3>
             </div>
           </div>
@@ -194,7 +194,7 @@ export function ReportPage() {
             </div>
             <div>
               <p className="text-xs font-medium text-ink-muted">
-                Giá trị đơn TB
+                Average Order Value
               </p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.averageOrderValue.toLocaleString("vi-VN")}đ
@@ -210,7 +210,7 @@ export function ReportPage() {
             </div>
             <div>
               <p className="text-xs font-medium text-ink-muted">
-                Lợi nhuận
+                Profit
               </p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.profit.toLocaleString("vi-VN")}đ
@@ -225,7 +225,7 @@ export function ReportPage() {
         <div className="flex items-center gap-2 mb-6">
           <TrendingUp className="w-5 h-5 text-ink" />
           <h3 className="font-semibold text-base text-ink">
-            Biểu đồ Doanh thu (Theo thời gian)
+            Revenue Trend (Over Time)
           </h3>
         </div>
         {revenueData && revenueData.length > 0 ? (
@@ -259,7 +259,7 @@ export function ReportPage() {
                       name === "revenue"
                         ? `${value.toLocaleString("vi-VN")}đ`
                         : value,
-                      name === "revenue" ? "Doanh thu" : "Số đơn",
+                      name === "revenue" ? "Revenue" : "Orders",
                     ]) as any
                   }
                 />
@@ -271,14 +271,14 @@ export function ReportPage() {
                   stroke="#8b5cf6"
                   fillOpacity={1}
                   fill="url(#colorRevenue)"
-                  name="Doanh thu"
+                  name="Revenue"
                 />
                 <Line
                   yAxisId="right"
                   type="monotone"
                   dataKey="orders"
                   stroke="#22c55e"
-                  name="Số đơn"
+                  name="Orders"
                   strokeWidth={2}
                 />
               </AreaChart>
@@ -286,7 +286,7 @@ export function ReportPage() {
           </div>
         ) : (
           <div className="h-80 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
-            <p className="text-sm">Chưa có dữ liệu doanh thu</p>
+            <p className="text-sm">No revenue data available</p>
           </div>
         )}
       </div>
@@ -299,7 +299,7 @@ export function ReportPage() {
             <div className="flex items-center gap-2 mb-6">
               <Tag className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Cơ cấu Danh mục (Theo Doanh thu)
+                Category Performance (by Revenue)
               </h3>
             </div>
 
@@ -338,7 +338,7 @@ export function ReportPage() {
                       formatter={
                         ((value: number) => [
                           `${value.toLocaleString("vi-VN")}đ`,
-                          "Doanh thu",
+                          "Revenue",
                         ]) as any
                       }
                     />
@@ -347,7 +347,7 @@ export function ReportPage() {
               </div>
             ) : (
               <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
-                <p className="text-sm">Chưa có dữ liệu bán hàng</p>
+                <p className="text-sm">No sales data available</p>
               </div>
             )}
           </div>
@@ -359,7 +359,7 @@ export function ReportPage() {
             <div className="flex items-center gap-2 mb-6">
               <CreditCard className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Thống kê Phương thức thanh toán
+                Payment Methods Stats
               </h3>
             </div>
 
@@ -387,7 +387,7 @@ export function ReportPage() {
                       formatter={
                         ((value: number) => [
                           `${value.toLocaleString("vi-VN")}đ`,
-                          "Doanh thu",
+                          "Revenue",
                         ]) as any
                       }
                     />
@@ -409,7 +409,7 @@ export function ReportPage() {
               </div>
             ) : (
               <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
-                <p className="text-sm">Chưa có dữ liệu thanh toán</p>
+                <p className="text-sm">No payment data available</p>
               </div>
             )}
           </div>
@@ -424,7 +424,7 @@ export function ReportPage() {
             <div className="flex items-center gap-2 mb-6">
               <Package className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Độ hoàn thành Đơn hàng
+                Order Completion Rate
               </h3>
             </div>
 
@@ -461,7 +461,7 @@ export function ReportPage() {
                     </Pie>
                     <Tooltip
                       formatter={
-                        ((value: number) => [`${value} đơn`, "Số lượng"]) as any
+                        ((value: number) => [`${value} orders`, "Count"]) as any
                       }
                     />
                     <Legend verticalAlign="bottom" height={36} />
@@ -471,7 +471,7 @@ export function ReportPage() {
             ) : (
               <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
                 <Package className="w-8 h-8 opacity-20 mb-2" />
-                <p className="text-sm">Chưa có dữ liệu đơn hàng</p>
+                <p className="text-sm">No order data available</p>
               </div>
             )}
           </div>
@@ -483,7 +483,7 @@ export function ReportPage() {
             <div className="flex items-center gap-2 mb-6">
               <Ticket className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Thống kê sử dụng Voucher
+                Voucher Usage Stats
               </h3>
             </div>
 
@@ -513,13 +513,13 @@ export function ReportPage() {
                     <Tooltip cursor={{ fill: "#f5f5f5" }} />
                     <Legend />
                     <Bar
-                      dataKey="Đã dùng"
+                      dataKey="Used"
                       fill="#ef4444"
                       radius={[4, 4, 0, 0]}
                       maxBarSize={40}
                     />
                     <Bar
-                      dataKey="Giới hạn"
+                      dataKey="Limit"
                       fill="#e5e5e5"
                       radius={[4, 4, 0, 0]}
                       maxBarSize={40}
@@ -530,7 +530,7 @@ export function ReportPage() {
             ) : (
               <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
                 <Ticket className="w-8 h-8 opacity-20 mb-2" />
-                <p className="text-sm">Chưa có dữ liệu Voucher</p>
+                <p className="text-sm">No voucher data available</p>
               </div>
             )}
           </div>

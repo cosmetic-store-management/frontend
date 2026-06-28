@@ -102,13 +102,13 @@ export function FlashSalePage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="h-64 bg-surface-soft animate-pulse rounded-sm mb-8" />
-        <div className="h-16 bg-surface-soft animate-pulse rounded-sm mb-8" />
+        <div className="h-64 bg-muted animate-pulse rounded-2xl mb-8" />
+        <div className="h-16 bg-muted animate-pulse rounded-xl mb-8" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((n) => (
             <div
               key={n}
-              className="h-72 bg-surface-soft animate-pulse rounded-sm"
+              className="h-72 bg-muted animate-pulse rounded-xl"
             />
           ))}
         </div>
@@ -217,7 +217,7 @@ export function FlashSalePage() {
         </div>
 
         {/* Timeline Tabs */}
-        <div className="flex overflow-x-auto no-scrollbar bg-surface shadow-sm mb-4 border border-border/40 rounded-sm">
+        <div className="flex overflow-x-auto no-scrollbar bg-card shadow-sm mb-4 border border-border/40 rounded-2xl overflow-hidden">
           {displayTabs.map((fs, index) => {
             const fsStart = new Date(fs.startTime);
             const fsEnd = new Date(fs.endTime);
@@ -231,16 +231,18 @@ export function FlashSalePage() {
               <button
                 key={fs._id}
                 onClick={() => setActiveTabIndex(index)}
-                className={`flex-1 shrink-0 flex flex-col items-center justify-center px-8 py-4 transition-colors cursor-pointer border-r border-border/40 min-w-35 last:border-r-0
-                  ${isSelected ? "bg-brand text-white" : "bg-transparent text-ink hover:bg-surface-soft"}`}
+                className={`flex-1 shrink-0 flex flex-col items-center justify-center px-8 py-4 transition-colors cursor-pointer border-r border-border/40 min-w-35 last:border-r-0 ${
+                  isSelected ? "text-white" : "bg-transparent text-foreground hover:bg-muted"
+                }`}
+                style={isSelected ? { background: "hsl(352, 72%, 52%)" } : {}}
               >
                 <span className="text-xl md:text-2xl font-black">
                   {timeLabel}
                 </span>
                 <span
-                  className={`text-xs md:text-sm font-medium mt-0.5 ${isSelected ? "text-white" : "text-ink-muted"}`}
+                  className={`text-xs md:text-sm font-medium mt-0.5 ${isSelected ? "text-white/80" : "text-muted-foreground"}`}
                 >
-                  {isCurrentlyActive ? "Đang diễn ra" : "Sắp diễn ra"}
+                  {isCurrentlyActive ? "Live now" : "Upcoming"}
                 </span>
               </button>
             );
@@ -248,21 +250,21 @@ export function FlashSalePage() {
         </div>
 
         {/* Countdown */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6 bg-surface py-4 shadow-sm border border-border/40 rounded-sm">
-          <span className="text-sm font-bold text-ink uppercase">
-            {isActive ? "Kết thúc trong" : "Bắt đầu trong"}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6 bg-card py-4 shadow-sm border border-border/40 rounded-xl">
+          <span className="text-sm font-bold text-foreground uppercase">
+            {isActive ? "Ends in" : "Starts in"}
           </span>
           {timeLeft && (
             <div className="flex items-center gap-1.5">
-              <span className="bg-black text-white font-bold w-8 h-8 flex items-center justify-center text-sm shadow-sm">
+              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-lg">
                 {String(timeLeft.hours).padStart(2, "0")}
               </span>
-              <span className="text-black font-bold text-lg">:</span>
-              <span className="bg-black text-white font-bold w-8 h-8 flex items-center justify-center text-sm shadow-sm">
+              <span className="text-foreground font-bold text-lg">:</span>
+              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-lg">
                 {String(timeLeft.minutes).padStart(2, "0")}
               </span>
-              <span className="text-black font-bold text-lg">:</span>
-              <span className="bg-black text-white font-bold w-8 h-8 flex items-center justify-center text-sm shadow-sm">
+              <span className="text-foreground font-bold text-lg">:</span>
+              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-lg">
                 {String(timeLeft.seconds).padStart(2, "0")}
               </span>
             </div>
@@ -286,7 +288,7 @@ export function FlashSalePage() {
               <Link
                 key={index}
                 to={`/product/${item.productSlug}`}
-                className={`group flex flex-col h-full bg-surface border border-border/40 hover:border-brand hover:shadow-md transition-all duration-300 overflow-hidden rounded-sm ${isUpcoming ? "opacity-80" : ""}`}
+                className={`group flex flex-col h-full bg-card border border-border/40 hover:border-brand hover:shadow-md transition-all duration-300 overflow-hidden rounded-xl ${isUpcoming ? "opacity-80" : ""}`}
               >
                 {/* Image */}
                 <div className="relative aspect-square w-full overflow-hidden bg-surface-soft">

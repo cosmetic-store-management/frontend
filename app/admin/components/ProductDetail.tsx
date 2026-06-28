@@ -29,7 +29,7 @@ export default function ProductDetail({
 }: ProductDetailProps) {
   if (!product) return null;
 
-  const resolvedCategoryName = categoryName ?? "Chưa phân loại";
+  const resolvedCategoryName = categoryName ?? "Uncategorized";
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -56,7 +56,7 @@ export default function ProductDetail({
                       : "bg-surface-muted text-ink-muted"
                   }`}
                 >
-                  {product.isActive ? "Hoạt động" : "Không hoạt động"}
+                  {product.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
 

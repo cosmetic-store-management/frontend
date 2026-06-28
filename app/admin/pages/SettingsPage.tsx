@@ -162,9 +162,9 @@ export function SettingsPage() {
   const onSubmitAll = async (data: SettingsFormData) => {
     try {
       await saveSettingsMutation.mutateAsync(data as any);
-      toast.success("Đã lưu cấu hình thành công!");
+      toast.success("Settings saved successfully!");
     } catch (err: any) {
-      toast.error(err.message || "Lỗi khi lưu cấu hình!");
+      toast.error(err.message || "Error saving settings!");
     }
   };
 
@@ -174,22 +174,22 @@ export function SettingsPage() {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      toast.success("Đổi mật khẩu thành công!");
+      toast.success("Password changed successfully!");
       resetPassword();
     } catch (err: any) {
-      toast.error(err.message || "Lỗi khi đổi mật khẩu!");
+      toast.error(err.message || "Error changing password!");
     }
   };
 
   const onError = () => {
-    toast.error("Vui lòng kiểm tra lại thông tin nhập");
+    toast.error("Please check the entered information");
   };
 
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-100 gap-2">
         <Loader2 className="w-8 h-8 animate-spin text-brand" />
-        <p className="text-sm text-ink-muted">Đang tải cấu hình hệ thống...</p>
+        <p className="text-sm text-ink-muted">Loading system settings...</p>
       </div>
     );
   }
@@ -199,56 +199,60 @@ export function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-ink tracking-tight">
-          Cấu hình hệ thống
+          System Settings
         </h1>
         <p className="text-sm text-ink-muted mt-1">
-          Quản lý cài đặt chung, cổng thanh toán, và thông tin cá nhân
+          Manage general settings, payment gateways, and profile
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Sidebar Nav */}
-        <div className="space-y-1 bg-surface border border-border rounded-sm p-3 shadow-ui-soft h-fit sticky top-6">
+        <div className="space-y-1 bg-card border border-border rounded-sm p-3 shadow-sm h-fit sticky top-6">
           <button
             onClick={() => setActiveTab("general")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
               activeTab === "general"
-                ? "bg-brand text-white font-medium shadow-ui-soft"
-                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+                ? "text-white font-medium shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
+            style={activeTab === "general" ? { background: "hsl(352, 72%, 52%)" } : {}}
           >
-            <Settings className="w-4 h-4" /> Cài đặt chung
+            <Settings className="w-4 h-4" /> General
           </button>
           <button
             onClick={() => setActiveTab("branding")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
               activeTab === "branding"
-                ? "bg-brand text-white font-medium shadow-ui-soft"
-                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+                ? "text-white font-medium shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
+            style={activeTab === "branding" ? { background: "hsl(352, 72%, 52%)" } : {}}
           >
-            <Palette className="w-4 h-4" /> Thương Hiệu
+            <Palette className="w-4 h-4" /> Branding
           </button>
 
           <button
             onClick={() => setActiveTab("payment")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
               activeTab === "payment"
-                ? "bg-brand text-white font-medium shadow-ui-soft"
-                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+                ? "text-white font-medium shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
+            style={activeTab === "payment" ? { background: "hsl(352, 72%, 52%)" } : {}}
           >
-            <CreditCard className="w-4 h-4" /> Cổng thanh toán
+            <CreditCard className="w-4 h-4" /> Payment
           </button>
           <button
             onClick={() => setActiveTab("security")}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm transition-all duration-200 ${
               activeTab === "security"
-                ? "bg-brand text-white font-medium shadow-ui-soft"
-                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
+                ? "text-white font-medium shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
+            style={activeTab === "security" ? { background: "hsl(352, 72%, 52%)" } : {}}
           >
-            <Shield className="w-4 h-4" /> Cá nhân & Bảo mật
+            <Shield className="w-4 h-4" /> Profile & Security
           </button>
         </div>
 
@@ -262,20 +266,20 @@ export function SettingsPage() {
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Store className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Thông tin cửa hàng</h2>
+                      <h2 className="text-lg font-bold text-ink">Store Information</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <Label>Tên cửa hàng <span className="text-danger">*</span></Label>
+                        <Label>Store Name <span className="text-danger">*</span></Label>
                         <Controller
                           name="storeName"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Tên shop" />}
+                          render={({ field }) => <Input {...field} placeholder="Store Name" />}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>SĐT Liên hệ</Label>
+                        <Label>Contact Phone</Label>
                         <Controller
                           name="phone"
                           control={control}
@@ -291,23 +295,23 @@ export function SettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Mã số thuế</Label>
+                        <Label>Tax ID</Label>
                         <Controller
                           name="taxId"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Mã số thuế" />}
+                          render={({ field }) => <Input {...field} placeholder="Tax ID" />}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Địa chỉ cửa hàng</Label>
+                        <Label>Store Address</Label>
                         <Controller
                           name="storeAddress"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="123 Đường..." />}
+                          render={({ field }) => <Input {...field} placeholder="123 Street..." />}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Giờ hoạt động</Label>
+                        <Label>Working Hours</Label>
                         <Controller
                           name="workingHours"
                           control={control}
@@ -315,7 +319,7 @@ export function SettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Đơn vị tiền tệ</Label>
+                        <Label>Currency</Label>
                         <Controller
                           name="currency"
                           control={control}
@@ -323,11 +327,11 @@ export function SettingsPage() {
                         />
                       </div>
                       <div className="md:col-span-2 space-y-2">
-                        <Label>Mô tả cửa hàng</Label>
+                        <Label>Store Description</Label>
                         <Controller
                           name="description"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Mô tả..." />}
+                          render={({ field }) => <Input {...field} placeholder="Description..." />}
                         />
                       </div>
                     </div>
@@ -340,7 +344,7 @@ export function SettingsPage() {
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Palette className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Thương Hiệu</h2>
+                      <h2 className="text-lg font-bold text-ink">Branding</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
@@ -374,7 +378,7 @@ export function SettingsPage() {
                         <Controller
                           name="seoTitle"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Tiêu đề trang web" />}
+                          render={({ field }) => <Input {...field} placeholder="Website title" />}
                         />
                       </div>
                       <div className="md:col-span-2 space-y-2">
@@ -382,7 +386,7 @@ export function SettingsPage() {
                         <Controller
                           name="seoDescription"
                           control={control}
-                          render={({ field }) => <Textarea {...field} placeholder="Mô tả cho máy tìm kiếm" rows={2} />}
+                          render={({ field }) => <Textarea {...field} placeholder="Search engine description" rows={2} />}
                         />
                       </div>
                     </div>
@@ -391,7 +395,7 @@ export function SettingsPage() {
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Share2 className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Mạng xã hội</h2>
+                      <h2 className="text-lg font-bold text-ink">Social Media</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
@@ -444,11 +448,11 @@ export function SettingsPage() {
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Store className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Điểm thưởng</h2>
+                      <h2 className="text-lg font-bold text-ink">Reward Points</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <Label>Tỷ lệ tích điểm (VND = 1 điểm)</Label>
+                        <Label>Earn Rate (VND = 1 point)</Label>
                         <Controller
                           name="pointsEarnRate"
                           control={control}
@@ -456,7 +460,7 @@ export function SettingsPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Tối đa % dùng điểm</Label>
+                        <Label>Max % Points Usage</Label>
                         <Controller
                           name="maxPointsPct"
                           control={control}
@@ -475,19 +479,19 @@ export function SettingsPage() {
                   <div className="premium-card p-5">
                     <div className="flex items-center gap-2 border-b border-border pb-4 mb-4">
                       <CreditCard className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Chuyển khoản ngân hàng</h2>
+                      <h2 className="text-lg font-bold text-ink">Bank Transfer</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-fade-in">
                         <div className="space-y-2">
-                          <Label>Ngân hàng</Label>
+                          <Label>Bank</Label>
                           <Controller
                             name="bankName"
                             control={control}
                             render={({ field }) => (
                               <Select onValueChange={field.onChange} value={field.value}>
                                 <SelectTrigger className="w-full h-10 [&>span]:w-full [&>span]:overflow-hidden [&>span]:block">
-                                  <SelectValue placeholder="Chọn ngân hàng" />
+                                  <SelectValue placeholder="Select bank" />
                                 </SelectTrigger>
                                 <SelectContent className="max-h-75">
                                   {banks.map((bank: any) => (
@@ -504,19 +508,19 @@ export function SettingsPage() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Số tài khoản</Label>
+                          <Label>Account Number</Label>
                           <Controller
                             name="bankAccountNumber"
                             control={control}
-                            render={({ field }) => <Input {...field} placeholder="Nhập số tài khoản" />}
+                            render={({ field }) => <Input {...field} placeholder="Account Number" />}
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Tên chủ tài khoản</Label>
+                          <Label>Account Name</Label>
                           <Controller
                             name="bankAccountName"
                             control={control}
-                            render={({ field }) => <Input {...field} placeholder="Nhập tên chủ tài khoản" />}
+                            render={({ field }) => <Input {...field} placeholder="Account Name" />}
                           />
                         </div>
                       </div>
@@ -535,7 +539,7 @@ export function SettingsPage() {
                   ) : (
                     <Save className="w-4 h-4" />
                   )}
-                  Lưu cấu hình
+                  Save Settings
                 </Button>
               </div>
             </form>
@@ -546,11 +550,11 @@ export function SettingsPage() {
               <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="premium-card p-6 space-y-6">
                 <div className="flex items-center gap-2 border-b border-border pb-4">
                   <Lock className="w-5 h-5 text-brand" />
-                  <h2 className="text-lg font-bold text-ink">Đổi mật khẩu</h2>
+                  <h2 className="text-lg font-bold text-ink">Change Password</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Mật khẩu hiện tại</Label>
+                    <Label>Current Password</Label>
                     <Controller
                       name="currentPassword"
                       control={passwordControl}
@@ -559,7 +563,7 @@ export function SettingsPage() {
                     {passwordErrors.currentPassword && <span className="text-xs text-danger">{passwordErrors.currentPassword.message}</span>}
                   </div>
                   <div className="space-y-2">
-                    <Label>Mật khẩu mới</Label>
+                    <Label>New Password</Label>
                     <Controller
                       name="newPassword"
                       control={passwordControl}
@@ -568,7 +572,7 @@ export function SettingsPage() {
                     {passwordErrors.newPassword && <span className="text-xs text-danger">{passwordErrors.newPassword.message}</span>}
                   </div>
                   <div className="space-y-2">
-                    <Label>Xác nhận mật khẩu mới</Label>
+                    <Label>Confirm New Password</Label>
                     <Controller
                       name="confirmPassword"
                       control={passwordControl}
@@ -580,7 +584,7 @@ export function SettingsPage() {
                 <div className="flex justify-end">
                   <Button type="submit" disabled={changePasswordMutation.isPending} className="gap-2 px-6">
                     {changePasswordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Đổi mật khẩu
+                    Change Password
                   </Button>
                 </div>
               </form>
