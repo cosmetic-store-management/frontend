@@ -10,7 +10,8 @@ import {
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/sonner";
-import { HelmetProvider } from "react-helmet-async";
+import * as HelmetAsync from "react-helmet-async";
+const HelmetProvider = HelmetAsync.HelmetProvider || (HelmetAsync as any).default?.HelmetProvider;
 import React from "react";
 import * as ReactDOM from "react-dom";
 
