@@ -29,14 +29,13 @@ export interface ShopSettings {
   youtubeUrl?: string;
 }
 
-export const getPublicSettings = () =>
+export const getSettings = () =>
   apiClient.get<ShopSettings>("/settings/public");
 
-export interface PublicStats {
+export interface Stats {
   products: number;
   customers: number;
   rating: number;
 }
 
-export const getPublicStats = () =>
-  apiClient.get<PublicStats>("/settings/public/stats");
+export const getStats = () => apiClient.get<Stats>("/settings/public/stats");

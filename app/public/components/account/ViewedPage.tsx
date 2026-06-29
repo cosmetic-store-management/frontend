@@ -6,7 +6,7 @@ import {
   useClearViewed,
   useRemoveViewed,
 } from "@/public/hooks/useUser";
-import { ProductCard } from "@/public/components/ProductCard";
+import { ProductCard } from "@/public/components/products/ProductCard";
 
 export function ViewedPage() {
   const [page, setPage] = useState(1);
@@ -125,9 +125,7 @@ export function ViewedPage() {
       <DeleteModal
         open={modal.open}
         loading={clearMutation.isPending || removeMutation.isPending}
-        title={
-          modal.clearAll ? "Clear Browsing History?" : "Remove Product?"
-        }
+        title={modal.clearAll ? "Clear Browsing History?" : "Remove Product?"}
         description={
           modal.clearAll
             ? "Are you sure you want to clear your entire product browsing history? This action cannot be undone."

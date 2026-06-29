@@ -2,21 +2,20 @@ import { useMemo } from "react";
 import { Link } from "react-router";
 import { ChevronRight, Tag } from "lucide-react";
 import { useProducts } from "@/public/hooks/useProducts";
-import { useCategories } from "@/public/hooks/useCategories";
-import { usePublicBrands } from "@/public/hooks/useBrands";
+import { useCategories, useBrands } from "@/public/hooks/useProducts";
 import { useRecentlyViewed } from "@/public/hooks/useUser";
 import { useAuthStore } from "@/auth/store/auth.store";
-import { ProductCard } from "../components/ProductCard";
-import { HomeVouchers } from "../components/HomeVouchers";
-import { FlashSaleSection } from "../components/FlashSaleSection";
-import { RecommendationSection } from "../components/RecommendationSection";
-import { HeroCarousel } from "../components/HeroCarousel";
+import { ProductCard } from "../components/products/ProductCard";
+import { HomeVouchers } from "../components/vouchers/HomeVouchers";
+import { FlashSaleSection } from "../components/flash-sale/FlashSaleSection";
+import { RecommendationSection } from "../components/products/RecommendationSection";
+import { HeroCarousel } from "../components/home/HeroCarousel";
 import { ProductGridSkeleton } from "@/components/ui/skeleton";
-import { ProductCarousel } from "../components/ProductCarousel";
+import { ProductCarousel } from "../components/products/ProductCarousel";
 
 export default function HomePage() {
   const { data: categories = [] } = useCategories();
-  const { data: brandsRaw = [] } = usePublicBrands();
+  const { data: brandsRaw = [] } = useBrands();
   const { data: prodData, isLoading } = useProducts({ limit: 30 });
   const { user } = useAuthStore();
 

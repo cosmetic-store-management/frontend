@@ -9,13 +9,13 @@ import {
 } from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { Loader2, ArrowLeft, Mail, Sparkles } from "lucide-react";
-import { usePublicStats } from "@/public/hooks/usePublicStats";
+import { useStats } from "@/public/hooks/useSetting";
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const forgotPasswordMutation = useForgotPassword();
-  const { stats } = usePublicStats();
-  
+  const { stats } = useStats();
+
   const formatStat = (num: number) => {
     if (num >= 1000) return Math.floor(num / 1000) + "K+";
     if (num >= 100) return Math.floor(num / 100) * 100 + "+";
@@ -72,15 +72,23 @@ export default function ForgotPasswordPage() {
 
         <div className="relative z-10 text-center px-12 max-w-md">
           {/* Logo */}
-          <Link to="/" className="flex items-center justify-center gap-3 mb-10 group">
-            <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105"
-            >
-              <img src="/logo.png" alt="GlowUp Logo" className="w-full h-full object-cover scale-[1.45]" />
+          <Link
+            to="/"
+            className="flex items-center justify-center gap-3 mb-10 group"
+          >
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105">
+              <img
+                src="/logo.png"
+                alt="GlowUp Logo"
+                className="w-full h-full object-cover scale-[1.45]"
+              />
             </div>
             <span
               className="text-3xl font-bold text-white tracking-tight"
-              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+              style={{
+                fontFamily:
+                  "var(--font-display, 'Playfair Display', Georgia, serif)",
+              }}
             >
               GlowUp
             </span>
@@ -88,15 +96,22 @@ export default function ForgotPasswordPage() {
 
           <h2
             className="text-4xl font-bold text-white mb-4 leading-tight"
-            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            style={{
+              fontFamily:
+                "var(--font-display, 'Playfair Display', Georgia, serif)",
+            }}
           >
             Your beauty,
             <br />
             <em>your story.</em>
           </h2>
 
-          <p className="text-base leading-relaxed" style={{ color: "rgba(255,255,255,0.65)" }}>
-            Discover authentic skincare and cosmetics curated for the modern woman. Sign in to unlock exclusive offers.
+          <p
+            className="text-base leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.65)" }}
+          >
+            Discover authentic skincare and cosmetics curated for the modern
+            woman. Sign in to unlock exclusive offers.
           </p>
 
           {/* Trust indicators */}
@@ -108,7 +123,10 @@ export default function ForgotPasswordPage() {
             ].map(({ num, label }) => (
               <div key={label} className="text-center">
                 <p className="text-xl font-bold text-white">{num}</p>
-                <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>
+                <p
+                  className="text-xs mt-0.5"
+                  style={{ color: "rgba(255,255,255,0.55)" }}
+                >
                   {label}
                 </p>
               </div>
@@ -126,12 +144,17 @@ export default function ForgotPasswordPage() {
               className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
-              <img src="/logo.png" alt="GlowUp Logo" className="w-full h-full object-cover scale-[1.45]" />
+              <img
+                src="/logo.png"
+                alt="GlowUp Logo"
+                className="w-full h-full object-cover scale-[1.45]"
+              />
             </div>
             <span
               className="text-xl font-bold"
               style={{
-                fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)",
+                fontFamily:
+                  "var(--font-display, 'Playfair Display', Georgia, serif)",
                 color: "hsl(352, 72%, 38%)",
               }}
             >
@@ -142,22 +165,33 @@ export default function ForgotPasswordPage() {
           {!submitted ? (
             <>
               <div className="mb-8">
-                <Link to="/login" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
+                <Link
+                  to="/login"
+                  className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6"
+                >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Back to sign in
                 </Link>
                 <h1
                   className="text-2xl font-bold text-foreground"
-                  style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+                  style={{
+                    fontFamily:
+                      "var(--font-display, 'Playfair Display', Georgia, serif)",
+                  }}
                 >
                   Forgot Password
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1.5">
-                  Enter your email address and we'll send you a link to reset your password.
+                  Enter your email address and we'll send you a link to reset
+                  your password.
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-4"
+                noValidate
+              >
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
                     Email
@@ -165,15 +199,17 @@ export default function ForgotPasswordPage() {
                   <input
                     type="email"
                     placeholder="you@example.com"
-                    {...register("email")}
+                    {...register("identifier")}
                     className={`w-full h-11 px-4 rounded-sm border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
-                      errors.email
+                      errors.identifier
                         ? "border-destructive focus:ring-2 focus:ring-destructive/20"
                         : "border-border focus:border-brand focus:ring-2 focus:ring-brand/15"
                     }`}
                   />
-                  {errors.email && (
-                    <p className="text-xs text-destructive">{errors.email.message}</p>
+                  {errors.identifier && (
+                    <p className="text-xs text-destructive">
+                      {errors.identifier.message}
+                    </p>
                   )}
                 </div>
 
@@ -201,12 +237,18 @@ export default function ForgotPasswordPage() {
               </div>
               <h1
                 className="text-2xl font-bold text-foreground mb-4"
-                style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+                style={{
+                  fontFamily:
+                    "var(--font-display, 'Playfair Display', Georgia, serif)",
+                }}
               >
                 Check your inbox
               </h1>
               <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-                If an account exists for <strong>{getValues("email")}</strong>, we have sent password reset instructions. The link is valid for <strong>1 hour</strong>.
+                If an account exists for{" "}
+                <strong>{getValues("identifier")}</strong>, we have sent
+                password reset instructions. The link is valid for{" "}
+                <strong>1 hour</strong>.
               </p>
               <Link
                 to="/login"

@@ -7,8 +7,7 @@ export const meta: MetaFunction = () =>
     title: "Brands",
     description:
       "Discover top cosmetics brands at GlowUp: L'Oréal, Innisfree, Cetaphil, Romand, Some By Mi and many more.",
-    keywords:
-      "cosmetics brands, Innisfree, Cetaphil, Romand, L'Oréal, GlowUp",
+    keywords: "cosmetics brands, Innisfree, Cetaphil, Romand, L'Oréal, GlowUp",
     canonical: "/brands",
   });
 

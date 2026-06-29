@@ -65,7 +65,7 @@ import {
 import { Pagination } from "@/components/ui/pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 
 const EMPTY_FORM: CategoryFormData = {
   name: "",
@@ -107,37 +107,37 @@ const COSMETICS_ICONS = [
 const NAME_TO_ICON: Record<string, string> = {
   "chăm sóc da mặt": CDN + "2" + V,
   "face care": CDN + "2" + V,
-  "face": CDN + "2" + V,
+  face: CDN + "2" + V,
   "trang điểm": CDN + "1" + V,
-  "makeup": CDN + "1" + V,
+  makeup: CDN + "1" + V,
   "chống nắng": CDN + "7" + V,
-  "sunscreen": CDN + "7" + V,
+  sunscreen: CDN + "7" + V,
   "chăm sóc môi": CDN + "8" + V,
-  "lips": CDN + "8" + V,
+  lips: CDN + "8" + V,
   "nước hoa": CDN + "6" + V,
-  "perfume": CDN + "6" + V,
+  perfume: CDN + "6" + V,
   "chăm sóc cơ thể": CDN + "3" + V,
-  "body": CDN + "3" + V,
+  body: CDN + "3" + V,
   "body care": CDN + "3" + V,
   "chăm sóc tóc & da đầu": CDN + "4" + V,
   "chăm sóc tóc": CDN + "4" + V,
-  "hair": CDN + "4" + V,
+  hair: CDN + "4" + V,
   "hair care": CDN + "4" + V,
   "chăm sóc cá nhân": CDN + "5" + V,
   "personal care": CDN + "5" + V,
   "thiết bị làm đẹp": CDN + "11" + V,
   "dụng cụ làm đẹp": CDN + "11" + V,
   "beauty tools": CDN + "11" + V,
-  "devices": CDN + "11" + V,
+  devices: CDN + "11" + V,
   "dưỡng ẩm": CDN + "9" + V,
-  "moisturizer": CDN + "9" + V,
+  moisturizer: CDN + "9" + V,
   "làm sạch": CDN + "10" + V,
-  "cleanser": CDN + "10" + V,
+  cleanser: CDN + "10" + V,
   "chăm sóc mắt": CDN + "12" + V,
   "eye care": CDN + "12" + V,
-  "eyes": CDN + "12" + V,
-  "nail": CDN + "13" + V,
-  "nails": CDN + "13" + V,
+  eyes: CDN + "12" + V,
+  nail: CDN + "13" + V,
+  nails: CDN + "13" + V,
   "set quà": CDN + "15" + V,
   "gift sets": CDN + "15" + V,
 };
@@ -261,15 +261,15 @@ export function CategoryPage() {
       reset(
         editing
           ? {
-            name: editing.name,
-            description: editing.description || "",
-            imageUrl: "",
-            iconUrl: editing.iconUrl || "",
-            bannerUrl: editing.bannerUrl || "",
-            parentId: editing.parentId || null,
-            isActive: editing.isActive,
-            sortOrder: editing.sortOrder ?? 1,
-          }
+              name: editing.name,
+              description: editing.description || "",
+              imageUrl: "",
+              iconUrl: editing.iconUrl || "",
+              bannerUrl: editing.bannerUrl || "",
+              parentId: editing.parentId || null,
+              isActive: editing.isActive,
+              sortOrder: editing.sortOrder ?? 1,
+            }
           : EMPTY_FORM,
       );
     }
@@ -305,10 +305,13 @@ export function CategoryPage() {
       : createMutation.mutateAsync(formData as any);
     toast.promise(action, {
       loading: editing ? "Updating..." : "Creating...",
-      success: editing ? "Update successful!" : "Category created successfully!",
-      error: (e: unknown) => (e instanceof Error ? e.message : "An error occurred"),
+      success: editing
+        ? "Update successful!"
+        : "Category created successfully!",
+      error: (e: unknown) =>
+        e instanceof Error ? e.message : "An error occurred",
     });
-    await action.then(() => setIsFormOpen(false)).catch(() => { });
+    await action.then(() => setIsFormOpen(false)).catch(() => {});
   };
 
   const confirmDelete = () => {
@@ -388,7 +391,9 @@ export function CategoryPage() {
                     Parent Category
                   </TableHead>
                   <TableHead className="w-[12%] text-center">Order</TableHead>
-                  <TableHead className="w-[14%] text-center">Products</TableHead>
+                  <TableHead className="w-[14%] text-center">
+                    Products
+                  </TableHead>
                   <TableHead className="w-[14%] text-center">Status</TableHead>
                   <TableHead className="w-[12%] text-center">Actions</TableHead>
                 </TableRow>
@@ -752,10 +757,11 @@ export function CategoryPage() {
                                 })
                               }
                               title={`${label} — ${hint}`}
-                              className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${iconUrl === url
-                                ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
-                                : "border-border bg-surface"
-                                }`}
+                              className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${
+                                iconUrl === url
+                                  ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
+                                  : "border-border bg-surface"
+                              }`}
                             >
                               <img
                                 src={url}
@@ -785,10 +791,11 @@ export function CategoryPage() {
                                 })
                               }
                               title={`${label} — ${hint}`}
-                              className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${iconUrl === url
-                                ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
-                                : "border-border bg-surface"
-                                }`}
+                              className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${
+                                iconUrl === url
+                                  ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
+                                  : "border-border bg-surface"
+                              }`}
                             >
                               <img
                                 src={url}
@@ -805,7 +812,8 @@ export function CategoryPage() {
                       {/* Custom URL input */}
                       <div className="space-y-1">
                         <p className="text-[11px] text-ink-muted font-medium">
-                          Or paste a custom icon URL (PNG/SVG transparent background):
+                          Or paste a custom icon URL (PNG/SVG transparent
+                          background):
                         </p>
                         <Input
                           id="catIcon"
@@ -901,7 +909,9 @@ export function CategoryPage() {
           <DialogHeader>
             <DialogTitle>Delete Category</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+              Are you sure you want to delete{" "}
+              <strong>{deleteTarget?.name}</strong>? This action cannot be
+              undone.
               <span className="block mt-1 text-xs text-danger">
                 Categories with products cannot be deleted.
               </span>

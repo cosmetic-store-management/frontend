@@ -37,8 +37,8 @@ export const QK = {
   reviews: (productId: string, params?: unknown) =>
     ["reviews", productId, params] as const,
 
-  // ── User Profile ──────────────────────────────────────────
-  myProfile: () => ["myProfile"] as const,
+  // ── User Account ──────────────────────────────────────────
+  myAccount: () => ["myAccount"] as const,
   tier: () => ["myTierInfo"] as const,
 
   // ── Product Recommendations ───────────────────────────────

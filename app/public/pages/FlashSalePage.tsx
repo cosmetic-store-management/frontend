@@ -106,10 +106,7 @@ export function FlashSalePage() {
         <div className="h-16 bg-muted animate-pulse rounded-xl mb-8" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((n) => (
-            <div
-              key={n}
-              className="h-72 bg-muted animate-pulse rounded-xl"
-            />
+            <div key={n} className="h-72 bg-muted animate-pulse rounded-xl" />
           ))}
         </div>
       </div>
@@ -232,7 +229,9 @@ export function FlashSalePage() {
                 key={fs._id}
                 onClick={() => setActiveTabIndex(index)}
                 className={`flex-1 shrink-0 flex flex-col items-center justify-center px-8 py-4 transition-colors cursor-pointer border-r border-border/40 min-w-35 last:border-r-0 ${
-                  isSelected ? "text-white" : "bg-transparent text-foreground hover:bg-muted"
+                  isSelected
+                    ? "text-white"
+                    : "bg-transparent text-foreground hover:bg-muted"
                 }`}
                 style={isSelected ? { background: "hsl(352, 72%, 52%)" } : {}}
               >

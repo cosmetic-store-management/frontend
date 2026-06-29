@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { useCartStore } from "@/public/store/cart.store";
 import { useValidateVoucher } from "@/public/hooks/useVoucher";
-import { VoucherWalletModal } from "../components/VoucherWalletModal";
+import { VoucherWalletModal } from "../components/vouchers/VoucherWalletModal";
 import { toast } from "@/lib/toast";
 
 export function CartPage() {
@@ -56,12 +56,21 @@ export function CartPage() {
     return (
       <div className="max-w-300 w-full mx-auto px-4 py-6 animate-page-enter">
         <div className="premium-card p-16 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5" style={{ background: "hsl(352, 72%, 52%, 0.08)" }}>
-            <ShoppingBag className="w-10 h-10" style={{ color: "hsl(352, 72%, 52%)" }} />
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5"
+            style={{ background: "hsl(352, 72%, 52%, 0.08)" }}
+          >
+            <ShoppingBag
+              className="w-10 h-10"
+              style={{ color: "hsl(352, 72%, 52%)" }}
+            />
           </div>
           <h2
             className="text-2xl font-bold text-foreground mb-2"
-            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            style={{
+              fontFamily:
+                "var(--font-display, 'Playfair Display', Georgia, serif)",
+            }}
           >
             Your cart is empty
           </h2>
@@ -234,7 +243,10 @@ export function CartPage() {
           <div className="px-6 py-5 border-b border-border/50">
             <h2
               className="text-sm font-bold text-foreground uppercase tracking-wider"
-              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+              style={{
+                fontFamily:
+                  "var(--font-display, 'Playfair Display', Georgia, serif)",
+              }}
             >
               Order Summary
             </h2>
@@ -244,7 +256,11 @@ export function CartPage() {
             {/* Subtotal */}
             <div className="flex justify-between text-sm">
               <span className="text-ink-muted">
-                Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} {items.reduce((s, i) => s + i.quantity, 0) === 1 ? "item" : "items"})
+                Subtotal ({items.reduce((s, i) => s + i.quantity, 0)}{" "}
+                {items.reduce((s, i) => s + i.quantity, 0) === 1
+                  ? "item"
+                  : "items"}
+                )
               </span>
               <span className="font-semibold text-ink">
                 {subtotal.toLocaleString("vi-VN")}₫
@@ -280,7 +296,10 @@ export function CartPage() {
 
               {cartStoreVoucherCode ? (
                 <div className="flex items-center justify-between bg-brand/5 border border-brand/20 px-3 py-2 rounded-sm">
-                  <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "hsl(352, 72%, 48%)" }}>
+                  <div
+                    className="flex items-center gap-2 text-sm font-semibold"
+                    style={{ color: "hsl(352, 72%, 48%)" }}
+                  >
                     <Ticket className="w-3.5 h-3.5" /> {cartStoreVoucherCode}
                   </div>
                   <button
@@ -322,16 +341,12 @@ export function CartPage() {
             {/* Total */}
             <div className="pt-3 border-t border-border">
               <div className="flex items-baseline justify-between">
-                <span className="font-bold text-sm text-ink">
-                  Total
-                </span>
+                <span className="font-bold text-sm text-ink">Total</span>
                 <div className="text-right">
                   <div className="text-xl font-bold text-brand">
                     {total.toLocaleString("vi-VN")}₫
                   </div>
-                  <div className="text-[10px] text-ink-muted">
-                    VAT included
-                  </div>
+                  <div className="text-[10px] text-ink-muted">VAT included</div>
                 </div>
               </div>
             </div>

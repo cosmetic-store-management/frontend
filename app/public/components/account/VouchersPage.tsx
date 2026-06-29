@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAllWalletVouchers } from "@/public/hooks/useVoucher";
-import { VoucherCard } from "@/public/components/VoucherCard";
+import { VoucherCard } from "@/public/components/vouchers/VoucherCard";
 
 type VoucherTab = "valid" | "used" | "expired";
 

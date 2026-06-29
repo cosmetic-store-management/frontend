@@ -11,11 +11,10 @@ import {
 } from "lucide-react";
 import { useAuthStore } from "@/auth/store/auth.store";
 import { useCartStore } from "@/public/store/cart.store";
-import { useCategories } from "../hooks/useCategories";
-import { usePublicBrands } from "@/public/hooks/useBrands";
+import { useCategories, useBrands } from "@/public/hooks/useProducts";
 import { useLogout } from "@/auth/hooks/useAuth";
 
-export default function PublicHeader() {
+export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,7 +27,7 @@ export default function PublicHeader() {
   const cartCount = items.reduce((total, item) => total + item.quantity, 0);
 
   const { data: categories = [] } = useCategories();
-  const { data: brands = [] } = usePublicBrands();
+  const { data: brands = [] } = useBrands();
   const logoutMutation = useLogout();
   const navigate = useNavigate();
 
@@ -103,7 +102,10 @@ export default function PublicHeader() {
               onSubmit={handleSearch}
               className="flex items-center w-full relative h-9 bg-muted/60 rounded-sm border border-border/80 hover:border-brand/40 focus-within:border-brand focus-within:bg-white transition-all duration-200"
             >
-              <Search className="absolute left-3 w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+              <Search
+                className="absolute left-3 w-4 h-4 text-muted-foreground"
+                strokeWidth={1.5}
+              />
               <input
                 type="text"
                 value={searchTerm}
@@ -150,7 +152,10 @@ export default function PublicHeader() {
               to="/cart"
               className="relative p-1.5 rounded-full hover:bg-brand/8 transition-colors group"
             >
-              <ShoppingBag className="w-6 h-6 text-foreground group-hover:text-brand transition-colors" strokeWidth={1.5} />
+              <ShoppingBag
+                className="w-6 h-6 text-foreground group-hover:text-brand transition-colors"
+                strokeWidth={1.5}
+              />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-brand text-white text-[10px] font-bold leading-none rounded-full flex items-center justify-center px-1 shadow-sm">
                   {cartCount > 99 ? "99+" : cartCount}
@@ -173,7 +178,9 @@ export default function PublicHeader() {
             >
               <button
                 className={`flex items-center h-full py-3 gap-2 font-semibold transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 after:transition-transform after:origin-center ${
-                  isMegaMenuOpen ? "after:scale-x-100 text-brand" : "text-foreground hover:text-brand group-hover:after:scale-x-100"
+                  isMegaMenuOpen
+                    ? "after:scale-x-100 text-brand"
+                    : "text-foreground hover:text-brand group-hover:after:scale-x-100"
                 }`}
               >
                 <Menu className="w-4 h-4" />
@@ -183,16 +190,30 @@ export default function PublicHeader() {
               {/* Mega Menu Dropdown */}
               <div
                 className={`absolute top-full left-0 w-250 min-h-100 flex bg-white transition-all duration-300 ease-out z-50 border border-border/60 shadow-xl rounded-sm overflow-hidden origin-top mt-1 ${
-                  isMegaMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
+                  isMegaMenuOpen
+                    ? "opacity-100 visible translate-y-0"
+                    : "opacity-0 invisible -translate-y-2"
                 }`}
               >
                 {(() => {
                   const megaCategories = [...categories]
-                    .filter((cat: any) => cat.children && cat.children.length > 0)
+                    .filter(
+                      (cat: any) => cat.children && cat.children.length > 0,
+                    )
                     .sort((a: any, b: any) => {
-                      if (a.name === "Trang điểm" && b.name === "Chăm sóc da mặt") return -1;
-                      if (a.name === "Chăm sóc da mặt" && b.name === "Trang điểm") return 1;
-                      return (b.children?.length || 0) - (a.children?.length || 0);
+                      if (
+                        a.name === "Trang điểm" &&
+                        b.name === "Chăm sóc da mặt"
+                      )
+                        return -1;
+                      if (
+                        a.name === "Chăm sóc da mặt" &&
+                        b.name === "Trang điểm"
+                      )
+                        return 1;
+                      return (
+                        (b.children?.length || 0) - (a.children?.length || 0)
+                      );
                     });
                   return (
                     <>
@@ -236,84 +257,88 @@ export default function PublicHeader() {
                         })}
                       </div>
 
-                {/* Right Column: Active Category Content */}
-                <div className="flex-1 p-6 bg-surface">
-                  {(() => {
-                    const activeCat = activeMegaCategory || megaCategories[0];
-                    if (
-                      !activeCat ||
-                      !activeCat.children ||
-                      activeCat.children.length === 0
-                    )
-                      return null;
-                    return (
-                      <div
-                        key={activeCat.slug}
-                        className="flex gap-8 h-full animate-in fade-in slide-in-from-left-2 duration-300 ease-out"
-                      >
-                        {/* Subcategories */}
-                        <div className="flex-1 columns-2 lg:columns-3 gap-x-8 self-start">
-                          {activeCat.children.map((child: any) => (
+                      {/* Right Column: Active Category Content */}
+                      <div className="flex-1 p-6 bg-surface">
+                        {(() => {
+                          const activeCat =
+                            activeMegaCategory || megaCategories[0];
+                          if (
+                            !activeCat ||
+                            !activeCat.children ||
+                            activeCat.children.length === 0
+                          )
+                            return null;
+                          return (
                             <div
-                              key={child.id || child._id}
-                              className="flex flex-col gap-1.5 break-inside-avoid mb-4"
+                              key={activeCat.slug}
+                              className="flex gap-8 h-full animate-in fade-in slide-in-from-left-2 duration-300 ease-out"
                             >
-                              <Link
-                                onClick={() => setIsMegaMenuOpen(false)}
-                                to={`/products?category=${child.slug}`}
-                                className="text-[13px] font-bold text-foreground hover:text-primary transition-colors uppercase tracking-wide"
-                              >
-                                {child.name}
-                              </Link>
-                              {child.children && child.children.length > 0 && (
-                                <ul className="flex flex-col gap-1.5 mt-1">
-                                  {child.children.map((sub: any) => (
-                                    <li key={sub.id || sub._id}>
-                                      <Link
-                                        onClick={() => setIsMegaMenuOpen(false)}
-                                        to={`/products?category=${sub.slug}`}
-                                        className="text-[13px] font-normal text-slate-700 hover:text-primary transition-colors flex items-start gap-1.5 capitalize"
-                                      >
-                                        <span className="text-slate-300 font-bold leading-tight">
-                                          -
-                                        </span>
-                                        <span className="leading-tight">
-                                          {sub.name}
-                                        </span>
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
+                              {/* Subcategories */}
+                              <div className="flex-1 columns-2 lg:columns-3 gap-x-8 self-start">
+                                {activeCat.children.map((child: any) => (
+                                  <div
+                                    key={child.id || child._id}
+                                    className="flex flex-col gap-1.5 break-inside-avoid mb-4"
+                                  >
+                                    <Link
+                                      onClick={() => setIsMegaMenuOpen(false)}
+                                      to={`/products?category=${child.slug}`}
+                                      className="text-[13px] font-bold text-foreground hover:text-primary transition-colors uppercase tracking-wide"
+                                    >
+                                      {child.name}
+                                    </Link>
+                                    {child.children &&
+                                      child.children.length > 0 && (
+                                        <ul className="flex flex-col gap-1.5 mt-1">
+                                          {child.children.map((sub: any) => (
+                                            <li key={sub.id || sub._id}>
+                                              <Link
+                                                onClick={() =>
+                                                  setIsMegaMenuOpen(false)
+                                                }
+                                                to={`/products?category=${sub.slug}`}
+                                                className="text-[13px] font-normal text-slate-700 hover:text-primary transition-colors flex items-start gap-1.5 capitalize"
+                                              >
+                                                <span className="text-slate-300 font-bold leading-tight">
+                                                  -
+                                                </span>
+                                                <span className="leading-tight">
+                                                  {sub.name}
+                                                </span>
+                                              </Link>
+                                            </li>
+                                          ))}
+                                        </ul>
+                                      )}
+                                  </div>
+                                ))}
+                              </div>
+                              {/* Banner */}
+                              {activeCat.bannerUrl && (
+                                <div className="w-55 shrink-0">
+                                  <Link
+                                    onClick={() => setIsMegaMenuOpen(false)}
+                                    to={`/products?category=${activeCat.slug}`}
+                                  >
+                                    <img
+                                      src={activeCat.bannerUrl}
+                                      alt={activeCat.name}
+                                      className="w-full h-auto object-cover rounded-sm shadow-sm hover:opacity-90 transition-opacity"
+                                    />
+                                  </Link>
+                                </div>
                               )}
                             </div>
-                          ))}
-                        </div>
-                        {/* Banner */}
-                        {activeCat.bannerUrl && (
-                          <div className="w-55 shrink-0">
-                            <Link
-                              onClick={() => setIsMegaMenuOpen(false)}
-                              to={`/products?category=${activeCat.slug}`}
-                            >
-                              <img
-                                src={activeCat.bannerUrl}
-                                alt={activeCat.name}
-                                className="w-full h-auto object-cover rounded-sm shadow-sm hover:opacity-90 transition-opacity"
-                              />
-                            </Link>
-                          </div>
-                        )}
+                          );
+                        })()}
                       </div>
-                    );
-                  })()}
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
 
-      {/* Nav Items */}
+            {/* Nav Items */}
             <div className="flex items-stretch gap-6 flex-1">
               {categories.slice(0, 2).map((cat: any) => (
                 <div
@@ -410,7 +435,7 @@ export default function PublicHeader() {
                       to="/brands"
                       className="text-[13.5px] font-bold text-brand hover:underline flex items-center gap-1 group/link w-fit"
                     >
-                      View all brands 
+                      View all brands
                       <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
                     </Link>
                   </div>

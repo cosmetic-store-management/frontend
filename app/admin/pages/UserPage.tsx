@@ -50,13 +50,14 @@ import {
   X,
   Trash2,
 } from "lucide-react";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import { useAuth } from "@/auth/hooks/useAuth";
 import { StaffFormModal } from "../components/users/StaffFormModal";
 import { StaffPermissionsModal } from "../components/users/StaffPermissionsModal";
 import { StaffResetPasswordModal } from "../components/users/StaffResetPasswordModal";
 import { StaffInfoModal } from "../components/users/StaffInfoModal";
 import { StaffNotesModal } from "../components/users/StaffNotesModal";
+import DeleteModal from "@/components/ui/delete-modal";
 
 const ROLE_BADGE: Record<string, { label: string; className: string }> = {
   owner: {
@@ -149,11 +150,10 @@ export function UserPage() {
         <div className="p-3 bg-brand-light text-brand rounded-full mb-4">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h3 className="text-lg font-bold text-ink">
-          Access Restricted
-        </h3>
+        <h3 className="text-lg font-bold text-ink">Access Restricted</h3>
         <p className="text-sm text-ink-muted mt-2 max-w-md">
-          Staff management is only available for Manager or Store Owner accounts.
+          Staff management is only available for Manager or Store Owner
+          accounts.
         </p>
       </div>
     );
@@ -301,15 +301,9 @@ export function UserPage() {
               <TableRow className="bg-surface-muted border-b border-border">
                 <TableHead className="w-[25%] text-left pl-4">Staff</TableHead>
                 <TableHead className="w-[25%] text-center">Contact</TableHead>
-                <TableHead className="text-center w-[20%]">
-                  Role
-                </TableHead>
-                <TableHead className="text-center w-[20%]">
-                  Status
-                </TableHead>
-                <TableHead className="text-center w-[10%]">
-                  Actions
-                </TableHead>
+                <TableHead className="text-center w-[20%]">Role</TableHead>
+                <TableHead className="text-center w-[20%]">Status</TableHead>
+                <TableHead className="text-center w-[10%]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -365,15 +359,11 @@ export function UserPage() {
                     </TableCell>
                     <TableCell className="align-middle text-center">
                       {user.isActive !== false ? (
-                        <span
-                          className="inline-flex items-center rounded-sm bg-surface-soft text-success px-2.5 py-0.5 text-[10px] font-bold uppercase"
-                        >
+                        <span className="inline-flex items-center rounded-sm bg-surface-soft text-success px-2.5 py-0.5 text-[10px] font-bold uppercase">
                           Active
                         </span>
                       ) : (
-                        <span
-                          className="inline-flex items-center rounded-sm bg-surface-soft text-danger px-2.5 py-0.5 text-[10px] font-bold uppercase"
-                        >
+                        <span className="inline-flex items-center rounded-sm bg-surface-soft text-danger px-2.5 py-0.5 text-[10px] font-bold uppercase">
                           Locked
                         </span>
                       )}
@@ -434,13 +424,22 @@ export function UserPage() {
                               >
                                 {user.isActive !== false ? (
                                   <>
-                                    <Lock className="w-4 h-4 mr-2.5" /> Lock Account
+                                    <Lock className="w-4 h-4 mr-2.5" /> Lock
+                                    Account
                                   </>
                                 ) : (
                                   <>
-                                    <Unlock className="w-4 h-4 mr-2.5" /> Unlock Account
+                                    <Unlock className="w-4 h-4 mr-2.5" /> Unlock
+                                    Account
                                   </>
                                 )}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => setDeleteTarget(user)}
+                                className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2.5" />
+                                Delete Account
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -461,7 +460,8 @@ export function UserPage() {
               Page {cursors.length + 1}
               {data?.total ? (
                 <>
-                  <span className="mx-2 text-border">|</span> Total: {data.total} staff
+                  <span className="mx-2 text-border">|</span> Total:{" "}
+                  {data.total} staff
                 </>
               ) : null}
             </div>
@@ -556,50 +556,32 @@ export function UserPage() {
         }}
       />
 
-      {deleteTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-surface p-6 rounded-md shadow-ui-card w-full max-w-sm animate-scale-in">
-            <div className="flex items-center gap-3 text-danger mb-2">
-              <ShieldAlert className="w-6 h-6" />
-              <h3 className="text-lg font-bold">Xóa tài khoản</h3>
-            </div>
-            <p className="text-sm text-ink-muted mb-6">
-              Bạn có chắc chắn muốn xóa tài khoản của nhân viên{" "}
-              <span className="font-bold text-ink">{deleteTarget.name}</span>{" "}
-              không? Hành động này không thể hoàn tác.
-            </p>
-            <div className="flex justify-end gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setDeleteTarget(null)}
-                disabled={deleteStaffMutation.isPending}
-              >
-                Hủy
-              </Button>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  deleteStaffMutation.mutate(deleteTarget._id || deleteTarget.id, {
-                    onSuccess: () => {
-                      toast.success("Đã xóa tài khoản thành công");
-                      setDeleteTarget(null);
-                    },
-                    error: (err: any) => {
-                      toast.error(err.message || "Xóa tài khoản thất bại");
-                    }
-                  });
-                }}
-                disabled={deleteStaffMutation.isPending}
-              >
-                {deleteStaffMutation.isPending && (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                )}
-                Xóa ngay
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DeleteModal
+        open={!!deleteTarget}
+        title="Xóa tài khoản"
+        description={
+          <>
+            Bạn có chắc chắn muốn xóa tài khoản của nhân viên{" "}
+            <span className="font-bold text-ink">{deleteTarget?.name}</span>{" "}
+            không? Hành động này không thể hoàn tác.
+          </>
+        }
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          deleteStaffMutation.mutate(deleteTarget.id, {
+            onSuccess: () => {
+              toast.success("Đã xóa tài khoản thành công");
+              setDeleteTarget(null);
+            },
+            onError: (err: any) => {
+              toast.error(err.message || "Xóa tài khoản thất bại");
+            },
+          });
+        }}
+        loading={deleteStaffMutation.isPending}
+        confirmText="Xóa ngay"
+      />
     </div>
   );
 }

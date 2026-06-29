@@ -67,7 +67,7 @@ export function deleteStaffAPI(id: string): Promise<{ message: string }> {
 
 // ── Customer ──────────────────────────────────────────────────────────────────
 
-export function updateProfile(data: {
+export function updateAccount(data: {
   name?: string;
   phone?: string;
   address?: string;

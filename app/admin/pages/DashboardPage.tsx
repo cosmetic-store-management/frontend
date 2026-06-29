@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import { useDashboardData } from "../hooks/useReport";
 import { Badge } from "@/components/ui/badge";
-import { RevenueChart } from "../components/RevenueChart";
+import { RevenueChart } from "../components/dashboard/RevenueChart";
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
 
@@ -37,7 +37,8 @@ function StatCard({
   accent,
   index,
 }: StatCardProps) {
-  const isNeutral = change === "Updating" || change === "Delivered successfully";
+  const isNeutral =
+    change === "Updating" || change === "Delivered successfully";
 
   return (
     <div
@@ -203,13 +204,15 @@ export function DashboardPage() {
 
   return (
     <div className="flex-1 flex flex-col gap-6 animate-page-enter min-h-0">
-
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1
             className="text-xl font-bold text-foreground tracking-tight"
-            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            style={{
+              fontFamily:
+                "var(--font-display, 'Playfair Display', Georgia, serif)",
+            }}
           >
             Dashboard
           </h1>
@@ -275,13 +278,16 @@ export function DashboardPage() {
 
       {/* ── Tables Row ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 min-h-0">
-
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-card border border-border rounded-sm overflow-hidden flex flex-col">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <div>
-              <h2 className="text-sm font-semibold text-foreground">Recent Orders</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Online &amp; in-store</p>
+              <h2 className="text-sm font-semibold text-foreground">
+                Recent Orders
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Online &amp; in-store
+              </p>
             </div>
           </div>
           <div className="overflow-x-auto flex-1">
@@ -308,7 +314,10 @@ export function DashboardPage() {
               <tbody className="divide-y divide-border/50">
                 {recentOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-12 text-center text-sm text-muted-foreground">
+                    <td
+                      colSpan={5}
+                      className="py-12 text-center text-sm text-muted-foreground"
+                    >
                       No orders yet
                     </td>
                   </tr>
@@ -343,13 +352,16 @@ export function DashboardPage() {
 
         {/* Right column */}
         <div className="flex flex-col gap-4">
-
           {/* Top Products */}
           <div className="bg-card border border-border rounded-sm overflow-hidden flex-1">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border">
               <div>
-                <h2 className="text-sm font-semibold text-foreground">Top Products</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">By units sold</p>
+                <h2 className="text-sm font-semibold text-foreground">
+                  Top Products
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  By units sold
+                </p>
               </div>
             </div>
             <div className="px-5 py-4 space-y-4">
@@ -364,7 +376,14 @@ export function DashboardPage() {
                       <div className="flex items-center gap-2 min-w-0">
                         <span
                           className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 text-white"
-                          style={{ background: i === 0 ? "hsl(352, 72%, 52%)" : i === 1 ? "hsl(38, 90%, 50%)" : "hsl(345, 6%, 70%)" }}
+                          style={{
+                            background:
+                              i === 0
+                                ? "hsl(352, 72%, 52%)"
+                                : i === 1
+                                  ? "hsl(38, 90%, 50%)"
+                                  : "hsl(345, 6%, 70%)",
+                          }}
                         >
                           {i + 1}
                         </span>
@@ -394,7 +413,10 @@ export function DashboardPage() {
                         className="h-full rounded-full transition-all duration-700"
                         style={{
                           width: `${prod.percentage}%`,
-                          background: prod.stock === 0 ? "hsl(4, 80%, 52%)" : "hsl(352, 72%, 52%)",
+                          background:
+                            prod.stock === 0
+                              ? "hsl(4, 80%, 52%)"
+                              : "hsl(352, 72%, 52%)",
                         }}
                       />
                     </div>
@@ -410,7 +432,9 @@ export function DashboardPage() {
               <div className="flex items-center justify-between px-5 py-4 border-b border-red-100">
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4 text-red-500" />
-                  <h2 className="text-sm font-semibold text-red-700">Low Stock Alert</h2>
+                  <h2 className="text-sm font-semibold text-red-700">
+                    Low Stock Alert
+                  </h2>
                 </div>
                 <span className="text-[10px] font-bold bg-red-500 text-white px-2 py-0.5 rounded-full">
                   {data.lowStockItems.length}
@@ -431,8 +455,12 @@ export function DashboardPage() {
                       </p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-xs font-bold text-red-600">Stock: {item.stock}</p>
-                      <p className="text-[10px] text-muted-foreground">Min: {item.minStock}</p>
+                      <p className="text-xs font-bold text-red-600">
+                        Stock: {item.stock}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Min: {item.minStock}
+                      </p>
                     </div>
                   </div>
                 ))}

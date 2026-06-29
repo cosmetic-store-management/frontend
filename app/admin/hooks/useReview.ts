@@ -5,11 +5,13 @@ import {
   deleteReview,
   replyReview,
 } from "../services/review.service";
+import { useCursorPagination } from "@/hooks/useCursorPagination";
+import { handleMutationError } from "@/lib/api-helper";
 
 export function useAdminReviews() {
   const queryClient = useQueryClient();
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1] || undefined;
+  const { cursors, currentCursor, handleNext, handlePrev, resetCursors } =
+    useCursorPagination();
   const [filterRating, setFilterRating] = useState<string>("all");
   const [filterReplied, setFilterReplied] = useState<string>("all");
   const [filterProductName, setFilterProductName] = useState<string>("");
@@ -29,8 +31,8 @@ export function useAdminReviews() {
 
   // Reset cursors when filter changes
   useMemo(() => {
-    setCursors([]);
-  }, [filterRating, filterReplied, filterProductName]);
+    resetCursors();
+  }, [filterRating, filterReplied, filterProductName, resetCursors]);
 
   const {
     data: reviewsData,
@@ -57,14 +59,12 @@ export function useAdminReviews() {
     hasNextPage: false,
   };
 
-  const handleNext = () => {
-    if (pagination.nextCursor) {
-      setCursors((prev) => [...prev, pagination.nextCursor!]);
-    }
+  const handleNextPage = () => {
+    handleNext(pagination.nextCursor);
   };
 
-  const handlePrev = () => {
-    setCursors((prev) => prev.slice(0, -1));
+  const handlePrevPage = () => {
+    handlePrev();
   };
   const error = queryError
     ? queryError instanceof Error
@@ -80,6 +80,7 @@ export function useAdminReviews() {
     },
     onError: (err: any) => {
       setSubmitError(err.message || "Lỗi khi xóa đánh giá");
+      handleMutationError(err, "Failed to delete review");
     },
   });
 
@@ -91,6 +92,7 @@ export function useAdminReviews() {
     },
     onError: (err: any) => {
       setSubmitError(err.message || "Lỗi khi phản hồi đánh giá");
+      handleMutationError(err, "Failed to reply to review");
     },
   });
 
@@ -121,8 +123,8 @@ export function useAdminReviews() {
     reviews,
     pagination,
     cursors,
-    handleNext,
-    handlePrev,
+    handleNext: handleNextPage,
+    handlePrev: handlePrevPage,
     filterRating,
     setFilterRating,
     filterReplied,

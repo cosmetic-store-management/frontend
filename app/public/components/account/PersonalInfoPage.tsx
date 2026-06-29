@@ -8,20 +8,20 @@ import {
   useSendOtp,
   useVerifyOtp,
 } from "@/auth/hooks/useAuth";
-import { useUpdateProfile, useUpdateAvatar } from "@/public/hooks/useUser";
+import { useUpdateAccount, useUpdateAvatar } from "@/public/hooks/useUser";
 import {
-  profileUpdateSchema,
+  accountUpdateSchema,
   changePasswordSchema,
-  type ProfileUpdateFormData,
+  type AccountUpdateFormData,
   type ChangePasswordFormData,
-} from "@/public/schemas/profile.schema";
+} from "@/public/schemas/account.schema";
 import { toast } from "@/lib/toast";
 
 const MAX_AVATAR_SIZE = 1.5 * 1024 * 1024;
 
 export function PersonalInfoPage() {
   const { user } = useAuth();
-  const updateProfile = useUpdateProfile();
+  const updateAccount = useUpdateAccount();
   const updateAvatar = useUpdateAvatar();
   const changePass = useChangePassword();
 
@@ -33,7 +33,7 @@ export function PersonalInfoPage() {
 
   const [otpModalData, setOtpModalData] = useState<{
     email: string;
-    profileData: ProfileUpdateFormData;
+    accountData: AccountUpdateFormData;
   } | null>(null);
   const [otpArray, setOtpArray] = useState<string[]>(Array(6).fill(""));
   const [otpTimer, setOtpTimer] = useState(0);
@@ -92,14 +92,14 @@ export function PersonalInfoPage() {
     }
   };
 
-  // ── Profile form ──
+  // ── Account form ──
   const {
-    control: profileCtrl,
-    handleSubmit: handleProfileSubmit,
-    formState: { errors: profileErrors },
-    reset: resetProfile,
-  } = useForm<ProfileUpdateFormData>({
-    resolver: zodResolver(profileUpdateSchema),
+    control: accountCtrl,
+    handleSubmit: handleAccountSubmit,
+    formState: { errors: accountErrors },
+    reset: resetAccount,
+  } = useForm<AccountUpdateFormData>({
+    resolver: zodResolver(accountUpdateSchema),
     defaultValues: {
       name: user?.name || "",
       email: user?.email || "",
@@ -111,14 +111,14 @@ export function PersonalInfoPage() {
 
   useEffect(() => {
     if (user)
-      resetProfile({
+      resetAccount({
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
         dob: user.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
         gender: user.gender || undefined,
       });
-  }, [user, resetProfile]);
+  }, [user, resetAccount]);
 
   // ── Password form ──
   const {
@@ -155,9 +155,9 @@ export function PersonalInfoPage() {
     [updateAvatar],
   );
 
-  const executeUpdateProfile = async (data: ProfileUpdateFormData) => {
+  const executeUpdateAccount = async (data: AccountUpdateFormData) => {
     try {
-      await updateProfile.mutateAsync({
+      await updateAccount.mutateAsync({
         ...data,
         dob: data.dob ? new Date(data.dob).toISOString() : undefined,
       });
@@ -172,12 +172,12 @@ export function PersonalInfoPage() {
     }
   };
 
-  const onSaveProfile = async (data: ProfileUpdateFormData) => {
+  const onSaveAccount = async (data: AccountUpdateFormData) => {
     // Nếu đổi email, phải gửi OTP
     if (data.email && data.email !== user?.email) {
       try {
         await sendOtpMutation.mutateAsync(data.email);
-        setOtpModalData({ email: data.email, profileData: data });
+        setOtpModalData({ email: data.email, accountData: data });
         setOtpTimer(300); // 5 phút = 300 giây
         setOtpArray(Array(6).fill(""));
         toast.success("Mã OTP đã được gửi đến email mới. Vui lòng kiểm tra.");
@@ -186,7 +186,7 @@ export function PersonalInfoPage() {
       }
       return;
     }
-    await executeUpdateProfile(data);
+    await executeUpdateAccount(data);
   };
 
   const handleVerifyAndSave = async () => {
@@ -206,7 +206,7 @@ export function PersonalInfoPage() {
     }
 
     // Nếu OTP đúng thì mới update
-    await executeUpdateProfile(otpModalData.profileData);
+    await executeUpdateAccount(otpModalData.accountData);
   };
 
   const onChangePassword = async (data: ChangePasswordFormData) => {
@@ -298,8 +298,8 @@ export function PersonalInfoPage() {
             </p>
           </div>
 
-          {/* Profile form */}
-          <form onSubmit={handleProfileSubmit(onSaveProfile)}>
+          {/* Account form */}
+          <form onSubmit={handleAccountSubmit(onSaveAccount)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-5">
               <div className="space-y-1.5">
                 <label
@@ -309,7 +309,7 @@ export function PersonalInfoPage() {
                   Full Name
                 </label>
                 <Controller
-                  control={profileCtrl}
+                  control={accountCtrl}
                   name="name"
                   render={({ field }) => (
                     <input
@@ -321,9 +321,9 @@ export function PersonalInfoPage() {
                     />
                   )}
                 />
-                {profileErrors.name && (
+                {accountErrors.name && (
                   <p className="text-xs text-danger">
-                    {profileErrors.name.message}
+                    {accountErrors.name.message}
                   </p>
                 )}
               </div>
@@ -336,7 +336,7 @@ export function PersonalInfoPage() {
                   Email
                 </label>
                 <Controller
-                  control={profileCtrl}
+                  control={accountCtrl}
                   name="email"
                   render={({ field }) => (
                     <input
@@ -348,9 +348,9 @@ export function PersonalInfoPage() {
                     />
                   )}
                 />
-                {profileErrors.email && (
+                {accountErrors.email && (
                   <p className="text-xs text-danger">
-                    {profileErrors.email.message}
+                    {accountErrors.email.message}
                   </p>
                 )}
               </div>
@@ -363,7 +363,7 @@ export function PersonalInfoPage() {
                   Phone Number
                 </label>
                 <Controller
-                  control={profileCtrl}
+                  control={accountCtrl}
                   name="phone"
                   render={({ field }) => (
                     <input
@@ -375,9 +375,9 @@ export function PersonalInfoPage() {
                     />
                   )}
                 />
-                {profileErrors.phone && (
+                {accountErrors.phone && (
                   <p className="text-xs text-danger">
-                    {profileErrors.phone.message}
+                    {accountErrors.phone.message}
                   </p>
                 )}
               </div>
@@ -390,7 +390,7 @@ export function PersonalInfoPage() {
                   Date of Birth
                 </label>
                 <Controller
-                  control={profileCtrl}
+                  control={accountCtrl}
                   name="dob"
                   render={({ field }) => (
                     <input
@@ -415,9 +415,9 @@ export function PersonalInfoPage() {
                     />
                   )}
                 />
-                {profileErrors.dob && (
+                {accountErrors.dob && (
                   <p className="text-xs text-danger">
-                    {profileErrors.dob.message}
+                    {accountErrors.dob.message}
                   </p>
                 )}
               </div>
@@ -428,7 +428,7 @@ export function PersonalInfoPage() {
                   Gender
                 </label>
                 <Controller
-                  control={profileCtrl}
+                  control={accountCtrl}
                   name="gender"
                   render={({ field }) => (
                     <div className="flex items-center gap-6">
@@ -461,10 +461,10 @@ export function PersonalInfoPage() {
               <button
                 id="save-profile-btn"
                 type="submit"
-                disabled={updateProfile.isPending}
+                disabled={updateAccount.isPending}
                 className="btn-hover bg-brand text-white font-bold py-2.5 px-8 rounded-sm hover:bg-brand-dark transition-colors disabled:opacity-60"
               >
-                {updateProfile.isPending ? "Saving..." : "Save changes"}
+                {updateAccount.isPending ? "Saving..." : "Save changes"}
               </button>
             </div>
           </form>
@@ -577,7 +577,7 @@ export function PersonalInfoPage() {
                 {otpTimer === 0 && (
                   <button
                     type="button"
-                    onClick={() => onSaveProfile(otpModalData.profileData)}
+                    onClick={() => onSaveAccount(otpModalData.accountData)}
                     disabled={sendOtpMutation.isPending}
                     className="text-xs text-brand font-bold hover:underline disabled:opacity-50"
                   >

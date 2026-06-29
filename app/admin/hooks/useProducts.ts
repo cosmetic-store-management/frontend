@@ -10,9 +10,11 @@ import {
 } from "@/admin/services/product.service";
 import { getAdminCategories } from "@/admin/services/category.service";
 import { useDebounce } from "@/hooks/useDebounce";
-import type { ProductFormValues } from "../components/ProductModal";
+import type { ProductFormValues } from "../components/products/ProductEditor";
 import * as xlsx from "xlsx";
 import { apiClient } from "@/lib/client";
+import { useCursorPagination } from "@/hooks/useCursorPagination";
+import { handleMutationError } from "@/lib/api-helper";
 
 // ── Hook ───────────────────────────────────────────────────────────────────────
 export interface ProductFilters {
@@ -24,17 +26,20 @@ export interface ProductFilters {
 
 export function useProducts(filters: ProductFilters) {
   const queryClient = useQueryClient();
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1] || undefined;
+  const { cursors, currentCursor, handleNext, handlePrev, resetCursors } =
+    useCursorPagination();
   const debouncedKeyword = useDebounce(filters.keyword, 500);
 
   // Reset to first page when filters change
   useEffect(() => {
-    {
-      /* eslint-disable-next-line  */
-    }
-    setCursors([]);
-  }, [debouncedKeyword, filters.brandId, filters.categoryId, filters.status]);
+    resetCursors();
+  }, [
+    debouncedKeyword,
+    filters.brandId,
+    filters.categoryId,
+    filters.status,
+    resetCursors,
+  ]);
 
   // 1. Fetch Categories
   const { data: categoriesData } = useQuery({
@@ -91,14 +96,12 @@ export function useProducts(filters: ProductFilters) {
     hasNextPage: false,
   };
 
-  const handleNext = () => {
-    if (pagination.nextCursor) {
-      setCursors((prev) => [...prev, pagination.nextCursor!]);
-    }
+  const handleNextPage = () => {
+    handleNext(pagination.nextCursor);
   };
 
-  const handlePrev = () => {
-    setCursors((prev) => prev.slice(0, -1));
+  const handlePrevPage = () => {
+    handlePrev();
   };
 
   const error = productsError
@@ -115,9 +118,7 @@ export function useProducts(filters: ProductFilters) {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
       toast.success("Sản phẩm đã được tạo thành công!");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Tạo sản phẩm thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to update product"),
   });
 
   const updateMut = useMutation({
@@ -150,9 +151,7 @@ export function useProducts(filters: ProductFilters) {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
       toast.success("Sản phẩm đã được xóa khỏi hệ thống!");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Xóa sản phẩm thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to create product"),
   });
 
   const submitting =
@@ -303,8 +302,8 @@ export function useProducts(filters: ProductFilters) {
     categoryNameById,
     pagination,
     cursors,
-    handleNext,
-    handlePrev,
+    handleNext: handleNextPage,
+    handlePrev: handlePrevPage,
     loading,
     submitting,
     error,
@@ -317,4 +316,12 @@ export function useProducts(filters: ProductFilters) {
     refresh: refetch,
     clearError: () => {}, // No-op, managed by react-query
   };
+}
+
+export function useAdminProductsSelector(params: any, options: any) {
+  return useQuery({
+    queryKey: ["admin_products_selector", params],
+    queryFn: () => getAdminProducts(params),
+    enabled: options.enabled,
+  });
 }

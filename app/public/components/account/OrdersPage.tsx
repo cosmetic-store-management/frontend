@@ -54,7 +54,11 @@ const STATUS_META: Record<
     icon: CheckCircle,
     className: "bg-success/10 text-success",
   },
-  cancelled: { label: "Cancelled", icon: X, className: "bg-ink/5 text-ink-muted" },
+  cancelled: {
+    label: "Cancelled",
+    icon: X,
+    className: "bg-ink/5 text-ink-muted",
+  },
   return_pending: {
     label: "Return requested",
     icon: RotateCcw,
@@ -126,7 +130,9 @@ export function OrdersPage() {
     <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="mb-6">
         <h2 className="text-lg font-bold text-ink mb-1">My Orders</h2>
-        <p className="text-xs text-ink-muted">Click on an order to view details.</p>
+        <p className="text-xs text-ink-muted">
+          Click on an order to view details.
+        </p>
       </div>
 
       {/* Status tabs */}
@@ -186,9 +192,7 @@ export function OrdersPage() {
               </Link>
             </>
           ) : (
-            <p className="text-sm text-ink-muted">
-              No orders in this status
-            </p>
+            <p className="text-sm text-ink-muted">No orders in this status</p>
           )}
         </div>
       ) : (
@@ -298,7 +302,8 @@ export function OrdersPage() {
                     {/* Địa chỉ */}
                     <div>
                       <p className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-brand" /> Shipping Address
+                        <MapPin className="w-3 h-3 text-brand" /> Shipping
+                        Address
                       </p>
                       <div className="bg-white border border-border/60 rounded-sm px-3 py-2.5">
                         <p className="text-sm font-semibold text-ink">
@@ -329,24 +334,20 @@ export function OrdersPage() {
                       </p>
                       <div className="bg-white border border-border/60 rounded-sm px-3 py-2.5 space-y-1.5">
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-ink-muted">
-                            Method
-                          </span>
+                          <span className="text-xs text-ink-muted">Method</span>
                           <span className="text-xs font-medium text-ink">
                             {PAYMENT_LABEL[order.paymentMethod] ||
                               order.paymentMethod}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-xs text-ink-muted">
-                            Status
-                          </span>
+                          <span className="text-xs text-ink-muted">Status</span>
                           <span
                             className={`text-[11px] font-semibold px-2.5 py-1 rounded-sm ${
                               order.paymentStatus === "paid"
                                 ? "bg-success/10 text-success"
                                 : order.paymentStatus === "failed"
-                      ? "bg-danger/10 text-danger"
+                                  ? "bg-danger/10 text-danger"
                                   : "bg-warning/10 text-warning"
                             }`}
                           >
@@ -413,7 +414,8 @@ export function OrdersPage() {
                       (confirmCancelId === order.id ? (
                         <div className="space-y-2">
                           <p className="text-xs text-ink text-center">
-                            Confirm cancellation of order <strong>#{order.code}</strong>?
+                            Confirm cancellation of order{" "}
+                            <strong>#{order.code}</strong>?
                           </p>
                           <div className="flex gap-2">
                             <button
@@ -465,7 +467,8 @@ export function OrdersPage() {
                                 }
                               />
                               <p className="text-[10px] text-ink-muted">
-                                *Please provide photographic evidence via Customer Service Zalo after submitting request.
+                                *Please provide photographic evidence via
+                                Customer Service Zalo after submitting request.
                               </p>
                               <div className="flex gap-2">
                                 <button

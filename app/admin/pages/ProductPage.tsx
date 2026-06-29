@@ -1,13 +1,23 @@
 import { useMemo, useState } from "react";
 import { useRef } from "react";
-import { Plus, Search, Edit, Trash2, X, MoreVertical, Upload, Download } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  X,
+  MoreVertical,
+  Upload,
+  Download,
+} from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
 import { useBrands } from "../hooks/useBrand";
+import { useNavigate } from "react-router";
 import type { Category } from "@/admin/types/category";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { CardContent } from "@/components/ui/card";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -31,10 +41,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DeleteModal from "@/components/ui/delete-modal";
-import ProductDetail from "../components/ProductDetail";
-import ProductModal from "../components/ProductModal";
+import ProductDetail from "../components/products/ProductDetail";
 import type { Product } from "@/admin/types/product";
-import type { ProductFormValues } from "../components/ProductModal";
 
 // Shared tree builder (same as CategoryPage and ProductModal)
 function buildFlatCatOptions(
@@ -64,12 +72,12 @@ function buildFlatCatOptions(
 
 type ModalState =
   | { type: "none" }
-  | { type: "create" }
-  | { type: "edit"; product: Product }
   | { type: "detail"; product: Product }
   | { type: "delete"; product: Product };
 
 export function ProductPage() {
+  const navigate = useNavigate();
+
   // ── Filter state ───────────────────────────────────────────────────────────
   const [keyword, setKeyword] = useState("");
   const [brandId, setBrandId] = useState("");
@@ -119,64 +127,10 @@ export function ProductPage() {
   // ── Derived ────────────────────────────────────────────────────────────────
   const hasActiveFilter = !!(keyword || brandId || categoryId || status);
 
-
-  const initialValues = useMemo<ProductFormValues | undefined>(() => {
-    if (modal.type !== "edit") return undefined;
-    const p = modal.product;
-    return {
-      name: p.name,
-      slug: p.slug,
-      brandId: p.brandId || "",
-      description: p.description ?? "",
-      imageUrl: p.imageUrl,
-      imageUrls: p.imageUrls || [],
-      categoryId: p.categoryId,
-      categoryIds: p.categoryIds || [],
-      isActive: p.isActive,
-      variants: p.variants?.length
-        ? p.variants.map((v) => ({
-          id: v.id,
-          name: v.name,
-          sku: v.sku || "",
-          price: String(v.price || 0),
-          discountPrice:
-            v.discountPrice != null ? String(v.discountPrice) : "",
-          stock: String(v.stock || 0),
-          minStock: String(v.minStock || 10),
-          weight: String(v.weight || 200),
-          imageUrl: v.imageUrl || "",
-          isActive: v.isActive ?? true,
-        }))
-        : [
-          {
-            name: "Default",
-            sku: "",
-            price: "0",
-            discountPrice: "",
-            stock: "0",
-            minStock: "10",
-            weight: "200",
-            imageUrl: "",
-            isActive: true,
-          },
-        ],
-    };
-  }, [modal]);
-
   // ── Handlers ───────────────────────────────────────────────────────────────
   const closeModal = () => {
     setModal({ type: "none" });
     clearError();
-  };
-
-  const handleSubmitForm = async (values: ProductFormValues) => {
-    if (modal.type === "edit") {
-      const ok = await submitUpdate(modal.product.id, values);
-      if (ok) closeModal();
-    } else if (modal.type === "create") {
-      const ok = await submitCreate(values);
-      if (ok) closeModal();
-    }
   };
 
   const handleSubmitDelete = async () => {
@@ -224,8 +178,7 @@ export function ProductPage() {
               className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
               size="sm"
               onClick={() => {
-                clearError();
-                setModal({ type: "create" });
+                navigate("/admin/products/new");
               }}
             >
               <Plus className="size-4 mr-1.5" /> Add Product
@@ -289,7 +242,9 @@ export function ProductPage() {
                         className="flex items-center gap-1"
                       >
                         {opt.depth > 0 && (
-                          <span className="text-muted-foreground/50 text-xs">└</span>
+                          <span className="text-muted-foreground/50 text-xs">
+                            └
+                          </span>
                         )}
                         {opt.label}
                       </span>
@@ -303,12 +258,17 @@ export function ProductPage() {
                   <button
                     key={s}
                     onClick={() => setStatus(s === "all" ? "" : s)}
-                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${(s === "all" && !status) || status === s
-                      ? "bg-surface text-brand shadow-sm"
-                      : "text-ink-muted hover:text-ink"
-                      }`}
+                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${
+                      (s === "all" && !status) || status === s
+                        ? "bg-surface text-brand shadow-sm"
+                        : "text-ink-muted hover:text-ink"
+                    }`}
                   >
-                    {s === "all" ? "All" : s === "active" ? "Active" : "Inactive"}
+                    {s === "all"
+                      ? "All"
+                      : s === "active"
+                        ? "Active"
+                        : "Inactive"}
                   </button>
                 ))}
               </div>
@@ -429,8 +389,8 @@ export function ProductPage() {
                             return <span className="text-ink-muted">—</span>;
                           const prices = item.variants.map((v: any) =>
                             v.discountPrice != null &&
-                              v.discountPrice > 0 &&
-                              v.discountPrice < v.price
+                            v.discountPrice > 0 &&
+                            v.discountPrice < v.price
                               ? v.discountPrice
                               : v.price,
                           );
@@ -493,8 +453,7 @@ export function ProductPage() {
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => {
-                                  clearError();
-                                  setModal({ type: "edit", product: item });
+                                  navigate(`/admin/products/${item.id}/edit`);
                                 }}
                               >
                                 <Edit className="w-4 h-4 mr-2.5" />
@@ -592,29 +551,6 @@ export function ProductPage() {
             : undefined
         }
         onClose={closeModal}
-      />
-
-      <ProductModal
-        open={modal.type === "create"}
-        mode="create"
-        loading={submitting}
-        submitError={error}
-        categories={categories}
-        brands={brands}
-        onClose={closeModal}
-        onSubmit={handleSubmitForm}
-      />
-
-      <ProductModal
-        open={modal.type === "edit"}
-        mode="edit"
-        loading={submitting}
-        submitError={error}
-        categories={categories}
-        brands={brands}
-        initialValues={initialValues}
-        onClose={closeModal}
-        onSubmit={handleSubmitForm}
       />
     </section>
   );

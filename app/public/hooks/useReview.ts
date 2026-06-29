@@ -4,8 +4,10 @@ import {
   createReview,
   updateReview,
   deleteReview,
+  uploadMedia,
   CreateReviewPayload,
 } from "../services/review.service";
+import { handleMutationError } from "@/lib/api-helper";
 import { QK } from "@/lib/queryKeys";
 
 export const useProductReviews = (
@@ -62,5 +64,13 @@ export const useDeleteReview = (productId: string) => {
       queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
       queryClient.invalidateQueries({ queryKey: ["product"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to delete review"),
+  });
+};
+
+export const useUploadMedia = () => {
+  return useMutation({
+    mutationFn: (file: File) => uploadMedia(file),
+    onError: (err) => handleMutationError(err, "Failed to upload media"),
   });
 };

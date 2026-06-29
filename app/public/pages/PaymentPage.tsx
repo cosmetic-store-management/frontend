@@ -8,7 +8,9 @@ import {
   ChevronLeft,
   Timer,
 } from "lucide-react";
-import { usePublicSettings } from "@/public/hooks/usePublicSettings";
+import { useSetting } from "@/public/hooks/useSetting";
+import { useBanks } from "@/public/hooks/useBank";
+import { useOrderTrack, useCancelCheckout } from "@/public/hooks/useOrder";
 import { toast } from "@/lib/toast";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient as api } from "@/lib/client";
@@ -124,30 +126,12 @@ export function PaymentPage() {
   const paymentMethod = (searchParams.get("method") || "cod") as PaymentMethod;
   const amount = searchParams.get("amount") || "0";
 
-  const { data: settings, isLoading: settingsLoading } = usePublicSettings();
-  const { data: banksData } = useQuery({
-    queryKey: ["vietqr-banks"],
-    queryFn: async () => {
-      const res = await fetch("https://api.vietqr.io/v2/banks");
-      return res.json();
-    },
-    staleTime: 1000 * 60 * 60 * 24, // 24h
-  });
-  const banks = banksData?.data || [];
+  const { settings, isLoading: settingsLoading } = useSetting();
+  const { data: banks = [] } = useBanks();
 
-  const { data: orderTrack } = useQuery({
-    queryKey: ["order-track", code],
-    queryFn: async () => {
-      if (!code) return null;
-      const res = await api.get<any>(`/orders/track/${code}`);
-      return res.data?.order;
-    },
-    refetchInterval: (query) => {
-      // Dừng poll nếu đã thanh toán
-      return query.state.data?.paymentStatus === "paid" ? false : 3000;
-    },
-    enabled: ["bank", "qr", "transfer", "stripe"].includes(paymentMethod),
-  });
+  const { data: orderTrack } = useOrderTrack(code || "", paymentMethod);
+
+  const cancelCheckoutMutation = useCancelCheckout();
 
   const isPaid = orderTrack?.paymentStatus === "paid";
   const isCancelled = orderTrack?.orderStatus === "cancelled";
@@ -172,11 +156,17 @@ export function PaymentPage() {
 
   // Hết giờ tự động hủy
   useEffect(() => {
-    if (timeLeft <= 0 && !isPaid && !isCancelled && !hasAutoCancelled.current && code) {
+    if (
+      timeLeft <= 0 &&
+      !isPaid &&
+      !isCancelled &&
+      !hasAutoCancelled.current &&
+      code
+    ) {
       hasAutoCancelled.current = true;
-      api.patch(`/checkout/${code}/cancel`).catch(console.error);
+      cancelCheckoutMutation.mutate(code);
     }
-  }, [timeLeft, isPaid, isCancelled, code]);
+  }, [timeLeft, isPaid, isCancelled, code, cancelCheckoutMutation]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -197,7 +187,7 @@ export function PaymentPage() {
   const confirmCancelOrder = () => {
     setConfirmOpen(false);
     if (code) {
-      api.patch(`/checkout/${code}/cancel`).catch(console.error);
+      cancelCheckoutMutation.mutate(code);
     }
     navigate(-1);
   };

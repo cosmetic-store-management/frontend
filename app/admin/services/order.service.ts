@@ -53,7 +53,10 @@ export const cancelOrder = async (orderId: string) => {
 
 export const processRefund = async (orderId: string, payload?: any) => {
   return apiClient
-    .patch<{ message: string; order: Order }>(`/orders/admin/${orderId}/refund`, payload)
+    .patch<{ message: string; order: Order }>(
+      `/orders/admin/${orderId}/refund`,
+      payload,
+    )
     .then((res) => res.order);
 };
 

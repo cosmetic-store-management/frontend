@@ -26,11 +26,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import OrderDetail, { formatVnd } from "../components/OrderDetail";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import OrderDetail, { formatVnd } from "../components/orders/OrderDetail";
 import { orderStatusMeta } from "../types/order-meta";
-import OrderModal, { type OrderFormValues } from "../components/OrderModal";
-import { PageHeader } from "../components/PageHeader";
+import OrderModal, {
+  type OrderFormValues,
+} from "../components/orders/OrderModal";
+import { PageHeader } from "../components/common/PageHeader";
 import type { Order, OrderStatus } from "@/admin/types/order";
 import type { FilterKey } from "../hooks/useOrders";
 import { exportToCSV } from "@/lib/utils";
@@ -39,14 +48,14 @@ const STATUS_TABS: {
   key: FilterKey | "processing" | "returned";
   label: string;
 }[] = [
-    { key: "all", label: "All" },
-    { key: "pending", label: "Pending" },
-    { key: "processing", label: "Processing" },
-    { key: "shipping", label: "Shipping" },
-    { key: "completed", label: "Completed" },
-    { key: "returned", label: "Returned" },
-    { key: "cancelled", label: "Cancelled" },
-  ];
+  { key: "all", label: "All" },
+  { key: "pending", label: "Pending" },
+  { key: "processing", label: "Processing" },
+  { key: "shipping", label: "Shipping" },
+  { key: "completed", label: "Completed" },
+  { key: "returned", label: "Returned" },
+  { key: "cancelled", label: "Cancelled" },
+];
 
 function fmtDate(v?: string) {
   if (!v) return "-";
@@ -177,10 +186,11 @@ export function OrderPage() {
                   <button
                     key={tab.key}
                     onClick={() => setFilter(tab.key as FilterKey)}
-                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${filter === tab.key
-                      ? "bg-surface text-brand shadow-sm"
-                      : "text-ink-muted hover:text-ink"
-                      }`}
+                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${
+                      filter === tab.key
+                        ? "bg-surface text-brand shadow-sm"
+                        : "text-ink-muted hover:text-ink"
+                    }`}
                   >
                     {tab.label}
                   </button>
@@ -510,8 +520,9 @@ export function OrderPage() {
       <DeleteModal
         open={modal.type === "cancel"}
         title="Cancel Order"
-        description={`Order "${modal.type === "cancel" ? modal.order.code : ""
-          }" will be cancelled and stock will be restored.`}
+        description={`Order "${
+          modal.type === "cancel" ? modal.order.code : ""
+        }" will be cancelled and stock will be restored.`}
         confirmText="Confirm cancel"
         loading={submitting}
         submitError={error}

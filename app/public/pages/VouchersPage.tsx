@@ -12,7 +12,7 @@ import {
   LogIn,
 } from "lucide-react";
 import {
-  usePublicVouchers,
+  useVouchers,
   useCollectVoucher,
   useUncollectVoucher,
   useGetWalletVouchers,
@@ -20,9 +20,9 @@ import {
 import { useAuthStore } from "@/auth/store/auth.store";
 import { Link } from "react-router";
 import { toast } from "@/lib/toast";
-import type { PublicVoucher } from "../services/voucher.service";
+import type { Voucher } from "../services/voucher.service";
 
-function getVoucherMeta(voucher: PublicVoucher) {
+function getVoucherMeta(voucher: Voucher) {
   if (voucher.discountType === "freeship") {
     return {
       icon: <Truck className="w-5 h-5" />,
@@ -57,7 +57,7 @@ function VoucherCardFull({
   onUncollect,
   isLoading,
 }: {
-  voucher: PublicVoucher;
+  voucher: Voucher;
   isSaved: boolean;
   onCollect: (code: string) => void;
   onUncollect: (code: string) => void;
@@ -209,8 +209,7 @@ function VoucherCardFull({
 
 export function VouchersPage() {
   const { user } = useAuthStore();
-  const { data: publicVouchers, isLoading: loadingPublic } =
-    usePublicVouchers();
+  const { data: publicVouchers, isLoading: loadingPublic } = useVouchers();
   const { data: walletVouchers, isLoading: loadingWallet } =
     useGetWalletVouchers();
   const collectMutation = useCollectVoucher();
@@ -248,12 +247,21 @@ export function VouchersPage() {
     <div className="max-w-4xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4" style={{ background: "hsl(352, 72%, 52%, 0.1)", color: "hsl(352, 72%, 52%)" }}>
+        <div
+          className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4"
+          style={{
+            background: "hsl(352, 72%, 52%, 0.1)",
+            color: "hsl(352, 72%, 52%)",
+          }}
+        >
           <Ticket className="w-7 h-7" />
         </div>
         <h1
           className="text-2xl md:text-3xl font-bold text-foreground"
-          style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+          style={{
+            fontFamily:
+              "var(--font-display, 'Playfair Display', Georgia, serif)",
+          }}
         >
           Voucher Store
         </h1>
@@ -290,7 +298,10 @@ export function VouchersPage() {
             <Wallet className="w-4 h-4" />
             My wallet
             {walletVouchers && walletVouchers.length > 0 && (
-              <span className="ml-1 min-w-4.5 h-4.5 inline-flex items-center justify-center text-[10px] font-black bg-white rounded-full px-1" style={{ color: "hsl(352, 72%, 52%)" }}>
+              <span
+                className="ml-1 min-w-4.5 h-4.5 inline-flex items-center justify-center text-[10px] font-black bg-white rounded-full px-1"
+                style={{ color: "hsl(352, 72%, 52%)" }}
+              >
                 {walletVouchers.length}
               </span>
             )}
@@ -360,7 +371,7 @@ export function VouchersPage() {
         displayedVouchers.length > 0 &&
         (tab === "all" || user) && (
           <div className="grid gap-4 sm:grid-cols-2">
-            {displayedVouchers.map((v: PublicVoucher) => (
+            {displayedVouchers.map((v: Voucher) => (
               <VoucherCardFull
                 key={v.id}
                 voucher={v}

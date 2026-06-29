@@ -36,8 +36,8 @@ export default function NotFoundPage() {
             Page not found
           </h1>
           <p className="text-base text-ink-muted max-w-md mx-auto leading-relaxed">
-            Oops! This page has been removed, renamed, or never existed.
-            Check the URL or explore GlowUp.
+            Oops! This page has been removed, renamed, or never existed. Check
+            the URL or explore GlowUp.
           </p>
         </div>
 

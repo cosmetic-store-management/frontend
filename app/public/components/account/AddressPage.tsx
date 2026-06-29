@@ -22,8 +22,9 @@ import { useVietnamAddress } from "@/public/hooks/useVietnamAddress";
 import {
   addressSchema,
   type AddressFormData,
-} from "@/public/schemas/profile.schema";
+} from "@/public/schemas/account.schema";
 import { toast } from "@/lib/toast";
+import DeleteModal from "@/components/ui/delete-modal";
 
 export function AddressPage() {
   const { user } = useAuth();
@@ -38,6 +39,7 @@ export function AddressPage() {
     province: string;
     district: string;
   } | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     control,
@@ -92,14 +94,8 @@ export function AddressPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this address?")) return;
-    try {
-      await deleteMutation.mutateAsync(id);
-      toast.success("Address deleted");
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to delete");
-    }
+  const handleDelete = (id: string) => {
+    setDeleteTargetId(id);
   };
 
   // Reusable form JSX
@@ -410,6 +406,25 @@ export function AddressPage() {
           ))}
         </div>
       )}
+      
+      <DeleteModal
+        open={!!deleteTargetId}
+        loading={deleteMutation.isPending}
+        title="Confirm Delete"
+        description="Are you sure you want to delete this address? This action cannot be undone."
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={async () => {
+          if (deleteTargetId) {
+            try {
+              await deleteMutation.mutateAsync(deleteTargetId);
+              toast.success("Address deleted");
+              setDeleteTargetId(null);
+            } catch (err: any) {
+              toast.error(err.response?.data?.message || "Failed to delete");
+            }
+          }
+        }}
+      />
     </div>
   );
 }

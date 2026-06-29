@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   validateVoucher,
   getWalletVouchers,
-  getPublicVouchers,
+  getVouchers,
   collectVoucher,
   uncollectVoucher,
   getAllWalletVouchers,
@@ -10,10 +10,10 @@ import {
 import { QK } from "@/lib/queryKeys";
 import { useAuthStore } from "@/auth/store/auth.store";
 
-export function usePublicVouchers() {
+export function useVouchers() {
   return useQuery({
     queryKey: QK.publicVouchers(),
-    queryFn: () => getPublicVouchers(),
+    queryFn: () => getVouchers(),
     staleTime: 5 * 60 * 1000,
   });
 }

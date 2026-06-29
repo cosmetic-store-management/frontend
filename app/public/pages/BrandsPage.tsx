@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { usePublicBrands } from "@/public/hooks/useBrands";
+import { useBrands } from "@/public/hooks/useProducts";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -51,12 +51,14 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
         }`}
     >
       {/* Logo area — always white bg so logo image shows correctly */}
-      <div className={`w-full aspect-2/1 flex items-center justify-center p-4 bg-surface overflow-hidden ${dark ? 'opacity-80 group-hover:opacity-100 transition-opacity' : ''}`}>
+      <div
+        className={`w-full aspect-2/1 flex items-center justify-center p-4 bg-surface overflow-hidden ${dark ? "opacity-80 group-hover:opacity-100 transition-opacity" : ""}`}
+      >
         {brand.imageUrl && !imgFailed ? (
           <img
             src={brand.imageUrl}
             alt={brand.name}
-            className={`max-w-full max-h-full object-contain transition-all duration-300 ${!dark ? 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100' : ''}`}
+            className={`max-w-full max-h-full object-contain transition-all duration-300 ${!dark ? "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100" : ""}`}
             onError={() => setImgFailed(true)}
           />
         ) : (
@@ -85,7 +87,7 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function BrandsPage() {
-  const { data: brands = [], isLoading } = usePublicBrands();
+  const { data: brands = [], isLoading } = useBrands();
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const carouselRef = useRef<HTMLDivElement>(null);
 

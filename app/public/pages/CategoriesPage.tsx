@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router";
-import { useCategories } from "@/public/hooks/useCategories";
+import { useCategories } from "@/public/hooks/useProducts";
 import { ChevronRight, Search } from "lucide-react";
 
 // Skeleton cho loading state
@@ -134,9 +134,7 @@ export function CategoriesPage() {
         {!isLoading && filtered.length === 0 && (
           <div className="text-center py-20">
             <Search className="w-12 h-12 mx-auto text-border mb-4" />
-            <h3 className="text-lg font-bold text-ink">
-              No categories found
-            </h3>
+            <h3 className="text-lg font-bold text-ink">No categories found</h3>
             <p className="text-ink-muted mt-2 text-sm">
               Try searching with different keywords
             </p>
@@ -176,7 +174,8 @@ export function CategoriesPage() {
                       </h2>
                       {(rootCat.productCount ?? 0) > 0 && (
                         <span className="text-[11px] text-ink-muted font-normal hidden sm:inline">
-                          ({rootCat.productCount.toLocaleString("vi-VN")} products)
+                          ({rootCat.productCount.toLocaleString("vi-VN")}{" "}
+                          products)
                         </span>
                       )}
                     </div>

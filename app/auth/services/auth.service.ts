@@ -27,7 +27,9 @@ interface AuthData {
 
 export async function login(payload: LoginPayload): Promise<User> {
   const data = await apiClient.post<AuthData>("/auth/login", payload);
-  useAuthStore.getState().setAuth(data.user, data.accessToken, data.refreshToken);
+  useAuthStore
+    .getState()
+    .setAuth(data.user, data.accessToken, data.refreshToken);
   return data.user;
 }
 

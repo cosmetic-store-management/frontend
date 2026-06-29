@@ -14,7 +14,7 @@ import {
   sendOtp,
   verifyOtp,
 } from "@/auth/services/auth.service";
-import { getMyProfile } from "@/public/services/user.service";
+import { getMyAccount } from "@/public/services/user.service";
 
 export const useAuth = () => {
   const store = useAuthStore();
@@ -161,7 +161,7 @@ export const useSocialLogin = () => {
       refreshToken: string;
     }) => {
       setAccessToken(token); // Set token so apiClient uses it
-      const user = await getMyProfile();
+      const user = await getMyAccount();
       return { user, token, refreshToken };
     },
     onSuccess: async ({ user, token, refreshToken }) => {

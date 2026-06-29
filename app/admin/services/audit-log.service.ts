@@ -25,8 +25,11 @@ export function getAuditLogs(params?: {
   endDate?: string;
   cursor?: string;
   limit?: number;
-}): Promise<{ logs: AuditLogItem[], pagination: any }> {
+}): Promise<{ logs: AuditLogItem[]; pagination: any }> {
   return apiClient
-    .get<{ logs: AuditLogItem[], pagination: any }>("/audit-logs", params as Record<string, string>)
+    .get<{ logs: AuditLogItem[]; pagination: any }>(
+      "/audit-logs",
+      params as Record<string, string>,
+    )
     .then((res) => res);
 }

@@ -11,12 +11,14 @@ import {
   ChevronLeft,
   Timer,
 } from "lucide-react";
-import { usePublicSettings } from "@/public/hooks/usePublicSettings";
+import { useSetting } from "@/public/hooks/useSetting";
 import { toast } from "@/lib/toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient as api } from "@/lib/client";
 import DeleteModal from "@/components/ui/delete-modal";
 import { useCartStore } from "@/public/store/cart.store";
+import { useBanks } from "@/public/hooks/useBank";
+import { useOrderTrack, useCancelCheckout } from "@/public/hooks/useOrder";
 
 type PaymentMethod =
   | "cod"
@@ -55,9 +57,14 @@ function BankTransferInfo({
 
   return (
     <div className="mt-8 bg-card border border-brand/20 rounded-sm overflow-hidden max-w-md mx-auto shadow-md">
-      <div className="px-6 py-4 border-b border-brand/10 flex items-center gap-2" style={{ background: "hsl(352, 72%, 52%, 0.05)" }}>
+      <div
+        className="px-6 py-4 border-b border-brand/10 flex items-center gap-2"
+        style={{ background: "hsl(352, 72%, 52%, 0.05)" }}
+      >
         <Banknote className="w-5 h-5" style={{ color: "hsl(352, 72%, 52%)" }} />
-        <h3 className="font-bold" style={{ color: "hsl(352, 72%, 52%)" }}>Bank transfer details</h3>
+        <h3 className="font-bold" style={{ color: "hsl(352, 72%, 52%)" }}>
+          Bank transfer details
+        </h3>
       </div>
       <div className="p-6 space-y-4 text-sm">
         {finalQrUrl && (
@@ -132,32 +139,13 @@ export function OrderSuccessPage() {
   const paymentMethod = (searchParams.get("method") || "cod") as PaymentMethod;
   const amount = searchParams.get("amount") || "0";
 
-  const { data: settings, isLoading: settingsLoading } = usePublicSettings();
-  const { data: banksData } = useQuery({
-    queryKey: ["vietqr-banks"],
-    queryFn: async () => {
-      const res = await fetch("https://api.vietqr.io/v2/banks");
-      return res.json();
-    },
-    staleTime: 1000 * 60 * 60 * 24, // 24h
-  });
-  const banks = banksData?.data || [];
+  const { settings, isLoading: settingsLoading } = useSetting();
+  const { data: banks = [] } = useBanks();
 
   const queryClient = useQueryClient();
 
-  const { data: orderTrack } = useQuery({
-    queryKey: ["order-track", code],
-    queryFn: async () => {
-      if (!code) return null;
-      const res = await api.get<any>(`/orders/track/${code}`);
-      return res.data?.order;
-    },
-    refetchInterval: (query) => {
-      // Dừng poll nếu đã thanh toán
-      return query.state.data?.paymentStatus === "paid" ? false : 3000;
-    },
-    enabled: ["bank", "qr", "stripe"].includes(paymentMethod || ""),
-  });
+  const { data: orderTrack } = useOrderTrack(code || "", paymentMethod);
+  const cancelCheckoutMutation = useCancelCheckout();
 
   const isPaid = orderTrack?.paymentStatus === "paid";
   const isCancelled = orderTrack?.orderStatus === "cancelled";
@@ -171,13 +159,16 @@ export function OrderSuccessPage() {
     // Clear cart if payment is confirmed via polling
     if (isPaid) {
       clearCart();
-      if (window.location.pathname.startsWith('/payment')) {
-        navigate(`/order-success/${code}?method=${paymentMethod}&amount=${amount}`, { replace: true });
+      if (window.location.pathname.startsWith("/payment")) {
+        navigate(
+          `/order-success/${code}?method=${paymentMethod}&amount=${amount}`,
+          { replace: true },
+        );
       }
     }
-    
+
     // Clear cart if user lands directly on order-success (e.g. Stripe redirect)
-    if (window.location.pathname.startsWith('/order-success')) {
+    if (window.location.pathname.startsWith("/order-success")) {
       clearCart();
     }
   }, [isPaid, clearCart, navigate, code, paymentMethod, amount]);
@@ -193,11 +184,24 @@ export function OrderSuccessPage() {
   // Hết giờ tự động hủy
   useEffect(() => {
     if (paymentMethod !== "bank" && paymentMethod !== "qr") return;
-    if (timeLeft <= 0 && !isPaid && !isCancelled && !hasAutoCancelled.current && code) {
+    if (
+      timeLeft <= 0 &&
+      !isPaid &&
+      !isCancelled &&
+      !hasAutoCancelled.current &&
+      code
+    ) {
       hasAutoCancelled.current = true;
-      api.patch(`/checkout/${code}/cancel`).catch(console.error);
+      cancelCheckoutMutation.mutate(code);
     }
-  }, [timeLeft, isPaid, isCancelled, code, paymentMethod]);
+  }, [
+    timeLeft,
+    isPaid,
+    isCancelled,
+    code,
+    paymentMethod,
+    cancelCheckoutMutation,
+  ]);
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -208,7 +212,13 @@ export function OrderSuccessPage() {
   };
 
   const handleBack = () => {
-    if ((paymentMethod === "bank" || paymentMethod === "qr") && !isPaid && !isCancelled && timeLeft > 0 && code) {
+    if (
+      (paymentMethod === "bank" || paymentMethod === "qr") &&
+      !isPaid &&
+      !isCancelled &&
+      timeLeft > 0 &&
+      code
+    ) {
       setConfirmOpen(true);
     } else {
       navigate(-1);
@@ -218,7 +228,7 @@ export function OrderSuccessPage() {
   const confirmCancelOrder = () => {
     setConfirmOpen(false);
     if (code) {
-      api.patch(`/checkout/${code}/cancel`).catch(console.error);
+      cancelCheckoutMutation.mutate(code);
     }
     navigate(-1);
   };
@@ -235,8 +245,7 @@ export function OrderSuccessPage() {
     },
     bank: {
       label: "Bank Transfer",
-      description:
-        "Your order will be processed once we confirm the payment.",
+      description: "Your order will be processed once we confirm the payment.",
       color: "text-brand",
     },
     ewallet: { label: "E-wallet", description: "", color: "" },
@@ -252,71 +261,86 @@ export function OrderSuccessPage() {
   return (
     <div className="max-w-300 w-full mx-auto px-4 py-8 sm:py-16 animate-page-enter">
       {/* Back Button */}
-      {(paymentMethod === "bank" || paymentMethod === "qr") && !isPaid && !isCancelled && (
-        <div className="mb-8">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-1.5 text-ink-muted hover:text-foreground transition-colors w-fit"
-          >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-        </div>
-      )}
+      {(paymentMethod === "bank" || paymentMethod === "qr") &&
+        !isPaid &&
+        !isCancelled && (
+          <div className="mb-8">
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-1.5 text-ink-muted hover:text-foreground transition-colors w-fit"
+            >
+              <ChevronLeft className="w-5 h-5" />
+              <span className="text-sm font-medium">Back</span>
+            </button>
+          </div>
+        )}
 
-      {(!((paymentMethod === "bank" || paymentMethod === "qr") && !isPaid)) ? (
+      {!((paymentMethod === "bank" || paymentMethod === "qr") && !isPaid) ? (
         <div className="max-w-2xl mx-auto text-center relative animate-fade-up">
           {/* Animated Success Icon */}
           <div className="w-24 h-24 bg-success/10 rounded-sm flex items-center justify-center mx-auto mb-6">
-             <CheckCircle2 className="w-12 h-12 text-success" />
+            <CheckCircle2 className="w-12 h-12 text-success" />
           </div>
 
-          <h1 className="text-3xl font-bold text-foreground mb-3" style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}>
+          <h1
+            className="text-3xl font-bold text-foreground mb-3"
+            style={{
+              fontFamily:
+                "var(--font-display, 'Playfair Display', Georgia, serif)",
+            }}
+          >
             Order Confirmed! 🎉
           </h1>
           <p className="text-ink-muted mb-8 max-w-md mx-auto">
-            Thank you for shopping with GlowUp. Your order has been placed successfully and is being processed.
+            Thank you for shopping with GlowUp. Your order has been placed
+            successfully and is being processed.
           </p>
 
           {/* Receipt Card */}
           <div className="bg-white rounded-sm p-6 shadow-sm border border-border mx-auto max-w-sm mb-10 text-left">
-            <p className="text-xs text-ink-muted font-bold mb-1 uppercase tracking-widest">Order Reference</p>
+            <p className="text-xs text-ink-muted font-bold mb-1 uppercase tracking-widest">
+              Order Reference
+            </p>
             <div className="flex items-center justify-between">
-              <span className="font-mono text-xl font-bold text-ink">#{code}</span>
-              <button 
-                onClick={() => copyText(`#${code}`)} 
-                className="p-2 hover:bg-surface-muted rounded-sm transition-colors text-ink-muted hover:text-brand" 
+              <span className="font-mono text-xl font-bold text-ink">
+                #{code}
+              </span>
+              <button
+                onClick={() => copyText(`#${code}`)}
+                className="p-2 hover:bg-surface-muted rounded-sm transition-colors text-ink-muted hover:text-brand"
                 title="Copy Order Code"
               >
-                 <Copy className="w-4 h-4" />
+                <Copy className="w-4 h-4" />
               </button>
             </div>
-            
+
             <div className="h-px bg-border my-4"></div>
-            
+
             <div className="flex justify-between items-center text-sm">
               <span className="text-ink-muted font-medium">Payment Method</span>
-              <span className={`font-semibold ${meta.color}`}>{meta.label}</span>
+              <span className={`font-semibold ${meta.color}`}>
+                {meta.label}
+              </span>
             </div>
           </div>
 
           {/* Call to Actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-             <button
-               onClick={() => navigate("/account?view=orders")}
-               className="btn-hover w-full sm:w-auto flex justify-center items-center gap-2 text-white font-bold py-3 px-8 rounded-sm transition-all shadow-sm hover:shadow-md active:scale-[0.99]"
-               style={{ background: "hsl(352, 72%, 52%)" }}
-             >
-               <ClipboardList className="w-4 h-4" />
-               View My Orders
-             </button>
-             <button
-               onClick={() => navigate("/")}
-               className="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-surface-muted text-ink font-semibold py-3 px-8 rounded-sm transition-all active:scale-[0.99] border border-border"
-             >
-               <ShoppingBag className="w-4 h-4" />
-               Continue Shopping
-             </button>
+            <button
+              onClick={() => navigate("/account?view=orders")}
+              className="btn-hover w-full sm:w-auto flex justify-center items-center gap-2 text-white font-bold py-3 px-8 rounded-sm transition-all shadow-sm hover:shadow-md active:scale-[0.99]"
+              style={{ background: "hsl(352, 72%, 52%)" }}
+            >
+              <ClipboardList className="w-4 h-4" />
+              View My Orders
+            </button>
+            <button
+              onClick={() => navigate("/")}
+              className="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-surface-muted text-ink font-semibold py-3 px-8 rounded-sm transition-all active:scale-[0.99] border border-border"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Continue Shopping
+            </button>
           </div>
         </div>
       ) : (
@@ -329,11 +353,14 @@ export function OrderSuccessPage() {
           {/* Title */}
           <h1
             className="text-3xl font-bold text-foreground mb-3"
-            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+            style={{
+              fontFamily:
+                "var(--font-display, 'Playfair Display', Georgia, serif)",
+            }}
           >
             Waiting for payment
           </h1>
-          
+
           {/* Timer for bank transfer */}
           {!isCancelled && (
             <div className="flex items-center justify-center gap-2 text-warning font-bold mb-4 text-lg">

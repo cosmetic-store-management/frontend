@@ -14,7 +14,7 @@ export const restockSchema = z
     manufactureDate: z.coerce.date({
       message: "Vui lòng chọn ngày sản xuất",
     }),
-    expiryDate: z.coerce.date({ 
+    expiryDate: z.coerce.date({
       message: "Vui lòng chọn hạn sử dụng",
     }),
   })

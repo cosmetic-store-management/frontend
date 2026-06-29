@@ -1,6 +1,6 @@
 import { Heart } from "lucide-react";
 import { useFavorites } from "@/public/hooks/useUser";
-import { ProductCard } from "@/public/components/ProductCard";
+import { ProductCard } from "@/public/components/products/ProductCard";
 
 export function FavoritesPage() {
   const { data: favorites = [], isLoading } = useFavorites();
@@ -10,9 +10,7 @@ export function FavoritesPage() {
       <div className="flex items-start justify-between mb-6">
         <div>
           <h2 className="text-lg font-bold text-ink">Wishlist</h2>
-          <p className="text-xs text-ink-muted mt-0.5">
-            Your saved products
-          </p>
+          <p className="text-xs text-ink-muted mt-0.5">Your saved products</p>
         </div>
         {favorites.length > 0 && (
           <span className="text-xs text-ink-muted mt-1">

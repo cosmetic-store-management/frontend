@@ -7,7 +7,8 @@ export const meta: MetaFunction = () =>
     title: "Products",
     description:
       "Explore thousands of authentic cosmetics — skincare, makeup, haircare and body. Filter by category, brand and price.",
-    keywords: "cosmetics, skincare, makeup, serum, moisturizer, lipstick, GlowUp",
+    keywords:
+      "cosmetics, skincare, makeup, serum, moisturizer, lipstick, GlowUp",
     canonical: "/products",
   });
 

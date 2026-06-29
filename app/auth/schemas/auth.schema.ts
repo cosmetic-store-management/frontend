@@ -31,9 +31,7 @@ export const forgotPasswordSchema = z.object({
   identifier: z.string().min(1, "Vui lòng nhập email hoặc số điện thoại"),
 });
 
-export type ForgotPasswordForm = z.infer<
-  typeof forgotPasswordSchema
->;
+export type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 
 export const resetPasswordSchema = z
   .object({

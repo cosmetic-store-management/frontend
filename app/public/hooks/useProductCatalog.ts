@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
-import { useProducts } from "@/public/hooks/useProducts";
-import { useCategories } from "@/public/hooks/useCategories";
+import {
+  useProducts,
+  useBrands,
+  useCategories,
+} from "@/public/hooks/useProducts";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const findCategoryContext = (

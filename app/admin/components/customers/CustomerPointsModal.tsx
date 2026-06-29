@@ -1,42 +1,30 @@
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/lib/toast";
+import { useAdjustPoints } from "../../hooks/useCustomer";
 import type { Customer } from "@/admin/services/user.service";
 import {
   adjustPointsSchema,
   type AdjustPointsFormData,
 } from "../../schemas/customer.schema";
 
-type CustomerPointsModalProps = {
-  customer: Customer | null;
+interface CustomerPointsModalProps {
+  open: boolean;
   onClose: () => void;
-  onSubmit: (data: AdjustPointsFormData) => Promise<void>;
-  loading: boolean;
-};
+  customer: Customer | null;
+}
 
-export function CustomerPointsModal({
-  customer,
-  onClose,
-  onSubmit,
-  loading,
-}: CustomerPointsModalProps) {
-  const open = !!customer;
+export function CustomerPointsModal({ open, onClose, customer }: CustomerPointsModalProps) {
+  const adjustPointsMutation = useAdjustPoints();
 
   const {
-    control,
+    register,
     handleSubmit,
     reset,
     formState: { errors },
@@ -46,85 +34,80 @@ export function CustomerPointsModal({
   });
 
   useEffect(() => {
-    if (open) {
+    if (customer && open) {
       reset({ pointsChanged: 0, reason: "" });
     }
-  }, [open, reset]);
+  }, [customer, open, reset]);
+
+  const onSubmit = async (data: AdjustPointsFormData) => {
+    if (!customer) return;
+    try {
+      await adjustPointsMutation.mutateAsync({
+        id: customer.id,
+        pointsChanged: data.pointsChanged,
+        reason: data.reason,
+      });
+      toast.success("Points adjusted successfully!");
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message || "Action failed!");
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-125">
-        <DialogHeader className="pr-6">
-          <DialogTitle>Điều chỉnh điểm thưởng</DialogTitle>
-          <DialogDescription>
-            Cộng hoặc trừ điểm thưởng của{" "}
-            <strong className="text-brand">{customer?.name}</strong>.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="bg-brand/5 text-brand text-sm border border-brand/20 p-3 rounded-sm flex justify-between items-center">
-            <span>Điểm hiện tại:</span>
-            <span className="font-bold text-lg">{customer?.points}</span>
-          </div>
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <Label htmlFor="pointsChanged">
-                Số điểm (+/-) <span className="text-danger">*</span>
-              </Label>
-              <Controller
-                control={control}
-                name="pointsChanged"
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    id="pointsChanged"
-                    type="number"
-                    placeholder="Ví dụ: -500"
-                    className="focus-visible:ring-brand"
-                  />
-                )}
-              />
-              {errors.pointsChanged && (
-                <p className="text-xs text-danger">
-                  {errors.pointsChanged.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-3">
-              <Label htmlFor="pointsReason">
-                Lý do điều chỉnh <span className="text-danger">*</span>
-              </Label>
-              <Controller
-                control={control}
-                name="reason"
-                render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    id="pointsReason"
-                    placeholder="Ví dụ: Đổi trả đơn hàng #12345"
-                    className="resize-none focus-visible:ring-brand"
-                  />
-                )}
-              />
-              {errors.reason && (
-                <p className="text-xs text-danger">{errors.reason.message}</p>
-              )}
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Huỷ
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                "Xác nhận"
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <BaseCrudModal
+      open={open}
+      onOpenChange={(o) => !o && onClose()}
+      title="Adjust Reward Points"
+      description={`Modify points for ${customer?.name} (Current: ${customer?.points || 0})`}
+      size="sm"
+      hideFooter={true}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
+        <div className="space-y-2">
+          <Label htmlFor="pointsChanged">
+            Points Adjustment <span className="text-danger">*</span>
+          </Label>
+          <Input
+            {...register("pointsChanged", { valueAsNumber: true })}
+            id="pointsChanged"
+            type="number"
+            placeholder="e.g., 50 or -20"
+            className="focus-visible:ring-brand"
+          />
+          <p className="text-xs text-ink-muted">
+            Use positive numbers to add, negative numbers to deduct.
+          </p>
+          {errors.pointsChanged && (
+            <p className="text-xs text-danger">
+              {errors.pointsChanged.message}
+            </p>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="reason">
+            Reason <span className="text-danger">*</span>
+          </Label>
+          <Textarea
+            {...register("reason")}
+            id="reason"
+            rows={3}
+            placeholder="E.g., Compensation for delayed order..."
+            className="focus-visible:ring-brand resize-none"
+          />
+          {errors.reason && (
+            <p className="text-xs text-danger">{errors.reason.message}</p>
+          )}
+        </div>
+        <div className="flex justify-end gap-2 pt-4">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={adjustPointsMutation.isPending}>
+            {adjustPointsMutation.isPending ? "Processing..." : "Confirm"}
+          </Button>
+        </div>
+      </form>
+    </BaseCrudModal>
   );
 }

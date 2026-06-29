@@ -15,10 +15,13 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "@/lib/toast";
-import { useOrderPreview, useCreateOrder } from "../hooks/useOrder";
-import { createStripeIntent } from "../services/order.service";
-import { useMyProfile } from "@/public/hooks/useUser";
-import { useShopSettings } from "@/public/hooks/useShopSettings";
+import {
+  useOrderPreview,
+  useCreateOrder,
+  useCreateStripeIntent,
+} from "../hooks/useOrder";
+import { useMyAccount } from "@/public/hooks/useUser";
+import { useSetting } from "@/public/hooks/useSetting";
 import {
   checkoutSchema,
   PAYMENT_METHODS,
@@ -34,7 +37,7 @@ const PAYMENT_ICON_MAP: Record<string, React.ReactNode> = {
 export function CheckoutPage() {
   const { user, isLoggedIn } = useAuth();
   const { items, clearCart, voucherCode } = useCartStore();
-  const { settings } = useShopSettings();
+  const { settings } = useSetting();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,8 +47,7 @@ export function CheckoutPage() {
 
   const pageContainerClassName =
     "w-full max-w-300 mx-auto px-4 py-6 relative animate-page-enter";
-  const summaryItemsClassName =
-    "px-5 py-4 overflow-y-auto max-h-55 space-y-3";
+  const summaryItemsClassName = "px-5 py-4 overflow-y-auto max-h-55 space-y-3";
 
   // Stripe states
   const [stripeModalOpen, setStripeModalOpen] = useState(false);
@@ -97,8 +99,9 @@ export function CheckoutPage() {
 
   const idempotencyKeyRef = useRef(crypto.randomUUID());
   const previewMutation = useOrderPreview();
-  const { data: liveProfile } = useMyProfile();
+  const { data: liveAccount } = useMyAccount();
   const createOrderMutation = useCreateOrder();
+  const createStripeIntentMutation = useCreateStripeIntent();
 
   // Redirect nếu chưa đăng nhập
   useEffect(() => {
@@ -185,7 +188,7 @@ export function CheckoutPage() {
   if (!isLoggedIn) return null;
 
   const paymentMethod = watch("paymentMethod");
-  const userPoints = liveProfile?.points ?? user?.points ?? 0;
+  const userPoints = liveAccount?.points ?? user?.points ?? 0;
   const liveUserPoints = previewData?.userPoints ?? userPoints;
   const maxCanUse = Math.min(
     previewData?.maxPointsAllowed || 0,
@@ -219,7 +222,9 @@ export function CheckoutPage() {
 
       if (data.paymentMethod === "stripe") {
         try {
-          const intentRes = await createStripeIntent(res.id);
+          const intentRes = await createStripeIntentMutation.mutateAsync(
+            res.id,
+          );
           if (intentRes.clientSecret) {
             setStripeClientSecret(intentRes.clientSecret);
             setStripeOrderId(res.id);
@@ -231,14 +236,14 @@ export function CheckoutPage() {
           }
         } catch (e) {
           console.error("Lỗi tạo intent Stripe", e);
-          toast.error(
-            "Không thể khởi tạo thanh toán Stripe. Vui lòng thử lại sau.",
-          );
           return; // Thêm return để ngừng tiến trình
         }
       }
       setOrderPlaced(true);
-      if (data.paymentMethod === "cod" || (data.paymentMethod as string) === "cash") {
+      if (
+        data.paymentMethod === "cod" ||
+        (data.paymentMethod as string) === "cash"
+      ) {
         clearCart();
       }
 
@@ -376,8 +381,12 @@ export function CheckoutPage() {
                       <div className="flex flex-col items-center gap-3 py-6 text-center border border-dashed border-border rounded-sm bg-muted/40">
                         <MapPin className="w-7 h-7 text-muted-foreground/40" />
                         <div>
-                          <p className="text-sm font-medium text-foreground mb-0.5">No delivery address</p>
-                          <p className="text-xs text-muted-foreground">Please add an address to continue</p>
+                          <p className="text-sm font-medium text-foreground mb-0.5">
+                            No delivery address
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Please add an address to continue
+                          </p>
                         </div>
                         <Link
                           to="/account?view=address"
@@ -522,11 +531,12 @@ export function CheckoutPage() {
                       <p className="font-medium text-ink text-xs line-clamp-2 leading-snug">
                         {item.name}
                       </p>
-                      {item.variantName && item.variantName !== "Default Title" && (
-                        <p className="text-[11px] text-ink-muted mt-0.5">
-                          {item.variantName}
-                        </p>
-                      )}
+                      {item.variantName &&
+                        item.variantName !== "Default Title" && (
+                          <p className="text-[11px] text-ink-muted mt-0.5">
+                            {item.variantName}
+                          </p>
+                        )}
                       <p className="text-sm font-semibold text-ink mt-1">
                         {priceMap[item.variantId] != null
                           ? priceMap[item.variantId].toLocaleString("vi-VN") +
@@ -554,9 +564,7 @@ export function CheckoutPage() {
 
               {(previewData?.tierDiscountAmount ?? 0) > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-brand font-medium">
-                    Tier Discount
-                  </span>
+                  <span className="text-brand font-medium">Tier Discount</span>
                   <span className="font-medium text-brand">
                     -{previewData.tierDiscountAmount.toLocaleString("vi-VN")}₫
                   </span>
@@ -575,9 +583,12 @@ export function CheckoutPage() {
 
               {(previewData?.freeshipDiscountAmount ?? 0) > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-brand font-medium">Freeship Voucher</span>
+                  <span className="text-brand font-medium">
+                    Freeship Voucher
+                  </span>
                   <span className="font-medium text-brand">
-                    -{previewData.freeshipDiscountAmount.toLocaleString("vi-VN")}
+                    -
+                    {previewData.freeshipDiscountAmount.toLocaleString("vi-VN")}
                     ₫
                   </span>
                 </div>
@@ -682,9 +693,7 @@ export function CheckoutPage() {
           // Khi đóng modal thủ công mà chưa thanh toán xong, có thể redirect user về trang quản lý đơn hàng
           // Hoặc để user tự đóng và bấm nút "Thanh toán lại" sau (nếu hỗ trợ)
           setStripeModalOpen(false);
-          toast.info(
-            "You can pay for this order later in the Orders section."
-          );
+          toast.info("You can pay for this order later in the Orders section.");
           navigate("/account?view=orders");
         }}
         clientSecret={stripeClientSecret}

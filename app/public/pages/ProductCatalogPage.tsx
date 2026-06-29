@@ -1,6 +1,6 @@
 import { Search, Filter, X, ChevronDown } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "../components/products/ProductCard";
 import { useProductCatalog } from "../hooks/useProductCatalog";
 import { ProductGridSkeleton } from "@/components/ui/skeleton";
 
@@ -51,10 +51,15 @@ export function ProductCatalogPage() {
           <aside className="hidden lg:block w-64 shrink-0">
             {/* CATEGORY CONTEXT */}
             <div className="mb-6 border-b border-transparent lg:border-border/50 pb-4">
-              <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Category</span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
+                Category
+              </span>
               <h2
                 className="text-2xl font-bold text-foreground mt-1 tracking-tight"
-                style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+                style={{
+                  fontFamily:
+                    "var(--font-display, 'Playfair Display', Georgia, serif)",
+                }}
               >
                 {sidebarTitle}
               </h2>
@@ -293,8 +298,13 @@ export function ProductCatalogPage() {
               <div className="p-4 flex items-center justify-between border-b border-border">
                 <span
                   className="font-bold text-lg"
-                  style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
-                >Filter</span>
+                  style={{
+                    fontFamily:
+                      "var(--font-display, 'Playfair Display', Georgia, serif)",
+                  }}
+                >
+                  Filter
+                </span>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
                   className="p-1.5 rounded-lg hover:bg-muted transition-colors"

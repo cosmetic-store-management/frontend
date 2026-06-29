@@ -16,7 +16,7 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { key: "profile", label: "Personal Info", icon: User },
+  { key: "account", label: "Personal Info", icon: User },
   { key: "tier", label: "Member Tier", icon: Award },
   { key: "orders", label: "My Orders", icon: Package },
   { key: "vouchers", label: "Vouchers", icon: Award },

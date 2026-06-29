@@ -66,12 +66,12 @@
   --red-800: hsl(347, 75%, 28%);
   --red-700: hsl(349, 70%, 38%);
   --red-600: hsl(350, 68%, 45%);
-  --red-500: hsl(352, 72%, 52%);  /* GlowUp Berry — core brand */
+  --red-500: hsl(352, 72%, 52%); /* GlowUp Berry — core brand */
   --red-400: hsl(353, 78%, 63%);
   --red-300: hsl(354, 82%, 74%);
   --red-200: hsl(355, 86%, 84%);
   --red-100: hsl(356, 90%, 92%);
-  --red-50:  hsl(357, 95%, 97%);
+  --red-50: hsl(357, 95%, 97%);
 
   /* ── Warm Neutrals (tinted with brand hue — never pure gray) ── */
   --neutral-950: hsl(345, 8%, 10%);
@@ -84,10 +84,10 @@
   --neutral-300: hsl(345, 6%, 78%);
   --neutral-200: hsl(345, 8%, 88%);
   --neutral-100: hsl(345, 10%, 94%);
-  --neutral-50:  hsl(345, 15%, 97%);
+  --neutral-50: hsl(345, 15%, 97%);
 
   /* ── Global Shadcn Variables ── */
-  --background: hsl(345, 15%, 98%);  /* warm white — never pure #fff */
+  --background: hsl(345, 15%, 98%); /* warm white — never pure #fff */
   --foreground: var(--neutral-950);
   --card: #ffffff;
   --card-foreground: var(--neutral-950);
@@ -112,8 +112,12 @@
 
   /* ── Interactive shadows ── */
   --shadow-interactive: 0 0 0 2px var(--red-200);
-  --shadow-card: 0 4px 16px -4px hsl(345 30% 20% / 0.12), 0 2px 6px -2px hsl(345 30% 20% / 0.08);
-  --shadow-card-hover: 0 12px 32px -8px hsl(345 50% 30% / 0.18), 0 4px 12px -4px hsl(345 30% 20% / 0.1);
+  --shadow-card:
+    0 4px 16px -4px hsl(345 30% 20% / 0.12),
+    0 2px 6px -2px hsl(345 30% 20% / 0.08);
+  --shadow-card-hover:
+    0 12px 32px -8px hsl(345 50% 30% / 0.18),
+    0 4px 12px -4px hsl(345 30% 20% / 0.1);
 }
 
 .dark {
@@ -356,7 +360,6 @@
     @apply bg-surface/90 backdrop-blur-xl border border-border/50 shadow-lg;
   }
 
-
   /* Animated gradient text — use sparingly (hero only) */
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-brand to-rose-500;
@@ -474,9 +477,17 @@
 
 /* ── Badge pop ── */
 @keyframes badgePop {
-  0%   { transform: scale(0.7); opacity: 0; }
-  70%  { transform: scale(1.08); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 @keyframes shimmer {
   from {

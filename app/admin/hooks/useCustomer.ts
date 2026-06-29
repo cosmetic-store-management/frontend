@@ -8,6 +8,8 @@ import {
   updateInternalNotes,
   adjustPoints,
 } from "@/admin/services/user.service";
+import { fetchOrders } from "@/admin/services/order.service";
+import { handleMutationError } from "@/lib/api-helper";
 
 export function useCustomers(params?: {
   page?: number;
@@ -25,6 +27,14 @@ export function useCustomers(params?: {
   return useQuery({
     queryKey: ["customers", params],
     queryFn: () => getCustomers(params),
+  });
+}
+
+export function useCustomerOrders(userId: string) {
+  return useQuery({
+    queryKey: ["admin", "customerOrders", userId],
+    queryFn: () => fetchOrders({ userId, limit: 100 } as any),
+    enabled: !!userId,
   });
 }
 
@@ -47,6 +57,7 @@ export function useDeleteCustomer() {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to delete customer"),
   });
 }
 
@@ -58,6 +69,7 @@ export function useUpdateCustomerStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to update status"),
   });
 }
 

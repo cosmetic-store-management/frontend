@@ -11,8 +11,15 @@ import {
 } from "@/components/ui/select";
 import { useAuditLogs } from "../hooks/useAuditLog";
 import { useAuth } from "@/auth/hooks/useAuth";
-import { PageHeader } from "../components/PageHeader";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PageHeader } from "../components/common/PageHeader";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export function AuditLogPage() {
   const { user } = useAuth();
@@ -39,7 +46,8 @@ export function AuditLogPage() {
   const pagination = data?.pagination;
 
   const handleNext = () => {
-    if (pagination?.nextCursor) setCursors((prev) => [...prev, pagination.nextCursor!]);
+    if (pagination?.nextCursor)
+      setCursors((prev) => [...prev, pagination.nextCursor!]);
   };
   const handlePrev = () => setCursors((prev) => prev.slice(0, -1));
 
@@ -49,11 +57,10 @@ export function AuditLogPage() {
         <div className="p-3 bg-brand-light text-brand rounded-full mb-4">
           <ShieldAlert className="w-8 h-8" />
         </div>
-        <h3 className="text-lg font-bold text-ink">
-          Access Restricted
-        </h3>
+        <h3 className="text-lg font-bold text-ink">Access Restricted</h3>
         <p className="text-sm text-ink-muted mt-2 max-w-md">
-          System Audit Logs are only available for Store Owner accounts. Staff members do not have permission to view this information.
+          System Audit Logs are only available for Store Owner accounts. Staff
+          members do not have permission to view this information.
         </p>
       </div>
     );
@@ -106,10 +113,13 @@ export function AuditLogPage() {
                   className="relative group cursor-pointer flex-1"
                   onClick={() => {
                     try {
-                      if (startDateRef.current && 'showPicker' in HTMLInputElement.prototype) {
+                      if (
+                        startDateRef.current &&
+                        "showPicker" in HTMLInputElement.prototype
+                      ) {
                         startDateRef.current.showPicker();
                       }
-                    } catch (err) { }
+                    } catch (err) {}
                   }}
                 >
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
@@ -127,10 +137,13 @@ export function AuditLogPage() {
                   className="relative group cursor-pointer flex-1"
                   onClick={() => {
                     try {
-                      if (endDateRef.current && 'showPicker' in HTMLInputElement.prototype) {
+                      if (
+                        endDateRef.current &&
+                        "showPicker" in HTMLInputElement.prototype
+                      ) {
                         endDateRef.current.showPicker();
                       }
-                    } catch (err) { }
+                    } catch (err) {}
                   }}
                 >
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
@@ -174,7 +187,10 @@ export function AuditLogPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-8 text-center text-ink-muted">
+                <TableCell
+                  colSpan={5}
+                  className="py-8 text-center text-ink-muted"
+                >
                   <div className="flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-brand" />
                     <span>Loading system logs...</span>
@@ -183,42 +199,44 @@ export function AuditLogPage() {
               </TableRow>
             ) : logs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-8 text-center text-ink-muted">
+                <TableCell
+                  colSpan={5}
+                  className="py-8 text-center text-ink-muted"
+                >
                   No activity logs found
                 </TableCell>
               </TableRow>
             ) : (
               logs.map((log) => (
-                <TableRow
-                  key={log.id}
-                >
+                <TableRow key={log.id}>
                   <TableCell className="font-medium text-ink-muted pl-4">
                     {log.userName}
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase ${["create", "add", "import"].includes(
-                        log.action.toLowerCase(),
-                      )
-                        ? "bg-emerald-100 text-emerald-700"
-                        : ["update", "edit", "modify"].includes(
+                      className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase ${
+                        ["create", "add", "import"].includes(
                           log.action.toLowerCase(),
                         )
-                          ? "bg-amber-100 text-amber-700"
-                          : ["delete", "remove", "destroy"].includes(
-                            log.action.toLowerCase(),
-                          )
-                            ? "bg-red-100 text-red-700"
-                            : ["login", "logout"].includes(
-                              log.action.toLowerCase(),
-                            )
-                              ? "bg-blue-100 text-blue-700"
-                              : ["export", "download"].includes(
+                          ? "bg-emerald-100 text-emerald-700"
+                          : ["update", "edit", "modify"].includes(
                                 log.action.toLowerCase(),
                               )
-                                ? "bg-indigo-100 text-indigo-700"
-                                : "bg-gray-100 text-gray-700"
-                        }`}
+                            ? "bg-amber-100 text-amber-700"
+                            : ["delete", "remove", "destroy"].includes(
+                                  log.action.toLowerCase(),
+                                )
+                              ? "bg-red-100 text-red-700"
+                              : ["login", "logout"].includes(
+                                    log.action.toLowerCase(),
+                                  )
+                                ? "bg-blue-100 text-blue-700"
+                                : ["export", "download"].includes(
+                                      log.action.toLowerCase(),
+                                    )
+                                  ? "bg-indigo-100 text-indigo-700"
+                                  : "bg-gray-100 text-gray-700"
+                      }`}
                     >
                       {log.action}
                     </span>

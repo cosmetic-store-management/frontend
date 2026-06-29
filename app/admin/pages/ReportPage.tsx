@@ -97,8 +97,8 @@ export function ReportPage() {
 
   const voucherBarData = (voucherData || []).map((v) => ({
     name: v.code,
-    "Used": v.usedCount,
-    "Limit": v.usageLimit > 0 ? v.usageLimit : 100, // fallback if unlimited for display
+    Used: v.usedCount,
+    Limit: v.usageLimit > 0 ? v.usageLimit : 100, // fallback if unlimited for display
   }));
 
   const methodNames: Record<string, string> = {
@@ -177,9 +177,7 @@ export function ReportPage() {
               <ShoppingBag className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-medium text-ink-muted">
-                Total Orders
-              </p>
+              <p className="text-xs font-medium text-ink-muted">Total Orders</p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.ordersCount.toLocaleString("vi-VN")} orders
               </h3>
@@ -209,9 +207,7 @@ export function ReportPage() {
               <BarChart3 className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-medium text-ink-muted">
-                Profit
-              </p>
+              <p className="text-xs font-medium text-ink-muted">Profit</p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.profit.toLocaleString("vi-VN")}đ
               </h3>

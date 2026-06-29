@@ -120,6 +120,8 @@ export function deleteProduct(id: string): Promise<void> {
   return apiClient.delete(`/products/admin/${id}`);
 }
 
-export function batchImportProducts(products: any[]): Promise<{ totalProcessed: number }> {
+export function batchImportProducts(
+  products: any[],
+): Promise<{ totalProcessed: number }> {
   return apiClient.post("/products/admin/batch-import", products);
 }

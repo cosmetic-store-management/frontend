@@ -6,13 +6,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
@@ -93,21 +87,15 @@ export function StripePaymentModal({
   amount,
 }: StripePaymentModalProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className="sm:max-w-md"
-        onPointerDownOutside={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle className="text-xl">
-            Thanh toán an toàn qua Stripe
-          </DialogTitle>
-          <DialogDescription>
-            Nhập thông tin thẻ quốc tế của bạn. Đơn hàng của bạn sẽ được xác
-            nhận ngay lập tức sau khi thanh toán thành công.
-          </DialogDescription>
-        </DialogHeader>
-
+    <BaseCrudModal
+      open={isOpen}
+      onOpenChange={onClose}
+      title="Thanh toán an toàn qua Stripe"
+      description="Nhập thông tin thẻ quốc tế của bạn. Đơn hàng của bạn sẽ được xác nhận ngay lập tức sau khi thanh toán thành công."
+      size="md"
+      hideFooter={true}
+    >
+      <div className="-mx-6 px-6">
         {clientSecret ? (
           <Elements
             stripe={stripePromise}
@@ -127,7 +115,7 @@ export function StripePaymentModal({
             </p>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </BaseCrudModal>
   );
 }

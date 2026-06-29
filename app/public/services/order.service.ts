@@ -44,8 +44,6 @@ export function previewOrder(payload: PreviewOrderPayload) {
   return apiClient.post<any>("/checkout/preview", payload);
 }
 
-
-
 export function cancelMyOrder(orderId: string) {
   return apiClient.patch<{ message: string; order: any }>(
     `/orders/${orderId}/cancel`,
@@ -68,4 +66,12 @@ export function createStripeIntent(orderId: string) {
   return apiClient.post<{ clientSecret: string }>(`/payments/create-intent`, {
     orderId,
   });
+}
+
+export function trackOrder(code: string) {
+  return apiClient.get<any>(`/orders/track/${code}`).then((res) => res.order);
+}
+
+export function cancelCheckout(code: string) {
+  return apiClient.patch(`/checkout/${code}/cancel`);
 }

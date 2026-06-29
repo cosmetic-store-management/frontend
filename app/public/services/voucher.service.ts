@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/client";
 
-export interface PublicVoucher {
+export interface Voucher {
   id: string;
   code: string;
   discountType: "percent" | "fixed" | "freeship";
@@ -14,9 +14,9 @@ export interface PublicVoucher {
   isActive: boolean;
 }
 
-export function getPublicVouchers() {
+export function getVouchers() {
   return apiClient
-    .get<{ vouchers: PublicVoucher[] }>("/vouchers/public")
+    .get<{ vouchers: Voucher[] }>("/vouchers/public")
     .then((res) => res.vouchers);
 }
 
@@ -39,14 +39,14 @@ export function getWalletVouchers() {
 export function getAllWalletVouchers() {
   return apiClient.get<{
     message: string;
-    vouchers: (PublicVoucher & {
+    vouchers: (Voucher & {
       status: "valid" | "used" | "expired" | "exhausted";
     })[];
   }>("/vouchers/wallet/all");
 }
 
 export function collectVoucher(code: string) {
-  return apiClient.post<{ message: string; voucher: PublicVoucher }>(
+  return apiClient.post<{ message: string; voucher: Voucher }>(
     `/vouchers/collect/${code}`,
   );
 }

@@ -201,7 +201,8 @@ export function TierPage() {
               </table>
             </div>
             <p className="text-[10px] text-ink-muted px-4 py-2 border-t border-border/50">
-              * Discounts apply automatically at checkout, cannot be combined with promo codes.
+              * Discounts apply automatically at checkout, cannot be combined
+              with promo codes.
             </p>
           </div>
         </>

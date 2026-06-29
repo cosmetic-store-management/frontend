@@ -1,10 +1,18 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Star, Trash2, MessageCircleReply, Loader2, Search, X, MoreVertical } from "lucide-react";
+import {
+  Star,
+  Trash2,
+  MessageCircleReply,
+  Loader2,
+  Search,
+  X,
+  MoreVertical,
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import {
   CardContent,
   CardHeader,
@@ -106,10 +114,11 @@ export function ReviewPage() {
     return Array.from({ length: 5 }).map((_, i) => (
       <Star
         key={i}
-        className={`w-3.5 h-3.5 ${i < rating
-          ? "text-warning fill-warning"
-          : "text-border fill-surface-soft"
-          }`}
+        className={`w-3.5 h-3.5 ${
+          i < rating
+            ? "text-warning fill-warning"
+            : "text-border fill-surface-soft"
+        }`}
       />
     ));
   };
@@ -191,29 +200,19 @@ export function ReviewPage() {
             <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead
-                    className="w-[20%] pl-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
-                  >
+                  <TableHead className="w-[20%] pl-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left">
                     Reviewer
                   </TableHead>
-                  <TableHead
-                    className="w-[25%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center"
-                  >
+                  <TableHead className="w-[25%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                     Product
                   </TableHead>
-                  <TableHead
-                    className="w-[15%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center"
-                  >
+                  <TableHead className="w-[15%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                     Rating
                   </TableHead>
-                  <TableHead
-                    className="w-[30%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center"
-                  >
+                  <TableHead className="w-[30%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                     Content
                   </TableHead>
-                  <TableHead
-                    className="w-[10%] px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                  >
+                  <TableHead className="w-[10%] px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -231,9 +230,7 @@ export function ReviewPage() {
                 )}
                 {!loading &&
                   reviews.map((item) => (
-                    <TableRow
-                      key={item.id}
-                    >
+                    <TableRow key={item.id}>
                       <TableCell className="px-4 py-3.5 align-middle">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center overflow-hidden shrink-0">
@@ -350,7 +347,7 @@ export function ReviewPage() {
                                 Reply
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                className="cursor-pointer rounded-sm text-danger focus:bg-danger/5 focus:text-danger"
+                                className="cursor-pointer rounded-sm text-danger focus:bg-danger/10 focus:text-danger data-[highlighted]:bg-danger/10 data-[highlighted]:text-danger"
                                 onClick={() => {
                                   clearError();
                                   setDeleteModal(item);
@@ -418,7 +415,6 @@ export function ReviewPage() {
         open={deleteModal !== null}
         title="Delete Review"
         description="Are you sure you want to delete this review? This action cannot be undone."
-        confirmText="Confirm Delete"
         loading={isDeleting}
         submitError={null}
         onClose={() => setDeleteModal(null)}
@@ -434,7 +430,8 @@ export function ReviewPage() {
           <DialogHeader className="pr-6">
             <DialogTitle>Reply to Review</DialogTitle>
             <DialogDescription>
-              Write your response as the store. This reply will be visible publicly on the product page.
+              Write your response as the store. This reply will be visible
+              publicly on the product page.
             </DialogDescription>
           </DialogHeader>
 
@@ -486,10 +483,7 @@ export function ReviewPage() {
             </div>
 
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setReplyModal(null)}
-              >
+              <Button variant="outline" onClick={() => setReplyModal(null)}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isReplying}>

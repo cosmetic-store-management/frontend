@@ -19,10 +19,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import { toast } from "@/lib/toast";
-import { FlashSaleEditor } from "../components/FlashSaleEditor";
+import { FlashSaleEditor } from "../components/flash-sale/FlashSaleEditor";
 import type { FlashSaleFormData } from "../schemas/flash-sale.schema";
+import DeleteModal from "@/components/ui/delete-modal";
 
 interface FlashSaleItem {
   productId: string;
@@ -54,8 +55,7 @@ const getStatusLabel = (fs: FlashSale) => {
   const end = new Date(fs.endTime).getTime();
   if (now < start)
     return { label: "Upcoming", color: "bg-blue-100 text-blue-700" };
-  if (now > end)
-    return { label: "Ended", color: "bg-red-100 text-red-700" };
+  if (now > end) return { label: "Ended", color: "bg-red-100 text-red-700" };
   return { label: "Ongoing", color: "bg-green-100 text-green-700" };
 };
 
@@ -67,6 +67,7 @@ export function FlashSalePage() {
     (FlashSaleFormData & { id?: string }) | undefined
   >(undefined);
   const [search, setSearch] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin_flash_sales", page],
@@ -82,6 +83,7 @@ export function FlashSalePage() {
     mutationFn: (id: string) => apiClient.delete(`/flash-sales/${id}`),
     onSuccess: () => {
       toast.success("Deleted successfully!");
+      setDeleteTargetId(null);
       queryClient.invalidateQueries({ queryKey: ["admin_flash_sales"] });
     },
   });
@@ -97,7 +99,9 @@ export function FlashSalePage() {
     onError: (err: any) => {
       console.error("CREATE FLASHSALE ERROR:", err.response?.data);
       toast.error(
-        err.response?.data?.message || err.message || "Error creating Flash Sale",
+        err.response?.data?.message ||
+          err.message ||
+          "Error creating Flash Sale",
       );
     },
   });
@@ -113,7 +117,9 @@ export function FlashSalePage() {
     onError: (err: any) => {
       console.error("UPDATE FLASHSALE ERROR:", err.response?.data);
       toast.error(
-        err.response?.data?.message || err.message || "Error updating Flash Sale",
+        err.response?.data?.message ||
+          err.message ||
+          "Error updating Flash Sale",
       );
     },
   });
@@ -195,10 +201,14 @@ export function FlashSalePage() {
             <Table className="table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[20%] text-left pl-4">Program Name</TableHead>
+                  <TableHead className="w-[20%] text-left pl-4">
+                    Program Name
+                  </TableHead>
                   <TableHead className="w-[35%] text-center">Time</TableHead>
                   <TableHead className="w-[15%] text-center">Status</TableHead>
-                  <TableHead className="w-[20%] text-center">Products</TableHead>
+                  <TableHead className="w-[20%] text-center">
+                    Products
+                  </TableHead>
                   <TableHead className="w-[10%] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -223,14 +233,17 @@ export function FlashSalePage() {
                 ) : (
                   filteredFlashSales.map((fs) => (
                     <TableRow key={fs.id}>
-                      <TableCell className="font-medium pl-4">{fs.name}</TableCell>
+                      <TableCell className="font-medium pl-4">
+                        {fs.name}
+                      </TableCell>
                       <TableCell className="text-center whitespace-nowrap">
                         {formatDate(fs.startTime)} - {formatDate(fs.endTime)}
                       </TableCell>
                       <TableCell className="text-center">
                         <span
-                          className={`px-2 rounded-sm text-xs font-medium uppercase ${getStatusLabel(fs).color
-                            }`}
+                          className={`px-2 rounded-sm text-xs font-medium uppercase ${
+                            getStatusLabel(fs).color
+                          }`}
                         >
                           {getStatusLabel(fs).label}
                         </span>
@@ -259,11 +272,7 @@ export function FlashSalePage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
-                              onClick={() => {
-                                if (confirm("Delete this program?")) {
-                                  deleteMutation.mutate(fs.id);
-                                }
-                              }}
+                              onClick={() => setDeleteTargetId(fs.id)}
                             >
                               <Trash2 className="w-4 h-4 mr-2.5" />
                               Delete
@@ -277,6 +286,18 @@ export function FlashSalePage() {
               </TableBody>
             </Table>
           </div>
+          <DeleteModal
+            open={!!deleteTargetId}
+            loading={deleteMutation.isPending}
+            title="Confirm Delete"
+            description="Are you sure you want to delete this flash sale program? This action cannot be undone."
+            onClose={() => setDeleteTargetId(null)}
+            onConfirm={() => {
+              if (deleteTargetId) {
+                deleteMutation.mutate(deleteTargetId);
+              }
+            }}
+          />
         </>
       ) : (
         <FlashSaleEditor

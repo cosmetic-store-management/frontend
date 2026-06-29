@@ -1,41 +1,29 @@
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/lib/toast";
+import { useUpdateInternalNotes } from "../../hooks/useCustomer";
 import type { Customer } from "@/admin/services/user.service";
 import {
   updateNotesSchema,
   type UpdateNotesFormData,
 } from "../../schemas/customer.schema";
 
-type CustomerNotesModalProps = {
-  customer: Customer | null;
+interface CustomerNotesModalProps {
+  open: boolean;
   onClose: () => void;
-  onSubmit: (data: UpdateNotesFormData) => Promise<void>;
-  loading: boolean;
-};
+  customer: Customer | null;
+}
 
-export function CustomerNotesModal({
-  customer,
-  onClose,
-  onSubmit,
-  loading,
-}: CustomerNotesModalProps) {
-  const open = !!customer;
+export function CustomerNotesModal({ open, onClose, customer }: CustomerNotesModalProps) {
+  const updateNotesMutation = useUpdateInternalNotes();
 
   const {
-    control,
+    register,
     handleSubmit,
     reset,
     formState: { errors },
@@ -45,57 +33,59 @@ export function CustomerNotesModal({
   });
 
   useEffect(() => {
-    if (open && customer) {
+    if (customer && open) {
       reset({ internalNotes: customer.internalNotes || "" });
     }
-  }, [open, customer, reset]);
+  }, [customer, open, reset]);
+
+  const onSubmit = async (data: UpdateNotesFormData) => {
+    if (!customer) return;
+    try {
+      await updateNotesMutation.mutateAsync({
+        id: customer.id,
+        internalNotes: data.internalNotes || "",
+      });
+      toast.success("Internal notes updated successfully!");
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message || "Action failed!");
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-125">
-        <DialogHeader className="pr-6">
-          <DialogTitle>Ghi chú nội bộ</DialogTitle>
-          <DialogDescription>
-            Ghi chú về sở thích, thói quen mua sắm, hoặc các vấn đề của khách
-            hàng.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Label htmlFor="internalNotes" className="sr-only">
-            Nội dung ghi chú
-          </Label>
-          <Controller
-            control={control}
-            name="internalNotes"
-            render={({ field }) => (
-              <Textarea
-                {...field}
-                id="internalNotes"
-                placeholder="Ví dụ: Khách hay mua son màu đỏ, từng phàn nàn về giao hàng..."
-                rows={5}
-                className="resize-none focus-visible:ring-brand"
-              />
-            )}
+    <BaseCrudModal
+      open={open}
+      onOpenChange={(o) => !o && onClose()}
+      title="Internal Notes"
+      description="Add private notes about this customer (visible to staff only)."
+      size="md"
+      hideFooter={true}
+    >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
+        <div className="space-y-2">
+          <Label htmlFor="internalNotes">Notes</Label>
+          <Textarea
+            {...register("internalNotes")}
+            id="internalNotes"
+            rows={5}
+            placeholder="E.g., Prefers evening deliveries..."
+            className="focus-visible:ring-brand resize-none"
           />
           {errors.internalNotes && (
             <p className="text-xs text-danger">
               {errors.internalNotes.message}
             </p>
           )}
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Hủy bỏ
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                "Lưu ghi chú"
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+        <div className="flex justify-end gap-2 pt-4">
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" disabled={updateNotesMutation.isPending}>
+            {updateNotesMutation.isPending ? "Saving..." : "Save Notes"}
+          </Button>
+        </div>
+      </form>
+    </BaseCrudModal>
   );
 }

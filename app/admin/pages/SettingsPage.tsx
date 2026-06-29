@@ -11,7 +11,7 @@ import {
   Lock,
   Save,
   Palette,
-  Share2
+  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,18 +26,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/lib/toast";
-import {
-  useSettings,
-  useSaveSettings,
-} from "../hooks/useSettings";
+import { useSettings, useSaveSettings } from "../hooks/useSettings";
+import { useBanks } from "@/public/hooks/useBank";
 import { useChangePassword } from "@/auth/hooks/useAuth";
 import { useAuthStore } from "@/auth/store/auth.store";
 import {
   settingsSchema,
-  profileSchema,
+  accountSchema,
   passwordSchema,
   type SettingsFormData,
-  type ProfileFormData,
+  type AccountFormData,
   type PasswordFormData,
 } from "../schemas/settings.schema";
 
@@ -45,19 +43,14 @@ export function SettingsPage() {
   const { data: settings, isLoading } = useSettings();
   const saveSettingsMutation = useSaveSettings();
   const changePasswordMutation = useChangePassword();
-  
+
   const { user } = useAuthStore();
 
-  const { data: banksData } = useQuery({
-    queryKey: ["vietqr-banks"],
-    queryFn: async () => {
-      const res = await fetch("https://api.vietqr.io/v2/banks");
-      return res.json();
-    },
-  });
-  const banks = banksData?.data || [];
+  const { data: banks = [] } = useBanks();
 
-  const [activeTab, setActiveTab] = useState<"general" | "branding" | "payment" | "security">("general");
+  const [activeTab, setActiveTab] = useState<
+    "general" | "branding" | "payment" | "security"
+  >("general");
 
   // Form Cài đặt chung & Thanh toán
   const {
@@ -88,11 +81,11 @@ export function SettingsPage() {
 
   // Form Thông tin cá nhân
   const {
-    control: _profileControl,
-    handleSubmit: _handleProfileSubmit,
-    reset: resetProfile,
-  } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema) as any,
+    control: _accountControl,
+    handleSubmit: _handleAccountSubmit,
+    reset: resetAccount,
+  } = useForm<AccountFormData>({
+    resolver: zodResolver(accountSchema) as any,
     defaultValues: {
       name: "",
       email: "",
@@ -151,13 +144,13 @@ export function SettingsPage() {
 
   useEffect(() => {
     if (user) {
-      resetProfile({
+      resetAccount({
         name: user.name || "",
         email: user.email || "",
         phone: user.phone || "",
       });
     }
-  }, [user, resetProfile]);
+  }, [user, resetAccount]);
 
   const onSubmitAll = async (data: SettingsFormData) => {
     try {
@@ -202,7 +195,7 @@ export function SettingsPage() {
           System Settings
         </h1>
         <p className="text-sm text-ink-muted mt-1">
-          Manage general settings, payment gateways, and profile
+          Manage general settings, payment gateways, and account
         </p>
       </div>
 
@@ -216,7 +209,11 @@ export function SettingsPage() {
                 ? "text-white font-medium shadow-sm"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
-            style={activeTab === "general" ? { background: "hsl(352, 72%, 52%)" } : {}}
+            style={
+              activeTab === "general"
+                ? { background: "hsl(352, 72%, 52%)" }
+                : {}
+            }
           >
             <Settings className="w-4 h-4" /> General
           </button>
@@ -227,7 +224,11 @@ export function SettingsPage() {
                 ? "text-white font-medium shadow-sm"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
-            style={activeTab === "branding" ? { background: "hsl(352, 72%, 52%)" } : {}}
+            style={
+              activeTab === "branding"
+                ? { background: "hsl(352, 72%, 52%)" }
+                : {}
+            }
           >
             <Palette className="w-4 h-4" /> Branding
           </button>
@@ -239,7 +240,11 @@ export function SettingsPage() {
                 ? "text-white font-medium shadow-sm"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
-            style={activeTab === "payment" ? { background: "hsl(352, 72%, 52%)" } : {}}
+            style={
+              activeTab === "payment"
+                ? { background: "hsl(352, 72%, 52%)" }
+                : {}
+            }
           >
             <CreditCard className="w-4 h-4" /> Payment
           </button>
@@ -250,32 +255,46 @@ export function SettingsPage() {
                 ? "text-white font-medium shadow-sm"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
-            style={activeTab === "security" ? { background: "hsl(352, 72%, 52%)" } : {}}
+            style={
+              activeTab === "security"
+                ? { background: "hsl(352, 72%, 52%)" }
+                : {}
+            }
           >
-            <Shield className="w-4 h-4" /> Profile & Security
+            <Shield className="w-4 h-4" /> Account & Security
           </button>
         </div>
 
         {/* Content Area */}
         <div className="md:col-span-3 space-y-6">
-          {(activeTab === "general" || activeTab === "branding" || activeTab === "payment") && (
-            <form onSubmit={handleSubmit(onSubmitAll, onError)} className="space-y-6">
-              
+          {(activeTab === "general" ||
+            activeTab === "branding" ||
+            activeTab === "payment") && (
+            <form
+              onSubmit={handleSubmit(onSubmitAll, onError)}
+              className="space-y-6"
+            >
               {activeTab === "general" && (
                 <>
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Store className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Store Information</h2>
+                      <h2 className="text-lg font-bold text-ink">
+                        Store Information
+                      </h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
-                        <Label>Store Name <span className="text-danger">*</span></Label>
+                        <Label>
+                          Store Name <span className="text-danger">*</span>
+                        </Label>
                         <Controller
                           name="storeName"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Store Name" />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Store Name" />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -283,7 +302,9 @@ export function SettingsPage() {
                         <Controller
                           name="phone"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="09xxxx" />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="09xxxx" />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -291,7 +312,9 @@ export function SettingsPage() {
                         <Controller
                           name="email"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="email@shop.com" />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="email@shop.com" />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -299,7 +322,9 @@ export function SettingsPage() {
                         <Controller
                           name="taxId"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Tax ID" />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Tax ID" />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -307,7 +332,9 @@ export function SettingsPage() {
                         <Controller
                           name="storeAddress"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="123 Street..." />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="123 Street..." />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -315,7 +342,9 @@ export function SettingsPage() {
                         <Controller
                           name="workingHours"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="08:00 - 22:00" />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="08:00 - 22:00" />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -331,7 +360,9 @@ export function SettingsPage() {
                         <Controller
                           name="description"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Description..." />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Description..." />
+                          )}
                         />
                       </div>
                     </div>
@@ -378,7 +409,9 @@ export function SettingsPage() {
                         <Controller
                           name="seoTitle"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="Website title" />}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Website title" />
+                          )}
                         />
                       </div>
                       <div className="md:col-span-2 space-y-2">
@@ -386,7 +419,13 @@ export function SettingsPage() {
                         <Controller
                           name="seoDescription"
                           control={control}
-                          render={({ field }) => <Textarea {...field} placeholder="Search engine description" rows={2} />}
+                          render={({ field }) => (
+                            <Textarea
+                              {...field}
+                              placeholder="Search engine description"
+                              rows={2}
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -395,7 +434,9 @@ export function SettingsPage() {
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Share2 className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Social Media</h2>
+                      <h2 className="text-lg font-bold text-ink">
+                        Social Media
+                      </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
@@ -403,7 +444,12 @@ export function SettingsPage() {
                         <Controller
                           name="facebookUrl"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="https://facebook.com/..." />}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              placeholder="https://facebook.com/..."
+                            />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -411,7 +457,12 @@ export function SettingsPage() {
                         <Controller
                           name="instagramUrl"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="https://instagram.com/..." />}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              placeholder="https://instagram.com/..."
+                            />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -419,7 +470,12 @@ export function SettingsPage() {
                         <Controller
                           name="tiktokUrl"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="https://tiktok.com/..." />}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              placeholder="https://tiktok.com/..."
+                            />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -427,7 +483,12 @@ export function SettingsPage() {
                         <Controller
                           name="youtubeUrl"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="https://youtube.com/..." />}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              placeholder="https://youtube.com/..."
+                            />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -435,7 +496,12 @@ export function SettingsPage() {
                         <Controller
                           name="zaloUrl"
                           control={control}
-                          render={({ field }) => <Input {...field} placeholder="https://zalo.me/..." />}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              placeholder="https://zalo.me/..."
+                            />
+                          )}
                         />
                       </div>
                     </div>
@@ -448,7 +514,9 @@ export function SettingsPage() {
                   <div className="premium-card p-6 space-y-6">
                     <div className="flex items-center gap-2 border-b border-border pb-4">
                       <Store className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Reward Points</h2>
+                      <h2 className="text-lg font-bold text-ink">
+                        Reward Points
+                      </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="space-y-2">
@@ -456,7 +524,9 @@ export function SettingsPage() {
                         <Controller
                           name="pointsEarnRate"
                           control={control}
-                          render={({ field }) => <Input type="number" {...field} />}
+                          render={({ field }) => (
+                            <Input type="number" {...field} />
+                          )}
                         />
                       </div>
                       <div className="space-y-2">
@@ -464,7 +534,9 @@ export function SettingsPage() {
                         <Controller
                           name="maxPointsPct"
                           control={control}
-                          render={({ field }) => <Input type="number" {...field} />}
+                          render={({ field }) => (
+                            <Input type="number" {...field} />
+                          )}
                         />
                       </div>
                     </div>
@@ -474,56 +546,74 @@ export function SettingsPage() {
 
               {activeTab === "payment" && (
                 <div className="space-y-6">
-
                   {/* Bank Transfer */}
                   <div className="premium-card p-5">
                     <div className="flex items-center gap-2 border-b border-border pb-4 mb-4">
                       <CreditCard className="w-5 h-5 text-brand" />
-                      <h2 className="text-lg font-bold text-ink">Bank Transfer</h2>
+                      <h2 className="text-lg font-bold text-ink">
+                        Bank Transfer
+                      </h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 animate-fade-in">
-                        <div className="space-y-2">
-                          <Label>Bank</Label>
-                          <Controller
-                            name="bankName"
-                            control={control}
-                            render={({ field }) => (
-                              <Select onValueChange={field.onChange} value={field.value}>
-                                <SelectTrigger className="w-full h-10 [&>span]:w-full [&>span]:overflow-hidden [&>span]:block">
-                                  <SelectValue placeholder="Select bank" />
-                                </SelectTrigger>
-                                <SelectContent className="max-h-75">
-                                  {banks.map((bank: any) => (
-                                    <SelectItem key={bank.bin} value={bank.bin} className="w-full">
-                                      <div className="flex items-center gap-2 w-full overflow-hidden">
-                                        <img src={bank.logo} alt={bank.shortName} className="w-5 h-5 object-contain shrink-0" />
-                                        <span className="truncate block text-left">{bank.shortName} - {bank.name}</span>
-                                      </div>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            )}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Account Number</Label>
-                          <Controller
-                            name="bankAccountNumber"
-                            control={control}
-                            render={({ field }) => <Input {...field} placeholder="Account Number" />}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Account Name</Label>
-                          <Controller
-                            name="bankAccountName"
-                            control={control}
-                            render={({ field }) => <Input {...field} placeholder="Account Name" />}
-                          />
-                        </div>
+                      <div className="space-y-2">
+                        <Label>Bank</Label>
+                        <Controller
+                          name="bankName"
+                          control={control}
+                          render={({ field }) => (
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <SelectTrigger className="w-full h-10 [&>span]:w-full [&>span]:overflow-hidden [&>span]:block">
+                                <SelectValue placeholder="Select bank" />
+                              </SelectTrigger>
+                              <SelectContent className="max-h-75">
+                                {banks.map((bank: any) => (
+                                  <SelectItem
+                                    key={bank.bin}
+                                    value={bank.bin}
+                                    className="w-full"
+                                  >
+                                    <div className="flex items-center gap-2 w-full overflow-hidden">
+                                      <img
+                                        src={bank.logo}
+                                        alt={bank.shortName}
+                                        className="w-5 h-5 object-contain shrink-0"
+                                      />
+                                      <span className="truncate block text-left">
+                                        {bank.shortName} - {bank.name}
+                                      </span>
+                                    </div>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
                       </div>
+                      <div className="space-y-2">
+                        <Label>Account Number</Label>
+                        <Controller
+                          name="bankAccountNumber"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Account Number" />
+                          )}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Account Name</Label>
+                        <Controller
+                          name="bankAccountName"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Account Name" />
+                          )}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -547,10 +637,15 @@ export function SettingsPage() {
 
           {activeTab === "security" && (
             <div className="space-y-6">
-              <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} className="premium-card p-6 space-y-6">
+              <form
+                onSubmit={handlePasswordSubmit(onPasswordSubmit)}
+                className="premium-card p-6 space-y-6"
+              >
                 <div className="flex items-center gap-2 border-b border-border pb-4">
                   <Lock className="w-5 h-5 text-brand" />
-                  <h2 className="text-lg font-bold text-ink">Change Password</h2>
+                  <h2 className="text-lg font-bold text-ink">
+                    Change Password
+                  </h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2 md:col-span-2">
@@ -558,32 +653,58 @@ export function SettingsPage() {
                     <Controller
                       name="currentPassword"
                       control={passwordControl}
-                      render={({ field }) => <Input {...field} type="password" />}
+                      render={({ field }) => (
+                        <Input {...field} type="password" />
+                      )}
                     />
-                    {passwordErrors.currentPassword && <span className="text-xs text-danger">{passwordErrors.currentPassword.message}</span>}
+                    {passwordErrors.currentPassword && (
+                      <span className="text-xs text-danger">
+                        {passwordErrors.currentPassword.message}
+                      </span>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>New Password</Label>
                     <Controller
                       name="newPassword"
                       control={passwordControl}
-                      render={({ field }) => <Input {...field} type="password" />}
+                      render={({ field }) => (
+                        <Input {...field} type="password" />
+                      )}
                     />
-                    {passwordErrors.newPassword && <span className="text-xs text-danger">{passwordErrors.newPassword.message}</span>}
+                    {passwordErrors.newPassword && (
+                      <span className="text-xs text-danger">
+                        {passwordErrors.newPassword.message}
+                      </span>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>Confirm New Password</Label>
                     <Controller
                       name="confirmPassword"
                       control={passwordControl}
-                      render={({ field }) => <Input {...field} type="password" />}
+                      render={({ field }) => (
+                        <Input {...field} type="password" />
+                      )}
                     />
-                    {passwordErrors.confirmPassword && <span className="text-xs text-danger">{passwordErrors.confirmPassword.message}</span>}
+                    {passwordErrors.confirmPassword && (
+                      <span className="text-xs text-danger">
+                        {passwordErrors.confirmPassword.message}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex justify-end">
-                  <Button type="submit" disabled={changePasswordMutation.isPending} className="gap-2 px-6">
-                    {changePasswordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  <Button
+                    type="submit"
+                    disabled={changePasswordMutation.isPending}
+                    className="gap-2 px-6"
+                  >
+                    {changePasswordMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4" />
+                    )}
                     Change Password
                   </Button>
                 </div>

@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import {
   useBrands,
   useCreateBrand,
@@ -230,10 +230,11 @@ export function BrandPage() {
                   key={val}
                   type="button"
                   onClick={() => setStatusFilter(val)}
-                  className={`inline-flex h-9 items-center gap-1.5 border px-3.5 text-xs font-semibold transition-colors rounded-sm ${statusFilter === val
+                  className={`inline-flex h-9 items-center gap-1.5 border px-3.5 text-xs font-semibold transition-colors rounded-sm ${
+                    statusFilter === val
                       ? "border-brand bg-brand/10 text-brand"
                       : "border-border bg-surface text-ink-muted hover:border-brand hover:text-brand"
-                    }`}
+                  }`}
                 >
                   {val === "active" && <CheckCircle2 className="w-3.5 h-3.5" />}
                   {val === "inactive" && <XCircle className="w-3.5 h-3.5" />}
@@ -306,7 +307,7 @@ export function BrandPage() {
                   <TableHead className="py-4 px-5 w-[15%] text-left">
                     Origin
                   </TableHead>
-                  <TableHead className="py-4 px-5 w-[30%] text-left">
+                  <TableHead className="py-4 px-5 w-[30%] text-center">
                     Description
                   </TableHead>
                   <TableHead className="py-4 px-5 text-center w-[12%]">
@@ -380,10 +381,11 @@ export function BrandPage() {
                     {/* Product count — industry standard (dynamic, per-brand) */}
                     <TableCell className="py-3.5 px-5 text-center">
                       <span
-                        className={`inline-flex items-center gap-1 text-sm font-semibold tabular-nums ${(brand.productCount ?? 0) > 0
+                        className={`inline-flex items-center gap-1 text-sm font-semibold tabular-nums ${
+                          (brand.productCount ?? 0) > 0
                             ? "text-ink"
                             : "text-ink-muted/40"
-                          }`}
+                        }`}
                       >
                         <Package className="w-3.5 h-3.5 opacity-60" />
                         {brand.productCount ?? 0}
@@ -525,7 +527,8 @@ export function BrandPage() {
                   {editing.slug}
                 </code>
                 {" · "}
-                <span className="text-ink">{editing.productCount}</span> linked products
+                <span className="text-ink">{editing.productCount}</span> linked
+                products
               </p>
             )}
           </DialogHeader>
@@ -540,7 +543,10 @@ export function BrandPage() {
                 <div className="md:col-span-2 space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
-                      <Label htmlFor="bName" className="text-sm font-semibold text-ink">
+                      <Label
+                        htmlFor="bName"
+                        className="text-sm font-semibold text-ink"
+                      >
                         Brand Name <span className="text-brand">*</span>
                       </Label>
                       <Controller
@@ -563,7 +569,10 @@ export function BrandPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <Label htmlFor="bCountry" className="text-sm font-semibold text-ink">
+                      <Label
+                        htmlFor="bCountry"
+                        className="text-sm font-semibold text-ink"
+                      >
                         Country / Origin
                       </Label>
                       <Controller
@@ -587,7 +596,10 @@ export function BrandPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="bDesc" className="text-sm font-semibold text-ink">
+                    <Label
+                      htmlFor="bDesc"
+                      className="text-sm font-semibold text-ink"
+                    >
                       Brand Description
                     </Label>
                     <Controller
@@ -632,7 +644,10 @@ export function BrandPage() {
 
                   <div className="p-4 rounded-sm border border-border bg-bg/50 space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="bActive" className="text-sm font-semibold text-ink">
+                      <Label
+                        htmlFor="bActive"
+                        className="text-sm font-semibold text-ink"
+                      >
                         Publicly Visible
                       </Label>
                       <Controller
@@ -648,7 +663,8 @@ export function BrandPage() {
                       />
                     </div>
                     <p className="text-xs text-ink-muted">
-                      Hiding a brand removes it from sidebar filters — products are not hidden.
+                      Hiding a brand removes it from sidebar filters — products
+                      are not hidden.
                     </p>
                   </div>
                 </div>
@@ -696,7 +712,8 @@ export function BrandPage() {
                 <span className="flex items-start gap-1.5 mt-2 p-2.5 rounded-sm bg-danger/5 border border-danger/20 text-danger text-xs font-medium">
                   This brand has{" "}
                   <strong>{deleteTarget.productCount} products</strong>. The
-                  system will reject this — you must move or delete the products first.
+                  system will reject this — you must move or delete the products
+                  first.
                 </span>
               )}
               {deleteTarget && (deleteTarget.productCount ?? 0) === 0 && (

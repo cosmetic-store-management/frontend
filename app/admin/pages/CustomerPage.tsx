@@ -42,7 +42,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "@/lib/toast";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import {
   useCustomers,
   useDeleteCustomer,
@@ -98,7 +98,11 @@ import {
   type AdjustPointsFormData,
 } from "../schemas/customer.schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { CustomerFormModal } from "../components/customers/CustomerFormModal";
+import { CustomerOrderHistoryModal } from "../components/customers/CustomerOrderHistoryModal";
+import { CustomerLockModal } from "../components/customers/CustomerLockModal";
+import { CustomerNotesModal } from "../components/customers/CustomerNotesModal";
+import { CustomerPointsModal } from "../components/customers/CustomerPointsModal";
 
 const getTierInfo = (points: number) => {
   if (points >= 10000)
@@ -173,8 +177,7 @@ export function CustomerPage() {
     sortBy,
   ]);
 
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [lockTarget, setLockTarget] = useState<{
     id: string;
@@ -186,44 +189,7 @@ export function CustomerPage() {
   const [notesTarget, setNotesTarget] = useState<Customer | null>(null);
   const [pointsTarget, setPointsTarget] = useState<Customer | null>(null);
 
-  const {
-    control: customerControl,
-    handleSubmit: handleCustomerSubmit,
-    reset: resetCustomerForm,
-    formState: { errors: customerErrors },
-  } = useForm<UpdateCustomerFormData>({
-    resolver: zodResolver(updateCustomerSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
-      province: "",
-      district: "",
-      ward: "",
-      street: "",
-    },
-  });
 
-  const {
-    control: notesControl,
-    handleSubmit: handleNotesSubmit,
-    reset: resetNotesForm,
-    formState: { errors: notesErrors },
-  } = useForm<UpdateNotesFormData>({
-    resolver: zodResolver(updateNotesSchema),
-    defaultValues: { internalNotes: "" },
-  });
-
-  const {
-    control: pointsControl,
-    handleSubmit: handlePointsSubmit,
-    reset: resetPointsForm,
-    formState: { errors: pointsErrors },
-  } = useForm<AdjustPointsFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(adjustPointsSchema) as any,
-    defaultValues: { pointsChanged: 0, reason: "" },
-  });
 
   const { data, isLoading } = useCustomers({
     page,
@@ -246,11 +212,7 @@ export function CustomerPage() {
   // Pagination — backend returns { totalPages, page, totalDocs }
   const totalPages = (data as any)?.totalPages ?? 1;
   const metaPage = (data as any)?.page ?? page;
-  const updateCustomerMutation = useUpdateCustomer();
   const deleteCustomerMutation = useDeleteCustomer();
-  const updateStatusMutation = useUpdateCustomerStatus();
-  const updateNotesMutation = useUpdateInternalNotes();
-  const adjustPointsMutation = useAdjustPoints();
 
   // Fetch orders for the selected customer
   const { data: orderData, isLoading: isOrdersLoading } = useQuery({
@@ -265,34 +227,7 @@ export function CustomerPage() {
 
   // Removing openCreate since adding customers manually is disabled.
 
-  const openEdit = (cust: Customer) => {
-    setEditingId(cust.id);
-    resetCustomerForm({
-      name: cust.name,
-      email: cust.email,
-      phone: cust.phone || "",
-      province: cust.province || "",
-      district: cust.district || "",
-      ward: cust.ward || "",
-      street: cust.street || "",
-    });
-    setIsFormOpen(true);
-  };
 
-  const onSubmitCustomerForm = async (data: UpdateCustomerFormData) => {
-    try {
-      if (editingId) {
-        await updateCustomerMutation.mutateAsync({
-          id: editingId,
-          data,
-        });
-        toast.success("Customer information updated successfully!");
-      }
-      setIsFormOpen(false);
-    } catch (err: any) {
-      toast.error(err.message || "Error saving customer information!");
-    }
-  };
 
   const confirmDelete = async () => {
     if (!deleteTargetId) return;
@@ -302,53 +237,6 @@ export function CustomerPage() {
       setDeleteTargetId(null);
     } catch (err: any) {
       toast.error(err.message || "Could not delete customer!");
-    }
-  };
-
-  const confirmToggleStatus = async () => {
-    if (!lockTarget) return;
-    try {
-      await updateStatusMutation.mutateAsync({
-        id: lockTarget.id,
-        isActive: !lockTarget.isActive,
-      });
-      toast.success(
-        lockTarget.isActive
-          ? "Customer account locked"
-          : "Customer account unlocked",
-      );
-      setLockTarget(null);
-    } catch (err: any) {
-      toast.error(err.message || "Error updating status");
-    }
-  };
-
-  const onSubmitNotesForm = async (data: UpdateNotesFormData) => {
-    if (!notesTarget) return;
-    try {
-      await updateNotesMutation.mutateAsync({
-        id: notesTarget.id,
-        internalNotes: data.internalNotes || "",
-      });
-      toast.success("Notes updated successfully!");
-      setNotesTarget(null);
-    } catch (err: any) {
-      toast.error(err.message || "Error updating notes!");
-    }
-  };
-
-  const onSubmitPointsForm = async (data: AdjustPointsFormData) => {
-    if (!pointsTarget) return;
-    try {
-      await adjustPointsMutation.mutateAsync({
-        id: pointsTarget.id,
-        pointsChanged: Number(data.pointsChanged),
-        reason: data.reason,
-      });
-      toast.success("Points updated successfully!");
-      setPointsTarget(null);
-    } catch (err: any) {
-      toast.error(err.message || "Error updating points!");
     }
   };
 
@@ -653,7 +541,7 @@ export function CustomerPage() {
                               >
                                 <DropdownMenuItem
                                   className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => openEdit(cust)}
+                                  onClick={() => setEditingCustomer(cust)}
                                 >
                                   <Edit2 className="w-4 h-4 mr-2.5" />
                                   Edit Info
@@ -668,25 +556,14 @@ export function CustomerPage() {
                                 <DropdownMenuSeparator className="bg-border" />
                                 <DropdownMenuItem
                                   className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => {
-                                    setNotesTarget(cust);
-                                    resetNotesForm({
-                                      internalNotes: cust.internalNotes || "",
-                                    });
-                                  }}
+                                  onClick={() => setNotesTarget(cust)}
                                 >
                                   <StickyNote className="w-4 h-4 mr-2.5" />
                                   Internal Notes
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => {
-                                    setPointsTarget(cust);
-                                    resetPointsForm({
-                                      pointsChanged: 0,
-                                      reason: "",
-                                    });
-                                  }}
+                                  onClick={() => setPointsTarget(cust)}
                                 >
                                   <Coins className="w-4 h-4 mr-2.5" />
                                   Adjust Points
@@ -717,7 +594,7 @@ export function CustomerPage() {
                                   className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
                                 >
                                   <Trash2 className="w-4 h-4 mr-2.5" />
-                                  Delete Customer
+                                  Delete
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -761,298 +638,31 @@ export function CustomerPage() {
         </CardContent>
       </div>
 
-      {/* Form Dialog */}
-      <Dialog
-        open={isFormOpen}
-        onOpenChange={(o) => !o && setIsFormOpen(false)}
-      >
-        <DialogContent className="sm:max-w-150">
-          <DialogHeader className="pr-6">
-            <DialogTitle>
-              {editingId ? "Update Information" : "Add New Customer"}
-            </DialogTitle>
-            <DialogDescription>
-              Enter the customer's personal and contact information.
-            </DialogDescription>
-          </DialogHeader>
-
-          <form
-            onSubmit={handleCustomerSubmit(onSubmitCustomerForm)}
-            className="space-y-6 mt-2"
-          >
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="cName">
-                  Customer Name <span className="text-danger">*</span>
-                </Label>
-                <Controller
-                  control={customerControl}
-                  name="name"
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      id="cName"
-                      placeholder="E.g., Jane Doe"
-                      className="focus-visible:ring-brand"
-                    />
-                  )}
-                />
-                {customerErrors.name && (
-                  <p className="text-xs text-danger">
-                    {customerErrors.name.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cEmail">
-                  Contact Email <span className="text-danger">*</span>
-                </Label>
-                <Controller
-                  control={customerControl}
-                  name="email"
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="email"
-                      id="cEmail"
-                      placeholder="E.g., jane@example.com"
-                      className="focus-visible:ring-brand"
-                    />
-                  )}
-                />
-                {customerErrors.email && (
-                  <p className="text-xs text-danger">
-                    {customerErrors.email.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cPhone">
-                  Phone Number <span className="text-danger">*</span>
-                </Label>
-                <Controller
-                  control={customerControl}
-                  name="phone"
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      id="cPhone"
-                      placeholder="E.g., 0901234567"
-                      className="focus-visible:ring-brand"
-                    />
-                  )}
-                />
-                {customerErrors.phone && (
-                  <p className="text-xs text-danger">
-                    {customerErrors.phone.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="cProvince">Province/City</Label>
-                  <Controller
-                    control={customerControl}
-                    name="province"
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        id="cProvince"
-                        placeholder="E.g., Hanoi"
-                        className="focus-visible:ring-brand"
-                      />
-                    )}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cDistrict">District</Label>
-                  <Controller
-                    control={customerControl}
-                    name="district"
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        id="cDistrict"
-                        placeholder="E.g., Cau Giay"
-                        className="focus-visible:ring-brand"
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="cWard">Ward</Label>
-                  <Controller
-                    control={customerControl}
-                    name="ward"
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        id="cWard"
-                        placeholder="E.g., Dich Vong"
-                        className="focus-visible:ring-brand"
-                      />
-                    )}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cStreet">Street Address</Label>
-                  <Controller
-                    control={customerControl}
-                    name="street"
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        id="cStreet"
-                        placeholder="E.g., 123 Xuan Thuy"
-                        className="focus-visible:ring-brand"
-                      />
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsFormOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={updateCustomerMutation.isPending}>
-                {updateCustomerMutation.isPending ? (
-                  <>
-                    Saving...
-                  </>
-                ) : (
-                  "Confirm"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Order History Dialog */}
-      <Dialog
+      <CustomerFormModal
+        open={!!editingCustomer}
+        onClose={() => setEditingCustomer(null)}
+        customer={editingCustomer}
+      />
+      <CustomerOrderHistoryModal
         open={!!selectedCustomer}
-        onOpenChange={(o) => !o && setSelectedCustomer(null)}
-      >
-        <DialogContent className="sm:max-w-3xl">
-          <DialogHeader className="pr-6">
-            <DialogTitle>
-              Order History:{" "}
-              <span className="text-brand">{selectedCustomer?.name}</span>
-            </DialogTitle>
-            <DialogDescription>
-              Phone:{" "}
-              <span className="font-medium text-ink">
-                {selectedCustomer?.phone}
-              </span>{" "}
-              | Email:{" "}
-              <span className="font-medium text-ink">
-                {selectedCustomer?.email || "N/A"}
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="mt-2">
-            {isOrdersLoading ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-3">
-                <Loader2 className="w-6 h-6 animate-spin text-brand" />
-                <span className="text-sm text-ink-muted">
-                  Loading order history...
-                </span>
-              </div>
-            ) : customerOrders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 gap-3">
-                <History className="w-12 h-12 text-ink-muted/30" />
-                <p className="text-center text-sm text-ink-muted">
-                  No order history.
-                </p>
-              </div>
-            ) : (
-              <div className="border border-border rounded-sm bg-surface overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-bg/50 border-b border-border">
-                      <TableHead className="px-4 w-[25%]">Order ID</TableHead>
-                      <TableHead className="px-4 w-[15%]">Channel</TableHead>
-                      <TableHead className="px-4 text-center w-[20%]">
-                        Total Amount
-                      </TableHead>
-                      <TableHead className="px-4 text-center w-[20%]">
-                        Status
-                      </TableHead>
-                      <TableHead className="px-4 w-[20%]">Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {customerOrders.map((o: Order) => (
-                      <TableRow key={o.id} className="hover:bg-bg/40">
-                        <TableCell className="py-3 px-4 font-mono text-ink font-semibold">
-                          {o.code}
-                        </TableCell>
-                        <TableCell className="py-3 px-4">
-                          {o.channel === "pos" ? (
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] bg-brand/10 text-brand px-2 py-0 hover:bg-brand/20"
-                            >
-                              POS
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="text-[10px] text-warning border-warning/50 px-2 py-0 bg-warning/5"
-                            >
-                              Online
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="py-3 px-4 text-center font-bold text-brand">
-                          {o.totalAmount.toLocaleString("vi-VN")}₫
-                        </TableCell>
-                        <TableCell className="py-3 px-4 text-center">
-                          <Badge
-                            variant={
-                              STATUS_VARIANTS[o.orderStatus] ?? "outline"
-                            }
-                            className="text-[10px] px-2 py-0"
-                          >
-                            {STATUS_LABELS[o.orderStatus]}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="py-3 px-4 text-ink-muted text-xs">
-                          {o.createdAt
-                            ? new Date(o.createdAt).toLocaleDateString("vi-VN")
-                            : "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setSelectedCustomer(null)}
-            >
-              Close
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        onClose={() => setSelectedCustomer(null)}
+        customer={selectedCustomer}
+      />
+      <CustomerLockModal
+        open={!!lockTarget}
+        onClose={() => setLockTarget(null)}
+        lockTarget={lockTarget}
+      />
+      <CustomerNotesModal
+        open={!!notesTarget}
+        onClose={() => setNotesTarget(null)}
+        customer={notesTarget}
+      />
+      <CustomerPointsModal
+        open={!!pointsTarget}
+        onClose={() => setPointsTarget(null)}
+        customer={pointsTarget}
+      />
 
       {/* Delete Confirmation Modal */}
       <DeleteModal
@@ -1063,198 +673,6 @@ export function CustomerPage() {
         onClose={() => setDeleteTargetId(null)}
         onConfirm={confirmDelete}
       />
-      {/* Lock/Unlock Confirmation Modal */}
-      <Dialog
-        open={!!lockTarget}
-        onOpenChange={(o) => !o && setLockTarget(null)}
-      >
-        <DialogContent className="sm:max-w-125">
-          <DialogHeader className="pr-6">
-            <DialogTitle>
-              Confirm {lockTarget?.isActive ? "Lock" : "Unlock"} Account
-            </DialogTitle>
-            <DialogDescription>
-              Are you sure you want to {lockTarget?.isActive ? "lock" : "unlock"}{" "}
-              this account?
-            </DialogDescription>
-          </DialogHeader>
-
-          {lockTarget?.isActive && (
-            <div className="bg-danger/10 text-danger text-sm border border-danger/20 p-3 rounded-sm">
-              Customer will not be able to login or purchase after being locked.
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setLockTarget(null)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant={lockTarget?.isActive ? "destructive" : "default"}
-              onClick={confirmToggleStatus}
-              disabled={updateStatusMutation.isPending}
-            >
-              {updateStatusMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...
-                </>
-              ) : (
-                "Confirm"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Internal Notes Modal */}
-      <Dialog
-        open={!!notesTarget}
-        onOpenChange={(o) => !o && setNotesTarget(null)}
-      >
-        <DialogContent className="sm:max-w-125">
-          <DialogHeader className="pr-6">
-            <DialogTitle>Internal Notes</DialogTitle>
-            <DialogDescription>
-              Notes about customer preferences, shopping habits, or issues.
-            </DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={handleNotesSubmit(onSubmitNotesForm)}
-            className="space-y-4"
-          >
-            <Label htmlFor="internalNotes" className="sr-only">
-              Note Content
-            </Label>
-            <Controller
-              control={notesControl}
-              name="internalNotes"
-              render={({ field }) => (
-                <Textarea
-                  {...field}
-                  id="internalNotes"
-                  placeholder="E.g. Prefers red lipstick, complained about shipping..."
-                  rows={5}
-                  className="resize-none focus-visible:ring-brand"
-                />
-              )}
-            />
-            {notesErrors.internalNotes && (
-              <p className="text-xs text-danger">
-                {notesErrors.internalNotes.message}
-              </p>
-            )}
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setNotesTarget(null)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={updateNotesMutation.isPending}>
-                {updateNotesMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  "Confirm"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Point Adjustment Modal */}
-      <Dialog
-        open={!!pointsTarget}
-        onOpenChange={(o) => !o && setPointsTarget(null)}
-      >
-        <DialogContent className="sm:max-w-125">
-          <DialogHeader className="pr-6">
-            <DialogTitle>Adjust Points</DialogTitle>
-            <DialogDescription>
-              Add or deduct points for{" "}
-              <strong className="text-brand">{pointsTarget?.name}</strong>.
-            </DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={handlePointsSubmit(onSubmitPointsForm as any)}
-            className="space-y-4"
-          >
-            <div className="bg-brand/5 text-brand text-sm border border-brand/20 p-3 rounded-sm flex justify-between items-center">
-              <span>Current Points:</span>
-              <span className="font-bold text-lg">{pointsTarget?.points}</span>
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-3">
-                <Label htmlFor="pointsChanged">
-                  Points (+/-) <span className="text-danger">*</span>
-                </Label>
-                <Controller
-                  control={pointsControl}
-                  name="pointsChanged"
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      id="pointsChanged"
-                      type="number"
-                      placeholder="E.g. -500"
-                      className="focus-visible:ring-brand"
-                    />
-                  )}
-                />
-                {pointsErrors.pointsChanged && (
-                  <p className="text-xs text-danger">
-                    {pointsErrors.pointsChanged.message}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-3">
-                <Label htmlFor="pointsReason">
-                  Reason <span className="text-danger">*</span>
-                </Label>
-                <Controller
-                  control={pointsControl}
-                  name="reason"
-                  render={({ field }) => (
-                    <Textarea
-                      {...field}
-                      id="pointsReason"
-                      placeholder="E.g. Returned order #12345"
-                      className="resize-none focus-visible:ring-brand"
-                    />
-                  )}
-                />
-                {pointsErrors.reason && (
-                  <p className="text-xs text-danger">
-                    {pointsErrors.reason.message}
-                  </p>
-                )}
-              </div>
-            </div>
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setPointsTarget(null)}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={adjustPointsMutation.isPending}>
-                {adjustPointsMutation.isPending ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  "Confirm"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }

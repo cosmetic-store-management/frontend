@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  getMyProfile,
-  updateMyProfile,
+  getMyAccount,
+  updateMyAccount,
   updateMyAvatar,
   addMyAddress,
   updateMyAddress,
   deleteMyAddress,
   getMyTierInfo,
-  type UpdateProfilePayload,
+  type UpdateAccountPayload,
   type AddressPayload,
   getFavorites,
   toggleFavorite,
@@ -20,28 +20,28 @@ import { useAuthStore } from "@/auth/store/auth.store";
 import { QK } from "@/lib/queryKeys";
 import { toast } from "@/lib/toast";
 
-export function useMyProfile() {
+export function useMyAccount() {
   return useQuery({
-    queryKey: QK.myProfile(),
-    queryFn: () => getMyProfile(),
-    staleTime: 2 * 60 * 1000, // 2 phút
+    queryKey: QK.myAccount(),
+    queryFn: () => getMyAccount(),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
-export function useUpdateProfile() {
+export function useUpdateAccount() {
   const queryClient = useQueryClient();
   const setAuth = useAuthStore((s) => s.setAuth);
   const token = useAuthStore((s) => s.token);
   const refreshToken = useAuthStore((s) => s.refreshToken);
 
   return useMutation({
-    mutationFn: (payload: UpdateProfilePayload) => updateMyProfile(payload),
+    mutationFn: (payload: UpdateAccountPayload) => updateMyAccount(payload),
     onSuccess: (data) => {
       // Cập nhật user trong store, giữ nguyên tokens
       if (token && refreshToken && data.user) {
         setAuth(data.user, token, refreshToken);
       }
-      queryClient.invalidateQueries({ queryKey: QK.myProfile() });
+      queryClient.invalidateQueries({ queryKey: QK.myAccount() });
     },
   });
 }
@@ -57,7 +57,7 @@ export function useAddAddress() {
     onSuccess: (data) => {
       if (token && refreshToken && data.user)
         setAuth(data.user, token, refreshToken);
-      queryClient.invalidateQueries({ queryKey: QK.myProfile() });
+      queryClient.invalidateQueries({ queryKey: QK.myAccount() });
     },
   });
 }
@@ -74,7 +74,7 @@ export function useUpdateAddress() {
     onSuccess: (data) => {
       if (token && refreshToken && data.user)
         setAuth(data.user, token, refreshToken);
-      queryClient.invalidateQueries({ queryKey: QK.myProfile() });
+      queryClient.invalidateQueries({ queryKey: QK.myAccount() });
     },
   });
 }
@@ -90,7 +90,7 @@ export function useDeleteAddress() {
     onSuccess: (data) => {
       if (token && refreshToken && data.user)
         setAuth(data.user, token, refreshToken);
-      queryClient.invalidateQueries({ queryKey: QK.myProfile() });
+      queryClient.invalidateQueries({ queryKey: QK.myAccount() });
     },
   });
 }

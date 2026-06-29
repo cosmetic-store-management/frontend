@@ -170,9 +170,9 @@ export default function App() {
           CartProvider đã được xóa — cart state dùng Zustand (store/cart.store.ts).
           Không cần Provider wrapper; useCartStore() có thể dùng ở bất kỳ đâu.
         */}
-          <QueryClientProvider client={queryClient}>
-            <Outlet />
-          </QueryClientProvider>
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
 
         <Toaster />
         <ScrollRestoration />

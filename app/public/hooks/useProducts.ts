@@ -30,3 +30,19 @@ export function useProductRecommendations(id: string, limit: number = 10) {
     enabled: !!id,
   });
 }
+
+import { getBrands } from "../services/brand.service";
+export function useBrands() {
+  return useQuery({
+    queryKey: QK.brands(),
+    queryFn: getBrands,
+  });
+}
+
+import { getCategories } from "../services/category.service";
+export function useCategories() {
+  return useQuery({
+    queryKey: QK.categories(),
+    queryFn: () => getCategories(),
+  });
+}

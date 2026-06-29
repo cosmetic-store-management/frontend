@@ -5,9 +5,13 @@ import {
   previewOrder,
   cancelMyOrder,
   requestReturnOrder,
+  trackOrder,
+  cancelCheckout,
+  createStripeIntent,
   type CreateOrderPayload,
   type PreviewOrderPayload,
 } from "../services/order.service";
+import { handleMutationError } from "@/lib/api-helper";
 import { QK } from "@/lib/queryKeys";
 
 export function useMyOrders() {
@@ -59,5 +63,34 @@ export function useRequestReturnOrder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QK.myOrders() });
     },
+    onError: (err) => handleMutationError(err, "Failed to request return"),
+  });
+}
+
+export function useOrderTrack(code: string, paymentMethod: string) {
+  return useQuery({
+    queryKey: ["order-track", code],
+    queryFn: () => trackOrder(code),
+    refetchInterval: (query) => {
+      // @ts-ignore
+      return query.state.data?.paymentStatus === "paid" ? false : 3000;
+    },
+    enabled:
+      ["bank", "qr", "transfer", "stripe"].includes(paymentMethod) && !!code,
+  });
+}
+
+export function useCancelCheckout() {
+  return useMutation({
+    mutationFn: (code: string) => cancelCheckout(code),
+    onError: (err) => handleMutationError(err, "Failed to cancel checkout"),
+  });
+}
+
+export function useCreateStripeIntent() {
+  return useMutation({
+    mutationFn: (orderId: string) => createStripeIntent(orderId),
+    onError: (err) =>
+      handleMutationError(err, "Failed to create payment intent"),
   });
 }

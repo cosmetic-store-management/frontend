@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/client";
 
-export interface UpdateProfilePayload {
+export interface UpdateAccountPayload {
   name?: string;
   phone?: string;
   dob?: string;
@@ -15,11 +15,11 @@ export interface AddressPayload {
   isDefault?: boolean;
 }
 
-export function getMyProfile() {
+export function getMyAccount() {
   return apiClient.get<{ user: any }>("/auth/me").then((d) => d.user);
 }
 
-export function updateMyProfile(payload: UpdateProfilePayload) {
+export function updateMyAccount(payload: UpdateAccountPayload) {
   return apiClient.patch<{ message: string; user: any }>("/users/me", payload);
 }
 

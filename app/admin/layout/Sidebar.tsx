@@ -203,11 +203,18 @@ export default function AdminSidebar() {
       {/* ── Logo ── */}
       <div className="px-5 py-5 border-b border-border">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="GlowUp Logo" className="w-11 h-11 object-contain rounded-full mix-blend-multiply" />
+          <img
+            src="/logo.png"
+            alt="GlowUp Logo"
+            className="w-11 h-11 object-contain rounded-full mix-blend-multiply"
+          />
           <div>
             <p
               className="font-bold text-xl tracking-wide text-ink leading-none"
-              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+              style={{
+                fontFamily:
+                  "var(--font-display, 'Playfair Display', Georgia, serif)",
+              }}
             >
               GlowUp.
             </p>
@@ -331,30 +338,30 @@ export default function AdminSidebar() {
         {(hasPerm("vouchers.view") ||
           hasPerm("flash_sales.view") ||
           isOwner) && (
-            <>
-              <SectionLabel label="Marketing" />
-              <NavGroup
+          <>
+            <SectionLabel label="Marketing" />
+            <NavGroup
+              icon={Ticket}
+              label="Promotions"
+              isActive={isMarketingRoute}
+              isOpen={marketingOpen}
+              onToggle={() => setMarketingOpen(!marketingOpen)}
+            >
+              <SubNavItem
+                to="/admin/vouchers"
                 icon={Ticket}
-                label="Promotions"
-                isActive={isMarketingRoute}
-                isOpen={marketingOpen}
-                onToggle={() => setMarketingOpen(!marketingOpen)}
-              >
-                <SubNavItem
-                  to="/admin/vouchers"
-                  icon={Ticket}
-                  label="Vouchers"
-                  active={pathname === "/admin/vouchers"}
-                />
-                <SubNavItem
-                  to="/admin/flash-sales"
-                  icon={Zap}
-                  label="Flash Sale"
-                  active={pathname === "/admin/flash-sales"}
-                />
-              </NavGroup>
-            </>
-          )}
+                label="Vouchers"
+                active={pathname === "/admin/vouchers"}
+              />
+              <SubNavItem
+                to="/admin/flash-sales"
+                icon={Zap}
+                label="Flash Sale"
+                active={pathname === "/admin/flash-sales"}
+              />
+            </NavGroup>
+          </>
+        )}
 
         {/* ANALYTICS */}
         {hasPerm("reports.view") && (

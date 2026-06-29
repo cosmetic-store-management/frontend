@@ -132,7 +132,8 @@ async function handleResponse<T>(
 
     if (hadToken && typeof window !== "undefined") {
       const currentPath = window.location.pathname;
-      if (currentPath !== "/login") window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`;
+      if (currentPath !== "/login")
+        window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`;
     }
     throw new Error("Phiên đăng nhập hết hạn");
   }
@@ -198,7 +199,11 @@ export const apiClient = {
       fetch(url, {
         method: "POST",
         headers: buildHeaders(!isFormData, isFormData),
-        body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
+        body: isFormData
+          ? (body as FormData)
+          : body !== undefined
+            ? JSON.stringify(body)
+            : undefined,
         signal: timeoutSignal(),
       });
     return doRequest().then((res) => handleResponse<T>(res, doRequest));
@@ -211,7 +216,11 @@ export const apiClient = {
       fetch(url, {
         method: "PATCH",
         headers: buildHeaders(!isFormData, isFormData),
-        body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
+        body: isFormData
+          ? (body as FormData)
+          : body !== undefined
+            ? JSON.stringify(body)
+            : undefined,
         signal: timeoutSignal(),
       });
     return doRequest().then((res) => handleResponse<T>(res, doRequest));
@@ -224,7 +233,11 @@ export const apiClient = {
       fetch(url, {
         method: "PUT",
         headers: buildHeaders(!isFormData, isFormData),
-        body: isFormData ? (body as FormData) : body !== undefined ? JSON.stringify(body) : undefined,
+        body: isFormData
+          ? (body as FormData)
+          : body !== undefined
+            ? JSON.stringify(body)
+            : undefined,
         signal: timeoutSignal(),
       });
     return doRequest().then((res) => handleResponse<T>(res, doRequest));

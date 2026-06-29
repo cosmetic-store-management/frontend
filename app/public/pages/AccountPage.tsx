@@ -12,7 +12,7 @@ import { FavoritesPage } from "@/public/components/account/FavoritesPage";
 import { ViewedPage } from "@/public/components/account/ViewedPage";
 
 type Tab =
-  | "profile"
+  | "account"
   | "address"
   | "orders"
   | "tier"
@@ -21,7 +21,7 @@ type Tab =
   | "viewed";
 
 const VALID_TABS: Tab[] = [
-  "profile",
+  "account",
   "address",
   "orders",
   "tier",
@@ -37,7 +37,7 @@ export function AccountPage() {
   const location = useLocation();
 
   const viewParam = new URLSearchParams(location.search).get("view");
-  const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const [activeTab, setActiveTab] = useState<Tab>("account");
 
   // Sync tab with URL query param
   useEffect(() => {
@@ -49,14 +49,14 @@ export function AccountPage() {
     } else if (viewParam && VALID_TABS.includes(viewParam as Tab)) {
       setActiveTab(viewParam as Tab);
     } else if (!viewParam) {
-      setActiveTab("profile");
+      setActiveTab("account");
     }
   }, [viewParam]);
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab as Tab);
     const query =
-      tab === "profile" ? "" : `?view=${tab === "vouchers" ? "coupon" : tab}`;
+      tab === "account" ? "" : `?view=${tab === "vouchers" ? "coupon" : tab}`;
     navigate(`/account${query}`, { replace: true });
   };
 
@@ -74,7 +74,7 @@ export function AccountPage() {
   if (!user) return null;
 
   const PAGE_MAP: Record<Tab, ReactElement> = {
-    profile: <PersonalInfoPage />,
+    account: <PersonalInfoPage />,
     address: <AddressPage />,
     orders: <OrdersPage />,
     tier: <TierPage />,

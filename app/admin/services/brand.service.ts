@@ -21,7 +21,7 @@ export interface AdminBrandListResult {
   };
 }
 
-export function getPublicBrands(): Promise<Brand[]> {
+export function getBrands(): Promise<Brand[]> {
   return apiClient
     .get<{ brands: Brand[] }>("/brands")
     .then((res) => res.brands);

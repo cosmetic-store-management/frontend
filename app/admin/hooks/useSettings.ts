@@ -3,7 +3,7 @@ import {
   getGeneralSettings,
   saveGeneralSettings,
 } from "@/admin/services/setting.service";
-import { updateProfile } from "@/admin/services/user.service";
+import { updateAccount } from "@/admin/services/user.service";
 import { useAuthStore } from "@/auth/store/auth.store";
 
 export function useSettings() {
@@ -31,10 +31,10 @@ export function useDownloadBackup() {
   });
 }
 
-export function useUpdateProfile() {
+export function useUpdateAccount() {
   const { setAuth, token, refreshToken, user } = useAuthStore();
   return useMutation({
-    mutationFn: updateProfile,
+    mutationFn: updateAccount,
     onSuccess: (updatedUser) => {
       // Update the user state in auth store while keeping the tokens
       if (token && refreshToken && user) {

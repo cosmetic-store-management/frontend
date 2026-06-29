@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import {
   useVouchers,
   useCreateVoucher,
@@ -128,8 +128,8 @@ export function VoucherPage() {
       ...data,
       maxDiscount:
         data.discountType === "percent" &&
-          data.maxDiscount &&
-          data.maxDiscount > 0
+        data.maxDiscount &&
+        data.maxDiscount > 0
           ? data.maxDiscount
           : undefined,
       startDate: new Date(data.startDate).toISOString(),
@@ -143,10 +143,11 @@ export function VoucherPage() {
     toast.promise(action, {
       loading: editing ? "Updating..." : "Creating...",
       success: editing ? "Update successful!" : "Voucher created successfully!",
-      error: (e: unknown) => (e instanceof Error ? e.message : "An error occurred"),
+      error: (e: unknown) =>
+        e instanceof Error ? e.message : "An error occurred",
     });
 
-    await action.then(() => setIsFormOpen(false)).catch(() => { });
+    await action.then(() => setIsFormOpen(false)).catch(() => {});
   };
 
   const confirmDelete = () => {
@@ -207,14 +208,22 @@ export function VoucherPage() {
           <Table className="table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-[15%] text-left pl-4">Voucher Code</TableHead>
-                <TableHead className="w-[12%] text-center">Discount Type</TableHead>
-                <TableHead className="w-[12%] text-center">Discount Value</TableHead>
+                <TableHead className="w-[15%] text-left pl-4">
+                  Voucher Code
+                </TableHead>
+                <TableHead className="w-[12%] text-center">
+                  Discount Type
+                </TableHead>
+                <TableHead className="w-[12%] text-center">
+                  Discount Value
+                </TableHead>
                 <TableHead className="w-[12%] text-center">Min Order</TableHead>
                 <TableHead className="w-[12%] text-center">
                   Usage Limit / Used
                 </TableHead>
-                <TableHead className="w-[15%] text-center">Validity Period</TableHead>
+                <TableHead className="w-[15%] text-center">
+                  Validity Period
+                </TableHead>
                 <TableHead className="w-[12%] text-center">Status</TableHead>
                 <TableHead className="w-[10%] text-center">Actions</TableHead>
               </TableRow>
@@ -250,7 +259,9 @@ export function VoucherPage() {
                     <div className="flex flex-col w-fit mx-auto">
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />{" "}
-                        {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
+                        {new Date(voucher.startDate).toLocaleDateString(
+                          "vi-VN",
+                        )}
                       </div>
                       <div className="flex items-center gap-1 mt-1">
                         <Calendar className="w-3 h-3" />{" "}
@@ -372,9 +383,7 @@ export function VoucherPage() {
                         </SelectTrigger>
                         <SelectContent className="bg-surface border-border">
                           <SelectItem value="percent">Percentage %</SelectItem>
-                          <SelectItem value="fixed">
-                            Fixed Amount
-                          </SelectItem>
+                          <SelectItem value="fixed">Fixed Amount</SelectItem>
                           <SelectItem value="freeship">
                             Free Shipping
                           </SelectItem>

@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router";
 
-
 import { Star, ArrowLeft, Minus, Plus, ShoppingBag, Heart } from "lucide-react";
 import { useProduct } from "@/public/hooks/useProducts";
 import { useCartStore } from "@/public/store/cart.store";
 import { toast } from "@/lib/toast";
-import { ProductReviews } from "../components/ProductReviews";
-import { ProductImageGallery } from "../components/ProductImageGallery";
-import { ExpandableContent } from "../components/ExpandableContent";
-import { RelatedProducts } from "../components/RelatedProducts";
-import { ProductVouchers } from "../components/ProductVouchers";
-import { ProductRecommendations } from "../components/ProductRecommendations";
+import { ProductReviews } from "../components/products/ProductReviews";
+import { ProductImageGallery } from "../components/products/ProductImageGallery";
+import { ExpandableContent } from "../components/common/ExpandableContent";
+import { RelatedProducts } from "../components/products/RelatedProducts";
+import { ProductVouchers } from "../components/products/ProductVouchers";
+import { ProductRecommendations } from "../components/products/ProductRecommendations";
 import { useAuth } from "@/auth/hooks/useAuth";
 import {
   useRecordViewed,
@@ -236,7 +235,10 @@ export function ProductDetailPage() {
           <div className="flex flex-col">
             <h1
               className="text-2xl sm:text-3xl font-bold text-foreground mb-3 leading-tight"
-              style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+              style={{
+                fontFamily:
+                  "var(--font-display, 'Playfair Display', Georgia, serif)",
+              }}
             >
               {product.name}
             </h1>
@@ -251,9 +253,7 @@ export function ProductDetailPage() {
                         className="w-4 h-4 text-warning fill-warning"
                       />
                     ))}
-                    <span className="ml-1">
-                      ({product.numReviews} reviews)
-                    </span>
+                    <span className="ml-1">({product.numReviews} reviews)</span>
                   </div>
                 ) : (
                   <span className="text-ink-muted">No reviews yet</span>
@@ -280,7 +280,8 @@ export function ProductDetailPage() {
 
             {/* Price block */}
             <div className="flex items-baseline gap-3 mb-4">
-              {selectedVariant?.discountPrice && selectedVariant.discountPrice < selectedVariant.price ? (
+              {selectedVariant?.discountPrice &&
+              selectedVariant.discountPrice < selectedVariant.price ? (
                 <>
                   <span
                     className="text-3xl font-black tracking-tight"
@@ -295,7 +296,13 @@ export function ProductDetailPage() {
                     className="text-xs font-bold px-2 py-0.5 rounded-sm text-white"
                     style={{ background: "hsl(352, 72%, 52%)" }}
                   >
-                    -{Math.round((1 - selectedVariant.discountPrice / selectedVariant.price) * 100)}%
+                    -
+                    {Math.round(
+                      (1 -
+                        selectedVariant.discountPrice / selectedVariant.price) *
+                        100,
+                    )}
+                    %
                   </span>
                 </>
               ) : (
@@ -325,13 +332,14 @@ export function ProductDetailPage() {
                         );
                       }}
                       disabled={v.stock === 0}
-                      className={`flex items-center gap-2 h-10 px-4 rounded-sm border-2 text-sm font-semibold transition-all duration-150 ${selectedVariant?.id === v.id ||
-                          (selectedVariant && selectedVariant.name === v.name)
+                      className={`flex items-center gap-2 h-10 px-4 rounded-sm border-2 text-sm font-semibold transition-all duration-150 ${
+                        selectedVariant?.id === v.id ||
+                        (selectedVariant && selectedVariant.name === v.name)
                           ? "border-brand bg-brand/5 text-brand shadow-sm"
                           : v.stock === 0
                             ? "border-border opacity-40 cursor-not-allowed"
                             : "border-border hover:border-brand/50 text-foreground"
-                        }`}
+                      }`}
                     >
                       {v.imageUrl && (
                         <img
@@ -341,7 +349,11 @@ export function ProductDetailPage() {
                         />
                       )}
                       {v.name || v.sku || `0${idx + 1}`}
-                      {v.stock === 0 && <span className="text-[10px] ml-1 opacity-60">Out of stock</span>}
+                      {v.stock === 0 && (
+                        <span className="text-[10px] ml-1 opacity-60">
+                          Out of stock
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -349,7 +361,9 @@ export function ProductDetailPage() {
             )}
 
             {/* Action Area */}
-            <div className={`space-y-4 ${variants.length > 1 ? 'mt-6 pt-5 border-t border-border' : 'mt-6'}`}>
+            <div
+              className={`space-y-4 ${variants.length > 1 ? "mt-6 pt-5 border-t border-border" : "mt-6"}`}
+            >
               {/* Qty + Stock */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-border rounded-sm h-11 w-32 overflow-hidden">
@@ -384,7 +398,9 @@ export function ProductDetailPage() {
                 </div>
                 {selectedVariant && (
                   <span className="text-sm text-muted-foreground">
-                    <span className={`font-semibold ${stock <= 5 ? "text-destructive" : "text-foreground"}`}>
+                    <span
+                      className={`font-semibold ${stock <= 5 ? "text-destructive" : "text-foreground"}`}
+                    >
                       {stock}
                     </span>{" "}
                     in stock
@@ -446,7 +462,10 @@ export function ProductDetailPage() {
       <div className="mt-4 premium-card overflow-visible! p-6 md:p-10">
         <h2
           className="text-2xl font-bold text-foreground mb-6 text-center"
-          style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+          style={{
+            fontFamily:
+              "var(--font-display, 'Playfair Display', Georgia, serif)",
+          }}
         >
           Product Details
         </h2>

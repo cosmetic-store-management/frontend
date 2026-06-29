@@ -11,7 +11,9 @@ import {
   rejectReturn,
 } from "@/admin/services/order.service";
 import type { Order } from "@/admin/types/order";
-import type { OrderFormValues } from "../components/OrderModal";
+import type { OrderFormValues } from "../components/orders/OrderModal";
+import { useCursorPagination } from "@/hooks/useCursorPagination";
+import { handleMutationError } from "@/lib/api-helper";
 
 export type FilterKey = "all" | Order["orderStatus"];
 
@@ -24,17 +26,22 @@ export function useOrders(
   channel?: string,
 ) {
   const queryClient = useQueryClient();
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1] || undefined;
+  const { cursors, currentCursor, handleNext, handlePrev, resetCursors } =
+    useCursorPagination();
   const debouncedKeyword = useDebounce(keyword, 500);
 
   // Reset to first page when search or filter changes
   useEffect(() => {
-    {
-      /* eslint-disable-next-line  */
-    }
-    setCursors([]);
-  }, [debouncedKeyword, filter, paymentStatus, dateFrom, dateTo, channel]);
+    resetCursors();
+  }, [
+    debouncedKeyword,
+    filter,
+    paymentStatus,
+    dateFrom,
+    dateTo,
+    channel,
+    resetCursors,
+  ]);
 
   // 1. Fetch Orders
   const queryParams = useMemo(
@@ -77,14 +84,12 @@ export function useOrders(
     hasNextPage: false,
   };
 
-  const handleNext = () => {
-    if (pagination.nextCursor) {
-      setCursors((prev) => [...prev, pagination.nextCursor!]);
-    }
+  const handleNextPage = () => {
+    handleNext(pagination.nextCursor);
   };
 
-  const handlePrev = () => {
-    setCursors((prev) => prev.slice(0, -1));
+  const handlePrevPage = () => {
+    handlePrev();
   };
   const error = queryError
     ? queryError instanceof Error
@@ -100,9 +105,7 @@ export function useOrders(
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
       toast.success("Trạng thái đơn hàng đã được cập nhật");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Cập nhật đơn hàng thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to update order"),
   });
 
   const cancelMut = useMutation({
@@ -111,9 +114,7 @@ export function useOrders(
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
       toast.success("Đã hủy đơn hàng thành công");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Hủy đơn hàng thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to cancel order"),
   });
 
   const refundMut = useMutation({
@@ -122,9 +123,7 @@ export function useOrders(
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
       toast.success("Đã xác nhận hoàn tiền thành công");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Xác nhận hoàn tiền thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to refund"),
   });
 
   const approveReturnMut = useMutation({
@@ -133,9 +132,7 @@ export function useOrders(
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
       toast.success("Đã duyệt yêu cầu trả hàng");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Duyệt yêu cầu thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to approve return"),
   });
 
   const rejectReturnMut = useMutation({
@@ -145,9 +142,7 @@ export function useOrders(
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
       toast.success("Đã từ chối yêu cầu trả hàng");
     },
-    onError: (err: any) => {
-      toast.error(err.message || "Từ chối yêu cầu thất bại");
-    },
+    onError: (err: any) => handleMutationError(err, "Failed to reject return"),
   });
 
   const submitting =
@@ -206,8 +201,8 @@ export function useOrders(
     orders,
     pagination,
     cursors,
-    handleNext,
-    handlePrev,
+    handleNext: handleNextPage,
+    handlePrev: handlePrevPage,
     loading,
     error,
     submitting,

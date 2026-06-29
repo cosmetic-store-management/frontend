@@ -40,10 +40,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PageHeader } from "../components/PageHeader";
+import { PageHeader } from "../components/common/PageHeader";
 import { toast } from "@/lib/toast";
-import { BulkRestockModal } from "../components/BulkRestockModal";
-import BatchDetailsModal from "../components/BatchDetailsModal";
+import { BulkRestockModal } from "../components/inventory/BulkRestockModal";
+import BatchDetailsModal from "../components/inventory/BatchDetailsModal";
 import { useDebounce } from "@/hooks/useDebounce";
 import { DatePicker } from "@/components/ui/date-picker";
 import {
@@ -117,10 +117,7 @@ export function InventoryPage() {
     setStockCursors([]);
   }, [debouncedSearch]);
 
-  const {
-    data: stockData,
-    isLoading: isStockLoading,
-  } = useInventoryStock({
+  const { data: stockData, isLoading: isStockLoading } = useInventoryStock({
     search: debouncedSearch || undefined,
     cursor: currentStockCursor,
     limit: 10,
@@ -128,10 +125,7 @@ export function InventoryPage() {
   const stockItems = stockData?.stock || [];
   const stockPagination = stockData?.pagination;
 
-  const {
-    data: txData,
-    isLoading: isTxLoading,
-  } = useInventoryTransactions({
+  const { data: txData, isLoading: isTxLoading } = useInventoryTransactions({
     cursor: currentTxCursor,
     limit: 10,
   });
@@ -139,12 +133,14 @@ export function InventoryPage() {
   const txPagination = txData?.pagination;
 
   const handleStockNext = () => {
-    if (stockPagination?.nextCursor) setStockCursors((prev) => [...prev, stockPagination.nextCursor!]);
+    if (stockPagination?.nextCursor)
+      setStockCursors((prev) => [...prev, stockPagination.nextCursor!]);
   };
   const handleStockPrev = () => setStockCursors((prev) => prev.slice(0, -1));
 
   const handleTxNext = () => {
-    if (txPagination?.nextCursor) setTxCursors((prev) => [...prev, txPagination.nextCursor!]);
+    if (txPagination?.nextCursor)
+      setTxCursors((prev) => [...prev, txPagination.nextCursor!]);
   };
   const handleTxPrev = () => setTxCursors((prev) => prev.slice(0, -1));
 
@@ -250,9 +246,7 @@ export function InventoryPage() {
         ],
       });
 
-      toast.success(
-        `Added ${data.restockQty} items for ${selectedItem.name}`,
-      );
+      toast.success(`Added ${data.restockQty} items for ${selectedItem.name}`);
       setIsRestockOpen(false);
       setSelectedItem(null);
     } catch (err: any) {
@@ -289,21 +283,31 @@ export function InventoryPage() {
             <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => setActiveTab("stock")}
-                className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${activeTab === "stock"
+                className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${
+                  activeTab === "stock"
                     ? "border-brand/30 text-brand shadow-sm"
                     : "border-border bg-surface text-ink-muted hover:border-brand/20 hover:text-ink"
-                  }`}
-                style={activeTab === "stock" ? { background: "hsl(352, 72%, 52%, 0.08)" } : {}}
+                }`}
+                style={
+                  activeTab === "stock"
+                    ? { background: "hsl(352, 72%, 52%, 0.08)" }
+                    : {}
+                }
               >
                 Current stock
               </button>
               <button
                 onClick={() => setActiveTab("transactions")}
-                className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${activeTab === "transactions"
+                className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${
+                  activeTab === "transactions"
                     ? "border-brand/30 text-brand shadow-sm"
                     : "border-border bg-surface text-ink-muted hover:border-brand/20 hover:text-ink"
-                  }`}
-                style={activeTab === "transactions" ? { background: "hsl(352, 72%, 52%, 0.08)" } : {}}
+                }`}
+                style={
+                  activeTab === "transactions"
+                    ? { background: "hsl(352, 72%, 52%, 0.08)" }
+                    : {}
+                }
               >
                 Transaction history
               </button>
@@ -320,27 +324,19 @@ export function InventoryPage() {
               <Table className="min-w-205 table-fixed">
                 <TableHeader>
                   <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                    <TableHead className="w-[30%]">
-                      Product
-                    </TableHead>
-                    <TableHead className="text-center w-[11%]">
-                      Stock
-                    </TableHead>
+                    <TableHead className="w-[30%]">Product</TableHead>
+                    <TableHead className="text-center w-[11%]">Stock</TableHead>
                     <TableHead className="text-center w-[13%]">
                       Min Stock
                     </TableHead>
-                    <TableHead className="w-[16%]">
-                      Brand
-                    </TableHead>
+                    <TableHead className="w-[16%]">Brand</TableHead>
                     <TableHead className="w-[14%] text-right">
                       Import Price
                     </TableHead>
                     <TableHead className="w-[16%] text-center">
                       MFG - EXP
                     </TableHead>
-                    <TableHead className="text-center w-24">
-                      Actions
-                    </TableHead>
+                    <TableHead className="text-center w-24">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -371,9 +367,7 @@ export function InventoryPage() {
                       const isOut = item.stock === 0;
 
                       return (
-                        <TableRow
-                          key={item.id}
-                        >
+                        <TableRow key={item.id}>
                           <TableCell className="py-3.5 px-5 overflow-hidden max-w-0">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
@@ -392,8 +386,10 @@ export function InventoryPage() {
                                     {item.name}
                                   </span>
                                   {item.expiringBatchesCount &&
-                                    item.expiringBatchesCount > 0 ? (
-                                    <span title={`${item.expiringBatchesCount} batches expiring soon (< 3 months)!`}>
+                                  item.expiringBatchesCount > 0 ? (
+                                    <span
+                                      title={`${item.expiringBatchesCount} batches expiring soon (< 3 months)!`}
+                                    >
                                       <AlertCircle className="w-4 h-4 text-danger shrink-0 cursor-help" />
                                     </span>
                                   ) : null}
@@ -406,12 +402,13 @@ export function InventoryPage() {
                           </TableCell>
                           <TableCell className="py-3.5 px-5 text-center">
                             <span
-                              className={`inline-flex items-center gap-1 font-bold ${isOut
-                                ? "text-danger"
-                                : isLow
-                                  ? "text-warning"
-                                  : "text-ink"
-                                }`}
+                              className={`inline-flex items-center gap-1 font-bold ${
+                                isOut
+                                  ? "text-danger"
+                                  : isLow
+                                    ? "text-warning"
+                                    : "text-ink"
+                              }`}
                             >
                               {item.stock}
                               {isLow && <AlertCircle className="w-3.5 h-3.5" />}
@@ -442,16 +439,16 @@ export function InventoryPage() {
                           <TableCell className="py-3.5 px-5 text-center text-ink-muted text-xs whitespace-nowrap">
                             {item.manufactureDate
                               ? new Date(
-                                item.manufactureDate,
-                              ).toLocaleDateString("vi-VN")
+                                  item.manufactureDate,
+                                ).toLocaleDateString("vi-VN")
                               : "N/A"}
                             <br />
                             <span className="text-ink-muted mx-1">-</span>
                             <br />
                             {item.expiryDate
                               ? new Date(item.expiryDate).toLocaleDateString(
-                                "vi-VN",
-                              )
+                                  "vi-VN",
+                                )
                               : "N/A"}
                           </TableCell>
                           <TableCell className="py-3.5 px-5 text-center">
@@ -544,30 +541,21 @@ export function InventoryPage() {
             <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[20%]">
-                    TX ID
-                  </TableHead>
-                  <TableHead className="w-[15%]">
-                    SKU
-                  </TableHead>
-                  <TableHead className="text-center w-[18%]">
-                    Type
-                  </TableHead>
-                  <TableHead className="text-right w-[12%]">
-                    Quantity
-                  </TableHead>
-                  <TableHead className="w-[20%]">
-                    Performer
-                  </TableHead>
-                  <TableHead className="w-[15%] text-center">
-                    Date
-                  </TableHead>
+                  <TableHead className="w-[20%]">TX ID</TableHead>
+                  <TableHead className="w-[15%]">SKU</TableHead>
+                  <TableHead className="text-center w-[18%]">Type</TableHead>
+                  <TableHead className="text-right w-[12%]">Quantity</TableHead>
+                  <TableHead className="w-[20%]">Performer</TableHead>
+                  <TableHead className="w-[15%] text-center">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isTxLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="py-8 text-center text-ink-muted">
+                    <TableCell
+                      colSpan={6}
+                      className="py-8 text-center text-ink-muted"
+                    >
                       <div className="flex items-center justify-center gap-2">
                         <Loader2 className="w-4 h-4 animate-spin text-brand" />
                         <span>Loading transaction history...</span>
@@ -576,15 +564,16 @@ export function InventoryPage() {
                   </TableRow>
                 ) : transactions.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="py-8 text-center text-ink-muted">
+                    <TableCell
+                      colSpan={6}
+                      className="py-8 text-center text-ink-muted"
+                    >
                       No transactions found
                     </TableCell>
                   </TableRow>
                 ) : (
                   transactions.map((tx: any) => (
-                    <TableRow
-                      key={tx.id}
-                    >
+                    <TableRow key={tx.id}>
                       <TableCell className="py-3.5 px-5 font-mono text-xs text-ink-muted overflow-hidden max-w-0">
                         <span className="block truncate">{tx.id}</span>
                       </TableCell>
@@ -593,12 +582,13 @@ export function InventoryPage() {
                       </TableCell>
                       <TableCell className="py-3.5 px-5 text-center">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-xs font-semibold ${tx.type === "in"
-                            ? "bg-success/10 text-success border border-success"
-                            : tx.type === "out"
-                              ? "bg-warning/10 text-warning border border-warning"
-                              : "bg-blue-500/10 text-blue-500 border border-blue-500"
-                            }`}
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-xs font-semibold ${
+                            tx.type === "in"
+                              ? "bg-success/10 text-success border border-success"
+                              : tx.type === "out"
+                                ? "bg-warning/10 text-warning border border-warning"
+                                : "bg-blue-500/10 text-blue-500 border border-blue-500"
+                          }`}
                         >
                           {tx.type === "in" ? (
                             <>
@@ -619,12 +609,13 @@ export function InventoryPage() {
                         </span>
                       </TableCell>
                       <TableCell
-                        className={`py-3.5 px-5 text-right font-bold tabular-nums ${tx.type === "in"
-                          ? "text-success"
-                          : tx.type === "out"
-                            ? "text-warning"
-                            : "text-blue-500"
-                          }`}
+                        className={`py-3.5 px-5 text-right font-bold tabular-nums ${
+                          tx.type === "in"
+                            ? "text-success"
+                            : tx.type === "out"
+                              ? "text-warning"
+                              : "text-blue-500"
+                        }`}
                       >
                         {tx.type === "in"
                           ? `+${tx.qty}`
@@ -765,9 +756,7 @@ export function InventoryPage() {
             {/* Inline Add Supplier Form */}
             {isNewSupplier && (
               <div className="border border-border/80 bg-surface-soft/50 rounded-sm p-3 space-y-3">
-                <p className="text-xs font-bold text-ink">
-                  New Supplier Info
-                </p>
+                <p className="text-xs font-bold text-ink">New Supplier Info</p>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
                     <Label
@@ -1023,7 +1012,7 @@ export function InventoryPage() {
                 }
               >
                 {restockMutation.isPending ||
-                  createSupplierMutation.isPending ? (
+                createSupplierMutation.isPending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
                   "Confirm"

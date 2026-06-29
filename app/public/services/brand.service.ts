@@ -12,7 +12,7 @@ export interface Brand {
   productCount: number;
 }
 
-export function getPublicBrands(): Promise<Brand[]> {
+export function getBrands(): Promise<Brand[]> {
   return apiClient.get<{ brands: Brand[] }>("/brands").then((res: any) => {
     // Handle both flat and nested response structures
     const list = res?.brands ?? res?.data?.brands ?? res ?? [];

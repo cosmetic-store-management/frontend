@@ -1,14 +1,6 @@
 import { ReactNode } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { BaseCrudModal } from "./base-crud-modal";
 
 export type DeleteModalProps = {
   open: boolean;
@@ -32,55 +24,45 @@ export default function DeleteModal({
   onConfirm,
   loading = false,
   submitError = null,
-  cancelText = "Hủy",
-  confirmText = "Xác nhận",
-  loadingText = "Đang xử lý...",
+  cancelText = "Cancel",
+  confirmText = "Confirm",
+  loadingText = "Loading...",
   disableConfirm = false,
 }: DeleteModalProps) {
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="animate-scale-in sm:max-w-120 p-6">
-        <DialogHeader className="flex flex-row items-start gap-4 space-y-0 text-left">
-          <div className="w-12 h-12 rounded-full bg-danger/10 flex items-center justify-center shrink-0 mt-0.5">
-            <AlertCircle className="w-6 h-6 text-danger" />
+    <BaseCrudModal
+      open={open}
+      onOpenChange={(isOpen) => !isOpen && onClose()}
+      title={title}
+      size="sm"
+      primaryActionText={loading ? loadingText : confirmText}
+      secondaryActionText={cancelText}
+      onPrimaryAction={onConfirm}
+      onSecondaryAction={onClose}
+      isLoading={loading}
+      isDisabled={disableConfirm}
+      isDanger={true}
+      hideHeader={true}
+    >
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center shrink-0 mt-0.5">
+          <AlertCircle className="w-5 h-5 text-danger" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold tracking-tight text-ink">
+            {title}
+          </h2>
+          <div className="mt-1.5 text-sm text-ink-muted leading-relaxed">
+            {description}
           </div>
-          <div className="space-y-2 flex-1">
-            <DialogTitle className="text-xl font-bold text-ink">
-              {title}
-            </DialogTitle>
-            <DialogDescription className="text-[15px] text-ink-muted leading-relaxed">
-              {description}
-            </DialogDescription>
-          </div>
-        </DialogHeader>
 
-        <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-          <div className="flex-1 w-full sm:w-auto min-w-0">
-            {submitError && (
-              <p className="text-sm font-medium text-danger text-left">
-                {submitError}
-              </p>
-            )}
-          </div>
-          <div className="flex w-full sm:w-auto gap-3 shrink-0">
-            <Button
-              variant="outline"
-              className="flex-1 sm:flex-none h-10 px-6 font-medium text-ink bg-surface border-border hover:bg-surface-muted"
-              onClick={onClose}
-            >
-              {cancelText}
-            </Button>
-            <Button
-              variant="default"
-              className="flex-1 sm:flex-none h-10 px-6 font-medium"
-              onClick={onConfirm}
-              disabled={loading || disableConfirm}
-            >
-              {loading ? loadingText : confirmText}
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          {submitError && (
+            <div className="w-full mt-4 p-3 bg-danger/10 text-danger rounded-sm text-sm font-medium border border-danger/20 text-left">
+              {submitError}
+            </div>
+          )}
+        </div>
+      </div>
+    </BaseCrudModal>
   );
 }

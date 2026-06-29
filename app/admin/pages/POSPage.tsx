@@ -45,9 +45,9 @@ interface CartItem {
 export function POSPage() {
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "pos_card" | "transfer">(
-    "cash",
-  );
+  const [paymentMethod, setPaymentMethod] = useState<
+    "cash" | "pos_card" | "transfer"
+  >("cash");
   const [discount, setDiscount] = useState(0);
   const [receivedCash, setReceivedCash] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -279,9 +279,7 @@ export function POSPage() {
                         className="max-w-full max-h-full object-contain mix-blend-multiply"
                       />
                     ) : (
-                      <span className="text-xs text-gray-400">
-                        No Image
-                      </span>
+                      <span className="text-xs text-gray-400">No Image</span>
                     )}
                   </div>
                   <h4 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-10 leading-tight">
@@ -564,7 +562,8 @@ export function POSPage() {
               Payment Successful!
             </DialogTitle>
             <DialogDescription className="text-sm text-ink-muted mt-2">
-              Your order has been recorded and the receipt is printed successfully.
+              Your order has been recorded and the receipt is printed
+              successfully.
             </DialogDescription>
           </DialogHeader>
 

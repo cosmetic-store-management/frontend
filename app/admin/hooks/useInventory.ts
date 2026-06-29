@@ -7,7 +7,9 @@ import {
   createGoodsReceipt,
   adjustStock,
   updateMinStock,
+  updateBatch,
 } from "@/admin/services/inventory.service";
+import { handleMutationError } from "@/lib/api-helper";
 
 export function useInventoryStock(
   params: { search?: string; cursor?: string; limit?: number } = {},
@@ -43,6 +45,7 @@ export function useCreateSupplier() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to create supplier"),
   });
 }
 
@@ -56,6 +59,7 @@ export function useRestock() {
       queryClient.invalidateQueries({ queryKey: ["pos-products"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to restock"),
   });
 }
 
@@ -69,6 +73,7 @@ export function useAdjustStock() {
       queryClient.invalidateQueries({ queryKey: ["pos-products"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to adjust stock"),
   });
 }
 
@@ -80,5 +85,18 @@ export function useUpdateMinStock() {
       queryClient.invalidateQueries({ queryKey: ["stock"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
     },
+    onError: (err) => handleMutationError(err, "Failed to update min stock"),
+  });
+}
+
+export function useUpdateBatch() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      updateBatch(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
+    },
+    onError: (err) => handleMutationError(err, "Failed to update batch"),
   });
 }
