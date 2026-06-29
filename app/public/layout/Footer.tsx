@@ -8,50 +8,14 @@ import {
   Youtube,
   MessageCircle,
   Music2,
-  ShieldCheck,
-  Truck,
-  RefreshCw,
-  Headphones,
 } from "lucide-react";
 import { useShopSettings } from "@/public/hooks/useShopSettings";
-
-const TRUST_BADGES = [
-  { icon: ShieldCheck, label: "100% Authentic", sub: "Certified genuine" },
-  { icon: Truck, label: "Free Shipping", sub: "Orders over 500K" },
-  { icon: RefreshCw, label: "Easy Returns", sub: "30-day policy" },
-  { icon: Headphones, label: "24/7 Support", sub: "Always here for you" },
-];
 
 export default function PublicFooter() {
   const { settings } = useShopSettings();
 
   return (
     <footer className="mt-auto" style={{ background: "hsl(345, 20%, 8%)" }}>
-      {/* ── Trust Badges Strip ── */}
-      <div
-        className="border-b"
-        style={{ borderColor: "hsl(345, 12%, 14%)" }}
-      >
-        <div className="max-w-300 w-full mx-auto px-4 py-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {TRUST_BADGES.map(({ icon: Icon, label, sub }) => (
-              <div key={label} className="flex items-center gap-3">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ background: "hsl(352, 72%, 52%, 0.15)" }}
-                >
-                  <Icon className="w-4.5 h-4.5" style={{ color: "hsl(352, 72%, 62%)" }} />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-white leading-none">{label}</p>
-                  <p className="text-[10px] mt-0.5" style={{ color: "hsl(345, 8%, 55%)" }}>{sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* ── Main Footer ── */}
       <div className="max-w-300 w-full mx-auto px-4 py-14">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
@@ -184,7 +148,7 @@ export default function PublicFooter() {
               Beauty tips, exclusive offers, and new arrivals — straight to your inbox.
             </p>
 
-            <form className="flex mb-8 rounded-xl overflow-hidden ring-1" style={{ ringColor: "hsl(345, 12%, 18%)" }}>
+            <form className="flex mb-8 rounded-sm overflow-hidden ring-1" style={{ ringColor: "hsl(345, 12%, 18%)" }}>
               <input
                 type="email"
                 placeholder="Your email address"
@@ -212,7 +176,7 @@ export default function PublicFooter() {
                   href={settings.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+                  className="w-9 h-9 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                   style={{ background: "hsl(345, 12%, 16%)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#1877F2")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "hsl(345, 12%, 16%)")}
@@ -225,7 +189,7 @@ export default function PublicFooter() {
                   href={settings.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+                  className="w-9 h-9 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                   style={{ background: "hsl(345, 12%, 16%)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#E4405F")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "hsl(345, 12%, 16%)")}
@@ -238,7 +202,7 @@ export default function PublicFooter() {
                   href={settings.tiktokUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+                  className="w-9 h-9 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                   style={{ background: "hsl(345, 12%, 16%)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "hsl(345, 80%, 30%)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "hsl(345, 12%, 16%)")}
@@ -279,26 +243,12 @@ export default function PublicFooter() {
 
       {/* ── Bottom Bar ── */}
       <div className="border-t" style={{ borderColor: "hsl(345, 12%, 13%)" }}>
-        <div className="max-w-300 w-full mx-auto px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs" style={{ color: "hsl(345, 6%, 40%)" }}>
+        <div className="max-w-300 w-full mx-auto px-4 py-5 flex items-center justify-center">
+          <p className="text-xs text-center" style={{ color: "hsl(345, 6%, 40%)" }}>
             © {new Date().getFullYear()}{" "}
-            <span className="text-white font-medium">{settings.storeName || "GlowUp Cosmetics"}</span>.
+            <span className="text-white font-medium">{settings.storeName || "Tấn Thành"}</span>.
             All rights reserved.
           </p>
-          <div className="flex items-center gap-5">
-            {["Privacy", "Terms", "Cookies"].map((item) => (
-              <Link
-                key={item}
-                to="#"
-                className="text-xs transition-colors"
-                style={{ color: "hsl(345, 6%, 40%)" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "hsl(352, 72%, 62%)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "hsl(345, 6%, 40%)")}
-              >
-                {item}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
     </footer>

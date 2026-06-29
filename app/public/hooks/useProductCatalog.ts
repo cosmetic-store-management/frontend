@@ -161,7 +161,7 @@ export function useProductCatalog() {
     setSearchParams(newParams, { preventScrollReset: true });
   };
 
-  let sidebarTitle = "LOẠI SẢN PHẨM";
+  let sidebarTitle = "ALL PRODUCTS";
   let displaySubcategories: any[] = categories;
 
   if (selectedCategories.length > 0) {

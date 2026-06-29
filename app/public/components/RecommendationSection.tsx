@@ -20,7 +20,7 @@ export function RecommendationSection() {
     <section>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl md:text-3xl font-black text-gradient uppercase tracking-wider">
-          Gợi Ý Dành Riêng Cho Bạn
+          RECOMMENDED FOR YOU
         </h2>
       </div>
 

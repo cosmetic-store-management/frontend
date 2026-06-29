@@ -177,7 +177,7 @@ export function HeroCarousel() {
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
               to={slide.ctaLink}
-              className="hero-cta-primary group inline-flex items-center justify-center gap-2 font-semibold rounded-full text-white transition-all"
+              className="hero-cta-primary group inline-flex items-center justify-center gap-2 font-semibold rounded-sm text-white transition-all"
               style={{
                 background: slide.accent,
                 padding: "14px 32px",
@@ -190,7 +190,7 @@ export function HeroCarousel() {
             </Link>
             <Link
               to="/products"
-              className="inline-flex items-center justify-center gap-2 font-semibold rounded-full text-white transition-all"
+              className="inline-flex items-center justify-center gap-2 font-semibold rounded-sm text-white transition-all"
               style={{
                 background: "rgba(255,255,255,0.1)",
                 backdropFilter: "blur(12px)",

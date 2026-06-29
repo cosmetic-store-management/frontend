@@ -101,7 +101,7 @@ export default function PublicHeader() {
           <div className="hidden lg:block flex-1 max-w-150 mx-auto px-4">
             <form
               onSubmit={handleSearch}
-              className="flex items-center w-full relative h-9 bg-muted/60 rounded-full border border-border/80 hover:border-brand/40 focus-within:border-brand focus-within:bg-white transition-all duration-200"
+              className="flex items-center w-full relative h-9 bg-muted/60 rounded-sm border border-border/80 hover:border-brand/40 focus-within:border-brand focus-within:bg-white transition-all duration-200"
             >
               <Search className="absolute left-3 w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
               <input

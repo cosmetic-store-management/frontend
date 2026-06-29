@@ -33,7 +33,7 @@ export function Sidebar({
 }: SidebarProps) {
   return (
     <div className="w-full md:w-1/4 lg:w-1/5 shrink-0">
-      <div className="bg-surface h-full flex flex-col">
+      <div className="bg-surface rounded-sm h-full flex flex-col">
         {/* User Info Header */}
         <div className="p-4 flex items-center gap-3 border-b border-border/50">
           <div

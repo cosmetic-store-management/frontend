@@ -20,9 +20,9 @@ function isNewProduct(createdAt?: string | Date): boolean {
 
 /** Phân bổ nhãn FREESHIP linh hoạt dựa trên product ID */
 const FREESHIP_LABELS = [
-  "FREESHIP TQ",
-  "FREESHIP HCM HN",
-  "FREESHIP HCM",
+  "FREE SHIPPING",
+  "NATIONWIDE",
+  "LOCAL DELIVERY",
 ] as const;
 function getFreeshiplabel(id: string): string {
   let hash = 0;
@@ -201,7 +201,7 @@ export const ProductCard = React.memo(function ProductCard({
         {isOutOfStock && !isInactive && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[2px]">
             <span className="bg-foreground text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wider">
-              Hết hàng
+              Out of stock
             </span>
           </div>
         )}
@@ -211,16 +211,16 @@ export const ProductCard = React.memo(function ProductCard({
       <div className="p-2.5 flex flex-col flex-1">
         {/* Badges row: FREESHIP + NEW / HOT */}
         <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-          <span className="bg-[#0b2b5e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
+          <span className="bg-[#0b2b5e] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight">
             {getFreeshiplabel(product.id || product._id || product.name || "")}
           </span>
           {isNew && (
-            <span className="bg-brand text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight">
+            <span className="bg-brand text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight">
               NEW
             </span>
           )}
           {isHot && (
-            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-tight" style={{background: "hsl(22, 90%, 50%)", color: "white"}}>
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-sm leading-tight" style={{background: "hsl(22, 90%, 50%)", color: "white"}}>
               HOT
             </span>
           )}

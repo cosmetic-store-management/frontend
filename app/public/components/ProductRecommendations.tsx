@@ -48,7 +48,7 @@ export function ProductRecommendations({
     return (
       <div className="mt-12 py-8 border-t border-border">
         <h2 className="text-[18px] font-bold mb-4 text-ink uppercase">
-          Đề xuất cho bạn
+          RECOMMENDATIONS FOR YOU
         </h2>
         <div className="flex justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand"></div>
@@ -65,7 +65,7 @@ export function ProductRecommendations({
     <div className="bg-surface p-6 md:p-8 rounded-sm border border-border shadow-ui-soft w-full">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-[20px] font-bold text-ink uppercase tracking-wider">
-          Đề xuất cho bạn
+          RECOMMENDATIONS FOR YOU
         </h2>
 
         <div className="flex gap-1">

@@ -61,7 +61,7 @@ export function Pagination({
         className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-border bg-surface text-ink-muted transition-colors hover:bg-surface-soft hover:text-ink disabled:pointer-events-none disabled:opacity-50"
       >
         <ChevronLeft className="size-4" />
-        <span className="sr-only">Trang trước</span>
+        <span className="sr-only">Previous page</span>
       </button>
 
       {pages.map((page, index) => {
@@ -84,7 +84,7 @@ export function Pagination({
             onClick={() => onPageChange(page as number)}
             aria-current={isCurrent ? "page" : undefined}
             className={cn(
-              "inline-flex h-9 w-9 items-center justify-center border text-sm font-medium transition-colors",
+              "inline-flex h-9 w-9 items-center justify-center rounded-sm border text-sm font-medium transition-colors",
               isCurrent
                 ? "border-transparent bg-primary text-primary-foreground"
                 : "border-transparent text-muted-foreground hover:bg-surface-soft hover:text-foreground",
@@ -102,7 +102,7 @@ export function Pagination({
         className="inline-flex h-9 w-9 items-center justify-center rounded-sm border border-border bg-surface text-ink-muted transition-colors hover:bg-surface-soft hover:text-ink disabled:pointer-events-none disabled:opacity-50"
       >
         <ChevronRight className="size-4" />
-        <span className="sr-only">Trang sau</span>
+        <span className="sr-only">Next page</span>
       </button>
     </nav>
   );

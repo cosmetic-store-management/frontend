@@ -101,32 +101,32 @@ export function OrdersPage() {
       await cancelMutation.mutateAsync(orderId);
       setConfirmCancelId(null);
       setExpandedId(null);
-      toast.success("Đã hủy đơn hàng thành công");
+      toast.success("Order cancelled successfully");
     } catch (err: any) {
-      toast.error(err?.message || "Hủy đơn thất bại");
+      toast.error(err?.message || "Failed to cancel order");
     }
   };
 
   const handleReturn = async (orderId: string) => {
     if (!returnReason.trim()) {
-      toast.error("Vui lòng nhập lý do trả hàng");
+      toast.error("Please enter a reason for returning");
       return;
     }
     try {
       await returnMutation.mutateAsync({ orderId, reason: returnReason });
       setReturnOrderId(null);
       setReturnReason("");
-      toast.success("Yêu cầu trả hàng đã được gửi");
+      toast.success("Return request has been submitted");
     } catch (err: any) {
-      toast.error(err?.message || "Gửi yêu cầu trả hàng thất bại");
+      toast.error(err?.message || "Failed to submit return request");
     }
   };
 
   return (
-    <div className="animate-slide-up bg-surface px-6 py-6 flex-1">
+    <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-ink mb-1">Đơn hàng của tôi</h2>
-        <p className="text-xs text-ink-muted">Nhấn vào đơn để xem chi tiết.</p>
+        <h2 className="text-lg font-bold text-ink mb-1">My Orders</h2>
+        <p className="text-xs text-ink-muted">Click on an order to view details.</p>
       </div>
 
       {/* Status tabs */}
@@ -173,21 +173,21 @@ export function OrdersPage() {
           {statusTab === "all" ? (
             <>
               <p className="text-sm font-medium text-ink mb-1">
-                Bạn chưa có đơn hàng nào
+                You have no orders
               </p>
               <p className="text-xs text-ink-muted mb-5">
-                Hãy khám phá và mua sắm ngay!
+                Let's explore and shop now!
               </p>
               <Link
                 to="/products"
                 className="inline-flex items-center gap-2 bg-brand text-white text-sm font-bold px-6 py-2.5 rounded-sm hover:bg-brand-dark transition-colors"
               >
-                <ShoppingBag className="w-4 h-4" /> Mua sắm ngay
+                <ShoppingBag className="w-4 h-4" /> Shop now
               </Link>
             </>
           ) : (
             <p className="text-sm text-ink-muted">
-              Không có đơn hàng ở trạng thái này
+              No orders in this status
             </p>
           )}
         </div>
@@ -219,7 +219,7 @@ export function OrdersPage() {
                       </span>
                       {order.channel === "pos" && (
                         <span className="text-[10px] px-2 py-0.5 rounded-sm bg-brand/10 text-brand font-medium">
-                          Tại quầy
+                          In-store
                         </span>
                       )}
                     </div>
@@ -271,7 +271,7 @@ export function OrdersPage() {
                     )}
                     {!isOpen && (order.items?.length ?? 0) > 2 && (
                       <p className="text-xs text-ink-muted">
-                        +{order.items.length - 2} sản phẩm khác
+                        +{order.items.length - 2} other products
                       </p>
                     )}
                   </div>
@@ -283,7 +283,7 @@ export function OrdersPage() {
                     </p>
                     <div className="text-right">
                       <p className="text-[10px] text-ink-muted">
-                        Tổng thanh toán
+                        Total payment
                       </p>
                       <p className="text-sm font-bold text-brand">
                         {order.totalAmount?.toLocaleString("vi-VN")}₫
@@ -298,8 +298,7 @@ export function OrdersPage() {
                     {/* Địa chỉ */}
                     <div>
                       <p className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-brand" /> Địa chỉ giao
-                        hàng
+                        <MapPin className="w-3 h-3 text-brand" /> Shipping Address
                       </p>
                       <div className="bg-white border border-border/60 rounded-sm px-3 py-2.5">
                         <p className="text-sm font-semibold text-ink">
@@ -317,7 +316,7 @@ export function OrdersPage() {
                         </p>
                         {order.note && (
                           <p className="text-xs text-ink-muted italic mt-1.5 pt-1.5 border-t border-border/40">
-                            Ghi chú: {order.note}
+                            Note: {order.note}
                           </p>
                         )}
                       </div>
@@ -326,12 +325,12 @@ export function OrdersPage() {
                     {/* Thanh toán */}
                     <div>
                       <p className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-2 flex items-center gap-1">
-                        <CreditCard className="w-3 h-3 text-brand" /> Thanh toán
+                        <CreditCard className="w-3 h-3 text-brand" /> Payment
                       </p>
                       <div className="bg-white border border-border/60 rounded-sm px-3 py-2.5 space-y-1.5">
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-ink-muted">
-                            Phương thức
+                            Method
                           </span>
                           <span className="text-xs font-medium text-ink">
                             {PAYMENT_LABEL[order.paymentMethod] ||
@@ -340,28 +339,28 @@ export function OrdersPage() {
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-ink-muted">
-                            Trạng thái
+                            Status
                           </span>
                           <span
                             className={`text-[11px] font-semibold px-2.5 py-1 rounded-sm ${
                               order.paymentStatus === "paid"
                                 ? "bg-success/10 text-success"
                                 : order.paymentStatus === "failed"
-                                  ? "bg-danger/10 text-danger"
+                      ? "bg-danger/10 text-danger"
                                   : "bg-warning/10 text-warning"
                             }`}
                           >
                             {order.paymentStatus === "paid"
-                              ? "Đã thanh toán"
+                              ? "Paid"
                               : order.paymentStatus === "failed"
-                                ? "Thất bại"
-                                : "Chờ thanh toán"}
+                                ? "Failed"
+                                : "Pending Payment"}
                           </span>
                         </div>
                         {order.trackingCode && (
                           <div className="flex justify-between items-center pt-1.5 border-t border-border/40">
                             <span className="text-xs text-ink-muted flex items-center gap-1">
-                              <Truck className="w-3 h-3" /> Mã vận đơn
+                              <Truck className="w-3 h-3" /> Tracking Code
                             </span>
                             <span className="text-xs font-mono font-semibold text-brand">
                               {order.trackingCode}
@@ -374,14 +373,14 @@ export function OrdersPage() {
                     {/* Tóm tắt giá */}
                     <div className="bg-white border border-border/60 rounded-sm px-3 py-3 space-y-2">
                       <div className="flex justify-between text-xs text-ink-muted">
-                        <span>Tạm tính</span>
+                        <span>Subtotal</span>
                         <span>
                           {(order.subtotal ?? 0).toLocaleString("vi-VN")}₫
                         </span>
                       </div>
                       {hasDiscount && (
                         <div className="flex justify-between text-xs text-brand">
-                          <span>Giảm giá</span>
+                          <span>Discount</span>
                           <span>
                             -{order.discountAmount.toLocaleString("vi-VN")}₫
                           </span>
@@ -394,15 +393,15 @@ export function OrdersPage() {
                         </div>
                       )}
                       <div className="flex justify-between text-xs text-ink-muted">
-                        <span>Phí vận chuyển</span>
+                        <span>Shipping Fee</span>
                         <span>
                           {(order.shippingFee ?? 0) > 0
                             ? `${order.shippingFee.toLocaleString("vi-VN")}₫`
-                            : "Miễn phí"}
+                            : "Free"}
                         </span>
                       </div>
                       <div className="flex justify-between font-bold text-sm border-t border-border/50 pt-2 mt-1">
-                        <span className="text-ink">Tổng thanh toán</span>
+                        <span className="text-ink">Total Payment</span>
                         <span className="text-brand">
                           {(order.totalAmount ?? 0).toLocaleString("vi-VN")}₫
                         </span>
@@ -414,14 +413,14 @@ export function OrdersPage() {
                       (confirmCancelId === order.id ? (
                         <div className="space-y-2">
                           <p className="text-xs text-ink text-center">
-                            Xác nhận hủy đơn <strong>#{order.code}</strong>?
+                            Confirm cancellation of order <strong>#{order.code}</strong>?
                           </p>
                           <div className="flex gap-2">
                             <button
                               onClick={() => setConfirmCancelId(null)}
                               className="flex-1 border border-border text-ink-muted text-sm py-2 rounded-sm hover:bg-white transition-colors"
                             >
-                              Không
+                              No
                             </button>
                             <button
                               onClick={() => handleCancel(order.id)}
@@ -429,8 +428,8 @@ export function OrdersPage() {
                               className="flex-1 bg-danger text-white text-sm font-bold py-2 rounded-sm hover:bg-danger/90 transition-colors disabled:opacity-60"
                             >
                               {cancelMutation.isPending
-                                ? "Đang hủy..."
-                                : "Xác nhận hủy"}
+                                ? "Cancelling..."
+                                : "Confirm Cancel"}
                             </button>
                           </div>
                         </div>
@@ -439,7 +438,7 @@ export function OrdersPage() {
                           onClick={() => setConfirmCancelId(order.id)}
                           className="w-full border border-danger/40 text-danger text-sm font-medium py-2 rounded-sm hover:bg-danger/5 transition-colors"
                         >
-                          Hủy đơn hàng
+                          Cancel Order
                         </button>
                       ))}
 
@@ -455,26 +454,25 @@ export function OrdersPage() {
                           return returnOrderId === order.id ? (
                             <div className="space-y-2 pt-2 border-t border-border/40">
                               <p className="text-xs text-ink font-medium">
-                                Lý do trả hàng/hoàn tiền:
+                                Reason for return/refund:
                               </p>
                               <textarea
                                 className="w-full text-sm border border-border rounded-sm p-2 focus:outline-none focus:border-brand min-h-15"
-                                placeholder="Nhập lý do và mô tả tình trạng sản phẩm..."
+                                placeholder="Enter reason and describe product condition..."
                                 value={returnReason}
                                 onChange={(e) =>
                                   setReturnReason(e.target.value)
                                 }
                               />
                               <p className="text-[10px] text-ink-muted">
-                                *Quý khách vui lòng cung cấp thêm hình ảnh bằng
-                                chứng qua Zalo CSKH sau khi gửi yêu cầu.
+                                *Please provide photographic evidence via Customer Service Zalo after submitting request.
                               </p>
                               <div className="flex gap-2">
                                 <button
                                   onClick={() => setReturnOrderId(null)}
                                   className="flex-1 border border-border text-ink-muted text-sm py-2 rounded-sm hover:bg-white transition-colors"
                                 >
-                                  Hủy
+                                  Cancel
                                 </button>
                                 <button
                                   onClick={() => handleReturn(order.id)}
@@ -482,8 +480,8 @@ export function OrdersPage() {
                                   className="flex-1 bg-warning text-white text-sm font-bold py-2 rounded-sm hover:bg-warning/90 transition-colors disabled:opacity-60"
                                 >
                                   {returnMutation.isPending
-                                    ? "Đang gửi..."
-                                    : "Gửi yêu cầu"}
+                                    ? "Sending..."
+                                    : "Submit Request"}
                                 </button>
                               </div>
                             </div>
@@ -492,7 +490,7 @@ export function OrdersPage() {
                               onClick={() => setReturnOrderId(order.id)}
                               className="w-full border border-warning/40 text-warning text-sm font-medium py-2 rounded-sm hover:bg-warning/5 transition-colors mt-2"
                             >
-                              Yêu cầu Trả hàng / Hoàn tiền
+                              Request Return / Refund
                             </button>
                           );
                         }

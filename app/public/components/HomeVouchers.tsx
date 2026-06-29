@@ -76,17 +76,16 @@ function HomeSingleVoucher({
       <span className="text-[10px] text-ink-muted mt-0.5">{desc}</span>
 
       <div className="mt-2.5 pt-2.5 border-t border-dashed border-brand/20 flex justify-between items-center gap-1">
-        <span className="text-[9px] font-mono bg-brand/10 text-brand px-1.5 py-0.5 rounded uppercase tracking-widest truncate">
+        <span className="text-[9px] font-mono bg-brand/10 text-brand px-1.5 py-0.5 rounded-sm uppercase tracking-widest truncate">
           {voucher.code}
         </span>
         <button
           onClick={handleCollect}
           disabled={isLoading || saved}
-          className={`text-[10px] font-bold px-2.5 py-1 rounded-sm transition-all flex items-center gap-1 shrink-0 disabled:cursor-default ${
-            saved
-              ? "bg-success/10 text-success"
-              : "bg-brand text-white hover:bg-brand-dark"
-          }`}
+          className={`text-[10px] font-bold px-2.5 py-1 rounded-sm transition-all flex items-center gap-1 shrink-0 disabled:cursor-default ${saved
+            ? "bg-success/10 text-success"
+            : "bg-brand text-white hover:bg-brand-dark"
+            }`}
         >
           {saved ? (
             <>
@@ -145,20 +144,20 @@ export function HomeVouchers() {
       <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar">
         {isLoading
           ? [...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="min-w-45 h-22 bg-surface-soft border border-border rounded-sm animate-pulse shrink-0"
-              />
-            ))
+            <div
+              key={i}
+              className="min-w-45 h-22 bg-surface-soft border border-border rounded-sm animate-pulse shrink-0"
+            />
+          ))
           : vouchers!.map((v) => (
-              <HomeSingleVoucher
-                key={v.id}
-                voucher={v}
-                isSaved={savedCodes.has(v.code)}
-                onCollect={handleCollect}
-                isLoading={collectMutation.isPending}
-              />
-            ))}
+            <HomeSingleVoucher
+              key={v.id}
+              voucher={v}
+              isSaved={savedCodes.has(v.code)}
+              onCollect={handleCollect}
+              isLoading={collectMutation.isPending}
+            />
+          ))}
       </div>
     </section>
   );

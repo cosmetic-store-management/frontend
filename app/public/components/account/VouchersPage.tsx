@@ -15,9 +15,9 @@ export function VouchersPage() {
   );
 
   const TABS: { key: VoucherTab; label: string; count: number }[] = [
-    { key: "valid", label: "Khả dụng", count: validVouchers.length },
-    { key: "used", label: "Đã sử dụng", count: usedVouchers.length },
-    { key: "expired", label: "Hết hạn", count: expiredVouchers.length },
+    { key: "valid", label: "Available", count: validVouchers.length },
+    { key: "used", label: "Used", count: usedVouchers.length },
+    { key: "expired", label: "Expired", count: expiredVouchers.length },
   ];
 
   const activeVouchers =
@@ -28,10 +28,10 @@ export function VouchersPage() {
         : expiredVouchers;
 
   return (
-    <div className="animate-slide-up bg-surface px-6 py-6 flex-1">
+    <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-ink mb-1">Kho Voucher</h2>
-        <p className="text-xs text-ink-muted">Mã giảm giá đã lưu của bạn</p>
+        <h2 className="text-lg font-bold text-ink mb-1">Vouchers</h2>
+        <p className="text-xs text-ink-muted">Your saved vouchers</p>
       </div>
 
       {/* Sub-tabs */}
@@ -70,10 +70,10 @@ export function VouchersPage() {
         <div className="text-center py-16">
           <p className="text-sm text-ink-muted">
             {tab === "valid"
-              ? "Bạn chưa có mã khả dụng. Hãy lưu mã từ trang chủ!"
+              ? "You have no available vouchers. Save vouchers from the homepage!"
               : tab === "used"
-                ? "Bạn chưa sử dụng mã giảm giá nào."
-                : "Không có mã giảm giá đã hết hạn."}
+                ? "You haven't used any vouchers."
+                : "No expired vouchers."}
           </p>
         </div>
       ) : (

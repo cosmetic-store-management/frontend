@@ -105,15 +105,15 @@ export function ProductDetailPage() {
   if (isError || !product) {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-2xl font-bold mb-4">Không tìm thấy sản phẩm</h2>
+        <h2 className="text-2xl font-bold mb-4">Product not found</h2>
         <p className="text-ink-muted mb-8">
-          Sản phẩm này không tồn tại hoặc đã bị xóa.
+          This product does not exist or has been removed.
         </p>
         <Link
           to="/products"
-          className="btn-hover bg-brand text-white px-6 py-2 rounded-full font-bold"
+          className="btn-hover bg-brand text-white px-6 py-2 rounded-sm font-bold"
         >
-          Quay lại danh sách sản phẩm
+          Back to products
         </Link>
       </div>
     );
@@ -138,7 +138,7 @@ export function ProductDetailPage() {
 
   const handleToggleFavorite = () => {
     if (!isLoggedIn) {
-      toast.error("Vui lòng đăng nhập để lưu sản phẩm yêu thích");
+      toast.error("Please login to save favorite product");
       return;
     }
     toggleFavoriteMutation.mutate(product.id);
@@ -146,7 +146,7 @@ export function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
-      toast.error("Vui lòng chọn loại sản phẩm");
+      toast.error("Please select a variant");
       return;
     }
 
@@ -177,7 +177,7 @@ export function ProductDetailPage() {
       <div className="flex items-center text-[13px] text-muted-foreground mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80"
+          className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium px-3 py-1.5 rounded-sm bg-muted hover:bg-muted/80"
         >
           <ArrowLeft className="w-3.5 h-3.5" /> Back
         </button>
@@ -248,14 +248,14 @@ export function ProductDetailPage() {
                       />
                     ))}
                     <span className="ml-1">
-                      ({product.numReviews} đánh giá)
+                      ({product.numReviews} reviews)
                     </span>
                   </div>
                 ) : (
-                  <span className="text-ink-muted">Chưa có đánh giá</span>
+                  <span className="text-ink-muted">No reviews yet</span>
                 )}
                 <div className="w-px h-4 bg-border"></div>
-                <span>Đã bán {product.soldCount || 0}</span>
+                <span>{product.soldCount || 0} sold</span>
               </div>
 
               <button
@@ -288,7 +288,7 @@ export function ProductDetailPage() {
                     {selectedVariant.price.toLocaleString("vi-VN")}₫
                   </span>
                   <span
-                    className="text-xs font-bold px-2 py-0.5 rounded-full text-white"
+                    className="text-xs font-bold px-2 py-0.5 rounded-sm text-white"
                     style={{ background: "hsl(352, 72%, 52%)" }}
                   >
                     -{Math.round((1 - selectedVariant.discountPrice / selectedVariant.price) * 100)}%
@@ -321,14 +321,13 @@ export function ProductDetailPage() {
                         );
                       }}
                       disabled={v.stock === 0}
-                      className={`flex items-center gap-2 h-10 px-4 rounded-xl border-2 text-sm font-semibold transition-all duration-150 ${
-                        selectedVariant?.id === v.id ||
-                        (selectedVariant && selectedVariant.name === v.name)
+                      className={`flex items-center gap-2 h-10 px-4 rounded-sm border-2 text-sm font-semibold transition-all duration-150 ${selectedVariant?.id === v.id ||
+                          (selectedVariant && selectedVariant.name === v.name)
                           ? "border-brand bg-brand/5 text-brand shadow-sm"
                           : v.stock === 0
                             ? "border-border opacity-40 cursor-not-allowed"
                             : "border-border hover:border-brand/50 text-foreground"
-                      }`}
+                        }`}
                     >
                       {v.imageUrl && (
                         <img
@@ -349,7 +348,7 @@ export function ProductDetailPage() {
             <div className="space-y-4 mt-6 pt-5 border-t border-border">
               {/* Qty + Stock */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center border border-border rounded-xl h-11 w-32 overflow-hidden">
+                <div className="flex items-center border border-border rounded-sm h-11 w-32 overflow-hidden">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
@@ -394,14 +393,14 @@ export function ProductDetailPage() {
                 <button
                   onClick={handleAddToCart}
                   disabled={isOutOfStock || !product.isActive}
-                  className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-xl transition-all duration-150 hover:bg-brand/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-sm transition-all duration-150 hover:bg-brand/5 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <ShoppingBag className="w-5 h-5" /> Add to Cart
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={isOutOfStock || !product.isActive}
-                  className="btn-hover flex-1 font-bold py-3.5 px-6 rounded-xl transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-[0.99]"
+                  className="btn-hover flex-1 font-bold py-3.5 px-6 rounded-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-[0.99]"
                   style={{ background: "hsl(352, 72%, 52%)" }}
                 >
                   Buy Now
@@ -417,21 +416,21 @@ export function ProductDetailPage() {
         <button
           onClick={handleAddToCart}
           disabled={isOutOfStock || !product.isActive}
-          className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-xl transition-all disabled:opacity-40 text-sm"
+          className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
         >
           <ShoppingBag className="w-4 h-4" /> Add to Cart
         </button>
         <button
           onClick={handleBuyNow}
           disabled={isOutOfStock || !product.isActive}
-          className="flex-1 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-40 text-sm"
+          className="flex-1 text-white font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
           style={{ background: "hsl(352, 72%, 52%)" }}
         >
           Buy Now
         </button>
       </div>
 
-      {/* Khối 2: Sản phẩm liên quan */}
+      {/* Block 2: Related products */}
       {product.categoryId && (
         <RelatedProducts
           categoryId={product.categoryId}
@@ -463,7 +462,7 @@ export function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Khối 5: Đề xuất cho bạn */}
+      {/* Block 5: Recommendations for you */}
       <div className="mt-4">
         {product && <ProductRecommendations productId={product.id} />}
       </div>

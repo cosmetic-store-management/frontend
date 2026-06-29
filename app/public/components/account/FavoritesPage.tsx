@@ -6,17 +6,17 @@ export function FavoritesPage() {
   const { data: favorites = [], isLoading } = useFavorites();
 
   return (
-    <div className="animate-slide-up bg-surface px-6 py-6 flex-1">
+    <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-ink">Sản phẩm yêu thích</h2>
+          <h2 className="text-lg font-bold text-ink">Wishlist</h2>
           <p className="text-xs text-ink-muted mt-0.5">
-            Danh sách sản phẩm bạn đã lưu
+            Your saved products
           </p>
         </div>
         {favorites.length > 0 && (
           <span className="text-xs text-ink-muted mt-1">
-            {favorites.length} sản phẩm
+            {favorites.length} products
           </span>
         )}
       </div>
@@ -32,16 +32,16 @@ export function FavoritesPage() {
           </div>
           <div className="text-center">
             <p className="text-sm font-semibold text-ink mb-1">
-              Chưa có sản phẩm yêu thích
+              No favorite products yet
             </p>
             <p className="text-xs text-ink-muted mb-4">
-              Bấm vào biểu tượng ❤️ trên sản phẩm để lưu vào đây
+              Click the ❤️ icon on a product to save it here
             </p>
             <a
               href="/products"
               className="inline-block bg-brand text-white text-sm font-bold px-5 py-2 rounded-sm btn-hover"
             >
-              Khám phá sản phẩm
+              Explore Products
             </a>
           </div>
         </div>

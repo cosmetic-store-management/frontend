@@ -270,7 +270,7 @@
   }
   /* Cards */
   .premium-card {
-    @apply bg-card border border-border shadow-sm rounded-sm transition-all duration-300;
+    @apply bg-card border border-border shadow-sm rounded-sm overflow-hidden transition-all duration-300;
   }
   .premium-card:hover {
     @apply shadow-lg border-brand/40 -translate-y-[2px];

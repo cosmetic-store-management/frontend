@@ -9,12 +9,21 @@ import {
 } from "../schemas/public-auth.schema";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
+import { usePublicStats } from "@/public/hooks/usePublicStats";
 
 export default function PublicLoginPage() {
   const loginMutation = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPw, setShowPw] = useState(false);
+  const { stats } = usePublicStats();
+
+  const formatStat = (num: number) => {
+    if (num >= 1000) return Math.floor(num / 1000) + "K+";
+    if (num >= 100) return Math.floor(num / 100) * 100 + "+";
+    if (num >= 10) return Math.floor(num / 10) * 10 + "+";
+    return num + "+";
+  };
 
   const {
     register,
@@ -73,12 +82,11 @@ export default function PublicLoginPage() {
 
         <div className="relative z-10 text-center px-12 max-w-md">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-3 mb-10">
+          <Link to="/" className="flex items-center justify-center gap-3 mb-10 group">
             <div
-              className="w-12 h-12 rounded-2xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}
+              className="w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105"
             >
-              <Sparkles className="w-6 h-6 text-white" />
+              <img src="/logo.png" alt="GlowUp Logo" className="w-full h-full object-cover scale-[1.45]" />
             </div>
             <span
               className="text-3xl font-bold text-white tracking-tight"
@@ -86,7 +94,7 @@ export default function PublicLoginPage() {
             >
               GlowUp
             </span>
-          </div>
+          </Link>
 
           <h2
             className="text-4xl font-bold text-white mb-4 leading-tight"
@@ -104,9 +112,9 @@ export default function PublicLoginPage() {
           {/* Trust indicators */}
           <div className="mt-10 grid grid-cols-3 gap-4">
             {[
-              { num: "10K+", label: "Products" },
-              { num: "50K+", label: "Customers" },
-              { num: "4.9★", label: "Rating" },
+              { num: formatStat(stats.products), label: "Products" },
+              { num: formatStat(stats.customers), label: "Customers" },
+              { num: Number(stats.rating).toFixed(1) + "★", label: "Rating" },
             ].map(({ num, label }) => (
               <div key={label} className="text-center">
                 <p className="text-xl font-bold text-white">{num}</p>
@@ -154,20 +162,19 @@ export default function PublicLoginPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-            {/* Email / Phone */}
+            {/* Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                Email or Phone
+                Email
               </label>
               <input
                 type="text"
-                placeholder="hello@example.com"
+                placeholder="youremail@example.com"
                 {...register("identifier")}
-                className={`w-full h-11 px-4 rounded-xl border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
-                  errors.identifier
+                className={`w-full h-11 px-4 rounded-sm border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${errors.identifier
                     ? "border-destructive focus:ring-2 focus:ring-destructive/20"
                     : "border-border focus:border-brand focus:ring-2 focus:ring-brand/15"
-                }`}
+                  }`}
               />
               {errors.identifier && (
                 <p className="text-xs text-destructive">{errors.identifier.message}</p>
@@ -184,11 +191,10 @@ export default function PublicLoginPage() {
                   type={showPw ? "text" : "password"}
                   placeholder="••••••••"
                   {...register("password")}
-                  className={`w-full h-11 px-4 pr-11 rounded-xl border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
-                    errors.password
+                  className={`w-full h-11 px-4 pr-11 rounded-sm border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${errors.password
                       ? "border-destructive focus:ring-2 focus:ring-destructive/20"
                       : "border-border focus:border-brand focus:ring-2 focus:ring-brand/15"
-                  }`}
+                    }`}
                 />
                 <button
                   type="button"
@@ -226,7 +232,7 @@ export default function PublicLoginPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full h-11 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 mt-2 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99]"
+              className="w-full h-11 rounded-sm text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 mt-2 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99]"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               {isPending ? (
@@ -255,7 +261,7 @@ export default function PublicLoginPage() {
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={`${import.meta.env.VITE_API_URL}/auth/facebook`}
-                className="h-11 rounded-xl border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-[#1877F2]/40"
+                className="h-11 rounded-sm border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-[#1877F2]/40"
               >
                 <svg className="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
                   <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.324V1.325C24 .597 23.403 0 22.675 0z" />
@@ -264,7 +270,7 @@ export default function PublicLoginPage() {
               </a>
               <a
                 href={`${import.meta.env.VITE_API_URL}/auth/google`}
-                className="h-11 rounded-xl border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-red-300/50"
+                className="h-11 rounded-sm border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-red-300/50"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

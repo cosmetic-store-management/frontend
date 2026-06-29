@@ -160,12 +160,12 @@ export function ProductReviews({ product }: ProductReviewsProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      toast.error("Vui lòng đăng nhập để đánh giá");
+      toast.error("Please login to submit a review");
       return;
     }
 
     if (rating === 0) {
-      toast.error("Vui lòng chọn số sao để đánh giá sản phẩm");
+      toast.error("Please select a star rating to review the product");
       return;
     }
 
@@ -195,7 +195,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
       },
       {
         onSuccess: () => {
-          toast.success("Đánh giá của bạn đã được gửi");
+          toast.success("Your review has been submitted");
           setComment("");
           setMediaFile(null);
           setMediaPreviewUrl("");
@@ -224,7 +224,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
       },
       {
         onSuccess: () => {
-          toast.success("Đã cập nhật đánh giá");
+          toast.success("Review updated");
           setEditingReviewId(null);
         },
         onError: (err: any) => {
@@ -235,9 +235,9 @@ export function ProductReviews({ product }: ProductReviewsProps) {
   };
 
   const handleDelete = (reviewId: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) {
+    if (window.confirm("Are you sure you want to delete this review?")) {
       deleteReview.mutate(reviewId, {
-        onSuccess: () => toast.success("Đã xóa đánh giá"),
+        onSuccess: () => toast.success("Review deleted"),
         onError: (err: any) => toast.error(err.message || "Xóa thất bại"),
       });
     }
@@ -271,7 +271,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               </span>
             </div>
             <span className="text-[14px] text-ink-muted mt-2">
-              {totalReviews} đánh giá
+              {totalReviews} reviews
             </span>
           </div>
 
@@ -312,7 +312,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
         {/* Right: Write Review Button */}
         <div className="flex flex-col items-start justify-center min-w-62.5 md:pl-8 mt-6 md:mt-0">
           <span className="text-[14px] text-ink mb-3 font-medium">
-            Đánh giá sản phẩm
+            Review this product
           </span>
           <div
             className="flex items-center gap-2 mb-3 cursor-pointer"
@@ -356,7 +356,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               className="text-[13px] text-blue-500 cursor-pointer hover:underline"
               onClick={() => setIsModalOpen(true)}
             >
-              Hãy là người đầu tiên đánh giá sản phẩm!
+              Be the first to review this product!
             </span>
           )}
         </div>
@@ -370,7 +370,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
             <DropdownMenu open={isFilterOpen} onOpenChange={setIsFilterOpen}>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 border border-border bg-surface hover:bg-surface-muted px-4 py-2 rounded-sm text-sm font-medium transition-colors">
-                  <Filter className="w-4 h-4" /> Lọc đánh giá
+                  <Filter className="w-4 h-4" /> Filter reviews
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -399,7 +399,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               </div>
             ) : reviews.length === 0 ? (
               <div className="text-center text-ink-muted py-12 bg-surface-soft rounded-sm border border-border">
-                Không có đánh giá nào phù hợp với bộ lọc hiện tại.
+                No reviews match the current filter.
               </div>
             ) : (
               reviews.map((review) => (
@@ -563,7 +563,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                               >
                                 <img
                                   src={img}
-                                  alt={`Hình đính kèm ${idx + 1} của đánh giá`}
+                                  alt={`Attachment ${idx + 1} of review`}
                                   className="h-full w-full object-cover"
                                 />
                               </button>
@@ -609,7 +609,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                               }}
                               className="text-xs font-bold text-danger hover:underline"
                             >
-                              Sửa đánh giá
+                              Edit review
                             </button>
                             <button
                               onClick={() => handleDelete(review.id)}
@@ -683,7 +683,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
         <DialogContent className="max-w-3xl p-0 bg-surface sm:rounded-sm border-border shadow-ui-card flex flex-col max-h-[90vh] overflow-hidden">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface flex flex-row items-center justify-between shrink-0">
             <DialogTitle className="text-lg font-bold text-ink">
-              Đánh giá sản phẩm
+              Review product
             </DialogTitle>
           </DialogHeader>
 
@@ -740,7 +740,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                 </div>
                 <div className="text-ink font-medium text-[15px]">
                   {STAR_LABELS[modalHoverRating || rating] ??
-                    "Vui lòng chọn đánh giá"}
+                    "Please select a rating"}
                 </div>
               </div>
 
@@ -748,7 +748,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               <div className="space-y-2 mb-6">
                 <div className="flex justify-between items-center text-[15px]">
                   <span className="text-ink font-bold">
-                    Viết đánh giá<span className="text-danger">*</span>
+                    Write a review<span className="text-danger">*</span>
                   </span>
                   <span className="text-ink-muted text-sm">
                     {comment.length}/500 ký tự
@@ -757,7 +757,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value.slice(0, 500))}
-                  placeholder="Hãy chia sẻ đánh giá của bạn về sản phẩm"
+                  placeholder="Share your review about the product"
                   className="w-full bg-surface border border-border rounded-sm p-4 text-[15px] focus:outline-none focus:border-brand resize-none h-32 placeholder:text-ink-muted/60"
                 />
               </div>
@@ -765,7 +765,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               {/* Image Upload */}
               <div className="space-y-2">
                 <span className="text-ink font-bold text-[15px] block">
-                  Hình ảnh / Video đánh giá{" "}
+                  Review Images / Videos{" "}
                   <span className="text-ink-muted font-normal text-[13px]">
                     (định dạng .jpg, .jpeg, .png, .mp4, .mov)
                   </span>
@@ -837,7 +837,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               >
                 {createReview.isPending || isUploading
                   ? "Đang gửi..."
-                  : "Gửi đánh giá"}
+                  : "Submit review"}
               </button>
             </DialogFooter>
           </form>

@@ -226,12 +226,12 @@ export function PersonalInfoPage() {
 
   return (
     <>
-      <div className="animate-slide-up bg-surface flex-1">
+      <div className="animate-slide-up bg-surface rounded-sm flex-1">
         {/* ── Hồ sơ ── */}
         <div className="px-6 py-6 border-b border-border/50">
-          <h2 className="text-base font-bold text-ink mb-1">Hồ sơ của tôi</h2>
+          <h2 className="text-base font-bold text-ink mb-1">My Profile</h2>
           <p className="text-xs text-ink-muted mb-6">
-            Quản lý thông tin hồ sơ để bảo mật tài khoản
+            Manage profile information for account security
           </p>
 
           {/* Avatar */}
@@ -287,14 +287,14 @@ export function PersonalInfoPage() {
                       />
                     </svg>
                     <span className="text-white text-[9px] font-bold">
-                      Đổi ảnh
+                      Change photo
                     </span>
                   </>
                 )}
               </div>
             </button>
             <p className="text-[11px] text-ink-muted">
-              Nhấn vào ảnh để thay đổi · Max 1.5 MB
+              Click photo to change · Max 1.5 MB
             </p>
           </div>
 
@@ -306,7 +306,7 @@ export function PersonalInfoPage() {
                   htmlFor="profile-name"
                   className="text-sm font-semibold text-ink"
                 >
-                  Họ và tên
+                  Full Name
                 </label>
                 <Controller
                   control={profileCtrl}
@@ -316,7 +316,7 @@ export function PersonalInfoPage() {
                       {...field}
                       id="profile-name"
                       type="text"
-                      placeholder="Nhập họ và tên"
+                      placeholder="Enter full name"
                       className="w-full bg-surface-soft border border-border py-2 px-3 text-sm focus:ring-1 focus:ring-brand focus:outline-none rounded-sm"
                     />
                   )}
@@ -343,7 +343,7 @@ export function PersonalInfoPage() {
                       {...field}
                       id="profile-email"
                       type="email"
-                      placeholder="Chưa cập nhật"
+                      placeholder="Not updated"
                       className="w-full bg-surface-soft border border-border py-2 px-3 text-sm focus:ring-1 focus:ring-brand focus:outline-none rounded-sm"
                     />
                   )}
@@ -360,7 +360,7 @@ export function PersonalInfoPage() {
                   htmlFor="profile-phone"
                   className="text-sm font-semibold text-ink"
                 >
-                  Số điện thoại
+                  Phone Number
                 </label>
                 <Controller
                   control={profileCtrl}
@@ -370,7 +370,7 @@ export function PersonalInfoPage() {
                       {...field}
                       id="profile-phone"
                       type="tel"
-                      placeholder="Chưa cập nhật"
+                      placeholder="Not updated"
                       className="w-full bg-surface-soft border border-border py-2 px-3 text-sm focus:ring-1 focus:ring-brand focus:outline-none rounded-sm"
                     />
                   )}
@@ -387,7 +387,7 @@ export function PersonalInfoPage() {
                   htmlFor="profile-dob"
                   className="text-sm font-semibold text-ink"
                 >
-                  Ngày sinh
+                  Date of Birth
                 </label>
                 <Controller
                   control={profileCtrl}
@@ -425,7 +425,7 @@ export function PersonalInfoPage() {
               <div className="space-y-2 md:col-span-2">
                 {/* eslint-disable-next-line  */}
                 <label className="text-sm font-semibold text-ink block">
-                  Giới tính
+                  Gender
                 </label>
                 <Controller
                   control={profileCtrl}
@@ -433,9 +433,9 @@ export function PersonalInfoPage() {
                   render={({ field }) => (
                     <div className="flex items-center gap-6">
                       {[
-                        { value: "male", label: "Nam" },
-                        { value: "female", label: "Nữ" },
-                        { value: "other", label: "Khác" },
+                        { value: "male", label: "Male" },
+                        { value: "female", label: "Female" },
+                        { value: "other", label: "Other" },
                       ].map((opt) => (
                         <label
                           key={opt.value}
@@ -464,7 +464,7 @@ export function PersonalInfoPage() {
                 disabled={updateProfile.isPending}
                 className="btn-hover bg-brand text-white font-bold py-2.5 px-8 rounded-sm hover:bg-brand-dark transition-colors disabled:opacity-60"
               >
-                {updateProfile.isPending ? "Đang lưu..." : "Lưu thay đổi"}
+                {updateProfile.isPending ? "Saving..." : "Save changes"}
               </button>
             </div>
           </form>
@@ -472,9 +472,9 @@ export function PersonalInfoPage() {
 
         {/* ── Bảo mật ── */}
         <div className="px-6 py-6">
-          <h3 className="text-base font-bold text-ink mb-1">Bảo mật</h3>
+          <h3 className="text-base font-bold text-ink mb-1">Security</h3>
           <p className="text-xs text-ink-muted mb-6">
-            Đổi mật khẩu định kỳ để bảo vệ tài khoản
+            Change password periodically to protect your account
           </p>
           <form
             onSubmit={handlePwdSubmit(onChangePassword)}
@@ -484,17 +484,17 @@ export function PersonalInfoPage() {
               {
                 name: "currentPassword" as const,
                 id: "pwd-current",
-                label: "Mật khẩu hiện tại",
+                label: "Current password",
               },
               {
                 name: "newPassword" as const,
                 id: "pwd-new",
-                label: "Mật khẩu mới",
+                label: "New password",
               },
               {
                 name: "confirmPassword" as const,
                 id: "pwd-confirm",
-                label: "Xác nhận mật khẩu mới",
+                label: "Confirm new password",
               },
             ].map(({ name, id, label }) => (
               <div key={name} className="space-y-1.5">
@@ -526,7 +526,7 @@ export function PersonalInfoPage() {
               disabled={changePass.isPending}
               className="btn-hover bg-brand text-white font-bold py-2.5 px-8 rounded-sm hover:bg-brand-dark transition-colors disabled:opacity-60"
             >
-              {changePass.isPending ? "Đang xử lý..." : "Đổi mật khẩu"}
+              {changePass.isPending ? "Processing..." : "Change password"}
             </button>
           </form>
         </div>
@@ -538,10 +538,10 @@ export function PersonalInfoPage() {
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4">
             <div className="bg-surface w-full max-w-105 rounded-lg p-6 shadow-xl border border-border/50 animate-scale-up">
               <h3 className="text-lg font-bold text-ink mb-1">
-                Xác thực Email
+                Email Verification
               </h3>
               <p className="text-sm text-ink-muted mb-5 leading-relaxed">
-                Mã OTP đã được gửi đến{" "}
+                OTP code has been sent to{" "}
                 <strong className="text-brand font-semibold">
                   {otpModalData.email}
                 </strong>
@@ -566,7 +566,7 @@ export function PersonalInfoPage() {
 
               <div className="flex items-center justify-between mb-6">
                 <span className="text-xs font-medium text-ink-muted">
-                  Thời gian còn lại:{" "}
+                  Time remaining:{" "}
                   <strong className="text-danger">
                     {Math.floor(otpTimer / 60)
                       .toString()
@@ -581,7 +581,7 @@ export function PersonalInfoPage() {
                     disabled={sendOtpMutation.isPending}
                     className="text-xs text-brand font-bold hover:underline disabled:opacity-50"
                   >
-                    {sendOtpMutation.isPending ? "Đang gửi..." : "Gửi lại mã"}
+                    {sendOtpMutation.isPending ? "Sending..." : "Resend code"}
                   </button>
                 )}
               </div>
@@ -596,7 +596,7 @@ export function PersonalInfoPage() {
                   }}
                   className="btn-hover bg-surface-soft text-ink text-sm font-medium py-2 px-5 rounded-md hover:bg-border/50 transition-colors"
                 >
-                  Hủy
+                  Cancel
                 </button>
                 <button
                   type="button"
@@ -608,7 +608,7 @@ export function PersonalInfoPage() {
                   }
                   className="btn-hover bg-brand text-white text-sm font-medium py-2 px-5 rounded-md hover:bg-brand-dark disabled:opacity-50 transition-colors"
                 >
-                  {verifyOtpMutation.isPending ? "Đang xử lý..." : "Xác nhận"}
+                  {verifyOtpMutation.isPending ? "Processing..." : "Confirm"}
                 </button>
               </div>
             </div>

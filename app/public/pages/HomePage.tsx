@@ -88,7 +88,7 @@ export default function HomePage() {
                 <Link
                   key={cat.id || cat._id}
                   to={`/products?category=${cat.slug}`}
-                  className="card-animate group flex items-center gap-3 p-3 bg-surface border border-border/40 hover:border-brand/50 hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all rounded-lg"
+                  className="card-animate group flex items-center gap-3 p-3 bg-surface border border-border/40 hover:border-brand/50 hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all rounded-sm"
                   style={{ "--card-i": i } as React.CSSProperties}
                 >
                   {/* Icon */}
@@ -137,7 +137,7 @@ export default function HomePage() {
                 <Link
                   key={brand.id || brand._id}
                   to={`/products?brandId=${brand.id || brand._id}`}
-                  className="group rounded-lg overflow-hidden border border-border/40 aspect-2/1 bg-surface flex items-center justify-center p-4 hover:border-brand/50 hover:shadow-md hover:-translate-y-1 transition-all"
+                  className="group rounded-sm overflow-hidden border border-border/40 aspect-2/1 bg-surface flex items-center justify-center p-4 hover:border-brand/50 hover:shadow-md hover:-translate-y-1 transition-all"
                 >
                   {(brand.imageUrl || brand.logoUrl) &&
                   !(brand.imageUrl || brand.logoUrl || "").includes(
@@ -220,7 +220,7 @@ export default function HomePage() {
             <div className="mt-8 flex justify-center">
               <Link
                 to="/products"
-                className="btn-outline px-12 py-3 rounded-full hover:shadow-md hover:-translate-y-1"
+                className="btn-outline px-12 py-3 rounded-sm hover:shadow-md hover:-translate-y-1"
               >
                 Keep exploring
               </Link>

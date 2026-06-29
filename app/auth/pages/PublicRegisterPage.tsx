@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router";
-import { Loader2, Sparkles, Eye, EyeOff, Check } from "lucide-react";
+import { Loader2, Sparkles, Eye, EyeOff, Check, UserPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "@/auth/hooks/usePublicAuth";
@@ -79,7 +79,7 @@ export default function PublicRegisterPage() {
           type={type}
           placeholder={placeholder}
           {...register(name)}
-          className={`w-full h-11 px-4 ${rightEl ? "pr-11" : ""} rounded-xl border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
+          className={`w-full h-11 px-4 ${rightEl ? "pr-11" : ""} rounded-sm border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
             error
               ? "border-destructive focus:ring-2 focus:ring-destructive/20"
               : "border-border focus:border-brand focus:ring-2 focus:ring-brand/15"
@@ -117,12 +117,11 @@ export default function PublicRegisterPage() {
 
         <div className="relative z-10 text-center px-12 max-w-xs">
           {/* Logo */}
-          <div className="flex items-center justify-center gap-3 mb-8">
+          <Link to="/" className="flex items-center justify-center gap-3 mb-8 group">
             <div
-              className="w-11 h-11 rounded-2xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(8px)" }}
+              className="w-11 h-11 rounded-2xl flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105"
             >
-              <Sparkles className="w-5 h-5 text-white" />
+              <img src="/logo.png" alt="GlowUp Logo" className="w-full h-full object-cover scale-[1.45]" />
             </div>
             <span
               className="text-2xl font-bold text-white tracking-tight"
@@ -130,7 +129,7 @@ export default function PublicRegisterPage() {
             >
               GlowUp
             </span>
-          </div>
+          </Link>
 
           <h2
             className="text-3xl font-bold text-white mb-3 leading-tight"
@@ -208,7 +207,7 @@ export default function PublicRegisterPage() {
               label="Email"
               name="email"
               type="email"
-              placeholder="hello@example.com"
+              placeholder="you@example.com"
               error={errors.email?.message}
             />
             <Field
@@ -251,31 +250,21 @@ export default function PublicRegisterPage() {
               }
             />
 
-            <p className="text-xs text-muted-foreground pt-1">
-              By creating an account, you agree to our{" "}
-              <Link to="#" className="underline hover:opacity-80" style={{ color: "hsl(352, 72%, 48%)" }}>
-                Terms of Use
-              </Link>{" "}
-              and{" "}
-              <Link to="#" className="underline hover:opacity-80" style={{ color: "hsl(352, 72%, 48%)" }}>
-                Privacy Policy
-              </Link>
-              .
-            </p>
+
 
             {/* Submit */}
             <button
               type="submit"
               disabled={isPending}
-              className="w-full h-11 rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99] mt-1"
+              className="w-full h-11 rounded-sm text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99] mt-1"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               {isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4" />
-                  Create my account
+                  <UserPlus className="w-4 h-4" />
+                  Sign Up
                 </>
               )}
             </button>
@@ -296,7 +285,7 @@ export default function PublicRegisterPage() {
             <div className="grid grid-cols-2 gap-3">
               <a
                 href={`${import.meta.env.VITE_API_URL}/auth/facebook`}
-                className="h-11 rounded-xl border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-[#1877F2]/40"
+                className="h-11 rounded-sm border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-[#1877F2]/40"
               >
                 <svg className="w-4 h-4 fill-[#1877F2]" viewBox="0 0 24 24">
                   <path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.324V1.325C24 .597 23.403 0 22.675 0z" />
@@ -305,7 +294,7 @@ export default function PublicRegisterPage() {
               </a>
               <a
                 href={`${import.meta.env.VITE_API_URL}/auth/google`}
-                className="h-11 rounded-xl border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-red-300/50"
+                className="h-11 rounded-sm border border-border flex items-center justify-center gap-2.5 text-sm font-medium text-foreground transition-all duration-150 hover:bg-muted/60 hover:border-red-300/50"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

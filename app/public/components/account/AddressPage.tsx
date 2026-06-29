@@ -79,26 +79,26 @@ export function AddressPage() {
     try {
       if (editingId) {
         await updateMutation.mutateAsync({ id: editingId, payload: data });
-        toast.success("Cập nhật địa chỉ thành công");
+        toast.success("Address updated successfully");
       } else {
         await addMutation.mutateAsync(data);
-        toast.success("Thêm địa chỉ thành công");
+        toast.success("Address added successfully");
       }
       setShowForm(false);
       setEditingId(null);
       reset();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Lưu địa chỉ thất bại");
+      toast.error(err.response?.data?.message || "Failed to save address");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Bạn có chắc muốn xóa địa chỉ này?")) return;
+    if (!window.confirm("Are you sure you want to delete this address?")) return;
     try {
       await deleteMutation.mutateAsync(id);
-      toast.success("Đã xóa địa chỉ");
+      toast.success("Address deleted");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Xóa thất bại");
+      toast.error(err.response?.data?.message || "Failed to delete");
     }
   };
 
@@ -106,16 +106,16 @@ export function AddressPage() {
   const renderForm = (isInline = false) => (
     <form
       onSubmit={handleSubmit(onSave)}
-      className={`border border-border bg-surface-soft p-5 rounded-sm ${isInline ? "mt-3" : "mb-6"}`}
+      className={`border border-border bg-surface-soft p-5 rounded-sm ${isInline ? "mt-3" : "mb-6"} animate-scale-up`}
     >
       <h3 className="font-bold text-ink mb-4 text-sm">
-        {editingId ? "Cập nhật địa chỉ" : "Địa chỉ mới"}
+        {editingId ? "Update Address" : "New Address"}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold text-ink uppercase tracking-wide">
-            Tỉnh / Thành phố <span className="text-danger">*</span>
+            Province / City <span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -132,7 +132,7 @@ export function AddressPage() {
                 }}
               >
                 <SelectTrigger className="w-full h-9 text-sm bg-white">
-                  <SelectValue placeholder="-- Chọn tỉnh/thành --" />
+                  <SelectValue placeholder="-- Select province/city --" />
                 </SelectTrigger>
                 <SelectContent side="bottom">
                   {vn.provinces.map((p) => (
@@ -151,7 +151,7 @@ export function AddressPage() {
 
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold text-ink uppercase tracking-wide">
-            Quận / Huyện <span className="text-danger">*</span>
+            District <span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -171,8 +171,8 @@ export function AddressPage() {
                   <SelectValue
                     placeholder={
                       vn.districtLoading
-                        ? "Đang tải..."
-                        : "-- Chọn quận/huyện --"
+                        ? "Loading..."
+                        : "-- Select district --"
                     }
                   />
                 </SelectTrigger>
@@ -193,7 +193,7 @@ export function AddressPage() {
 
         <div className="space-y-1.5">
           <Label className="text-xs font-semibold text-ink uppercase tracking-wide">
-            Phường / Xã <span className="text-danger">*</span>
+            Ward <span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -207,7 +207,7 @@ export function AddressPage() {
                 <SelectTrigger className="w-full h-9 text-sm bg-white">
                   <SelectValue
                     placeholder={
-                      vn.wardLoading ? "Đang tải..." : "-- Chọn phường/xã --"
+                      vn.wardLoading ? "Loading..." : "-- Select ward --"
                     }
                   />
                 </SelectTrigger>
@@ -229,7 +229,7 @@ export function AddressPage() {
 
       <div className="space-y-1.5 mb-4">
         <Label className="text-xs font-semibold text-ink uppercase tracking-wide">
-          Số nhà / Tên đường <span className="text-danger">*</span>
+          Street Address <span className="text-danger">*</span>
         </Label>
         <Controller
           control={control}
@@ -238,7 +238,7 @@ export function AddressPage() {
             <Input
               {...field}
               type="text"
-              placeholder="VD: 123 Nguyễn Huệ"
+              placeholder="Ex: 123 Nguyen Hue"
               className="h-9 text-sm bg-white"
             />
           )}
@@ -264,7 +264,7 @@ export function AddressPage() {
           htmlFor="addr-isDefault"
           className="text-sm text-ink-muted cursor-pointer font-normal select-none"
         >
-          Đặt làm địa chỉ mặc định
+          Set as default address
         </Label>
       </div>
 
@@ -275,8 +275,8 @@ export function AddressPage() {
           className="btn-hover bg-brand text-white text-sm font-bold py-2 px-6 rounded-sm hover:bg-brand-dark transition-colors disabled:opacity-60"
         >
           {addMutation.isPending || updateMutation.isPending
-            ? "Đang lưu..."
-            : "Lưu địa chỉ"}
+            ? "Saving..."
+            : "Save Address"}
         </button>
         <button
           type="button"
@@ -288,7 +288,7 @@ export function AddressPage() {
           }}
           className="text-sm text-ink-muted hover:text-ink font-medium px-4 py-2 transition-colors"
         >
-          Hủy bỏ
+          Cancel
         </button>
       </div>
     </form>
@@ -297,13 +297,13 @@ export function AddressPage() {
   if (!user) return null;
 
   return (
-    <div className="animate-slide-up bg-surface px-6 py-6 flex-1">
+    <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-ink mb-1">Sổ địa chỉ</h2>
+          <h2 className="text-lg font-bold text-ink mb-1">Address Book</h2>
           <p className="text-xs text-ink-muted">
-            Địa chỉ giao hàng đã lưu của bạn
+            Your saved shipping addresses
           </p>
         </div>
         {!showForm && (
@@ -323,7 +323,7 @@ export function AddressPage() {
             }}
             className="btn-hover flex items-center gap-1.5 bg-brand text-white text-sm font-semibold px-4 py-2 rounded-sm hover:bg-brand-dark transition-colors"
           >
-            <Plus className="w-4 h-4" /> Thêm địa chỉ
+            <Plus className="w-4 h-4" /> Add Address
           </button>
         )}
       </div>
@@ -336,10 +336,10 @@ export function AddressPage() {
         <div className="text-center py-16">
           <MapPin className="w-10 h-10 text-border mx-auto mb-3" />
           <p className="text-sm text-ink-muted">
-            Bạn chưa có địa chỉ nào trong sổ.
+            You don't have any addresses yet.
           </p>
           <p className="text-xs text-ink-muted mt-1">
-            Thêm địa chỉ để thanh toán nhanh hơn.
+            Add an address for faster checkout.
           </p>
         </div>
       ) : (
@@ -363,7 +363,7 @@ export function AddressPage() {
                       </span>
                       {address.isDefault && (
                         <span className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-brand border border-brand/60 bg-brand/5 px-2 py-0.5 rounded-sm">
-                          Mặc định
+                          Default
                         </span>
                       )}
                     </div>

@@ -31,3 +31,12 @@ export interface ShopSettings {
 
 export const getPublicSettings = () =>
   apiClient.get<ShopSettings>("/settings/public");
+
+export interface PublicStats {
+  products: number;
+  customers: number;
+  rating: number;
+}
+
+export const getPublicStats = () =>
+  apiClient.get<PublicStats>("/settings/public/stats");

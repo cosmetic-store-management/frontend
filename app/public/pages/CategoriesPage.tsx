@@ -13,8 +13,8 @@ function CategorySkeleton() {
           className="bg-surface overflow-hidden rounded-sm border border-border/50"
         >
           <div className="px-5 py-4 bg-surface-soft flex items-center justify-between">
-            <div className="h-5 w-40 bg-border/50 rounded animate-pulse" />
-            <div className="h-4 w-20 bg-border/50 rounded animate-pulse" />
+            <div className="h-5 w-40 bg-border/50 rounded-sm animate-pulse" />
+            <div className="h-4 w-20 bg-border/50 rounded-sm animate-pulse" />
           </div>
           <div className="p-5 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {[1, 2, 3, 4].map((j) => (
@@ -43,7 +43,7 @@ function ChildTile({ cat }: { cat: any }) {
         </p>
         {(cat.productCount ?? 0) > 0 && (
           <p className="text-[11px] text-ink-muted mt-0.5">
-            {cat.productCount.toLocaleString("vi-VN")} sản phẩm
+            {cat.productCount.toLocaleString("vi-VN")} products
           </p>
         )}
       </div>
@@ -94,22 +94,22 @@ export function CategoriesPage() {
           <div>
             <nav className="flex items-center text-xs text-ink-muted mb-2 gap-1.5">
               <Link to="/" className="hover:text-brand transition-colors">
-                Trang chủ
+                Home
               </Link>
               <ChevronRight className="w-3 h-3" />
-              <span className="text-ink font-medium">Danh mục</span>
+              <span className="text-ink font-medium">Categories</span>
             </nav>
             <h1 className="text-2xl md:text-3xl font-black text-ink uppercase tracking-wider">
-              Danh Mục Sản Phẩm
+              All Categories
             </h1>
             {!isLoading && (
               <p className="text-sm text-ink-muted mt-1">
-                {categories.length} nhóm danh mục •{" "}
+                {categories.length} main categories •{" "}
                 {(categories as any[]).reduce(
                   (s: number, c: any) => s + (c.children?.length || 0),
                   0,
                 )}{" "}
-                danh mục con
+                subcategories
               </p>
             )}
           </div>
@@ -121,7 +121,7 @@ export function CategoriesPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Tìm danh mục..."
+              placeholder="Search categories..."
               className="w-full pl-9 pr-4 py-2.5 text-sm border border-border rounded-sm bg-surface focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
             />
           </div>
@@ -135,16 +135,16 @@ export function CategoriesPage() {
           <div className="text-center py-20">
             <Search className="w-12 h-12 mx-auto text-border mb-4" />
             <h3 className="text-lg font-bold text-ink">
-              Không tìm thấy danh mục
+              No categories found
             </h3>
             <p className="text-ink-muted mt-2 text-sm">
-              Thử tìm với từ khóa khác
+              Try searching with different keywords
             </p>
             <button
               onClick={() => setSearch("")}
               className="mt-4 text-brand hover:underline text-sm font-medium"
             >
-              Xóa bộ lọc
+              Clear filters
             </button>
           </div>
         )}
@@ -176,8 +176,7 @@ export function CategoriesPage() {
                       </h2>
                       {(rootCat.productCount ?? 0) > 0 && (
                         <span className="text-[11px] text-ink-muted font-normal hidden sm:inline">
-                          ({rootCat.productCount.toLocaleString("vi-VN")} sản
-                          phẩm)
+                          ({rootCat.productCount.toLocaleString("vi-VN")} products)
                         </span>
                       )}
                     </div>
@@ -185,7 +184,7 @@ export function CategoriesPage() {
                       to={`/products?category=${rootCat.slug}`}
                       className="text-sm font-bold text-brand hover:text-brand-dark flex items-center gap-1 shrink-0 transition-colors"
                     >
-                      Xem tất cả <ChevronRight className="w-4 h-4" />
+                      View all <ChevronRight className="w-4 h-4" />
                     </Link>
                   </div>
 
@@ -207,7 +206,7 @@ export function CategoriesPage() {
                                     <Link
                                       key={sub.id || sub._id}
                                       to={`/products?category=${sub.slug}`}
-                                      className="inline-flex items-center gap-1 text-[12px] text-ink-muted hover:text-brand border border-border/60 hover:border-brand/50 px-2.5 py-1 rounded-full transition-colors bg-white"
+                                      className="inline-flex items-center gap-1 text-[12px] text-ink-muted hover:text-brand border border-border/60 hover:border-brand/50 px-2.5 py-1 rounded-sm transition-colors bg-white"
                                     >
                                       {sub.name}
                                       {(sub.productCount ?? 0) > 0 && (

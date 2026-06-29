@@ -57,11 +57,11 @@ export function ExpandableContent({
           >
             {isExpanded ? (
               <>
-                Thu gọn nội dung <ChevronUp className="w-4 h-4" />
+                Show less <ChevronUp className="w-4 h-4" />
               </>
             ) : (
               <>
-                Xem thêm nội dung <ChevronDown className="w-4 h-4" />
+                Show more <ChevronDown className="w-4 h-4" />
               </>
             )}
           </button>

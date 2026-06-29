@@ -289,7 +289,6 @@ export function OrderPage() {
                 </TableHead>
                 <TableHead
                   style={{ width: "14%" }}
-                  style={{ width: "15%" }}
                   className="px-4 text-right text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
                   Total

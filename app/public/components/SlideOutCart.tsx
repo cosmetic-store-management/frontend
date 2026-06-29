@@ -69,7 +69,7 @@ export function SlideOutCart() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="btn-hover mt-4 px-6 py-2.5 bg-brand text-white font-bold rounded-full hover:bg-brand-dark transition-colors"
+                className="btn-hover mt-4 px-6 py-2.5 bg-brand text-white font-bold rounded-sm hover:bg-brand-dark transition-colors"
               >
                 Continue shopping
               </button>

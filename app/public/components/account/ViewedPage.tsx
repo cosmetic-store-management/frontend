@@ -29,13 +29,13 @@ export function ViewedPage() {
   });
 
   return (
-    <div className="animate-slide-up bg-surface px-6 py-6 flex-1">
+    <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-ink">Sản phẩm đã xem</h2>
+          <h2 className="text-lg font-bold text-ink">Recently Viewed</h2>
           <p className="text-xs text-ink-muted mt-0.5">
-            Lịch sử duyệt sản phẩm của bạn
+            Your product browsing history
           </p>
         </div>
         {total > 0 && (
@@ -45,7 +45,7 @@ export function ViewedPage() {
             }
             className="text-xs text-ink-muted hover:text-danger flex items-center gap-1.5 transition-colors px-2 py-1 rounded-sm hover:bg-danger/5"
           >
-            <Trash2 className="w-3.5 h-3.5" /> Xóa lịch sử
+            <Trash2 className="w-3.5 h-3.5" /> Clear history
           </button>
         )}
       </div>
@@ -61,16 +61,16 @@ export function ViewedPage() {
           </div>
           <div className="text-center">
             <p className="text-sm font-semibold text-ink mb-1">
-              Chưa có sản phẩm nào trong lịch sử
+              No products in history
             </p>
             <p className="text-xs text-ink-muted mb-4">
-              Khám phá cửa hàng và xem các sản phẩm bạn yêu thích
+              Explore the store and view products you love
             </p>
             <a
               href="/products"
               className="inline-block bg-brand text-white text-sm font-bold px-5 py-2 rounded-sm btn-hover"
             >
-              Khám phá sản phẩm
+              Explore Products
             </a>
           </div>
         </div>
@@ -89,7 +89,7 @@ export function ViewedPage() {
                     })
                   }
                   className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-surface/90 border border-border  text-ink-muted hover:text-danger hover:border-danger/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                  title="Xóa khỏi lịch sử"
+                  title="Remove from history"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -126,14 +126,14 @@ export function ViewedPage() {
         open={modal.open}
         loading={clearMutation.isPending || removeMutation.isPending}
         title={
-          modal.clearAll ? "Xóa toàn bộ lịch sử?" : "Xóa sản phẩm khỏi lịch sử?"
+          modal.clearAll ? "Clear Browsing History?" : "Remove Product?"
         }
         description={
           modal.clearAll
-            ? "Toàn bộ lịch sử xem sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác."
-            : "Sản phẩm này sẽ bị xóa khỏi lịch sử xem của bạn."
+            ? "Are you sure you want to clear your entire product browsing history? This action cannot be undone."
+            : "Are you sure you want to remove this product from your browsing history?"
         }
-        confirmText={modal.clearAll ? "Xóa tất cả" : "Xóa"}
+        confirmText={modal.clearAll ? "Clear All" : "Remove"}
         onClose={() =>
           setModal({ open: false, productId: null, clearAll: false })
         }

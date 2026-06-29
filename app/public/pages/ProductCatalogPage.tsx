@@ -120,7 +120,7 @@ export function ProductCatalogPage() {
                         placeholder="0"
                         value={minPriceInput}
                         onChange={handlePriceChange(setMinPriceInput)}
-                        className="w-full text-sm border border-border bg-muted rounded-xl py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
+                        className="w-full text-sm border border-border bg-muted rounded-sm py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
                       />
                       <span className="text-muted-foreground">–</span>
                       <input
@@ -128,12 +128,12 @@ export function ProductCatalogPage() {
                         placeholder="100.000.000"
                         value={maxPriceInput}
                         onChange={handlePriceChange(setMaxPriceInput)}
-                        className="w-full text-sm border border-border bg-muted rounded-xl py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
+                        className="w-full text-sm border border-border bg-muted rounded-sm py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
                       />
                     </div>
                     <button
                       onClick={applyPriceFilter}
-                      className="w-full mt-4 text-white font-bold py-2.5 rounded-xl transition-all duration-150 text-sm shadow-sm hover:shadow-md active:scale-[0.99]"
+                      className="w-full mt-4 text-white font-bold py-2.5 rounded-sm transition-all duration-150 text-sm shadow-sm hover:shadow-md active:scale-[0.99]"
                       style={{ background: "hsl(352, 72%, 52%)" }}
                     >
                       Apply
@@ -207,13 +207,13 @@ export function ProductCatalogPage() {
             <div className="flex items-center gap-2 mb-6 flex-wrap">
               {/* Mobile filter btn */}
               <button
-                className="lg:hidden flex items-center gap-2 text-sm font-medium text-foreground whitespace-nowrap h-9 px-3 rounded-xl border border-border bg-muted hover:bg-muted/80 transition-colors"
+                className="lg:hidden flex items-center gap-2 text-sm font-medium text-foreground whitespace-nowrap h-9 px-3 rounded-sm border border-border bg-muted hover:bg-muted/80 transition-colors"
                 onClick={() => setIsMobileFilterOpen(true)}
               >
                 <Filter className="w-4 h-4" /> Filter
               </button>
 
-              <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-xl flex-wrap">
+              <div className="flex items-center gap-1 p-1 bg-muted/60 rounded-sm flex-wrap">
                 {[
                   { id: "popular", label: "Popular" },
                   { id: "newest", label: "Newest" },
@@ -224,7 +224,7 @@ export function ProductCatalogPage() {
                   <button
                     key={tab.id}
                     onClick={() => setSortBy(tab.id)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
+                    className={`px-3.5 py-1.5 rounded-sm text-xs font-semibold whitespace-nowrap transition-all duration-150 ${
                       sortBy === tab.id
                         ? "bg-card shadow-sm text-brand"
                         : "text-muted-foreground hover:text-foreground"

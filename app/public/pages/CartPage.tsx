@@ -70,7 +70,7 @@ export function CartPage() {
           </p>
           <Link
             to="/products"
-            className="inline-flex items-center gap-2 text-white font-bold py-3 px-8 rounded-xl transition-all duration-150 shadow-sm hover:shadow-md active:scale-[0.99]"
+            className="inline-flex items-center gap-2 text-white font-bold py-3 px-8 rounded-sm transition-all duration-150 shadow-sm hover:shadow-md active:scale-[0.99]"
             style={{ background: "hsl(352, 72%, 52%)" }}
           >
             <ShoppingBag className="w-4 h-4" /> Shop now
