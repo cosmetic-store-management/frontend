@@ -30,8 +30,8 @@ import {
   useSettings,
   useSaveSettings,
 } from "../hooks/useSettings";
-import { useChangePassword } from "@/auth/hooks/useAdminAuth";
-import { useAdminAuthStore } from "@/store";
+import { useChangePassword } from "@/auth/hooks/useAuth";
+import { useAuthStore } from "@/auth/store/auth.store";
 import {
   settingsSchema,
   profileSchema,
@@ -46,7 +46,7 @@ export function SettingsPage() {
   const saveSettingsMutation = useSaveSettings();
   const changePasswordMutation = useChangePassword();
   
-  const { user } = useAdminAuthStore();
+  const { user } = useAuthStore();
 
   const { data: banksData } = useQuery({
     queryKey: ["vietqr-banks"],

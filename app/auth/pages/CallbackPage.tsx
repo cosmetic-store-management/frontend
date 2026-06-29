@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "@/lib/toast";
-import { useSocialLogin } from "@/auth/hooks/usePublicAuth";
+import { useSocialLogin } from "@/auth/hooks/useAuth";
 
 let processingToken: string | null = null;
 
-export default function SocialCallbackPage() {
+export default function CallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const socialLogin = useSocialLogin();

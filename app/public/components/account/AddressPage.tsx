@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useAuth } from "@/auth/hooks/usePublicAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 import {
   useAddAddress,
   useUpdateAddress,

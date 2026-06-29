@@ -29,7 +29,7 @@ export function VoucherWalletModal({
       <DialogContent className="max-w-md w-[95vw] p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
         <DialogHeader className="px-5 py-4 border-b border-border bg-surface shrink-0 flex flex-row items-center justify-between">
           <DialogTitle className="text-lg font-bold text-ink flex items-center gap-2">
-            <Ticket className="w-5 h-5 text-brand" /> Kho Voucher
+            <Ticket className="w-5 h-5 text-brand" /> My Wallet
           </DialogTitle>
         </DialogHeader>
 
@@ -42,13 +42,13 @@ export function VoucherWalletModal({
 
           {error && (
             <div className="text-center py-8 text-danger text-sm">
-              Bạn cần đăng nhập để xem kho voucher.
+              Please login to view your vouchers.
             </div>
           )}
 
           {!isLoading && vouchers && vouchers.length === 0 && (
             <div className="text-center py-8 text-ink-muted text-sm">
-              Bạn chưa có mã giảm giá nào.
+              You don't have any vouchers yet.
             </div>
           )}
 
@@ -67,40 +67,40 @@ export function VoucherWalletModal({
                   )}
                 >
                   {/* Dấu cắt (Ticket notch) */}
-                  <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-surface-soft rounded-full border-r border-border" />
-                  <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-surface-soft rounded-full border-l border-border" />
+                  <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full border-r border-border" />
+                  <div className="absolute right-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full border-l border-border" />
 
                   {/* Phần thông tin */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-ink uppercase">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="font-bold text-ink uppercase leading-none">
                         {voucher.code}
                       </span>
-                      <span className="text-xs font-semibold text-brand bg-brand/10 px-2 py-0.5 rounded-sm">
+                      <span className="text-[11px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-sm whitespace-nowrap shrink-0 flex items-center justify-center">
                         {voucher.discountType === "percent" &&
-                          `Giảm ${voucher.discountValue}%`}
+                          `${voucher.discountValue}% off`}
                         {voucher.discountType === "fixed" &&
-                          `Giảm ${voucher.discountValue.toLocaleString("vi-VN")}đ`}
-                        {voucher.discountType === "freeship" && "Freeship"}
+                          `${voucher.discountValue.toLocaleString("vi-VN")}₫ off`}
+                        {voucher.discountType === "freeship" && "Free Shipping"}
                       </span>
                     </div>
                     <p className="text-xs text-ink-muted line-clamp-2 mb-2">
-                      Đơn tối thiểu{" "}
-                      {voucher.minOrderValue.toLocaleString("vi-VN")}đ.
+                      Min. spend{" "}
+                      {voucher.minOrderValue.toLocaleString("vi-VN")}₫.
                       {voucher.maxDiscount &&
-                        ` Giảm tối đa ${voucher.maxDiscount.toLocaleString("vi-VN")}đ.`}
+                        ` Capped at ${voucher.maxDiscount.toLocaleString("vi-VN")}₫.`}
                     </p>
 
                     {/* Progress hoặc trạng thái */}
                     {!isEligible && (
                       <div className="flex items-center gap-1.5 mt-2 text-xs text-danger font-medium">
                         <AlertCircle className="w-3.5 h-3.5" />
-                        Mua thêm {diff.toLocaleString("vi-VN")}đ để sử dụng
+                        Spend {diff.toLocaleString("vi-VN")}₫ more to use
                       </div>
                     )}
                     {isEligible && (
                       <div className="flex items-center gap-1.5 mt-2 text-xs text-success font-medium">
-                        Đủ điều kiện áp dụng
+                        Eligible to apply
                       </div>
                     )}
                   </div>
@@ -123,7 +123,7 @@ export function VoucherWalletModal({
                         }
                       }}
                     >
-                      Áp dụng
+                      Apply
                     </Button>
                   </div>
                 </div>

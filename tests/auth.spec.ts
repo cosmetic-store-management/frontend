@@ -3,10 +3,10 @@
  * Happy path + Error cases
  *
  * Routes thực tế (từ app/routes.ts):
- *   /login               → PublicLoginPage
- *   /register            → PublicRegisterPage
- *   /forgot-password     → PublicForgotPasswordPage
- *   /admin/login         → AdminLoginPage
+ *   /login               → LoginPage
+ *   /register            → RegisterPage
+ *   /forgot-password     → ForgotPasswordPage
+ *   /reset-password      → ResetPasswordPage
  *
  * Toast library: Sonner → selector: [data-sonner-toast]
  * Register inputs không có name attr, dùng placeholder selector

@@ -10,7 +10,7 @@ import {
   Tag,
 } from "lucide-react";
 import { useState } from "react";
-import { useCartStore } from "@/store/cart.store";
+import { useCartStore } from "@/public/store/cart.store";
 import { useValidateVoucher } from "@/public/hooks/useVoucher";
 import { VoucherWalletModal } from "../components/VoucherWalletModal";
 import { toast } from "@/lib/toast";
@@ -86,7 +86,7 @@ export function CartPage() {
       {/* Back link */}
       <Link
         to="/products"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-5 px-3 py-1.5 rounded-full bg-muted hover:bg-muted/80 w-fit"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-5 px-3 py-1.5 rounded-sm bg-muted hover:bg-muted/80 w-fit"
       >
         <ArrowLeft className="w-3.5 h-3.5" /> Continue shopping
       </Link>
@@ -105,7 +105,7 @@ export function CartPage() {
                   to={`/product/${item.slug || item.productId}`}
                   className="shrink-0"
                 >
-                  <div className="w-16 h-16 bg-muted border border-border rounded-xl overflow-hidden">
+                  <div className="w-16 h-16 bg-muted border border-border rounded-sm overflow-hidden">
                     <img
                       src={item.imageUrl}
                       alt={item.name}
@@ -122,12 +122,14 @@ export function CartPage() {
                   >
                     {item.name}
                   </Link>
-                  <span className="inline-block text-[11px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full mt-0.5 font-medium">
-                    {item.variantName}
-                  </span>
+                  {item.variantName && item.variantName !== "Default Title" && (
+                    <span className="inline-block text-[11px] bg-muted text-muted-foreground px-2 py-0.5 rounded-sm mt-0.5 font-medium">
+                      {item.variantName}
+                    </span>
+                  )}
                   {/* Mobile */}
                   <div className="flex items-center justify-between sm:hidden mt-2">
-                    <div className="flex items-center border border-border rounded-lg h-7 overflow-hidden">
+                    <div className="flex items-center border border-border rounded-sm h-7 overflow-hidden">
                       <button
                         onClick={() =>
                           updateQuantity(
@@ -170,8 +172,8 @@ export function CartPage() {
                 </div>
 
                 {/* Qty — desktop */}
-                <div className="hidden sm:flex flex-col items-center shrink-0">
-                  <div className="flex items-center border border-border rounded-xl h-8 overflow-hidden">
+                <div className="hidden sm:flex flex-col items-center shrink-0 gap-1">
+                  <div className="flex items-center border border-border rounded-sm h-8 overflow-hidden bg-white">
                     <button
                       onClick={() =>
                         updateQuantity(
@@ -217,7 +219,7 @@ export function CartPage() {
                 {/* Xóa */}
                 <button
                   onClick={() => removeItem(item.productId, item.variantId)}
-                  className="shrink-0 p-1.5 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-lg transition-colors"
+                  className="shrink-0 p-1.5 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm transition-colors"
                   title="Remove"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -277,7 +279,7 @@ export function CartPage() {
               </div>
 
               {cartStoreVoucherCode ? (
-                <div className="flex items-center justify-between bg-brand/5 border border-brand/20 px-3 py-2 rounded-xl">
+                <div className="flex items-center justify-between bg-brand/5 border border-brand/20 px-3 py-2 rounded-sm">
                   <div className="flex items-center gap-2 text-sm font-semibold" style={{ color: "hsl(352, 72%, 48%)" }}>
                     <Ticket className="w-3.5 h-3.5" /> {cartStoreVoucherCode}
                   </div>
@@ -299,8 +301,8 @@ export function CartPage() {
                       onKeyDown={(e) =>
                         e.key === "Enter" && handleApplyVoucher()
                       }
-                      placeholder="Enter code (e.g. GLOWUP)"
-                      className="w-full bg-muted border border-border rounded-xl py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand uppercase transition-all"
+                      placeholder="Enter your code"
+                      className="w-full bg-muted border border-border rounded-sm py-2 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand uppercase transition-all"
                     />
                   </div>
                   <button
@@ -308,7 +310,7 @@ export function CartPage() {
                     disabled={
                       validateVoucherMutation.isPending || !voucherInput.trim()
                     }
-                    className="text-white px-4 py-2 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                    className="text-white px-4 py-2 rounded-sm text-sm font-bold transition-all disabled:opacity-50"
                     style={{ background: "hsl(352, 72%, 52%)" }}
                   >
                     {validateVoucherMutation.isPending ? "..." : "Apply"}
@@ -338,7 +340,7 @@ export function CartPage() {
           <div className="px-6 pb-6">
             <button
               onClick={() => navigate("/checkout")}
-              className="w-full text-white font-bold py-3.5 rounded-xl transition-all duration-150 flex justify-center items-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99]"
+              className="w-full text-white font-bold py-3.5 rounded-sm transition-all duration-150 flex justify-center items-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99]"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               Checkout <ArrowRight className="w-4 h-4" />

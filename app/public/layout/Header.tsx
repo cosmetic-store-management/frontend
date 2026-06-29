@@ -9,11 +9,11 @@ import {
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
-import { usePublicAuthStore } from "../../store/public.auth.store";
-import { useCartStore } from "../../store/cart.store";
+import { useAuthStore } from "@/auth/store/auth.store";
+import { useCartStore } from "@/public/store/cart.store";
 import { useCategories } from "../hooks/useCategories";
 import { usePublicBrands } from "@/public/hooks/useBrands";
-import { useLogout } from "@/auth/hooks/usePublicAuth";
+import { useLogout } from "@/auth/hooks/useAuth";
 
 export default function PublicHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,7 +22,7 @@ export default function PublicHeader() {
   const [activeMegaCategory, setActiveMegaCategory] = useState<any>(null);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
-  const { user, isAuthenticated, clearAuth } = usePublicAuthStore();
+  const { user, isAuthenticated, clearAuth } = useAuthStore();
 
   const items = useCartStore((state) => state.items);
   const cartCount = items.reduce((total, item) => total + item.quantity, 0);
@@ -152,7 +152,7 @@ export default function PublicHeader() {
             >
               <ShoppingBag className="w-6 h-6 text-foreground group-hover:text-brand transition-colors" strokeWidth={1.5} />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-brand text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-brand text-white text-[10px] font-bold leading-none rounded-full flex items-center justify-center px-1 shadow-sm">
                   {cartCount > 99 ? "99+" : cartCount}
                 </span>
               )}
@@ -182,18 +182,23 @@ export default function PublicHeader() {
 
               {/* Mega Menu Dropdown */}
               <div
-                className={`absolute top-full left-0 w-250 min-h-100 flex bg-white transition-all duration-300 ease-out z-50 border border-border/60 shadow-xl rounded-xl overflow-hidden origin-top mt-1 ${
+                className={`absolute top-full left-0 w-250 min-h-100 flex bg-white transition-all duration-300 ease-out z-50 border border-border/60 shadow-xl rounded-sm overflow-hidden origin-top mt-1 ${
                   isMegaMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
                 }`}
               >
-                {/* Left Column: Level 1 Categories */}
-                <div className="w-65 shrink-0 border-r border-border py-2 bg-surface flex flex-col">
-                  {categories.length > 0
-                    ? categories
-                        .filter(
-                          (cat: any) => cat.children && cat.children.length > 0,
-                        )
-                        .map((cat: any, index: number) => {
+                {(() => {
+                  const megaCategories = [...categories]
+                    .filter((cat: any) => cat.children && cat.children.length > 0)
+                    .sort((a: any, b: any) => {
+                      if (a.name === "Trang điểm" && b.name === "Chăm sóc da mặt") return -1;
+                      if (a.name === "Chăm sóc da mặt" && b.name === "Trang điểm") return 1;
+                      return (b.children?.length || 0) - (a.children?.length || 0);
+                    });
+                  return (
+                    <>
+                      {/* Left Column: Level 1 Categories */}
+                      <div className="w-65 shrink-0 border-r border-border py-2 bg-surface flex flex-col">
+                        {megaCategories.map((cat: any, index: number) => {
                           const isHovered = activeMegaCategory
                             ? activeMegaCategory.slug === cat.slug
                             : index === 0;
@@ -228,14 +233,13 @@ export default function PublicHeader() {
                               )}
                             </div>
                           );
-                        })
-                    : null}
-                </div>
+                        })}
+                      </div>
 
                 {/* Right Column: Active Category Content */}
                 <div className="flex-1 p-6 bg-surface">
                   {(() => {
-                    const activeCat = activeMegaCategory || categories[0];
+                    const activeCat = activeMegaCategory || megaCategories[0];
                     if (
                       !activeCat ||
                       !activeCat.children ||
@@ -303,10 +307,13 @@ export default function PublicHeader() {
                     );
                   })()}
                 </div>
-              </div>
-            </div>
+              </>
+            );
+          })()}
+        </div>
+      </div>
 
-            {/* Nav Items */}
+      {/* Nav Items */}
             <div className="flex items-stretch gap-6 flex-1">
               {categories.slice(0, 2).map((cat: any) => (
                 <div
@@ -325,7 +332,7 @@ export default function PublicHeader() {
 
                   {/* Subcategory Dropdown */}
                   {cat.children && cat.children.length > 0 && (
-                    <div className="absolute top-full left-0 min-w-60 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border/60 shadow-xl rounded-xl mt-1">
+                    <div className="absolute top-full left-0 min-w-60 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border/60 shadow-xl rounded-sm mt-1">
                       {cat.children.map((child: any) => (
                         <div
                           key={child.id || child._id}
@@ -380,29 +387,31 @@ export default function PublicHeader() {
                 </Link>
 
                 {/* Brand Dropdown */}
-                <div className="absolute top-full left-0 w-72 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-5 border border-border/60 shadow-xl rounded-xl mt-1">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                <div className="absolute top-full -left-5 w-[320px] bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-5 border border-border/60 shadow-xl rounded-sm mt-1">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-4 px-5">
                     Featured Brands
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-3 px-5">
                     {brands.length > 0
                       ? brands.slice(0, 8).map((brand: any) => (
                           <Link
                             key={brand.id || brand._id}
                             to={`/products?brandId=${brand.id || brand._id}`}
-                            className="text-sm text-foreground hover:text-brand font-medium transition-colors truncate py-1"
+                            className="text-[13.5px] text-ink hover:text-brand font-medium transition-colors truncate pr-2"
                           >
                             {brand.name}
                           </Link>
                         ))
                       : null}
                   </div>
-                  <div className="mt-4 pt-3 border-t border-border/50">
+                  <div className="mt-5 border-t border-border/60" />
+                  <div className="pt-4 px-5">
                     <Link
                       to="/brands"
-                      className="text-sm font-semibold text-brand hover:underline"
+                      className="text-[13.5px] font-bold text-brand hover:underline flex items-center gap-1 group/link w-fit"
                     >
-                      View all brands →
+                      View all brands 
+                      <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-1" />
                     </Link>
                   </div>
                 </div>

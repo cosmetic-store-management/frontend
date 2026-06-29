@@ -9,14 +9,13 @@ import {
 export default [
   // ── Storefront ──────────────────────────────────────────
   layout("./public/layout/Layout.tsx", [
-    index("./routes/index.tsx"), // Now HomePage is at "/"
+    index("./routes/index.tsx"),
     route("products", "./routes/public/products.tsx"),
     route("categories", "./routes/public/categories.tsx"),
     route("brands", "./routes/public/brands.tsx"),
     route("vouchers", "./routes/public/vouchers.tsx"),
     route("product/:slug", "./routes/public/product-detail.tsx"),
     route("flash-sale", "./routes/public/flash-sale.tsx"),
-
     route("cart", "./routes/public/cart.tsx"),
 
     // Protected routes
@@ -24,23 +23,17 @@ export default [
       route("checkout", "./routes/public/checkout.tsx"),
       route("order-success/:code", "./routes/public/order-success.tsx"),
       route("payment/:code", "./routes/public/payment.tsx"),
-      route("account", "./routes/public/profile.tsx"),
+      route("account", "./routes/public/account.tsx"),
     ]),
-
-    // Public Auth
-    route("login", "./auth/pages/PublicLoginPage.tsx"),
-    route("register", "./auth/pages/PublicRegisterPage.tsx"),
-    route("forgot-password", "./auth/pages/PublicForgotPasswordPage.tsx"),
-    route("reset-password", "./auth/pages/PublicResetPasswordPage.tsx"),
-    route("auth/social-callback", "./auth/pages/SocialCallbackPage.tsx"),
   ]),
 
-  // ── Auth (Admin) ────────────────────────────────────────────────
+  // ── Auth ──────────────────────────────────────────────────────────
   layout("./auth/layout/Layout.tsx", [
-    // Admin
-    ...prefix("admin", [
-      route("login", "./auth/pages/AdminLoginPage.tsx", { id: "admin-login" }),
-    ]),
+    route("login", "./routes/auth/login.tsx"),
+    route("register", "./routes/auth/register.tsx"),
+    route("forgot-password", "./routes/auth/forgot-password.tsx"),
+    route("reset-password", "./routes/auth/reset-password.tsx"),
+    route("auth/social-callback", "./routes/auth/callback.tsx"),
   ]),
 
   // ── Admin ──────────────────────────────────────────────────────────
@@ -65,6 +58,6 @@ export default [
     ]),
   ]),
 
-  // ── 404 — Wildcard (phải ở cuối cùng) ─────────────────────────────────────
+  // ── 404 — Wildcard ─────────────────────────────────────
   route("*", "./public/pages/NotFoundPage.tsx"),
 ] satisfies RouteConfig;

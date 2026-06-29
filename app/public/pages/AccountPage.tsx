@@ -1,6 +1,6 @@
 import { useState, useEffect, type ReactElement } from "react";
 import { useNavigate, useLocation } from "react-router";
-import { useAuth, useLogout } from "@/auth/hooks/usePublicAuth";
+import { useAuth, useLogout } from "@/auth/hooks/useAuth";
 import { toast } from "@/lib/toast";
 import { Sidebar } from "@/public/components/account/Sidebar";
 import { PersonalInfoPage } from "@/public/components/account/PersonalInfoPage";
@@ -30,7 +30,7 @@ const VALID_TABS: Tab[] = [
   "viewed",
 ];
 
-export function ProfilePage() {
+export function AccountPage() {
   const { user, logout: clearAuth } = useAuth();
   const logoutMutation = useLogout();
   const navigate = useNavigate();

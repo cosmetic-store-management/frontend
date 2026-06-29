@@ -1,31 +1,41 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { User } from "@/admin/types/user"; // Re-use the same user type, or a public user type if distinct
+import type { User } from "@/auth/types/user";
 
-interface PublicAuthState {
+interface AuthState {
   user: User | null;
   token: string | null; // access token (ngắn hạn)
   refreshToken: string | null; // refresh token (dài hạn)
   isAuthenticated: boolean;
+  isAdmin: boolean;
+  isOwner: boolean;
+  isManager: boolean;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
   setAccessToken: (token: string) => void;
   clearAuth: () => void;
 }
 
-export const usePublicAuthStore = create<PublicAuthState>()(
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
       token: null,
       refreshToken: null,
       isAuthenticated: false,
+      isAdmin: false,
+      isOwner: false,
+      isManager: false,
 
       setAuth: (user, accessToken, refreshToken) => {
+        const isAdmin = ["owner", "manager", "staff"].includes(user.role);
         set({
           user,
           token: accessToken,
           refreshToken,
           isAuthenticated: true,
+          isAdmin,
+          isOwner: user.role === "owner",
+          isManager: user.role === "manager",
         });
       },
 
@@ -37,11 +47,14 @@ export const usePublicAuthStore = create<PublicAuthState>()(
           token: null,
           refreshToken: null,
           isAuthenticated: false,
+          isAdmin: false,
+          isOwner: false,
+          isManager: false,
         });
       },
     }),
     {
-      name: "glowup_public_auth", // Lưu ở key riêng cho Public
+      name: "glowup_auth", // Unified storage key
       storage: createJSONStorage(() => localStorage),
     },
   ),

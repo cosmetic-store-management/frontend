@@ -7,7 +7,7 @@ import {
   useChangePassword,
   useSendOtp,
   useVerifyOtp,
-} from "@/auth/hooks/usePublicAuth";
+} from "@/auth/hooks/useAuth";
 import { useUpdateProfile, useUpdateAvatar } from "@/public/hooks/useUser";
 import {
   profileUpdateSchema,

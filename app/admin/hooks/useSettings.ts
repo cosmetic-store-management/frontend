@@ -4,7 +4,7 @@ import {
   saveGeneralSettings,
 } from "@/admin/services/setting.service";
 import { updateProfile } from "@/admin/services/user.service";
-import { useAdminAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export function useSettings() {
   return useQuery({
@@ -32,7 +32,7 @@ export function useDownloadBackup() {
 }
 
 export function useUpdateProfile() {
-  const { setAuth, token, refreshToken, user } = useAdminAuthStore();
+  const { setAuth, token, refreshToken, user } = useAuthStore();
   return useMutation({
     mutationFn: updateProfile,
     onSuccess: (updatedUser) => {

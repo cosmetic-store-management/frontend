@@ -17,7 +17,7 @@ import {
   useUncollectVoucher,
   useGetWalletVouchers,
 } from "../hooks/useVoucher";
-import { usePublicAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 import { Link } from "react-router";
 import { toast } from "@/lib/toast";
 import type { PublicVoucher } from "../services/voucher.service";
@@ -208,7 +208,7 @@ function VoucherCardFull({
 }
 
 export function VouchersPage() {
-  const { user } = usePublicAuthStore();
+  const { user } = useAuthStore();
   const { data: publicVouchers, isLoading: loadingPublic } =
     usePublicVouchers();
   const { data: walletVouchers, isLoading: loadingWallet } =

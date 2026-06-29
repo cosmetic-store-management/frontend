@@ -2,16 +2,16 @@ import { Link, useNavigate, useLocation } from "react-router";
 import { Lock, Loader2, Sparkles, Eye, EyeOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLogin } from "@/auth/hooks/usePublicAuth";
+import { useLogin } from "@/auth/hooks/useAuth";
 import {
-  publicLoginSchema,
-  type PublicLoginForm,
-} from "../schemas/public-auth.schema";
+  loginSchema,
+  type LoginForm,
+} from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
 import { usePublicStats } from "@/public/hooks/usePublicStats";
 
-export default function PublicLoginPage() {
+export default function LoginPage() {
   const loginMutation = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,26 +29,27 @@ export default function PublicLoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<PublicLoginForm>({
-    resolver: zodResolver(publicLoginSchema),
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
     defaultValues: { identifier: "", password: "" },
   });
 
-  const onSubmit = async (data: PublicLoginForm) => {
+  const onSubmit = async (data: LoginForm) => {
     try {
       const isEmail = data.identifier.includes("@");
       const payload = isEmail
         ? { email: data.identifier, password: data.password }
         : { phone: data.identifier, password: data.password };
 
-      await loginMutation.mutateAsync(payload);
+      const user = await loginMutation.mutateAsync(payload);
       toast.success("Welcome back! ✨");
       const params = new URLSearchParams(location.search);
       const returnUrl = params.get("returnUrl");
-      {
-        /* eslint-disable-next-line  */
+      if (["owner", "manager", "staff"].includes(user?.role || "")) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = returnUrl || "/";
       }
-      window.location.href = returnUrl || "/";
     } catch (err: any) {
       toast.error(err instanceof Error ? err.message : "Login failed. Please check your credentials.");
     }

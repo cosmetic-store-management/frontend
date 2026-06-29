@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/client";
-import type { Product } from "@/admin/types/product";
+import type { Product } from "@/public/types/product";
 
 export interface BrandRef {
   id: string;

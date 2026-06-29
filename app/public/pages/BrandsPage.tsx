@@ -43,20 +43,20 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
   return (
     <Link
       to={`/products?brandId=${brand.id}`}
-      className={`group flex flex-col items-center transition-all duration-200 overflow-hidden
+      className={`group flex flex-col items-center transition-all duration-300 overflow-hidden rounded-sm
         ${
           dark
-            ? "border border-white/10 hover:border-white/25"
-            : "border border-[#e8e8e8] bg-white hover:border-[#ccc] hover:"
+            ? "border border-white/10 hover:border-white/25 hover:-translate-y-1"
+            : "border border-border/40 bg-surface hover:border-brand/50 hover:shadow-md hover:-translate-y-1"
         }`}
     >
       {/* Logo area — always white bg so logo image shows correctly */}
-      <div className="w-full aspect-4/3 flex items-center justify-center p-5 bg-white overflow-hidden">
+      <div className={`w-full aspect-2/1 flex items-center justify-center p-4 bg-surface overflow-hidden ${dark ? 'opacity-80 group-hover:opacity-100 transition-opacity' : ''}`}>
         {brand.imageUrl && !imgFailed ? (
           <img
             src={brand.imageUrl}
             alt={brand.name}
-            className="max-w-full max-h-22.5 object-contain transition-transform duration-300 group-hover:scale-105"
+            className={`max-w-full max-h-full object-contain transition-all duration-300 ${!dark ? 'grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100' : ''}`}
             onError={() => setImgFailed(true)}
           />
         ) : (
@@ -73,7 +73,7 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
       >
         <span
           className={`text-[10px] font-bold uppercase tracking-widest line-clamp-1
-          ${dark ? "text-white/60 group-hover:text-white" : "text-ink/60 group-hover:text-ink"} transition-colors`}
+          ${dark ? "text-white/60 group-hover:text-white" : "text-ink/60 group-hover:text-brand"} transition-colors`}
         >
           {brand.name}
         </span>
@@ -236,7 +236,7 @@ export default function BrandsPage() {
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {Array.from({ length: 15 }).map((_, i) => (
-              <div key={i} className="aspect-4/3 skeleton" />
+              <div key={i} className="aspect-2/1 skeleton rounded-sm" />
             ))}
           </div>
         ) : brands.length === 0 ? (

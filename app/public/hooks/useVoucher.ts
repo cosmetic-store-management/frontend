@@ -8,7 +8,7 @@ import {
   getAllWalletVouchers,
 } from "../services/voucher.service";
 import { QK } from "@/lib/queryKeys";
-import { usePublicAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export function usePublicVouchers() {
   return useQuery({
@@ -26,7 +26,7 @@ export function useValidateVoucher() {
 }
 
 export function useGetWalletVouchers() {
-  const isAuthenticated = usePublicAuthStore((s) => s.isAuthenticated);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: QK.walletVouchers(),
     queryFn: () => getWalletVouchers().then((res) => res.vouchers),
@@ -37,7 +37,7 @@ export function useGetWalletVouchers() {
 }
 
 export function useAllWalletVouchers() {
-  const isAuthenticated = usePublicAuthStore((s) => s.isAuthenticated);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: QK.allWalletVouchers(),
     queryFn: () => getAllWalletVouchers().then((res) => res.vouchers),

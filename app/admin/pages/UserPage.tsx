@@ -7,6 +7,7 @@ import {
   useResetPassword,
   useUpdateStaffInfo,
   useUpdateStaffNotes,
+  useDeleteStaff,
 } from "../hooks/useUser";
 import type { CreateStaffFormData } from "../schemas/user.schema";
 import type { User } from "@/admin/types/user";
@@ -47,9 +48,10 @@ import {
   MoreVertical,
   Settings2,
   X,
+  Trash2,
 } from "lucide-react";
 import { PageHeader } from "../components/PageHeader";
-import { useAuth } from "@/auth/hooks/useAdminAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 import { StaffFormModal } from "../components/users/StaffFormModal";
 import { StaffPermissionsModal } from "../components/users/StaffPermissionsModal";
 import { StaffResetPasswordModal } from "../components/users/StaffResetPasswordModal";
@@ -72,7 +74,9 @@ const ROLE_BADGE: Record<string, { label: string; className: string }> = {
 };
 
 export function UserPage() {
-  const { isManager, isOwner } = useAuth();
+  const { user: currentUser } = useAuth();
+  const isOwner = currentUser?.role === "owner";
+  const isManager = currentUser?.role === "manager";
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -125,6 +129,7 @@ export function UserPage() {
   const resetPasswordMutation = useResetPassword();
   const updateStaffInfoMutation = useUpdateStaffInfo();
   const updateStaffNotesMutation = useUpdateStaffNotes();
+  const deleteStaffMutation = useDeleteStaff();
 
   const [isFormOpen, setIsFormOpen] = useState(false);
 
@@ -133,6 +138,7 @@ export function UserPage() {
   const [editTarget, setEditTarget] = useState<User | null>(null);
   const [infoTarget, setInfoTarget] = useState<User | null>(null);
   const [notesTarget, setNotesTarget] = useState<User | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
 
   const [editRole, setEditRole] = useState<"manager" | "staff">("staff");
   const [editPermissions, setEditPermissions] = useState<string[]>([]);
@@ -549,6 +555,51 @@ export function UserPage() {
           );
         }}
       />
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-surface p-6 rounded-md shadow-ui-card w-full max-w-sm animate-scale-in">
+            <div className="flex items-center gap-3 text-danger mb-2">
+              <ShieldAlert className="w-6 h-6" />
+              <h3 className="text-lg font-bold">Xóa tài khoản</h3>
+            </div>
+            <p className="text-sm text-ink-muted mb-6">
+              Bạn có chắc chắn muốn xóa tài khoản của nhân viên{" "}
+              <span className="font-bold text-ink">{deleteTarget.name}</span>{" "}
+              không? Hành động này không thể hoàn tác.
+            </p>
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleteStaffMutation.isPending}
+              >
+                Hủy
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  deleteStaffMutation.mutate(deleteTarget._id || deleteTarget.id, {
+                    onSuccess: () => {
+                      toast.success("Đã xóa tài khoản thành công");
+                      setDeleteTarget(null);
+                    },
+                    error: (err: any) => {
+                      toast.error(err.message || "Xóa tài khoản thất bại");
+                    }
+                  });
+                }}
+                disabled={deleteStaffMutation.isPending}
+              >
+                {deleteStaffMutation.isPending && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                )}
+                Xóa ngay
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,10 +1,11 @@
 import { Navigate, Outlet } from "react-router";
 import { useEffect, useState } from "react";
 import AdminSidebar from "./Sidebar";
-import { useAuth } from "@/auth/hooks/useAdminAuth";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export default function AdminLayout() {
-  const { isLoggedIn, isAdmin } = useAuth();
+  const { isAuthenticated: isLoggedIn, user } = useAuthStore();
+  const isAdmin = ["owner", "manager", "staff"].includes(user?.role || "");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function AdminLayout() {
   // Chặn khách, chỉ cho admin vào
   if (!isLoggedIn || !isAdmin) {
     console.log("AdminLayout Redirecting:", { isLoggedIn, isAdmin });
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to={`/login?returnUrl=/admin`} replace />;
   }
 
   return (

@@ -6,39 +6,39 @@ import {
   useCollectVoucher,
   useGetWalletVouchers,
 } from "../hooks/useVoucher";
-import { usePublicAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 import { toast } from "@/lib/toast";
 import type { PublicVoucher } from "../services/voucher.service";
 
 function getVoucherMeta(voucher: PublicVoucher) {
   if (voucher.discountType === "freeship") {
     return {
-      icon: <Truck className="w-3.5 h-3.5" />,
+      icon: <Truck className="w-4 h-4" />,
       title: "Free Shipping",
       desc:
         voucher.minOrderValue > 0
-          ? `Orders over ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+          ? `Min ${(voucher.minOrderValue / 1000).toFixed(0)}K`
           : "All orders",
     };
   }
   if (voucher.discountType === "percent") {
     return {
-      icon: <Tag className="w-3.5 h-3.5" />,
+      icon: <Tag className="w-4 h-4" />,
       title: `${voucher.discountValue}% off`,
       desc:
         voucher.maxDiscount && voucher.maxDiscount > 0
-          ? `Up to ${(voucher.maxDiscount / 1000).toFixed(0)}K off`
+          ? `Min ${(voucher.minOrderValue / 1000).toFixed(0)}K • Max ${(voucher.maxDiscount / 1000).toFixed(0)}K`
           : voucher.minOrderValue > 0
-            ? `Min. ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+            ? `Min ${(voucher.minOrderValue / 1000).toFixed(0)}K`
             : "Any order",
     };
   }
   return {
-    icon: <Ticket className="w-3.5 h-3.5" />,
+    icon: <Ticket className="w-4 h-4" />,
     title: `${(voucher.discountValue / 1000).toFixed(0)}K off`,
     desc:
       voucher.minOrderValue > 0
-        ? `Min. ${(voucher.minOrderValue / 1000).toFixed(0)}K`
+        ? `Min ${(voucher.minOrderValue / 1000).toFixed(0)}K`
         : "Any order",
   };
 }
@@ -66,34 +66,34 @@ function HomeSingleVoucher({
   const saved = isSaved || justSaved;
 
   return (
-    <div className="bg-brand/5 border border-brand/20 rounded-sm p-3 flex flex-col relative shrink-0 min-w-45 max-w-55">
-      <div className="absolute top-1/2 -left-2 w-4 h-4 bg-bg rounded-full -translate-y-1/2 border-r border-brand/20" />
-      <div className="absolute top-1/2 -right-2 w-4 h-4 bg-bg rounded-full -translate-y-1/2 border-l border-brand/20" />
+    <div className="bg-brand/5 border border-brand/20 rounded-sm p-4 flex flex-col relative shrink-0 min-w-56 max-w-64 transition-colors hover:bg-brand/10">
+      <div className="absolute top-1/2 -left-px w-2 h-4 bg-background rounded-r-full -translate-y-1/2 border border-l-0 border-brand/20" />
+      <div className="absolute top-1/2 -right-px w-2 h-4 bg-background rounded-l-full -translate-y-1/2 border border-r-0 border-brand/20" />
 
-      <span className="font-bold text-brand text-sm flex items-center gap-1.5 leading-tight">
+      <span className="font-black text-brand text-xl flex items-center gap-2 leading-tight tracking-tight">
         {icon} {title}
       </span>
-      <span className="text-[10px] text-ink-muted mt-0.5">{desc}</span>
+      <span className="text-[11px] text-ink-muted mt-1.5 whitespace-nowrap overflow-hidden text-ellipsis">{desc}</span>
 
-      <div className="mt-2.5 pt-2.5 border-t border-dashed border-brand/20 flex justify-between items-center gap-1">
-        <span className="text-[9px] font-mono bg-brand/10 text-brand px-1.5 py-0.5 rounded-sm uppercase tracking-widest truncate">
+      <div className="mt-3.5 pt-3.5 border-t border-dashed border-brand/20 flex justify-between items-center gap-2">
+        <span className="text-[11px] font-mono bg-brand/10 text-brand px-2 py-1 rounded-sm uppercase tracking-widest truncate">
           {voucher.code}
         </span>
         <button
           onClick={handleCollect}
           disabled={isLoading || saved}
-          className={`text-[10px] font-bold px-2.5 py-1 rounded-sm transition-all flex items-center gap-1 shrink-0 disabled:cursor-default ${saved
+          className={`text-[11px] font-bold px-3 py-1.5 rounded-sm transition-all flex items-center gap-1.5 shrink-0 disabled:cursor-default ${saved
             ? "bg-success/10 text-success"
             : "bg-brand text-white hover:bg-brand-dark"
             }`}
         >
           {saved ? (
             <>
-              <Check className="w-2.5 h-2.5" /> Saved
+              <Check className="w-3 h-3" /> Saved
             </>
           ) : (
             <>
-              <Gift className="w-2.5 h-2.5" /> Save
+              <Gift className="w-3 h-3" /> Save
             </>
           )}
         </button>
@@ -103,7 +103,7 @@ function HomeSingleVoucher({
 }
 
 export function HomeVouchers() {
-  const { user } = usePublicAuthStore();
+  const { user } = useAuthStore();
   const { data: vouchers, isLoading } = usePublicVouchers();
   const { data: walletVouchers } = useGetWalletVouchers();
   const collectMutation = useCollectVoucher();

@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/client";
-import { useAdminAuthStore } from "@/store/admin.auth.store";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export interface DashboardStats {
   stats: {
@@ -56,7 +56,7 @@ export function exportPdf(startDate?: string, endDate?: string) {
 
   // Create a form or link to download directly
   const url = `${import.meta.env.VITE_API_URL}/reports/export-pdf${qs}`;
-  const token = useAdminAuthStore.getState().token;
+  const token = useAuthStore.getState().token;
 
   return fetch(url, {
     headers: {

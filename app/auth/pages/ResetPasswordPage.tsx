@@ -1,15 +1,15 @@
 import { useSearchParams, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useResetPassword } from "@/auth/hooks/usePublicAuth";
+import { useResetPassword } from "@/auth/hooks/useAuth";
 import {
-  publicResetPasswordSchema,
-  type PublicResetPasswordForm,
-} from "../schemas/public-auth.schema";
+  resetPasswordSchema,
+  type ResetPasswordForm,
+} from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { Lock, Loader2 } from "lucide-react";
 
-export default function PublicResetPasswordPage() {
+export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const navigate = useNavigate();
@@ -20,12 +20,12 @@ export default function PublicResetPasswordPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<PublicResetPasswordForm>({
-    resolver: zodResolver(publicResetPasswordSchema),
+  } = useForm<ResetPasswordForm>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: { token: token || "", password: "", confirmPassword: "" },
   });
 
-  const onSubmit = async (data: PublicResetPasswordForm) => {
+  const onSubmit = async (data: ResetPasswordForm) => {
     if (!token) {
       toast.error("Không tìm thấy token. Link không hợp lệ.");
       return;

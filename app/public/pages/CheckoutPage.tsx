@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "@/auth/hooks/usePublicAuth";
-import { useCartStore } from "@/store/cart.store";
+import { useAuth } from "@/auth/hooks/useAuth";
+import { useCartStore } from "@/public/store/cart.store";
 import {
   CreditCard,
   Banknote,
@@ -237,9 +237,7 @@ export function CheckoutPage() {
           return; // Thêm return để ngừng tiến trình
         }
       }
-
       setOrderPlaced(true);
-
       if (data.paymentMethod === "cod" || (data.paymentMethod as string) === "cash") {
         clearCart();
       }
@@ -269,10 +267,10 @@ export function CheckoutPage() {
         <div className="fixed inset-0 z-50 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center">
           <Loader2 className="w-12 h-12 animate-spin text-brand mb-4 drop-shadow-sm" />
           <p className="text-base font-bold text-ink drop-shadow-sm">
-            Đang xử lý đơn hàng...
+            Processing your order...
           </p>
           <p className="text-sm text-ink-muted mt-1 font-medium">
-            Vui lòng không đóng trình duyệt lúc này
+            Please do not close your browser
           </p>
         </div>
       )}
@@ -293,7 +291,7 @@ export function CheckoutPage() {
           ══════════════════════════════════════════════════ */}
           <div className="flex flex-col gap-4">
             {/* ── Card 1: Thông tin + Địa chỉ ───────────────── */}
-            <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
+            <div className="bg-card rounded-sm border border-border overflow-hidden shadow-sm">
               <div className="p-5">
                 {/* Header */}
                 <div className="flex items-center gap-2 mb-5">
@@ -301,7 +299,7 @@ export function CheckoutPage() {
                     <Truck className="w-4 h-4" />
                   </span>
                   <h2 className="font-bold text-sm text-ink uppercase tracking-wide">
-                    Thông tin người nhận & Giao hàng
+                    Receiver & Delivery Info
                   </h2>
                 </div>
 
@@ -310,7 +308,7 @@ export function CheckoutPage() {
                   <div>
                     {/* eslint-disable-next-line  */}
                     <label className="text-xs font-semibold text-ink-muted block mb-1.5">
-                      Họ và tên <span className="text-danger">*</span>
+                      Full Name <span className="text-danger">*</span>
                     </label>
                     <Controller
                       control={control}
@@ -320,7 +318,7 @@ export function CheckoutPage() {
                           {...field}
                           type="text"
                           className="input-base"
-                          placeholder="Nguyễn Văn A"
+                          placeholder="John Doe"
                         />
                       )}
                     />
@@ -331,7 +329,7 @@ export function CheckoutPage() {
                   <div>
                     {/* eslint-disable-next-line  */}
                     <label className="text-xs font-semibold text-ink-muted block mb-1.5">
-                      Số điện thoại <span className="text-danger">*</span>
+                      Phone Number <span className="text-danger">*</span>
                     </label>
                     <Controller
                       control={control}
@@ -353,13 +351,13 @@ export function CheckoutPage() {
                     <div className="flex items-center justify-between mb-1.5">
                       {/* eslint-disable-next-line  */}
                       <label className="text-xs font-semibold text-ink-muted">
-                        Địa chỉ giao hàng <span className="text-danger">*</span>
+                        Delivery Address <span className="text-danger">*</span>
                       </label>
                       <Link
                         to="/account?view=address"
                         className="flex items-center gap-1 text-xs font-semibold text-brand hover:text-brand-dark transition-colors"
                       >
-                        Quản lý địa chỉ <ExternalLink className="w-3 h-3" />
+                        Manage addresses <ExternalLink className="w-3 h-3" />
                       </Link>
                     </div>
 
@@ -375,7 +373,7 @@ export function CheckoutPage() {
                           .join(", ")}
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center gap-3 py-6 text-center border border-dashed border-border rounded-xl bg-muted/40">
+                      <div className="flex flex-col items-center gap-3 py-6 text-center border border-dashed border-border rounded-sm bg-muted/40">
                         <MapPin className="w-7 h-7 text-muted-foreground/40" />
                         <div>
                           <p className="text-sm font-medium text-foreground mb-0.5">No delivery address</p>
@@ -383,7 +381,7 @@ export function CheckoutPage() {
                         </div>
                         <Link
                           to="/account?view=address"
-                          className="inline-flex items-center gap-1.5 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm"
+                          className="inline-flex items-center gap-1.5 text-white text-xs font-bold px-4 py-2 rounded-sm transition-all shadow-sm"
                           style={{ background: "hsl(352, 72%, 52%)" }}
                         >
                           <ExternalLink className="w-3 h-3" /> Add address
@@ -396,7 +394,7 @@ export function CheckoutPage() {
                   <div className="sm:col-span-2">
                     {/* eslint-disable-next-line  */}
                     <label className="text-xs font-semibold text-ink-muted block mb-1.5">
-                      Ghi chú cho shipper
+                      Delivery Notes
                     </label>
                     <Controller
                       control={control}
@@ -406,7 +404,7 @@ export function CheckoutPage() {
                           {...field}
                           rows={3}
                           className="input-base resize-none"
-                          placeholder="VD: Gọi trước khi giao, giao giờ hành chính…"
+                          placeholder="E.g: Call before delivery..."
                         />
                       )}
                     />
@@ -423,7 +421,7 @@ export function CheckoutPage() {
                     <CreditCard className="w-4 h-4" />
                   </span>
                   <h2 className="font-bold text-sm text-ink uppercase tracking-wide">
-                    Phương thức thanh toán
+                    Payment Method
                   </h2>
                 </div>
 
@@ -434,8 +432,7 @@ export function CheckoutPage() {
                     <div className="space-y-2">
                       {availableMethods.length === 0 ? (
                         <div className="text-sm text-ink-muted p-4 border border-border rounded-sm bg-surface-soft text-center">
-                          Cửa hàng hiện chưa cấu hình phương thức thanh toán
-                          nào.
+                          No payment methods configured by store.
                         </div>
                       ) : (
                         availableMethods.map((method) => (
@@ -491,10 +488,10 @@ export function CheckoutPage() {
             {/* Header */}
             <div className="px-5 py-4 border-b border-border flex items-center justify-between">
               <h2 className="text-sm font-bold text-ink uppercase tracking-wider">
-                Đơn hàng
+                Order Summary
               </h2>
               <span className="text-xs text-ink-muted bg-surface-soft px-2 py-0.5 rounded-sm">
-                {items.length} sản phẩm
+                {items.length} item(s)
               </span>
             </div>
 
@@ -525,9 +522,11 @@ export function CheckoutPage() {
                       <p className="font-medium text-ink text-xs line-clamp-2 leading-snug">
                         {item.name}
                       </p>
-                      <p className="text-[11px] text-ink-muted mt-0.5">
-                        {item.variantName}
-                      </p>
+                      {item.variantName && item.variantName !== "Default Title" && (
+                        <p className="text-[11px] text-ink-muted mt-0.5">
+                          {item.variantName}
+                        </p>
+                      )}
                       <p className="text-sm font-semibold text-ink mt-1">
                         {priceMap[item.variantId] != null
                           ? priceMap[item.variantId].toLocaleString("vi-VN") +
@@ -543,7 +542,7 @@ export function CheckoutPage() {
             {/* Price breakdown */}
             <div className="px-5 py-4 border-t border-border space-y-2.5">
               <div className="flex justify-between text-sm">
-                <span className="text-ink-muted">Tạm tính</span>
+                <span className="text-ink-muted">Subtotal</span>
                 <span className="font-medium text-ink">
                   {(
                     previewData?.subtotal ??
@@ -556,7 +555,7 @@ export function CheckoutPage() {
               {(previewData?.tierDiscountAmount ?? 0) > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-brand font-medium">
-                    Chiết khấu hạng thẻ
+                    Tier Discount
                   </span>
                   <span className="font-medium text-brand">
                     -{previewData.tierDiscountAmount.toLocaleString("vi-VN")}₫
@@ -566,7 +565,7 @@ export function CheckoutPage() {
 
               {(previewData?.voucherDiscountAmount ?? 0) > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-brand font-medium">Mã giảm giá</span>
+                  <span className="text-brand font-medium">Voucher</span>
                   <span className="font-medium text-brand">
                     -{previewData.voucherDiscountAmount.toLocaleString("vi-VN")}
                     ₫
@@ -574,14 +573,24 @@ export function CheckoutPage() {
                 </div>
               )}
 
+              {(previewData?.freeshipDiscountAmount ?? 0) > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-brand font-medium">Freeship Voucher</span>
+                  <span className="font-medium text-brand">
+                    -{previewData.freeshipDiscountAmount.toLocaleString("vi-VN")}
+                    ₫
+                  </span>
+                </div>
+              )}
+
               <div className="flex justify-between text-sm">
-                <span className="text-ink-muted">Phí vận chuyển</span>
+                <span className="text-ink-muted">Shipping Fee</span>
                 <span className="font-medium text-ink">
                   {previewData
                     ? previewData.shippingFee > 0
                       ? `${previewData.shippingFee.toLocaleString("vi-VN")}₫`
-                      : "Miễn phí"
-                    : "Đang tính..."}
+                      : "Free"
+                    : "Calculating..."}
                 </span>
               </div>
 
@@ -589,10 +598,10 @@ export function CheckoutPage() {
               <div className="pt-2 border-t border-border/60">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-ink">
-                    Điểm GlowUp
+                    GlowUp Points
                   </span>
                   <span className="text-[11px] text-ink-muted">
-                    Có:{" "}
+                    Available:{" "}
                     <strong className="text-brand">
                       {liveUserPoints.toLocaleString("vi-VN")}
                     </strong>
@@ -617,19 +626,19 @@ export function CheckoutPage() {
                     onClick={() => setUsedPoints(maxCanUse)}
                     className="bg-brand text-white text-xs font-bold px-3 py-1.5 rounded-sm hover:bg-brand-dark transition-colors"
                   >
-                    Tối đa
+                    Max
                   </button>
                 </div>
                 {(previewData?.actualUsedPoints ?? 0) > 0 && (
                   <div className="flex justify-between text-xs mt-2">
-                    <span className="text-ink-muted">Quy đổi điểm:</span>
+                    <span className="text-ink-muted">Points applied:</span>
                     <span className="font-bold text-brand">
                       -{previewData.actualUsedPoints.toLocaleString("vi-VN")}₫
                     </span>
                   </div>
                 )}
                 <p className="text-[10px] text-ink-muted mt-1">
-                  * Tối đa {settings.maxPointsPct ?? 50}% hoá đơn
+                  * Max {settings.maxPointsPct ?? 50}% of order
                 </p>
               </div>
             </div>
@@ -637,7 +646,7 @@ export function CheckoutPage() {
             {/* Total + CTA */}
             <div className="px-5 py-4 border-t border-border space-y-4">
               <div className="flex items-baseline justify-between">
-                <span className="font-bold text-ink">Tổng cộng</span>
+                <span className="font-bold text-ink">Total</span>
                 <span className="text-2xl font-bold text-brand">
                   {(
                     previewData?.finalTotalAmount ??
@@ -654,12 +663,12 @@ export function CheckoutPage() {
               >
                 {createOrderMutation.isPending ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Đang xử lý...
+                    <Loader2 className="w-4 h-4 animate-spin" /> Processing...
                   </>
                 ) : !defaultAddr ? (
-                  "Vui lòng thêm địa chỉ giao hàng"
+                  "Please add delivery address"
                 ) : (
-                  "Xác nhận đặt hàng"
+                  "Confirm Order"
                 )}
               </button>
             </div>
@@ -674,7 +683,7 @@ export function CheckoutPage() {
           // Hoặc để user tự đóng và bấm nút "Thanh toán lại" sau (nếu hỗ trợ)
           setStripeModalOpen(false);
           toast.info(
-            "Bạn có thể thanh toán đơn hàng này sau trong mục Đơn mua.",
+            "You can pay for this order later in the Orders section."
           );
           navigate("/account?view=orders");
         }}

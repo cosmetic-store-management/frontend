@@ -1,6 +1,6 @@
 import type { MetaFunction } from "react-router";
 import { buildMeta } from "@/lib/seo";
-import { ProfilePage } from "../../public/pages/ProfilePage";
+import { AccountPage } from "../../public/pages/AccountPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
@@ -8,6 +8,6 @@ export const meta: MetaFunction = () =>
     noindex: true, // Profile page does not need indexing
   });
 
-export default function ProfileRoute() {
-  return <ProfilePage />;
+export default function AccountRoute() {
+  return <AccountPage />;
 }

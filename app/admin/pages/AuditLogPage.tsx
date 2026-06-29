@@ -10,12 +10,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuditLogs } from "../hooks/useAuditLog";
-import { useAuth } from "@/auth/hooks/useAdminAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 import { PageHeader } from "../components/PageHeader";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export function AuditLogPage() {
-  const { isOwner } = useAuth();
+  const { user } = useAuth();
+  const isOwner = user?.role === "owner";
   const [search, setSearch] = useState("");
   const [domainFilter, setDomainFilter] = useState("all");
   const [startDate, setStartDate] = useState("");

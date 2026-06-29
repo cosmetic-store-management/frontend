@@ -2,16 +2,16 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForgotPassword } from "@/auth/hooks/usePublicAuth";
+import { useForgotPassword } from "@/auth/hooks/useAuth";
 import {
-  publicForgotPasswordSchema,
-  type PublicForgotPasswordForm,
-} from "../schemas/public-auth.schema";
+  forgotPasswordSchema,
+  type ForgotPasswordForm,
+} from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { Loader2, ArrowLeft, Mail, Sparkles } from "lucide-react";
 import { usePublicStats } from "@/public/hooks/usePublicStats";
 
-export default function PublicForgotPasswordPage() {
+export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
   const forgotPasswordMutation = useForgotPassword();
   const { stats } = usePublicStats();
@@ -28,13 +28,13 @@ export default function PublicForgotPasswordPage() {
     handleSubmit,
     getValues,
     formState: { errors, isSubmitting },
-  } = useForm<PublicForgotPasswordForm>({
-    resolver: zodResolver(publicForgotPasswordSchema),
-    defaultValues: { email: "" },
+  } = useForm<ForgotPasswordForm>({
+    resolver: zodResolver(forgotPasswordSchema),
+    defaultValues: { identifier: "" },
   });
 
-  const onSubmit = async (data: PublicForgotPasswordForm) => {
-    forgotPasswordMutation.mutate(data.email, {
+  const onSubmit = async (data: ForgotPasswordForm) => {
+    forgotPasswordMutation.mutate(data.identifier, {
       onSuccess: () => {
         setSubmitted(true);
       },

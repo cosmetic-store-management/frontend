@@ -31,7 +31,7 @@ import {
   DEFAULT_STAFF_PERMISSIONS,
   PERMISSION_TEMPLATES,
 } from "./constants";
-import { useAuth } from "@/auth/hooks/useAdminAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 
 interface StaffFormModalProps {
   open: boolean;
@@ -46,7 +46,8 @@ export function StaffFormModal({
   onSubmit,
   isLoading,
 }: StaffFormModalProps) {
-  const { isOwner } = useAuth();
+  const { user } = useAuth();
+  const isOwner = user?.role === "owner";
 
   const {
     control,

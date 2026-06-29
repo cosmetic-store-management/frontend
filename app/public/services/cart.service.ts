@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/client";
-import type { CartItem } from "@/store/cart.store";
+import type { CartItem } from "@/public/store/cart.store";
 
 export const syncCartAPI = async (
   localItems: { variantId: string; quantity: number }[],

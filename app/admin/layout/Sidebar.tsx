@@ -22,7 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/auth/hooks/useAdminAuth";
+import { useAuth, useLogout } from "@/auth/hooks/useAuth";
 
 // ── Nav item helpers ──────────────────────────────────────────────────────────
 
@@ -141,7 +141,17 @@ function SectionLabel({ label }: { label: string }) {
 
 export default function AdminSidebar() {
   const { pathname } = useLocation();
-  const { user, isOwner, isManager, handleLogout } = useAuth();
+  const { user, logout } = useAuth();
+  const logoutMutation = useLogout();
+
+  const isOwner = user?.role === "owner";
+  const isManager = user?.role === "manager";
+
+  const handleLogout = async () => {
+    await logoutMutation.mutateAsync();
+    logout();
+    window.location.href = "/login";
+  };
 
   const hasPerm = (perm: string) => {
     if (isOwner || isManager) return true;
@@ -401,7 +411,7 @@ export default function AdminSidebar() {
       <div className="border-t border-border p-3">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 font-medium"
+          className="flex w-full items-center gap-3 px-3 py-2 rounded-sm text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 font-medium"
         >
           <LogOut className="w-4 h-4" />
           Log Out

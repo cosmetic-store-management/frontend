@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Outlet, Navigate, useLocation } from "react-router";
-import { useAuth } from "@/auth/hooks/usePublicAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 
 export default function ProtectedLayout() {
   const { isLoggedIn } = useAuth();

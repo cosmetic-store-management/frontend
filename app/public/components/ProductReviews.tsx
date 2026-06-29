@@ -11,7 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { usePublicAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 import {
   useProductReviews,
   useCreateReview,
@@ -73,7 +73,7 @@ interface ProductReviewsProps {
 
 export function ProductReviews({ product }: ProductReviewsProps) {
   const productId = product.id;
-  const { user } = usePublicAuthStore();
+  const { user } = useAuthStore();
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);

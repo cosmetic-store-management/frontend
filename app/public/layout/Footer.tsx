@@ -215,7 +215,7 @@ export default function PublicFooter() {
                   href={settings.youtubeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+                  className="w-9 h-9 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                   style={{ background: "hsl(345, 12%, 16%)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#FF0000")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "hsl(345, 12%, 16%)")}
@@ -228,7 +228,7 @@ export default function PublicFooter() {
                   href={settings.zaloUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+                  className="w-9 h-9 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
                   style={{ background: "hsl(345, 12%, 16%)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#0068FF")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "hsl(345, 12%, 16%)")}

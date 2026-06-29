@@ -1,6 +1,6 @@
 import { Award, TrendingUp, Star, Gem, CheckCircle } from "lucide-react";
 import { useMyTierInfo } from "@/public/hooks/useUser";
-import { useAuth } from "@/auth/hooks/usePublicAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 
 // Static mapping — phải định nghĩa ở FE để Tailwind JIT scan được class
 const TIER_GRADIENT: Record<string, string> = {

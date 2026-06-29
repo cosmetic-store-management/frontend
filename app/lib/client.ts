@@ -9,8 +9,8 @@
  *  - Nếu 401 → thử refresh token → retry request gốc → nếu vẫn lỗi → clear auth + redirect
  */
 
-import { useAdminAuthStore, usePublicAuthStore } from "@/store";
-import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/auth/store/auth.store";
+import { useCartStore } from "@/public/store/cart.store";
 
 const BASE_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:8000/api"
@@ -29,13 +29,7 @@ let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
 
 function getActiveStore() {
-  if (
-    typeof window !== "undefined" &&
-    window.location.pathname.startsWith("/admin")
-  ) {
-    return useAdminAuthStore.getState();
-  }
-  return usePublicAuthStore.getState();
+  return useAuthStore.getState();
 }
 
 function buildHeaders(isJson = true, isFormData = false): HeadersInit {
@@ -138,12 +132,7 @@ async function handleResponse<T>(
 
     if (hadToken && typeof window !== "undefined") {
       const currentPath = window.location.pathname;
-      if (currentPath.startsWith("/admin")) {
-        if (currentPath !== "/admin/login")
-          window.location.href = "/admin/login";
-      } else {
-        if (currentPath !== "/login") window.location.href = "/login";
-      }
+      if (currentPath !== "/login") window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`;
     }
     throw new Error("Phiên đăng nhập hết hạn");
   }

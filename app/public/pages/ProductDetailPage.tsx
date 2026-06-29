@@ -4,7 +4,7 @@ import { useParams, useNavigate, useSearchParams, Link } from "react-router";
 
 import { Star, ArrowLeft, Minus, Plus, ShoppingBag, Heart } from "lucide-react";
 import { useProduct } from "@/public/hooks/useProducts";
-import { useCartStore } from "@/store/cart.store";
+import { useCartStore } from "@/public/store/cart.store";
 import { toast } from "@/lib/toast";
 import { ProductReviews } from "../components/ProductReviews";
 import { ProductImageGallery } from "../components/ProductImageGallery";
@@ -12,7 +12,7 @@ import { ExpandableContent } from "../components/ExpandableContent";
 import { RelatedProducts } from "../components/RelatedProducts";
 import { ProductVouchers } from "../components/ProductVouchers";
 import { ProductRecommendations } from "../components/ProductRecommendations";
-import { useAuth } from "@/auth/hooks/usePublicAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 import {
   useRecordViewed,
   useFavorites,
@@ -155,7 +155,11 @@ export function ProductDetailPage() {
       variantId: selectedVariant.id || selectedVariant.sku,
       name: product.name,
       variantName: selectedVariant.name || selectedVariant.sku || "Mặc định",
-      price: selectedVariant.price,
+      price:
+        selectedVariant.discountPrice &&
+        selectedVariant.discountPrice < selectedVariant.price
+          ? selectedVariant.discountPrice
+          : selectedVariant.price,
       quantity,
       imageUrl: product.imageUrl,
       stock: selectedVariant.stock ?? 999,
@@ -345,7 +349,7 @@ export function ProductDetailPage() {
             )}
 
             {/* Action Area */}
-            <div className="space-y-4 mt-6 pt-5 border-t border-border">
+            <div className={`space-y-4 ${variants.length > 1 ? 'mt-6 pt-5 border-t border-border' : 'mt-6'}`}>
               {/* Qty + Stock */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center border border-border rounded-sm h-11 w-32 overflow-hidden">

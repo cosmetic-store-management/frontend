@@ -7,6 +7,7 @@ import {
   resetPassword,
   updateStaffInfo,
   updateStaffNotes,
+  deleteStaffAPI,
 } from "@/admin/services/user.service";
 
 const KEYS = {
@@ -93,6 +94,14 @@ export function useUpdateStaffNotes() {
       id: string;
       internalNotes: string;
     }) => updateStaffNotes(id, internalNotes),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "users"] }),
+  });
+}
+
+export function useDeleteStaff() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteStaffAPI(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "users"] }),
   });
 }

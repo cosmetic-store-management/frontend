@@ -68,7 +68,7 @@ const STATUS_META: Record<
 };
 
 const PAYMENT_LABEL: Record<string, string> = {
-  cod: "Cash on Delivery (COD)",
+  cod: "Cash on Delivery",
   bank: "Bank Transfer",
   qr: "QR Transfer",
   ewallet: "E-Wallet",

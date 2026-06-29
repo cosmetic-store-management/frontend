@@ -1,19 +1,7 @@
-/**
- * auth.service.ts — API calls cho authentication.
- *
- * Sau khi login thành công → gọi useAuthStore.getState().setAuth()
- * Sau khi logout → gọi useAuthStore.getState().clearAuth()
- *
- * State management hoàn toàn do Zustand auth.store.ts đảm nhiệm.
- * Service này chỉ lo HTTP calls.
- */
-
 import { apiClient } from "@/lib/client";
-import { useAdminAuthStore, usePublicAuthStore } from "@/store";
-import { useCartStore } from "@/store/cart.store";
-import type { User } from "@/admin/types/user";
-
-// ── Request / Response types ──────────────────────────────────────────────────
+import { useAuthStore } from "@/auth/store/auth.store";
+import { useCartStore } from "@/public/store/cart.store";
+import type { User } from "@/auth/types/user";
 
 export interface LoginPayload {
   email?: string;
@@ -37,35 +25,32 @@ interface AuthData {
 
 // ── API calls ─────────────────────────────────────────────────────────────────
 
-export async function loginAdmin(payload: LoginPayload): Promise<User> {
-  const data = await apiClient.post<AuthData>("/auth/admin/login", payload);
-  useAdminAuthStore
-    .getState()
-    .setAuth(data.user, data.accessToken, data.refreshToken);
-  return data.user;
-}
-
-export async function loginPublic(payload: LoginPayload): Promise<User> {
-  const data = await apiClient.post<AuthData>("/auth/public/login", payload);
-  usePublicAuthStore
-    .getState()
-    .setAuth(data.user, data.accessToken, data.refreshToken);
+export async function login(payload: LoginPayload): Promise<User> {
+  const data = await apiClient.post<AuthData>("/auth/login", payload);
+  useAuthStore.getState().setAuth(data.user, data.accessToken, data.refreshToken);
   return data.user;
 }
 
 export async function register(payload: RegisterPayload): Promise<User> {
   const data = await apiClient.post<AuthData>("/auth/register", payload);
-  usePublicAuthStore
+  useAuthStore
     .getState()
-    .setAuth(data.user, data.accessToken, data.refreshToken);
+    .setAuth(
+      data.user,
+      data.accessToken,
+      useAuthStore.getState().refreshToken || "",
+    );
   return data.user;
 }
 
 export async function logoutAdmin(): Promise<void> {
   try {
     await apiClient.post("/auth/logout");
+  } catch (error) {
+    useAuthStore.getState().clearAuth();
+    throw error;
   } finally {
-    useAdminAuthStore.getState().clearAuth();
+    useAuthStore.getState().clearAuth();
     useCartStore.getState().clearCart(); // Cart isolation: không để cart của admin leak
   }
 }
@@ -74,7 +59,7 @@ export async function logoutPublic(): Promise<void> {
   try {
     await apiClient.post("/auth/logout");
   } finally {
-    usePublicAuthStore.getState().clearAuth();
+    useAuthStore.getState().clearAuth();
     useCartStore.getState().clearCart(); // Cart isolation: xóa giỏ hàng khi đăng xuất
   }
 }

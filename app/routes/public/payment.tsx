@@ -1,5 +1,5 @@
-import { PaymentPage } from "../../public/pages/PaymentPage";
+import { OrderSuccessPage } from "../../public/pages/OrderSuccessPage";
 
-export default function OrderSuccessRoute() {
-  return <PaymentPage />;
+export default function PaymentRoute() {
+  return <OrderSuccessPage />;
 }

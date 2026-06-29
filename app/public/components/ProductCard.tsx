@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { ShoppingCart, Heart } from "lucide-react";
-import { useAuth } from "@/auth/hooks/usePublicAuth";
+import { useAuth } from "@/auth/hooks/useAuth";
 import { useToggleFavorite, useFavorites } from "../hooks/useUser";
 import { toast } from "@/lib/toast";
 

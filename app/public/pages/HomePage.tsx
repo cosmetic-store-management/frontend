@@ -5,7 +5,7 @@ import { useProducts } from "@/public/hooks/useProducts";
 import { useCategories } from "@/public/hooks/useCategories";
 import { usePublicBrands } from "@/public/hooks/useBrands";
 import { useRecentlyViewed } from "@/public/hooks/useUser";
-import { usePublicAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 import { ProductCard } from "../components/ProductCard";
 import { HomeVouchers } from "../components/HomeVouchers";
 import { FlashSaleSection } from "../components/FlashSaleSection";
@@ -18,7 +18,7 @@ export default function HomePage() {
   const { data: categories = [] } = useCategories();
   const { data: brandsRaw = [] } = usePublicBrands();
   const { data: prodData, isLoading } = useProducts({ limit: 30 });
-  const { user } = usePublicAuthStore();
+  const { user } = useAuthStore();
 
   // Chỉ gọi recently viewed khi đã đăng nhập — tránh 401 redirect
   const { data: viewedData } = useRecentlyViewed(1, 8, { enabled: !!user });

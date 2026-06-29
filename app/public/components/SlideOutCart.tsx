@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { X, ShoppingBag, Trash2, Plus, Minus, ArrowRight } from "lucide-react";
-import { useCartStore } from "@/store/cart.store";
+import { useCartStore } from "@/public/store/cart.store";
 import { useEffect } from "react";
 
 export function SlideOutCart() {

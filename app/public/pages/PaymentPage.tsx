@@ -12,7 +12,7 @@ import { usePublicSettings } from "@/public/hooks/usePublicSettings";
 import { toast } from "@/lib/toast";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient as api } from "@/lib/client";
-import { useCartStore } from "@/store/cart.store";
+import { useCartStore } from "@/public/store/cart.store";
 import DeleteModal from "@/components/ui/delete-modal";
 
 type PaymentMethod =

@@ -4,7 +4,7 @@ import {
   createAttribute,
   updateAttribute,
   deleteAttribute,
-} from "@/services/attribute.service";
+} from "@/admin/services/attribute.service";
 
 export function useVariants() {
   return useQuery({

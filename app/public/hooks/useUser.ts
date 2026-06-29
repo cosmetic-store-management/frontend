@@ -16,7 +16,7 @@ import {
   clearRecentlyViewed,
   removeRecentlyViewed,
 } from "../services/user.service";
-import { usePublicAuthStore } from "@/store";
+import { useAuthStore } from "@/auth/store/auth.store";
 import { QK } from "@/lib/queryKeys";
 import { toast } from "@/lib/toast";
 
@@ -30,9 +30,9 @@ export function useMyProfile() {
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
-  const setAuth = usePublicAuthStore((s) => s.setAuth);
-  const token = usePublicAuthStore((s) => s.token);
-  const refreshToken = usePublicAuthStore((s) => s.refreshToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const token = useAuthStore((s) => s.token);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (payload: UpdateProfilePayload) => updateMyProfile(payload),
@@ -48,9 +48,9 @@ export function useUpdateProfile() {
 
 export function useAddAddress() {
   const queryClient = useQueryClient();
-  const setAuth = usePublicAuthStore((s) => s.setAuth);
-  const token = usePublicAuthStore((s) => s.token);
-  const refreshToken = usePublicAuthStore((s) => s.refreshToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const token = useAuthStore((s) => s.token);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (payload: AddressPayload) => addMyAddress(payload),
@@ -64,9 +64,9 @@ export function useAddAddress() {
 
 export function useUpdateAddress() {
   const queryClient = useQueryClient();
-  const setAuth = usePublicAuthStore((s) => s.setAuth);
-  const token = usePublicAuthStore((s) => s.token);
-  const refreshToken = usePublicAuthStore((s) => s.refreshToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const token = useAuthStore((s) => s.token);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: AddressPayload }) =>
@@ -81,9 +81,9 @@ export function useUpdateAddress() {
 
 export function useDeleteAddress() {
   const queryClient = useQueryClient();
-  const setAuth = usePublicAuthStore((s) => s.setAuth);
-  const token = usePublicAuthStore((s) => s.token);
-  const refreshToken = usePublicAuthStore((s) => s.refreshToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const token = useAuthStore((s) => s.token);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (id: string) => deleteMyAddress(id),
@@ -96,9 +96,9 @@ export function useDeleteAddress() {
 }
 
 export function useUpdateAvatar() {
-  const setAuth = usePublicAuthStore((s) => s.setAuth);
-  const token = usePublicAuthStore((s) => s.token);
-  const refreshToken = usePublicAuthStore((s) => s.refreshToken);
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const token = useAuthStore((s) => s.token);
+  const refreshToken = useAuthStore((s) => s.refreshToken);
 
   return useMutation({
     mutationFn: (avatarDataUrl: string) => updateMyAvatar(avatarDataUrl),
@@ -119,7 +119,7 @@ export function useMyTierInfo() {
 }
 
 export function useFavorites() {
-  const isAuthenticated = usePublicAuthStore((s) => s.isAuthenticated);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   return useQuery({
     queryKey: QK.favorites(),
     queryFn: () => getFavorites().then((res) => res.products),

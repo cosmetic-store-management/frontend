@@ -122,10 +122,10 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
     >
       {/* Notch decoration */}
       <div
-        className={`absolute top-1/2 -left-2 w-4 h-4 rounded-full -translate-y-1/2 border-r ${isDisabled ? "bg-surface border-border" : "bg-white border-brand/20"}`}
+        className={`absolute top-1/2 -left-px w-2 h-4 rounded-r-full -translate-y-1/2 border border-l-0 ${isDisabled ? "bg-surface border-border" : "bg-white border-brand/20"}`}
       />
       <div
-        className={`absolute top-1/2 -right-2 w-4 h-4 rounded-full -translate-y-1/2 border-l ${isDisabled ? "bg-surface border-border" : "bg-white border-brand/20"}`}
+        className={`absolute top-1/2 -right-px w-2 h-4 rounded-l-full -translate-y-1/2 border border-r-0 ${isDisabled ? "bg-surface border-border" : "bg-white border-brand/20"}`}
       />
 
       <div className="p-4">
@@ -142,7 +142,7 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
         {/* Title */}
         <div className="flex items-start justify-between gap-2">
           <span
-            className={`font-bold text-base flex items-center gap-1.5 ${isDisabled ? "text-ink-muted" : "text-brand"}`}
+            className={`font-black text-lg flex items-center gap-2 tracking-tight ${isDisabled ? "text-ink-muted" : "text-brand"}`}
           >
             {getIcon()} {voucher.title || getDiscountDisplay()}
           </span>
@@ -152,42 +152,40 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
         </div>
 
         {/* Conditions */}
-        <span className="text-xs text-ink-muted mt-1 block">
-          {minOrderText}
-        </span>
-        {voucher.maxDiscount && voucher.maxDiscount > 0 && (
-          <span className="text-xs text-ink-muted block">
-            Tối đa {voucher.maxDiscount.toLocaleString("vi-VN")}đ
-          </span>
-        )}
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-muted">
+          <span>{minOrderText}</span>
+          {voucher.maxDiscount && voucher.maxDiscount > 0 && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-border/80 hidden sm:block"></span>
+              <span>Tối đa {voucher.maxDiscount.toLocaleString("vi-VN")}đ</span>
+            </>
+          )}
+        </div>
 
         {/* Validity */}
-        <div className="flex items-center gap-3 mt-2">
-          {voucher.startDate && (
-            <span className="text-[10px] text-ink-muted">
-              Từ: {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
+        <div className="flex flex-wrap items-center gap-3 mt-2.5">
+          {status === "pending" && voucher.startDate && (
+            <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
+              Có hiệu lực từ {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
             </span>
           )}
-          <span
-            className={`text-[10px] flex items-center gap-0.5 font-medium ${
-              status === "expired"
-                ? "text-red-400"
+          
+          {status !== "pending" && (
+            <span
+              className={`text-[11px] flex items-center gap-1 font-medium ${
+                status === "expired" || status === "used"
+                  ? "text-red-400"
+                  : isExpiringSoon
+                    ? "text-danger"
+                    : "text-ink-muted"
+              }`}
+            >
+              <Clock className="w-3 h-3" />
+              {status === "expired" || status === "used"
+                ? `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`
                 : isExpiringSoon
-                  ? "text-danger"
-                  : "text-ink-muted"
-            }`}
-          >
-            <Clock className="w-2.5 h-2.5" />
-            {status === "expired" || status === "used"
-              ? `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`
-              : isExpiringSoon
-                ? `Còn ${daysLeft} ngày`
-                : `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`}
-          </span>
-          {voucher.usageLimit !== undefined && voucher.usageLimit > 0 && (
-            <span className="text-[10px] text-ink-muted">
-              Còn {Math.max(0, voucher.usageLimit - (voucher.usedCount || 0))}/
-              {voucher.usageLimit} lượt
+                  ? `Sắp hết hạn: Còn ${daysLeft} ngày`
+                  : `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`}
             </span>
           )}
         </div>

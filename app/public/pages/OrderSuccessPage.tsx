@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import {
   CheckCircle2,
@@ -7,11 +8,15 @@ import {
   ClipboardList,
   Loader2,
   Clock,
+  ChevronLeft,
+  Timer,
 } from "lucide-react";
 import { usePublicSettings } from "@/public/hooks/usePublicSettings";
 import { toast } from "@/lib/toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient as api } from "@/lib/client";
+import DeleteModal from "@/components/ui/delete-modal";
+import { useCartStore } from "@/public/store/cart.store";
 
 type PaymentMethod =
   | "cod"
@@ -49,7 +54,7 @@ function BankTransferInfo({
   const finalQrUrl = dynamicQrUrl || settings?.bankQrCodeUrl;
 
   return (
-    <div className="mt-8 bg-card border border-brand/20 rounded-2xl overflow-hidden max-w-md mx-auto shadow-md">
+    <div className="mt-8 bg-card border border-brand/20 rounded-sm overflow-hidden max-w-md mx-auto shadow-md">
       <div className="px-6 py-4 border-b border-brand/10 flex items-center gap-2" style={{ background: "hsl(352, 72%, 52%, 0.05)" }}>
         <Banknote className="w-5 h-5" style={{ color: "hsl(352, 72%, 52%)" }} />
         <h3 className="font-bold" style={{ color: "hsl(352, 72%, 52%)" }}>Bank transfer details</h3>
@@ -60,37 +65,37 @@ function BankTransferInfo({
             <img
               src={finalQrUrl}
               alt="QR Code"
-              className="w-64 h-64 sm:w-72 sm:h-72 object-contain rounded-xl border border-border/50 p-2 bg-white"
+              className="w-64 h-64 sm:w-72 sm:h-72 object-contain rounded-sm border border-border/50 p-2 bg-white"
             />
             <p className="text-xs text-ink-muted mt-2">
-              Mở app Ngân hàng để quét mã QR
+              Open banking app to scan QR code
             </p>
           </div>
         )}
         {[
           {
-            label: "Ngân hàng",
+            label: "Bank",
             value:
               banks.find((b: any) => b.bin === settings?.bankName)?.shortName ||
               settings?.bankName ||
-              "Chưa cấu hình",
+              "Not configured",
           },
           {
-            label: "Số tài khoản",
-            value: settings?.bankAccountNumber || "Chưa cấu hình",
+            label: "Account Number",
+            value: settings?.bankAccountNumber || "Not configured",
             copy: true,
           },
           {
-            label: "Chủ tài khoản",
-            value: settings?.bankAccountName || "Chưa cấu hình",
+            label: "Account Name",
+            value: settings?.bankAccountName || "Not configured",
           },
           {
-            label: "Số tiền",
+            label: "Amount",
             value: `${parseInt(amount || "0").toLocaleString("vi-VN")}₫`,
             highlight: true,
           },
           {
-            label: "Nội dung CK",
+            label: "Transfer Note",
             value: transferNote,
             copy: true,
             highlight: true,
@@ -102,11 +107,11 @@ function BankTransferInfo({
               className={`flex items-center gap-2 font-semibold ${highlight ? "text-brand" : "text-ink"}`}
             >
               <span className="text-right">{value}</span>
-              {copy && value !== "Chưa cấu hình" && (
+              {copy && value !== "Not configured" && (
                 <button
                   onClick={() => copyText(value)}
                   className="p-1 rounded hover:bg-surface-soft transition-colors text-ink-muted hover:text-brand"
-                  title="Sao chép"
+                  title="Copy"
                 >
                   <Copy className="w-3.5 h-3.5" />
                 </button>
@@ -114,12 +119,6 @@ function BankTransferInfo({
             </div>
           </div>
         ))}
-      </div>
-      <div className="bg-warning/5 px-6 py-3 border-t border-warning/20">
-        <p className="text-xs text-warning-dark font-medium">
-          ⚠ Vui lòng chuyển khoản trong vòng <strong>24 giờ</strong>. Đơn hàng
-          sẽ tự động hủy nếu không nhận được thanh toán.
-        </p>
       </div>
     </div>
   );
@@ -157,122 +156,227 @@ export function OrderSuccessPage() {
       // Dừng poll nếu đã thanh toán
       return query.state.data?.paymentStatus === "paid" ? false : 3000;
     },
-    enabled: paymentMethod === "bank" || paymentMethod === "qr",
+    enabled: ["bank", "qr", "stripe"].includes(paymentMethod || ""),
   });
 
   const isPaid = orderTrack?.paymentStatus === "paid";
+  const isCancelled = orderTrack?.orderStatus === "cancelled";
+
+  const [timeLeft, setTimeLeft] = useState(15 * 60);
+  const hasAutoCancelled = useRef(false);
+  const [isConfirmOpen, setConfirmOpen] = useState(false);
+  const { clearCart } = useCartStore();
+
+  useEffect(() => {
+    // Clear cart if payment is confirmed via polling
+    if (isPaid) {
+      clearCart();
+      if (window.location.pathname.startsWith('/payment')) {
+        navigate(`/order-success/${code}?method=${paymentMethod}&amount=${amount}`, { replace: true });
+      }
+    }
+    
+    // Clear cart if user lands directly on order-success (e.g. Stripe redirect)
+    if (window.location.pathname.startsWith('/order-success')) {
+      clearCart();
+    }
+  }, [isPaid, clearCart, navigate, code, paymentMethod, amount]);
+
+  // Đếm ngược
+  useEffect(() => {
+    if (paymentMethod !== "bank" && paymentMethod !== "qr") return;
+    if (timeLeft <= 0 || isPaid || isCancelled) return;
+    const timerId = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timerId);
+  }, [timeLeft, isPaid, isCancelled, paymentMethod]);
+
+  // Hết giờ tự động hủy
+  useEffect(() => {
+    if (paymentMethod !== "bank" && paymentMethod !== "qr") return;
+    if (timeLeft <= 0 && !isPaid && !isCancelled && !hasAutoCancelled.current && code) {
+      hasAutoCancelled.current = true;
+      api.patch(`/checkout/${code}/cancel`).catch(console.error);
+    }
+  }, [timeLeft, isPaid, isCancelled, code, paymentMethod]);
+
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = (seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
+  const handleBack = () => {
+    if ((paymentMethod === "bank" || paymentMethod === "qr") && !isPaid && !isCancelled && timeLeft > 0 && code) {
+      setConfirmOpen(true);
+    } else {
+      navigate(-1);
+    }
+  };
+
+  const confirmCancelOrder = () => {
+    setConfirmOpen(false);
+    if (code) {
+      api.patch(`/checkout/${code}/cancel`).catch(console.error);
+    }
+    navigate(-1);
+  };
 
   const methodMeta: Record<
     PaymentMethod,
     { label: string; description: string; color: string }
   > = {
     cod: {
-      label: "Thanh toán khi nhận hàng",
+      label: "Cash on Delivery",
       description:
-        "Shipper sẽ liên hệ bạn để xác nhận giao hàng. Vui lòng chuẩn bị tiền mặt.",
+        "The shipper will contact you to confirm delivery. Please prepare cash.",
       color: "text-success",
     },
     bank: {
-      label: "Chuyển khoản ngân hàng",
+      label: "Bank Transfer",
       description:
-        "Đơn hàng sẽ được xử lý sau khi chúng tôi xác nhận thanh toán.",
+        "Your order will be processed once we confirm the payment.",
       color: "text-brand",
     },
-    ewallet: { label: "Ví điện tử", description: "", color: "" },
-    qr: { label: "Quét mã QR", description: "", color: "" },
-    stripe: { label: "Thẻ quốc tế", description: "", color: "" },
-    cash: { label: "Tiền mặt", description: "", color: "" },
-    pos_card: { label: "Thẻ POS", description: "", color: "" },
-    transfer: { label: "Chuyển khoản", description: "", color: "" },
+    ewallet: { label: "E-wallet", description: "", color: "" },
+    qr: { label: "QR Code", description: "", color: "" },
+    stripe: { label: "Credit Card", description: "", color: "" },
+    cash: { label: "Cash", description: "", color: "" },
+    pos_card: { label: "POS Card", description: "", color: "" },
+    transfer: { label: "Transfer", description: "", color: "" },
   };
 
   const meta = methodMeta[paymentMethod] || methodMeta.cod;
 
   return (
-    <div className="container mx-auto px-4 py-16 max-w-2xl text-center animate-page-enter">
-      {/* Status Icon */}
-      <div
-        className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${paymentMethod === "bank" && !isPaid ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}`}
-      >
-        {paymentMethod === "bank" && !isPaid ? (
-          <Clock className="w-12 h-12" />
-        ) : (
-          <CheckCircle2 className="w-12 h-12" />
-        )}
-      </div>
+    <div className="max-w-300 w-full mx-auto px-4 py-8 sm:py-16 animate-page-enter">
+      {/* Back Button */}
+      {(paymentMethod === "bank" || paymentMethod === "qr") && !isPaid && !isCancelled && (
+        <div className="mb-8">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-1.5 text-ink-muted hover:text-foreground transition-colors w-fit"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
+        </div>
+      )}
 
-      {/* Title */}
-      <h1
-        className="text-3xl font-bold text-foreground mb-3"
-        style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
-      >
-        {paymentMethod === "bank" && !isPaid
-          ? "Waiting for payment"
-          : "Order placed! 🎉"}
-      </h1>
-      <p className="text-ink-muted mb-2">
-        {paymentMethod === "bank" && !isPaid
-          ? "Vui lòng quét mã QR bên dưới để hoàn tất thanh toán. Mã đơn hàng của bạn là:"
-          : "Cảm ơn bạn đã tin tưởng GlowUp. Mã đơn hàng của bạn là:"}
-      </p>
-      <div className="inline-flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-2 mb-4 shadow-sm">
-        <span className="font-mono font-bold text-foreground text-lg">#{code}</span>
-        <button
-          onClick={() => copyText(`#${code}`)}
-          className="text-muted-foreground hover:text-brand transition-colors"
-        >
-          <Copy className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Payment Method Info */}
-      <div className={`text-sm font-semibold mb-1 ${meta.color}`}>
-        {meta.label}
-      </div>
-      <p className="text-ink-muted text-sm max-w-md mx-auto">
-        {meta.description}
-      </p>
-
-      {/* Bank Transfer Details */}
-      {paymentMethod === "bank" &&
-        (isPaid ? (
-          <div className="mt-8 bg-success/10 border border-success/30 rounded-2xl overflow-hidden max-w-md mx-auto p-6">
-            <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-3" />
-            <h3 className="font-bold text-success text-xl mb-1">Payment confirmed!</h3>
-            <p className="text-sm text-foreground">We've received your bank transfer.</p>
+      {(!((paymentMethod === "bank" || paymentMethod === "qr") && !isPaid)) ? (
+        <div className="max-w-2xl mx-auto text-center relative animate-fade-up">
+          {/* Animated Success Icon */}
+          <div className="w-24 h-24 bg-success/10 rounded-sm flex items-center justify-center mx-auto mb-6">
+             <CheckCircle2 className="w-12 h-12 text-success" />
           </div>
-        ) : settingsLoading ? (
-          <div className="mt-8 flex items-center justify-center gap-2 text-ink-muted">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span className="text-sm">Đang tải thông tin ngân hàng...</span>
-          </div>
-        ) : (
-          <BankTransferInfo
-            orderCode={code || ""}
-            amount={amount}
-            settings={settings}
-            banks={banks}
-          />
-        ))}
 
-      {/* CTAs */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10">
-        <button
-          onClick={() => navigate("/account?view=orders")}
-          className="btn-hover flex items-center gap-2 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.99]"
-          style={{ background: "hsl(352, 72%, 52%)" }}
-        >
-          <ClipboardList className="w-4 h-4" />
-          My orders
-        </button>
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 font-semibold py-3 px-8 rounded-xl transition-all"
-        >
-          <ShoppingBag className="w-4 h-4" />
-          Continue shopping
-        </button>
-      </div>
+          <h1 className="text-3xl font-bold text-foreground mb-3" style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}>
+            Order Confirmed! 🎉
+          </h1>
+          <p className="text-ink-muted mb-8 max-w-md mx-auto">
+            Thank you for shopping with GlowUp. Your order has been placed successfully and is being processed.
+          </p>
+
+          {/* Receipt Card */}
+          <div className="bg-white rounded-sm p-6 shadow-sm border border-border mx-auto max-w-sm mb-10 text-left">
+            <p className="text-xs text-ink-muted font-bold mb-1 uppercase tracking-widest">Order Reference</p>
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-xl font-bold text-ink">#{code}</span>
+              <button 
+                onClick={() => copyText(`#${code}`)} 
+                className="p-2 hover:bg-surface-muted rounded-sm transition-colors text-ink-muted hover:text-brand" 
+                title="Copy Order Code"
+              >
+                 <Copy className="w-4 h-4" />
+              </button>
+            </div>
+            
+            <div className="h-px bg-border my-4"></div>
+            
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-ink-muted font-medium">Payment Method</span>
+              <span className={`font-semibold ${meta.color}`}>{meta.label}</span>
+            </div>
+          </div>
+
+          {/* Call to Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+             <button
+               onClick={() => navigate("/account?view=orders")}
+               className="btn-hover w-full sm:w-auto flex justify-center items-center gap-2 text-white font-bold py-3 px-8 rounded-sm transition-all shadow-sm hover:shadow-md active:scale-[0.99]"
+               style={{ background: "hsl(352, 72%, 52%)" }}
+             >
+               <ClipboardList className="w-4 h-4" />
+               View My Orders
+             </button>
+             <button
+               onClick={() => navigate("/")}
+               className="w-full sm:w-auto flex justify-center items-center gap-2 bg-white hover:bg-surface-muted text-ink font-semibold py-3 px-8 rounded-sm transition-all active:scale-[0.99] border border-border"
+             >
+               <ShoppingBag className="w-4 h-4" />
+               Continue Shopping
+             </button>
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-2xl mx-auto text-center relative animate-fade-up">
+          {/* Status Icon */}
+          <div className="w-24 h-24 rounded-sm flex items-center justify-center mx-auto mb-6 bg-warning/10 text-warning">
+            <Clock className="w-12 h-12" />
+          </div>
+
+          {/* Title */}
+          <h1
+            className="text-3xl font-bold text-foreground mb-3"
+            style={{ fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)" }}
+          >
+            Waiting for payment
+          </h1>
+          
+          {/* Timer for bank transfer */}
+          {!isCancelled && (
+            <div className="flex items-center justify-center gap-2 text-warning font-bold mb-4 text-lg">
+              <Timer className="w-5 h-5" />
+              {formatTime(timeLeft)}
+            </div>
+          )}
+          {isCancelled && (
+            <div className="text-danger font-bold mb-4 text-lg">
+              Order cancelled due to payment timeout
+            </div>
+          )}
+
+          <p className="text-ink-muted mb-6">
+            Please scan the QR code below to complete your payment.
+          </p>
+
+          {/* Bank Transfer Details */}
+          {settingsLoading ? (
+            <div className="mt-8 flex items-center justify-center gap-2 text-ink-muted">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-sm">Loading bank details...</span>
+            </div>
+          ) : (
+            <BankTransferInfo
+              orderCode={code || ""}
+              amount={amount}
+              settings={settings}
+              banks={banks}
+            />
+          )}
+        </div>
+      )}
+
+      <DeleteModal
+        open={isConfirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmCancelOrder}
+        title="Leave this page?"
+        description="Are you sure you want to leave this page? Your pending order will be cancelled."
+        cancelText="Cancel"
+        confirmText="Yes, leave"
+      />
     </div>
   );
 }

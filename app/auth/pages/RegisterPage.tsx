@@ -2,11 +2,11 @@ import { Link, useNavigate } from "react-router";
 import { Loader2, Sparkles, Eye, EyeOff, Check, UserPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegister } from "@/auth/hooks/usePublicAuth";
+import { useRegister, useSocialLogin } from "@/auth/hooks/useAuth";
 import {
-  publicRegisterSchema,
-  type PublicRegisterForm,
-} from "../schemas/public-auth.schema";
+  registerSchema,
+  type RegisterForm,
+} from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ const PERKS = [
   "Easy order tracking & returns",
 ];
 
-export default function PublicRegisterPage() {
+export default function RegisterPage() {
   const registerMutation = useRegister();
   const navigate = useNavigate();
   const [showPw, setShowPw] = useState(false);
@@ -27,8 +27,8 @@ export default function PublicRegisterPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<PublicRegisterForm>({
-    resolver: zodResolver(publicRegisterSchema),
+  } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -38,7 +38,7 @@ export default function PublicRegisterPage() {
     },
   });
 
-  const onSubmit = async (data: PublicRegisterForm) => {
+  const onSubmit = async (data: RegisterForm) => {
     try {
       await registerMutation.mutateAsync({
         name: data.name,

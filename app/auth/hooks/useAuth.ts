@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { usePublicAuthStore } from "@/store";
-import { useCartStore } from "@/store/cart.store";
+import { useAuthStore } from "@/auth/store/auth.store";
+import { useCartStore } from "@/public/store/cart.store";
 import { syncCartAPI } from "@/public/services/cart.service";
 import {
-  loginPublic,
+  login,
   type LoginPayload,
   register,
   type RegisterPayload,
@@ -17,10 +17,14 @@ import {
 import { getMyProfile } from "@/public/services/user.service";
 
 export const useAuth = () => {
-  const store = usePublicAuthStore();
+  const store = useAuthStore();
+  const isAdmin = ["owner", "manager", "staff"].includes(
+    store.user?.role || "",
+  );
   return {
     user: store.user,
     isLoggedIn: store.isAuthenticated,
+    isAdmin,
     logout: store.clearAuth,
   };
 };
@@ -30,7 +34,7 @@ export const useLogin = () => {
   const { items, setItems } = useCartStore();
 
   return useMutation({
-    mutationFn: (payload: LoginPayload) => loginPublic(payload),
+    mutationFn: (payload: LoginPayload) => login(payload),
     onSuccess: async () => {
       // Xóa cache của user cũ để tránh data cũ hiển thị cho user mới
       queryClient.clear();
@@ -146,7 +150,7 @@ export const useVerifyOtp = () => {
 export const useSocialLogin = () => {
   const queryClient = useQueryClient();
   const { items, setItems } = useCartStore();
-  const { setAuth, setAccessToken } = usePublicAuthStore();
+  const { setAuth, setAccessToken } = useAuthStore();
 
   return useMutation({
     mutationFn: async ({

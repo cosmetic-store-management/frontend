@@ -61,6 +61,10 @@ export function updateStaffNotes(
     .then((res) => res.user);
 }
 
+export function deleteStaffAPI(id: string): Promise<{ message: string }> {
+  return apiClient.delete<{ message: string }>(`/users/${id}`);
+}
+
 // ── Customer ──────────────────────────────────────────────────────────────────
 
 export function updateProfile(data: {
