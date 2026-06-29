@@ -6,7 +6,7 @@ import { useRegister, useSocialLogin } from "@/auth/hooks/useAuth";
 import { registerSchema, type RegisterForm } from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
-import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 
 const PERKS = [
   "Earn points on every purchase",
@@ -16,6 +16,7 @@ const PERKS = [
 ];
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const registerMutation = useRegister();
   const navigate = useNavigate();
   const [showPw, setShowPw] = useState(false);
@@ -44,13 +45,13 @@ export default function RegisterPage() {
         phone: data.phone,
         password: data.password,
       });
-      toast.success(i18next.t("Welcome to GlowUp! 🌸 Your account has been created."));
+      toast.success(t("Welcome to GlowUp! 🌸 Your account has been created."));
       navigate("/");
     } catch (err: any) {
       toast.error(
         err instanceof Error
           ? err.message
-          : i18next.t("Registration failed. Please try again."),
+          : t("Registration failed. Please try again."),
       );
     }
   };
@@ -78,7 +79,7 @@ export default function RegisterPage() {
   }) => (
     <div className="space-y-1.5">
       <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-        {i18next.t(label)}
+        {t(label)}
       </label>
       <div className="relative">
         <input
@@ -152,16 +153,16 @@ export default function RegisterPage() {
                 "var(--font-display, 'Playfair Display', Georgia, serif)",
             }}
           >
-            {i18next.t(`Join the glow`)}
+            {t(`Join the glow`)}
             <br />
-            <em>{i18next.t(`community.`)}</em>
+            <em>{t(`community.`)}</em>
           </h2>
 
           <p
             className="text-sm leading-relaxed mb-8"
             style={{ color: "rgba(255,255,255,0.6)" }}
           >
-            {i18next.t(`Create your free account and unlock a world of beauty perks.`)}
+            {t(`Create your free account and unlock a world of beauty perks.`)}
           </p>
 
           <ul className="space-y-3 text-left">
@@ -177,7 +178,7 @@ export default function RegisterPage() {
                   className="text-sm"
                   style={{ color: "rgba(255,255,255,0.75)" }}
                 >
-                  {i18next.t(perk)}
+                  {t(perk)}
                 </span>
               </li>
             ))}
@@ -216,10 +217,10 @@ export default function RegisterPage() {
                   "var(--font-display, 'Playfair Display', Georgia, serif)",
               }}
             >
-              {i18next.t(`Create account`)}
+              {t(`Create account`)}
             </h1>
             <p className="text-sm text-muted-foreground mt-1.5">
-              {i18next.t(`It's free and only takes a minute.`)}
+              {t(`It's free and only takes a minute.`)}
             </p>
           </div>
 
@@ -231,7 +232,7 @@ export default function RegisterPage() {
             <Field
               label="Full Name"
               name="name"
-              placeholder={i18next.t("Nguyễn Thị Lan")}
+              placeholder={t("Nguyễn Thị Lan")}
               error={errors.name?.message}
             />
             <Field
@@ -252,7 +253,7 @@ export default function RegisterPage() {
               label="Password"
               name="password"
               type={showPw ? "text" : "password"}
-              placeholder={i18next.t("Min. 6 characters")}
+              placeholder={t("Min. 6 characters")}
               error={errors.password?.message}
               rightEl={
                 <button
@@ -272,7 +273,7 @@ export default function RegisterPage() {
               label="Confirm Password"
               name="confirmPassword"
               type={showConfirm ? "text" : "password"}
-              placeholder={i18next.t("Repeat password")}
+              placeholder={t("Repeat password")}
               error={errors.confirmPassword?.message}
               rightEl={
                 <button
@@ -301,19 +302,19 @@ export default function RegisterPage() {
                 <Check className="w-3 h-3 text-white absolute opacity-0 peer-checked:opacity-100 transition-opacity" />
               </div>
               <span className="text-xs text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                {i18next.t(`By creating an account, you agree to GlowUp's`)}{" "}
+                {t(`By creating an account, you agree to GlowUp's`)}{" "}
                 <Link
                   to="/terms"
                   className="text-foreground underline decoration-border underline-offset-4 hover:decoration-brand transition-colors"
                 >
-                  {i18next.t(`Terms of Service`)}
+                  {t(`Terms of Service`)}
                 </Link>{" "}
-                {i18next.t(`and`)}{" "}
+                {t(`and`)}{" "}
                 <Link
                   to="/privacy"
                   className="text-foreground underline decoration-border underline-offset-4 hover:decoration-brand transition-colors"
                 >
-                  {i18next.t(`Privacy Policy`)}
+                  {t(`Privacy Policy`)}
                 </Link>
                 .
               </span>
@@ -331,7 +332,7 @@ export default function RegisterPage() {
               ) : (
                 <>
                   <UserPlus className="w-4 h-4" />
-                  {i18next.t(`Create Account`)}
+                  {t(`Create Account`)}
                 </>
               )}
             </button>
@@ -343,7 +344,7 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center">
                 <span className="px-3 bg-background text-xs text-muted-foreground">
-                  {i18next.t(`or sign up with`)}
+                  {t(`or sign up with`)}
                 </span>
               </div>
             </div>
@@ -379,13 +380,13 @@ export default function RegisterPage() {
           {/* Login CTA */}
           <div className="mt-8 text-center pb-8 lg:pb-0">
             <p className="text-sm text-muted-foreground">
-              {i18next.t(`Already have an account?`)}{" "}
+              {t(`Already have an account?`)}{" "}
               <Link
                 to="/login"
                 className="font-semibold transition-colors"
                 style={{ color: "hsl(352, 72%, 48%)" }}
               >
-                {i18next.t(`Sign in`)}
+                {t(`Sign in`)}
               </Link>
             </p>
           </div>

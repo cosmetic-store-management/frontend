@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next";
+
 import { useLanguageStore } from "../../store/language.store";
 import { Globe } from "lucide-react";
 import {
@@ -9,12 +9,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function LanguageSwitcher() {
-  const { i18n } = useTranslation();
+
   const { language, setLanguage } = useLanguageStore();
 
   const changeLanguage = (lng: 'en' | 'vi') => {
-    i18n.changeLanguage(lng);
     setLanguage(lng);
+    
+    // Trigger Google Translate Widget
+    const select = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
+    if (select) {
+      select.value = lng;
+      select.dispatchEvent(new Event('change'));
+    } else {
+      // Fallback if widget hasn't fully loaded
+      document.cookie = `googtrans=/en/${lng}; path=/`;
+      window.location.reload();
+    }
   };
 
   return (

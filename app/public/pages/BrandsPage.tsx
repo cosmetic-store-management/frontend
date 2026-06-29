@@ -46,10 +46,9 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
     <Link
       to={`/products?brandId=${brand.id}`}
       className={`group flex flex-col items-center transition-all duration-300 overflow-hidden rounded-sm
-        ${
-          dark
-            ? "border border-white/10 hover:border-white/25 hover:-translate-y-1"
-            : "border border-border/40 bg-surface hover:border-brand/50 hover:shadow-md hover:-translate-y-1"
+        ${dark
+          ? "border border-white/10 hover:border-white/25 hover:-translate-y-1"
+          : "border border-border/40 bg-surface hover:border-brand/50 hover:shadow-md hover:-translate-y-1"
         }`}
     >
       {/* Logo area — always white bg so logo image shows correctly */}
@@ -89,6 +88,7 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function BrandsPage() {
+  const { t } = useTranslation();
   const { data: brands = [], isLoading } = useBrands();
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -152,7 +152,7 @@ export default function BrandsPage() {
       ══════════════════════════════════════════════════════════════ */}
       <div className="bg-[#1a1a1a] py-8 px-4">
         <div className="max-w-300 mx-auto">
-          <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">{i18next.t("Thương Hiệu Nổi Bật")}</h2>
+          <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">{t("Featured Brands")}</h2>
 
           <div className="relative">
             {/* Carousel track */}
@@ -163,20 +163,20 @@ export default function BrandsPage() {
             >
               {isLoading
                 ? Array.from({ length: 5 }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="min-w-50 flex-1 aspect-4/3 bg-[#2a2a2a] animate-pulse"
-                    />
-                  ))
+                  <div
+                    key={i}
+                    className="min-w-50 flex-1 aspect-4/3 bg-[#2a2a2a] animate-pulse"
+                  />
+                ))
                 : featured.map((brand: any) => (
-                    <div
-                      key={brand.id}
-                      className="min-w-50 flex-1"
-                      style={{ scrollSnapAlign: "start" }}
-                    >
-                      <BrandCard brand={brand} dark />
-                    </div>
-                  ))}
+                  <div
+                    key={brand.id}
+                    className="min-w-50 flex-1"
+                    style={{ scrollSnapAlign: "start" }}
+                  >
+                    <BrandCard brand={brand} dark />
+                  </div>
+                ))}
             </div>
 
             {/* Arrow buttons — sit inside carousel, no overflow */}
@@ -204,8 +204,8 @@ export default function BrandsPage() {
           {/* Count heading */}
           <p className="text-center font-black text-[15px] uppercase tracking-widest text-ink mb-5">
             {isLoading
-              ? "Đang tải..."
-              : `Xem Tất Cả ${brands.length} Thương Hiệu`}
+              ? t("loading")
+              : t("View All Brands", { count: brands.length })}
           </p>
 
           {/* A-Z navigation */}
@@ -217,10 +217,9 @@ export default function BrandsPage() {
                   key={letter}
                   onClick={() => active && scrollTo(letter)}
                   className={`text-[13px] font-semibold transition-colors leading-none py-0.5
-                    ${
-                      active
-                        ? "text-ink hover:text-brand cursor-pointer"
-                        : "text-ink/20 cursor-default"
+                    ${active
+                      ? "text-ink hover:text-brand cursor-pointer"
+                      : "text-ink/20 cursor-default"
                     }`}
                 >
                   {letter}
@@ -242,7 +241,7 @@ export default function BrandsPage() {
             ))}
           </div>
         ) : brands.length === 0 ? (
-          <div className="py-20 text-center text-ink-muted">{i18next.t("Hiện chưa có thương hiệu nào")}</div>
+          <div className="py-20 text-center text-ink-muted">{t("Hiện chưa có thương hiệu nào")}</div>
         ) : (
           <div className="flex flex-col gap-8">
             {ALPHABET.filter((l) => activeLetters.has(l)).map((letter) => (

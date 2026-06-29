@@ -307,7 +307,7 @@ export default function Footer() {
           >
             © {new Date().getFullYear()}{" "}
             <span className="text-white font-medium">
-              {settings.storeName || "Tấn Thành"}
+              {settings.storeName || "GlowUp"}
             </span>
             . All rights reserved.
           </p>

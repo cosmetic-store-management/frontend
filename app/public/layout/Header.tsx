@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
-import { useTranslation } from "react-i18next";
+
 import {
   Search,
   ShoppingBag,
@@ -14,7 +14,7 @@ import { useAuthStore } from "@/auth/store/auth.store";
 import { useCartStore } from "@/public/store/cart.store";
 import { useCategories, useBrands } from "@/public/hooks/useProducts";
 import { useLogout } from "@/auth/hooks/useAuth";
-import LanguageSwitcher from "../components/LanguageSwitcher";
+import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -23,7 +23,7 @@ export default function Header() {
   const [activeMegaCategory, setActiveMegaCategory] = useState<any>(null);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
-  const { t } = useTranslation();
+
   const { user, isAuthenticated, clearAuth } = useAuthStore();
 
   const items = useCartStore((state) => state.items);
@@ -113,7 +113,7 @@ export default function Header() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={t("header.searchPlaceholder")}
+                placeholder="Search products, brands..."
                 className="w-full h-full bg-transparent py-0 pl-9 pr-4 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/70"
               />
               {searchTerm && (
@@ -129,7 +129,7 @@ export default function Header() {
 
           <div className="flex items-center gap-3 lg:gap-5 shrink-0 ml-auto lg:ml-0 text-ink">
             <span className="hidden lg:block text-[14px] text-ink whitespace-nowrap">
-              {t("header.hotline")}: 1900 1234
+              Hotline: 1900 1234
             </span>
             <span className="hidden lg:block text-border text-lg font-light">
               |

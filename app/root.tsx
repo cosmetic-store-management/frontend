@@ -1,5 +1,4 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
+
 import "./app.css";
 import {
   Links,
@@ -15,7 +14,7 @@ import { Toaster } from "./components/ui/sonner";
 
 import React from "react";
 import * as ReactDOM from "react-dom";
-import "./lib/i18n";
+
 
 if (import.meta.env.DEV && typeof window !== "undefined") {
   import("@axe-core/react").then((axe) => {
@@ -126,7 +125,7 @@ export function ErrorBoundary() {
               fontSize: "0.9rem",
               textDecoration: "none",
             }}
-          >{i18next.t("🌸 Về trang chủ")}</a>
+          >🌸 Về trang chủ</a>
         </div>
         <Scripts />
       </body>
@@ -166,10 +165,25 @@ export default function App() {
         <Links />
       </head>
       <body>
-        {/*
-          CartProvider đã được xóa — cart state dùng Zustand (store/cart.store.ts).
-          Không cần Provider wrapper; useCartStore() có thể dùng ở bất kỳ đâu.
-        */}
+        <div id="google_translate_element" style={{ position: "fixed", bottom: "20px", left: "20px", zIndex: 9999 }}></div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                new window.google.translate.TranslateElement({
+                  pageLanguage: 'en',
+                  includedLanguages: 'vi,en',
+                  layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+                }, 'google_translate_element');
+              }
+            `,
+          }}
+        />
+        <script
+          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+          async
+          defer
+        ></script>
         <QueryClientProvider client={queryClient}>
           <Outlet />
         </QueryClientProvider>
