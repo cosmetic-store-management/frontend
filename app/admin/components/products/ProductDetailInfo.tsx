@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import type { Product } from "@/admin/types/product";
 import ProductDetailVariants from "./ProductDetailVariants";
 
@@ -16,34 +18,26 @@ export default function ProductDetailInfo({
   return (
     <div className="grid grid-cols-2 gap-3">
       <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-          Tồn kho
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{i18next.t("Tồn kho")}</p>
         <p className="mt-1.5 text-sm font-medium text-ink">
           {totalStock.toLocaleString("vi-VN")} sp
         </p>
       </div>
 
       <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-          Thương hiệu
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{i18next.t("Thương hiệu")}</p>
         <p className="mt-1.5 text-sm font-medium text-ink">
           {product.brandName || "-"}
         </p>
       </div>
 
       <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-          Danh mục
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{i18next.t("Danh mục")}</p>
         <p className="mt-1.5 text-sm font-medium text-ink">{categoryName}</p>
       </div>
 
       <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-          Trạng thái
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{i18next.t("Trạng thái")}</p>
         <p
           className={`mt-1.5 text-sm font-medium ${product.isActive ? "text-success" : "text-ink-muted"}`}
         >
@@ -52,9 +46,7 @@ export default function ProductDetailInfo({
       </div>
 
       <div className="col-span-2 border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-          Mô tả
-        </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{i18next.t("Mô tả")}</p>
         <p className="mt-1.5 text-sm leading-6 text-ink-muted whitespace-pre-wrap">
           {product.description?.trim() || "-"}
         </p>

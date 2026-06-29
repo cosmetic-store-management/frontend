@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useAuditLogs } from "../hooks/useAuditLog";
 import { useAuth } from "@/auth/hooks/useAuth";
+import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "../components/common/PageHeader";
 import {
   Table,
@@ -30,26 +31,19 @@ export function AuditLogPage() {
   const [endDate, setEndDate] = useState("");
   const startDateRef = useRef<HTMLInputElement>(null);
   const endDateRef = useRef<HTMLInputElement>(null);
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1] || undefined;
+  const [page, setPage] = useState(1);
 
   const { data, isLoading } = useAuditLogs({
     search,
     domain: domainFilter,
     startDate,
     endDate,
-    cursor: currentCursor,
+    page: page,
     limit: 20,
   });
 
   const logs = data?.logs || [];
   const pagination = data?.pagination;
-
-  const handleNext = () => {
-    if (pagination?.nextCursor)
-      setCursors((prev) => [...prev, pagination.nextCursor!]);
-  };
-  const handlePrev = () => setCursors((prev) => prev.slice(0, -1));
 
   if (!isOwner) {
     return (
@@ -257,31 +251,13 @@ export function AuditLogPage() {
         </Table>
       </div>
 
-      {(cursors.length > 0 || pagination?.hasNextPage) && (
-        <div className="flex items-center justify-between p-5 bg-surface border border-border rounded-sm">
-          <div className="text-sm text-ink-muted font-medium">
-            Page {cursors.length + 1}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-sm h-9 px-4 font-medium"
-              onClick={handlePrev}
-              disabled={cursors.length === 0}
-            >
-              Trước
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-sm h-9 px-4 font-medium"
-              onClick={handleNext}
-              disabled={!pagination?.hasNextPage}
-            >
-              Sau
-            </Button>
-          </div>
+      {pagination?.totalPages > 1 && (
+        <div className="flex items-center justify-center p-5 bg-surface border border-border rounded-sm">
+          <Pagination
+            currentPage={page}
+            totalPages={pagination.totalPages}
+            onPageChange={setPage}
+          />
         </div>
       )}
     </div>

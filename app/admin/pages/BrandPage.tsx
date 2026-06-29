@@ -68,13 +68,11 @@ const EMPTY_FORM: BrandFormData = {
 export function BrandPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-  const [statusFilter, setStatusFilter] = useState<"" | "active" | "inactive">(
-    "",
-  );
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1] || undefined;
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [page, setPage] = useState(1);
+
   const [editing, setEditing] = useState<Brand | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Brand | null>(null);
 
   const {
@@ -89,27 +87,17 @@ export function BrandPage() {
   });
 
   useEffect(() => {
-    setCursors([]);
+    setPage(1);
   }, [debouncedSearch, statusFilter]);
 
   // Paginated list (current filter)
   const { data, isLoading } = useBrands({
     search: debouncedSearch || undefined,
     status: statusFilter || undefined,
-    cursor: currentCursor,
+    page: page,
     limit: 10,
   });
   const brands = data?.brands ?? [];
-
-  const handleNext = () => {
-    if (data?.pagination?.nextCursor) {
-      setCursors((prev) => [...prev, data.pagination.nextCursor!]);
-    }
-  };
-
-  const handlePrev = () => {
-    setCursors((prev) => prev.slice(0, -1));
-  };
 
   // Stat counts — single separate query for all brands (standard in WooCommerce / Magento)
   const { data: allData } = useBrands({ limit: 1000 });
@@ -218,7 +206,7 @@ export function BrandPage() {
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="inline-flex self-start items-center p-1 bg-muted/60 rounded-md">
               {(
                 [
                   ["", "All"],
@@ -230,14 +218,12 @@ export function BrandPage() {
                   key={val}
                   type="button"
                   onClick={() => setStatusFilter(val)}
-                  className={`inline-flex h-9 items-center gap-1.5 border px-3.5 text-xs font-semibold transition-colors rounded-sm ${
+                  className={`inline-flex h-8 items-center justify-center px-4 text-sm transition-all rounded-sm ${
                     statusFilter === val
-                      ? "border-brand bg-brand/10 text-brand"
-                      : "border-border bg-surface text-ink-muted hover:border-brand hover:text-brand"
+                      ? "bg-surface text-brand shadow-sm font-medium"
+                      : "text-ink-muted hover:text-ink font-normal"
                   }`}
                 >
-                  {val === "active" && <CheckCircle2 className="w-3.5 h-3.5" />}
-                  {val === "inactive" && <XCircle className="w-3.5 h-3.5" />}
                   {label}
                 </button>
               ))}
@@ -273,16 +259,16 @@ export function BrandPage() {
         ].map(({ icon, bg, label, val, cls }) => (
           <div
             key={label}
-            className="border border-border rounded-sm bg-surface shadow-ui-soft p-4 flex items-center gap-4"
+            className="border border-border rounded-sm bg-surface shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 p-4 flex items-center gap-4 group cursor-pointer"
           >
             <div
-              className={`w-10 h-10 rounded-sm ${bg} flex items-center justify-center shrink-0`}
+              className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6`}
             >
               {icon}
             </div>
             <div>
-              <p className="text-xs text-ink-muted font-medium">{label}</p>
-              <p className={`text-2xl font-bold tabular-nums ${cls}`}>{val}</p>
+              <p className="text-xs text-ink-muted font-medium mb-0.5">{label}</p>
+              <p className={`text-2xl font-bold tabular-nums tracking-tight ${cls}`}>{val}</p>
             </div>
           </div>
         ))}
@@ -475,37 +461,13 @@ export function BrandPage() {
         )}
 
         {/* Pagination */}
-        {(cursors.length > 0 || data?.pagination?.hasNextPage) && (
-          <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
-            <div className="text-sm text-ink-muted font-medium">
-              Page {cursors.length + 1}
-              {data?.pagination?.total ? (
-                <>
-                  <span className="mx-2 text-border">|</span>
-                  Total: {data.pagination.total} brands
-                </>
-              ) : null}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm h-9 px-4 font-medium"
-                onClick={handlePrev}
-                disabled={cursors.length === 0}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm h-9 px-4 font-medium"
-                onClick={handleNext}
-                disabled={!data?.pagination?.hasNextPage}
-              >
-                Next
-              </Button>
-            </div>
+        {data?.pagination && data.pagination.totalPages > 1 && (
+          <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
+            <Pagination
+              currentPage={page}
+              totalPages={data.pagination.totalPages}
+              onPageChange={setPage}
+            />
           </div>
         )}
       </div>

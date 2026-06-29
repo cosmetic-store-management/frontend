@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Ticket,
@@ -186,19 +188,15 @@ function VoucherCardFull({
               >
                 {isSaved ? (
                   <>
-                    <Check className="w-3 h-3" /> Đã lưu
-                  </>
+                    <Check className="w-3 h-3" />{i18next.t("Đã lưu")}</>
                 ) : (
                   <>
-                    <Gift className="w-3 h-3" /> Lưu mã
-                  </>
+                    <Gift className="w-3 h-3" />{i18next.t("Lưu mã")}</>
                 )}
               </button>
             )}
             {isFull && (
-              <span className="text-[11px] font-bold text-ink-muted border border-border px-3 py-1 rounded-sm">
-                Hết lượt
-              </span>
+              <span className="text-[11px] font-bold text-ink-muted border border-border px-3 py-1 rounded-sm">{i18next.t("Hết lượt")}</span>
             )}
           </div>
         </div>
@@ -315,9 +313,7 @@ export function VouchersPage() {
           <div className="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center">
             <LogIn className="w-8 h-8 text-brand" />
           </div>
-          <p className="text-ink-muted text-sm">
-            Đăng nhập để xem kho voucher của bạn
-          </p>
+          <p className="text-ink-muted text-sm">{i18next.t("Đăng nhập để xem kho voucher của bạn")}</p>
           <Link
             to="/auth/login"
             className="px-6 py-2.5 text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-sm text-sm"

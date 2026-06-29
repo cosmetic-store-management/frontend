@@ -13,6 +13,7 @@ import type { CreateStaffFormData } from "../schemas/user.schema";
 import type { User } from "@/admin/types/user";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -81,48 +82,36 @@ export function UserPage() {
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [cursors, setCursors] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const limit = 20;
 
-  const currentCursor = cursors[cursors.length - 1] || undefined;
-
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(search);
-      setCursors([]);
+      setPage(1);
     }, 500);
     return () => clearTimeout(handler);
   }, [search]);
 
   const handleStatusChange = (val: string) => {
     setStatusFilter(val);
-    setCursors([]);
+    setPage(1);
   };
 
   const handleRoleChange = (val: string) => {
     setRoleFilter(val);
-    setCursors([]);
+    setPage(1);
   };
 
   const { data, isLoading, error } = useUsers({
-    cursor: currentCursor,
+    page,
     limit,
     search: debouncedSearch,
     status: statusFilter !== "all" ? statusFilter : undefined,
     role: roleFilter !== "all" ? roleFilter : undefined,
   });
-
-  const handleNext = () => {
-    if (data?.nextCursor) {
-      setCursors((prev) => [...prev, data.nextCursor!]);
-    }
-  };
-
-  const handlePrev = () => {
-    setCursors((prev) => prev.slice(0, -1));
-  };
 
   const createStaffMutation = useCreateStaff();
   const updateRoleMutation = useUpdateRole();
@@ -454,37 +443,13 @@ export function UserPage() {
         </div>
 
         {/* Pagination UI */}
-        {(cursors.length > 0 || data?.hasNextPage) && (
-          <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
-            <div className="text-sm text-ink-muted font-medium">
-              Page {cursors.length + 1}
-              {data?.total ? (
-                <>
-                  <span className="mx-2 text-border">|</span> Total:{" "}
-                  {data.total} staff
-                </>
-              ) : null}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                onClick={handlePrev}
-                disabled={cursors.length === 0}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                onClick={handleNext}
-                disabled={!data?.hasNextPage}
-              >
-                Next
-              </Button>
-            </div>
+        {data && data.totalPages > 1 && (
+          <div className="flex items-center justify-center px-5 py-4 bg-surface border-t border-border">
+            <Pagination
+              currentPage={page}
+              totalPages={data.totalPages}
+              onPageChange={setPage}
+            />
           </div>
         )}
       </div>

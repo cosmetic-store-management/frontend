@@ -42,7 +42,7 @@ function StatCard({
 
   return (
     <div
-      className="relative bg-card border border-border rounded-sm p-5 overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg group card-animate"
+      className="relative bg-surface border border-border rounded-sm p-5 overflow-hidden shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 group cursor-pointer card-animate"
       style={{ "--card-i": index } as React.CSSProperties}
     >
       {/* Accent stripe */}
@@ -53,14 +53,14 @@ function StatCard({
 
       <div className="flex items-start justify-between mb-4">
         <div
-          className="w-10 h-10 rounded-sm flex items-center justify-center"
-          style={{ background: `${accent}18` }}
+          className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
+          style={{ background: accent.replace(")", ", 0.1)") }}
         >
           <Icon className="w-5 h-5" style={{ color: accent }} />
         </div>
         <div
           className="w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ background: `${accent}12` }}
+          style={{ background: accent.replace(")", ", 0.08)") }}
         >
           <ArrowUpRight className="w-4 h-4" style={{ color: accent }} />
         </div>
@@ -203,7 +203,7 @@ export function DashboardPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col gap-6 animate-page-enter min-h-0">
+    <div className="flex-1 flex flex-col gap-6 animate-page-enter">
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -277,7 +277,7 @@ export function DashboardPage() {
       <RevenueChart startDate={activeDate.start} endDate={activeDate.end} />
 
       {/* ── Tables Row ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1 min-h-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 flex-1">
         {/* Recent Orders */}
         <div className="lg:col-span-2 bg-card border border-border rounded-sm overflow-hidden flex flex-col">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">

@@ -6,7 +6,7 @@ export interface ProductQuery {
   category?: string;
   search?: string;
   onSale?: boolean;
-  cursor?: string;
+  page?: number;
   limit?: number;
 }
 
@@ -17,7 +17,7 @@ export interface AdminProductQuery {
   status?: "active" | "inactive";
   minStock?: number;
   maxStock?: number;
-  cursor?: string;
+  page?: number;
   limit?: number;
 }
 
@@ -26,8 +26,8 @@ export interface ProductListResult {
   pagination: {
     limit: number;
     total: number;
-    nextCursor: string | null;
-    hasNextPage: boolean;
+    page: number;
+    totalPages: number;
   };
 }
 

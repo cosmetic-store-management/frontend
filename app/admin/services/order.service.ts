@@ -117,7 +117,7 @@ export interface AdminOrderQuery {
   orderStatus?: string;
   channel?: string;
   userId?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
   paymentStatus?: string;
   dateFrom?: string;
@@ -129,8 +129,8 @@ export interface OrderListResult {
   pagination: {
     limit: number;
     total: number;
-    nextCursor: string | null;
-    hasNextPage: boolean;
+    page: number;
+    totalPages: number;
   };
 }
 

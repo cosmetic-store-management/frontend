@@ -21,20 +21,19 @@ export interface ReviewListResult {
   pagination: {
     limit: number;
     total: number;
-    nextCursor: string | null;
-    hasNextPage: boolean;
+    page: number;
+    totalPages: number;
   };
 }
 
 export function getAdminReviews(
-  cursor: string | undefined = undefined,
+  page: number = 1,
   limit = 10,
   rating?: string,
   isReplied?: string,
   productName?: string,
 ): Promise<ReviewListResult> {
-  const params: any = { limit };
-  if (cursor) params.cursor = cursor;
+  const params: any = { limit, page };
   if (rating && rating !== "all") params.rating = rating;
   if (isReplied && isReplied !== "all") params.isReplied = isReplied;
   if (productName && productName.trim() !== "")

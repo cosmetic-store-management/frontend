@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -58,9 +60,7 @@ export function StaffNotesModal({
         className="space-y-4"
         id="staff-notes-form"
       >
-        <Label htmlFor="internalNotes" className="sr-only">
-          Nội dung ghi chú
-        </Label>
+        <Label htmlFor="internalNotes" className="sr-only">{i18next.t("Nội dung ghi chú")}</Label>
         <Controller
           control={control}
           name="internalNotes"

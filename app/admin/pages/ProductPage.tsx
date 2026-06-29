@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { CardContent } from "@/components/ui/card";
 import { PageHeader } from "../components/common/PageHeader";
+import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -90,9 +91,8 @@ export function ProductPage() {
     categories,
     categoryNameById,
     pagination,
-    cursors,
-    handleNext,
-    handlePrev,
+    page,
+    setPage,
     loading,
     submitting,
     error,
@@ -492,37 +492,13 @@ export function ProductPage() {
             </Table>
           </div>
 
-          {(cursors.length > 0 || pagination.hasNextPage) && (
-            <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border rounded-b-sm">
-              <div className="text-sm text-ink-muted font-medium">
-                Page {cursors.length + 1}
-                {pagination.total > 0 && (
-                  <>
-                    <span className="mx-2 text-border">|</span>
-                    Total: {pagination.total} products
-                  </>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                  onClick={handlePrev}
-                  disabled={cursors.length === 0}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                  onClick={handleNext}
-                  disabled={!pagination.hasNextPage}
-                >
-                  Next
-                </Button>
-              </div>
+          {pagination?.totalPages > 1 && (
+            <div className="flex items-center justify-center px-5 py-4 bg-surface border-t border-border rounded-b-sm">
+              <Pagination
+                currentPage={page}
+                totalPages={pagination.totalPages}
+                onPageChange={setPage}
+              />
             </div>
           )}
         </CardContent>

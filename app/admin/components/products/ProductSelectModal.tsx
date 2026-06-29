@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAdminProductsSelector } from "@/admin/hooks/useProducts";
@@ -15,7 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BaseCrudModal } from "@/components/ui/base-crud-modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -87,6 +96,7 @@ export function ProductSelectModal({
     {
       search: debouncedSearch,
       limit: 10,
+      page: page,
       category: categoryId === "all" ? undefined : categoryId,
       brandId: brandId === "all" ? undefined : brandId,
       minStock: debouncedMinStock ? Number(debouncedMinStock) : undefined,
@@ -129,16 +139,15 @@ export function ProductSelectModal({
   };
 
   return (
-    <BaseCrudModal
-      open={open}
-      onOpenChange={onOpenChange}
-      title="Chọn sản phẩm"
-      description="Tìm kiếm và chọn sản phẩm/biến thể cần thiết."
-      size="xl"
-      hideFooter={true}
-    >
-      <div className="flex flex-col h-full space-y-4 pb-4">
-        <div className="px-6 py-4 border-b bg-muted/10">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-5xl w-[95vw] h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
+        <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
+          <DialogTitle className="text-xl font-bold text-ink">{i18next.t("Chọn sản phẩm")}</DialogTitle>
+          <DialogDescription className="text-sm text-ink-muted">{i18next.t("Tìm kiếm và chọn sản phẩm/biến thể cần thiết.")}</DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <div className="pl-4 pr-6 py-4 border-b bg-muted/10 shrink-0">
           <div className="flex flex-col sm:flex-row flex-wrap gap-3">
             <div className="group relative w-full sm:w-70">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
@@ -164,7 +173,7 @@ export function ProductSelectModal({
                   <SelectValue placeholder="Danh mục" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  <SelectItem value="all">Tất cả danh mục</SelectItem>
+                  <SelectItem value="all">{i18next.t("Tất cả danh mục")}</SelectItem>
                   {categories?.categories?.map((cat: any) => (
                     <SelectItem key={cat.id} value={cat.slug || cat.id}>
                       {cat.name}
@@ -179,7 +188,7 @@ export function ProductSelectModal({
                   <SelectValue placeholder="Thương hiệu" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  <SelectItem value="all">Tất cả thương hiệu</SelectItem>
+                  <SelectItem value="all">{i18next.t("Tất cả thương hiệu")}</SelectItem>
                   {brands?.brands?.map((brand: any) => (
                     <SelectItem key={brand.id} value={brand.id}>
                       {brand.name}
@@ -207,13 +216,9 @@ export function ProductSelectModal({
               <TableHeader className="bg-muted/30 sticky top-0 z-10 shadow-sm">
                 <TableRow>
                   <TableHead className="w-12 text-center bg-muted/30"></TableHead>
-                  <TableHead className="bg-muted/30">Sản phẩm</TableHead>
-                  <TableHead className="text-center w-25 bg-muted/30">
-                    Tồn Kho
-                  </TableHead>
-                  <TableHead className="text-center w-37.5 bg-muted/30">
-                    Giá gốc
-                  </TableHead>
+                  <TableHead className="bg-muted/30">{i18next.t("Sản phẩm")}</TableHead>
+                  <TableHead className="text-center w-25 bg-muted/30">{i18next.t("Tồn Kho")}</TableHead>
+                  <TableHead className="text-center w-37.5 bg-muted/30">{i18next.t("Giá gốc")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -229,9 +234,7 @@ export function ProductSelectModal({
                     <TableCell
                       colSpan={4}
                       className="h-32 text-center text-muted-foreground"
-                    >
-                      Không tìm thấy sản phẩm
-                    </TableCell>
+                    >{i18next.t("Không tìm thấy sản phẩm")}</TableCell>
                   </TableRow>
                 ) : (
                   <>
@@ -248,8 +251,9 @@ export function ProductSelectModal({
                               isChecked ? "bg-muted/20" : "hover:bg-muted/5"
                             }
                           >
-                            <TableCell className="text-center">
+                            <TableCell className="text-center pl-2">
                               <Checkbox
+                                className="rounded-sm"
                                 checked={isChecked}
                                 onCheckedChange={(checked) => {
                                   if (checked) {
@@ -323,8 +327,9 @@ export function ProductSelectModal({
                               isChecked ? "bg-muted/20" : "hover:bg-muted/5"
                             }
                           >
-                            <TableCell className="text-center">
+                            <TableCell className="text-center pl-2">
                               <Checkbox
+                                className="rounded-sm"
                                 checked={isChecked}
                                 onCheckedChange={(checked) =>
                                   handleToggle(variant, product, !!checked)
@@ -368,45 +373,44 @@ export function ProductSelectModal({
               </TableBody>
             </Table>
           </div>
-          {/* Cursor pagination will be implemented later
-            data?.pagination && data.pagination.totalPages > 1 && (
-              <div className="py-4 flex justify-center">
-                <Pagination
-                  currentPage={data.pagination.page}
-                  totalPages={data.pagination.totalPages}
-                  onPageChange={setPage}
-                />
-              </div>
-            )*/}
+          {/* Pagination */}
+          {productsData?.pagination && productsData.pagination.totalPages > 1 && (
+            <div className="py-4 flex justify-center bg-surface border-t border-border shrink-0">
+              <Pagination
+                currentPage={page}
+                totalPages={productsData.pagination.totalPages}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </div>
-      </div>
+        </div>
 
-      {/* Custom Footer */}
-      <div className="sticky bottom-0 -mx-6 -mb-6 mt-6 px-6 py-4 border-t border-surface-muted bg-surface/80 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-        <span className="text-sm text-muted-foreground">
-          Đã chọn:{" "}
-          <strong className="text-foreground">{localSelected.length}</strong>{" "}
-          sản phẩm
-        </span>
-        <div className="flex gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="rounded-sm font-medium px-5"
-          >
-            Huỷ
-          </Button>
-          <Button
-            type="button"
-            onClick={handleConfirm}
-            disabled={localSelected.length === 0}
-            className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-hover text-brand-foreground"
-          >
-            Xác nhận
-          </Button>
-        </div>
-      </div>
-    </BaseCrudModal>
+        {/* Custom Footer */}
+        <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 flex flex-col sm:flex-row items-center sm:justify-between justify-between gap-4">
+          <span className="text-sm text-ink-muted">
+            Đã chọn:{" "}
+            <strong className="text-ink font-semibold">{localSelected.length}</strong>{" "}
+            sản phẩm
+          </span>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="rounded-sm font-medium px-5"
+            >
+              Huỷ
+            </Button>
+            <Button
+              type="button"
+              onClick={handleConfirm}
+              disabled={localSelected.length === 0}
+              className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-hover text-white shadow-ui-soft"
+            >{i18next.t("Xác nhận")}</Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

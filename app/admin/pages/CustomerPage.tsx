@@ -342,51 +342,49 @@ export function CustomerPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-card border border-border p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="w-12 h-12 rounded-sm flex shrink-0 items-center justify-center" style={{ background: "hsl(352, 72%, 52%, 0.1)", color: "hsl(352, 72%, 52%)" }}>
+        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-danger/10 text-danger transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium mb-0.5">Total customers</p>
-            <div className="text-2xl font-bold text-foreground tracking-tight">
+            <p className="text-xs text-ink-muted font-medium mb-0.5">Total customers</p>
+            <div className="text-2xl font-bold text-ink tracking-tight">
               {overview.totalCustomers || 0}
             </div>
           </div>
         </div>
 
-        <div className="bg-card border border-border p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="w-12 h-12 rounded-sm flex shrink-0 items-center justify-center" style={{ background: "hsl(142, 60%, 52%, 0.1)", color: "hsl(142, 60%, 42%)" }}>
+        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-success/10 text-success transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
             <UserPlus className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium mb-0.5">New (30 days)</p>
-            <div className="text-2xl font-bold text-foreground tracking-tight">
+            <p className="text-xs text-ink-muted font-medium mb-0.5">New (30 days)</p>
+            <div className="text-2xl font-bold text-ink tracking-tight">
               {overview.newCustomers || 0}
             </div>
           </div>
         </div>
 
-        <div className="bg-card border border-border p-5 rounded-sm shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
-          <div className="w-12 h-12 rounded-sm flex shrink-0 items-center justify-center" style={{ background: "hsl(43, 90%, 50%, 0.1)", color: "hsl(43, 90%, 42%)" }}>
+        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-warning/10 text-warning transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
             <Repeat className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium mb-0.5">Returning</p>
-            <div className="text-2xl font-bold text-foreground tracking-tight">
+            <p className="text-xs text-ink-muted font-medium mb-0.5">Returning</p>
+            <div className="text-2xl font-bold text-ink tracking-tight">
               {overview.returningCustomers || 0}
             </div>
           </div>
         </div>
 
-        <div className="bg-surface border border-border p-6 rounded-sm shadow-ui-soft card-hover flex items-center gap-5">
-          <div className="w-14 h-14 rounded-sm bg-orange-500/10 text-orange-600 flex shrink-0 items-center justify-center">
-            <Moon className="w-6 h-6" />
+        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
+          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-orange-500/10 text-orange-600 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+            <Moon className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-ink-muted font-medium mb-1">
-              Churning Customers
-            </p>
-            <div className="text-3xl font-bold text-ink tracking-tight">
+            <p className="text-xs text-ink-muted font-medium mb-0.5">Churning Customers</p>
+            <div className="text-2xl font-bold text-ink tracking-tight">
               {overview.churningCustomers || 0}
             </div>
           </div>
@@ -448,7 +446,7 @@ export function CustomerPage() {
                       >
                         <TableCell className="px-5 py-4 align-middle">
                           <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-sm bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm">
                               <span className="text-brand font-bold">
                                 {cust.name
                                   ? cust.name.charAt(0).toUpperCase()

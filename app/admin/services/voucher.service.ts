@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 /**
  * admin/services/voucher.service.ts
  * Data-access layer cho admin Voucher CRUD.

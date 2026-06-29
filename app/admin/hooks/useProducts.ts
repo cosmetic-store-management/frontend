@@ -26,19 +26,17 @@ export interface ProductFilters {
 
 export function useProducts(filters: ProductFilters) {
   const queryClient = useQueryClient();
-  const { cursors, currentCursor, handleNext, handlePrev, resetCursors } =
-    useCursorPagination();
+  const [page, setPage] = useState(1);
   const debouncedKeyword = useDebounce(filters.keyword, 500);
 
   // Reset to first page when filters change
   useEffect(() => {
-    resetCursors();
+    setPage(1);
   }, [
     debouncedKeyword,
     filters.brandId,
     filters.categoryId,
     filters.status,
-    resetCursors,
   ]);
 
   // 1. Fetch Categories
@@ -62,19 +60,19 @@ export function useProducts(filters: ProductFilters) {
   // 2. Fetch Products
   const queryParams = useMemo(
     () => ({
-      cursor: currentCursor,
-      limit: 20,
       search: debouncedKeyword || undefined,
       brandId: filters.brandId || undefined,
       category: filters.categoryId || undefined,
-      status: (filters.status as "active" | "inactive") || undefined,
+      status: filters.status || undefined,
+      page: page,
+      limit: 12,
     }),
     [
-      currentCursor,
       debouncedKeyword,
       filters.brandId,
       filters.categoryId,
       filters.status,
+      page,
     ],
   );
 
@@ -90,18 +88,10 @@ export function useProducts(filters: ProductFilters) {
 
   const products = productsData?.products || [];
   const pagination = productsData?.pagination || {
-    limit: 20,
+    limit: 12,
     total: 0,
-    nextCursor: null,
-    hasNextPage: false,
-  };
-
-  const handleNextPage = () => {
-    handleNext(pagination.nextCursor);
-  };
-
-  const handlePrevPage = () => {
-    handlePrev();
+    page: 1,
+    totalPages: 1,
   };
 
   const error = productsError
@@ -301,9 +291,8 @@ export function useProducts(filters: ProductFilters) {
     categories,
     categoryNameById,
     pagination,
-    cursors,
-    handleNext: handleNextPage,
-    handlePrev: handlePrevPage,
+    page,
+    setPage,
     loading,
     submitting,
     error,

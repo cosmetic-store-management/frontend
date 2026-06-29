@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
@@ -87,7 +89,7 @@ export default function EditBatchModal({
         id="edit-batch-form"
       >
         <div className="space-y-2">
-          <Label htmlFor="batchCode">Mã lô</Label>
+          <Label htmlFor="batchCode">{i18next.t("Mã lô")}</Label>
           <Input
             id="batchCode"
             value={formData.batchCode}
@@ -97,7 +99,7 @@ export default function EditBatchModal({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="importPrice">Giá nhập (đ)</Label>
+          <Label htmlFor="importPrice">{i18next.t("Giá nhập (đ)")}</Label>
           <Input
             id="importPrice"
             type="number"
@@ -113,7 +115,7 @@ export default function EditBatchModal({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="manufactureDate">Ngày sản xuất</Label>
+            <Label htmlFor="manufactureDate">{i18next.t("Ngày sản xuất")}</Label>
             <Input
               id="manufactureDate"
               type="date"
@@ -124,7 +126,7 @@ export default function EditBatchModal({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="expiryDate">Hạn sử dụng</Label>
+            <Label htmlFor="expiryDate">{i18next.t("Hạn sử dụng")}</Label>
             <Input
               id="expiryDate"
               type="date"

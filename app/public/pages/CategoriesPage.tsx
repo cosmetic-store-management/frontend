@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useState, useMemo } from "react";
 import { Link } from "react-router";
 import { useCategories } from "@/public/hooks/useProducts";

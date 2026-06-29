@@ -180,35 +180,24 @@ function buildFlatOptions(
 export function CategoryPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-  const [cursors, setCursors] = useState<string[]>([]);
-  const currentCursor = cursors[cursors.length - 1] || undefined;
+  const [page, setPage] = useState(1);
   const [editing, setEditing] = useState<Category | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Category | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    setCursors([]);
+    setPage(1);
   }, [debouncedSearch]);
 
   const { data, isLoading } = useCategories({
     search: debouncedSearch || undefined,
-    cursor: currentCursor,
+    page: page,
     limit: 200,
   });
   const { data: allCatsData } = useAllCategories();
   const allCategories: Category[] = allCatsData?.categories ?? [];
   const categories = data?.categories || [];
-
-  const handleNext = () => {
-    if (data?.pagination?.nextCursor) {
-      setCursors((prev) => [...prev, data.pagination!.nextCursor!]);
-    }
-  };
-
-  const handlePrev = () => {
-    setCursors((prev) => prev.slice(0, -1));
-  };
 
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
@@ -527,37 +516,13 @@ export function CategoryPage() {
               No categories found
             </p>
           )}
-          {(cursors.length > 0 || data?.pagination?.hasNextPage) && (
-            <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
-              <div className="text-sm text-ink-muted font-medium">
-                Page {cursors.length + 1}
-                {data?.pagination?.total ? (
-                  <>
-                    <span className="mx-2 text-border">|</span>
-                    Total: {data.pagination.total} categories
-                  </>
-                ) : null}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                  onClick={handlePrev}
-                  disabled={cursors.length === 0}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                  onClick={handleNext}
-                  disabled={!data?.pagination?.hasNextPage}
-                >
-                  Next
-                </Button>
-              </div>
+          {data?.pagination && data.pagination.totalPages > 1 && (
+            <div className="border-t border-border p-4 bg-surface">
+              <Pagination
+                currentPage={page}
+                totalPages={data.pagination.totalPages}
+                onPageChange={setPage}
+              />
             </div>
           )}
         </div>

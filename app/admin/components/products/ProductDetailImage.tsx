@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 type ProductDetailImageProps = {
   imageUrl?: string;
   name: string;
@@ -18,7 +20,7 @@ export default function ProductDetailImage({
             className="h-full max-h-85 w-full object-cover shadow-[0_16px_48px_rgba(15,23,42,0.12)] md:max-h-none"
           />
         ) : (
-          <p className="text-ink-muted text-sm">Chưa có hình ảnh</p>
+          <p className="text-ink-muted text-sm">{i18next.t("Chưa có hình ảnh")}</p>
         )}
       </div>
     </div>

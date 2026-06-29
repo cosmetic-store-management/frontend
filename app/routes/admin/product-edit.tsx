@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -120,10 +122,8 @@ export default function ProductEditPage() {
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-ink-muted">
-            <p>Không tìm thấy thông tin sản phẩm.</p>
-            <Button variant="outline" onClick={handleCancel} className="mt-4">
-              Quay lại
-            </Button>
+            <p>{i18next.t("Không tìm thấy thông tin sản phẩm.")}</p>
+            <Button variant="outline" onClick={handleCancel} className="mt-4">{i18next.t("Quay lại")}</Button>
           </div>
         )}
       </div>

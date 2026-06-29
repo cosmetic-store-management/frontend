@@ -241,7 +241,7 @@ export function FlashSalePage() {
                       </TableCell>
                       <TableCell className="text-center">
                         <span
-                          className={`px-2 rounded-sm text-xs font-medium uppercase ${
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium uppercase ${
                             getStatusLabel(fs).color
                           }`}
                         >

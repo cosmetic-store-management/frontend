@@ -63,9 +63,8 @@ export function ReviewPage() {
   const {
     reviews,
     pagination,
-    cursors,
-    handleNext,
-    handlePrev,
+    page,
+    setPage,
     filterRating,
     setFilterRating,
     filterReplied,
@@ -375,37 +374,13 @@ export function ReviewPage() {
               </TableBody>
             </Table>
           </div>
-          {(cursors.length > 0 || pagination?.hasNextPage) && (
-            <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
-              <div className="text-sm text-ink-muted font-medium">
-                Page {cursors.length + 1}
-                {pagination?.total > 0 && (
-                  <>
-                    <span className="mx-2 text-border">|</span>
-                    Total: {pagination.total} reviews
-                  </>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
-                  onClick={handlePrev}
-                  disabled={cursors.length === 0}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
-                  onClick={handleNext}
-                  disabled={!pagination?.hasNextPage}
-                >
-                  Next
-                </Button>
-              </div>
+          {pagination?.totalPages > 1 && (
+            <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
+              <Pagination
+                currentPage={page}
+                totalPages={pagination.totalPages}
+                onPageChange={setPage}
+              />
             </div>
           )}
         </CardContent>

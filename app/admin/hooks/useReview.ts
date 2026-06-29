@@ -5,13 +5,11 @@ import {
   deleteReview,
   replyReview,
 } from "../services/review.service";
-import { useCursorPagination } from "@/hooks/useCursorPagination";
 import { handleMutationError } from "@/lib/api-helper";
 
 export function useAdminReviews() {
   const queryClient = useQueryClient();
-  const { cursors, currentCursor, handleNext, handlePrev, resetCursors } =
-    useCursorPagination();
+  const [page, setPage] = useState(1);
   const [filterRating, setFilterRating] = useState<string>("all");
   const [filterReplied, setFilterReplied] = useState<string>("all");
   const [filterProductName, setFilterProductName] = useState<string>("");
@@ -20,19 +18,19 @@ export function useAdminReviews() {
   // 1. Fetch Reviews
   const queryParams = useMemo(
     () => ({
-      cursor: currentCursor,
+      page,
       limit: 10,
       rating: filterRating,
       isReplied: filterReplied,
       productName: filterProductName,
     }),
-    [currentCursor, filterRating, filterReplied, filterProductName],
+    [page, filterRating, filterReplied, filterProductName],
   );
 
-  // Reset cursors when filter changes
+  // Reset page when filter changes
   useMemo(() => {
-    resetCursors();
-  }, [filterRating, filterReplied, filterProductName, resetCursors]);
+    setPage(1);
+  }, [filterRating, filterReplied, filterProductName]);
 
   const {
     data: reviewsData,
@@ -43,7 +41,7 @@ export function useAdminReviews() {
     queryKey: ["admin", "reviews", queryParams],
     queryFn: () =>
       getAdminReviews(
-        queryParams.cursor,
+        queryParams.page,
         queryParams.limit,
         queryParams.rating,
         queryParams.isReplied,
@@ -55,17 +53,10 @@ export function useAdminReviews() {
   const pagination = reviewsData?.pagination || {
     limit: 10,
     total: 0,
-    nextCursor: null,
-    hasNextPage: false,
+    page: 1,
+    totalPages: 1,
   };
 
-  const handleNextPage = () => {
-    handleNext(pagination.nextCursor);
-  };
-
-  const handlePrevPage = () => {
-    handlePrev();
-  };
   const error = queryError
     ? queryError instanceof Error
       ? queryError.message
@@ -122,9 +113,8 @@ export function useAdminReviews() {
   return {
     reviews,
     pagination,
-    cursors,
-    handleNext: handleNextPage,
-    handlePrev: handlePrevPage,
+    page,
+    setPage,
     filterRating,
     setFilterRating,
     filterReplied,

@@ -9,6 +9,7 @@ import {
   Loader2,
   Search,
   MoreVertical,
+  AlertTriangle,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Switch } from "@/components/ui/switch";
@@ -56,7 +57,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "@/lib/toast";
-
+import DeleteModal from "@/components/ui/delete-modal";
 const EMPTY_FORM: VoucherFormData = {
   code: "",
   discountType: "percent",
@@ -579,28 +580,22 @@ export function VoucherPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
-        <DialogContent className="animate-scale-in">
-          <DialogHeader>
-            <DialogTitle>Delete Voucher</DialogTitle>
-          </DialogHeader>
-          <DialogDescription>
-            Permanently delete voucher <strong>{deleteTarget?.code}</strong>?
-          </DialogDescription>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DeleteModal
+        open={!!deleteTarget}
+        title="Delete Voucher"
+        description={
+          <>
+            Are you sure you want to delete the voucher{" "}
+            <strong className="text-ink">{deleteTarget?.code}</strong>?
+            <br />
+            This action cannot be undone.
+          </>
+        }
+        loading={deleteMutation.isPending}
+        submitError={null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

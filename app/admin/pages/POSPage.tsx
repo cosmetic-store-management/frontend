@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import {
   Search,
@@ -652,20 +654,18 @@ export function POSPage() {
             <h2 className="text-sm font-bold uppercase tracking-wider">
               GLOWUP COSMETICS
             </h2>
-            <p className="text-[10px] text-ink-muted">
-              ĐC: 123 Đường 3 Tháng 2, Quận 10, TP.HCM
-            </p>
+            <p className="text-[10px] text-ink-muted">{i18next.t("ĐC: 123 Đường 3 Tháng 2, Quận 10, TP.HCM")}</p>
             <p className="text-[10px] text-ink-muted">Hotline: 0901 234 567</p>
             <p className="text-[10px] text-ink-muted">
               ----------------------------------------
             </p>
-            <h3 className="text-xs font-bold mt-1">HÓA ĐƠN BÁN LẺ</h3>
+            <h3 className="text-xs font-bold mt-1">{i18next.t("HÓA ĐƠN BÁN LẺ")}</h3>
             <p className="text-[10px] font-semibold">{lastOrder.code}</p>
           </div>
 
           <div className="space-y-1 text-[10px] mb-3">
             <div className="flex justify-between">
-              <span>Thời gian:</span>
+              <span>{i18next.t("Thời gian:")}</span>
               <span>
                 {lastOrder.createdAt
                   ? new Date(lastOrder.createdAt).toLocaleString("vi-VN")
@@ -673,16 +673,16 @@ export function POSPage() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Thu ngân:</span>
-              <span>Quản trị viên (GlowUp)</span>
+              <span>{i18next.t("Thu ngân:")}</span>
+              <span>{i18next.t("Quản trị viên (GlowUp)")}</span>
             </div>
             <div className="flex justify-between">
-              <span>Khách hàng:</span>
+              <span>{i18next.t("Khách hàng:")}</span>
               <span>{lastOrder.receiverName || "Khách lẻ tại quầy"}</span>
             </div>
             {lastOrder.phone && lastOrder.phone !== "0000000000" && (
               <div className="flex justify-between">
-                <span>Số điện thoại:</span>
+                <span>{i18next.t("Số điện thoại:")}</span>
                 <span>{lastOrder.phone}</span>
               </div>
             )}
@@ -696,18 +696,12 @@ export function POSPage() {
           <table className="w-full text-left text-[10px] my-2 border-collapse">
             <thead>
               <tr className="bg-surface-muted text-ink-muted border-b border-border text-left">
-                <th className="pb-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
-                  Tên sản phẩm
-                </th>
+                <th className="pb-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{i18next.t("Tên sản phẩm")}</th>
                 <th className="pb-1 text-center w-8 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
                   SL
                 </th>
-                <th className="pb-1 text-right w-20 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
-                  Đơn giá
-                </th>
-                <th className="pb-1 text-right w-20 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
-                  T.Tiền
-                </th>
+                <th className="pb-1 text-right w-20 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{i18next.t("Đơn giá")}</th>
+                <th className="pb-1 text-right w-20 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{i18next.t("T.Tiền")}</th>
               </tr>
             </thead>
             <tbody>
@@ -739,12 +733,12 @@ export function POSPage() {
 
           <div className="space-y-1 text-[10px] text-right mt-2">
             <div className="flex justify-between">
-              <span>Tạm tính:</span>
+              <span>{i18next.t("Tạm tính:")}</span>
               <span>{lastOrder.subtotal.toLocaleString("vi-VN")}₫</span>
             </div>
             {lastOrder.note && lastOrder.note.includes("Giảm giá:") && (
               <div className="flex justify-between">
-                <span>Giảm giá:</span>
+                <span>{i18next.t("Giảm giá:")}</span>
                 <span>
                   {lastOrder.note
                     .substring(lastOrder.note.indexOf("Giảm giá:") + 9)
@@ -753,35 +747,35 @@ export function POSPage() {
               </div>
             )}
             <div className="flex justify-between text-xs font-bold">
-              <span>Tổng tiền:</span>
+              <span>{i18next.t("Tổng tiền:")}</span>
               <span>{lastOrder.totalAmount.toLocaleString("vi-VN")}₫</span>
             </div>
             {(lastOrder?.earnedPoints || 0) > 0 && (
               <div className="flex justify-between text-[10px] font-medium mt-1">
-                <span>Điểm tích lũy:</span>
+                <span>{i18next.t("Điểm tích lũy:")}</span>
                 <span>+{lastOrder.earnedPoints} điểm</span>
               </div>
             )}
             {lastOrder.paymentMethod === "transfer" && (
               <div className="flex justify-between">
-                <span>Thanh toán:</span>
-                <span className="font-semibold">Chuyển khoản QR</span>
+                <span>{i18next.t("Thanh toán:")}</span>
+                <span className="font-semibold">{i18next.t("Chuyển khoản QR")}</span>
               </div>
             )}
             {lastOrder.paymentMethod === "pos_card" && (
               <div className="flex justify-between">
-                <span>Thanh toán:</span>
-                <span className="font-semibold">Quẹt thẻ</span>
+                <span>{i18next.t("Thanh toán:")}</span>
+                <span className="font-semibold">{i18next.t("Quẹt thẻ")}</span>
               </div>
             )}
             {lastOrder.paymentMethod === "cash" && (
               <>
                 <div className="flex justify-between">
-                  <span>Khách đưa:</span>
+                  <span>{i18next.t("Khách đưa:")}</span>
                   <span>{Number(receivedCash).toLocaleString("vi-VN")}₫</span>
                 </div>
                 <div className="flex justify-between font-semibold">
-                  <span>Tiền thừa trả khách:</span>
+                  <span>{i18next.t("Tiền thừa trả khách:")}</span>
                   <span>{changeDue.toLocaleString("vi-VN")}₫</span>
                 </div>
               </>
@@ -789,10 +783,8 @@ export function POSPage() {
           </div>
 
           <div className="text-center space-y-1 mt-6 text-[10px]">
-            <p className="italic">Cảm ơn quý khách đã mua sắm tại GlowUp!</p>
-            <p className="text-[8px] text-ink-muted">
-              Hẹn gặp lại quý khách lần sau
-            </p>
+            <p className="italic">{i18next.t("Cảm ơn quý khách đã mua sắm tại GlowUp!")}</p>
+            <p className="text-[8px] text-ink-muted">{i18next.t("Hẹn gặp lại quý khách lần sau")}</p>
           </div>
         </div>
       )}

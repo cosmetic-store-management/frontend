@@ -23,7 +23,7 @@ export function getAuditLogs(params?: {
   domain?: string;
   startDate?: string;
   endDate?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
 }): Promise<{ logs: AuditLogItem[]; pagination: any }> {
   return apiClient

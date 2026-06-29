@@ -12,7 +12,7 @@ import {
 import { handleMutationError } from "@/lib/api-helper";
 
 export function useInventoryStock(
-  params: { search?: string; cursor?: string; limit?: number } = {},
+  params: { search?: string; page?: number; limit?: number } = {},
 ) {
   return useQuery({
     queryKey: ["stock", params],
@@ -21,7 +21,7 @@ export function useInventoryStock(
 }
 
 export function useInventoryTransactions(params: {
-  cursor?: string;
+  page?: number;
   limit: number;
   type?: string;
 }) {

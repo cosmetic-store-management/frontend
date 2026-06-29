@@ -16,7 +16,7 @@ const KEYS = {
 
 export function useUsers(
   params: {
-    cursor?: string;
+    page?: number;
     limit?: number;
     search?: string;
     status?: string;

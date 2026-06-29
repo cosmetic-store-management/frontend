@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { POSPage } from "@/admin/pages/POSPage";
 import { isRouteErrorResponse, useRouteError } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -21,7 +23,7 @@ export function ErrorBoundary() {
       <div className="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-4">
         <span className="text-2xl">⚠️</span>
       </div>
-      <h2 className="text-xl font-bold text-ink mb-2">Lỗi tải trang POS</h2>
+      <h2 className="text-xl font-bold text-ink mb-2">{i18next.t("Lỗi tải trang POS")}</h2>
       <p className="text-sm text-ink-muted mb-6 max-w-md">{message}</p>
       <Button
         onClick={() => window.location.reload()}

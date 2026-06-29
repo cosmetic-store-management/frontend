@@ -45,6 +45,7 @@ import { toast } from "@/lib/toast";
 import { BulkRestockModal } from "../components/inventory/BulkRestockModal";
 import BatchDetailsModal from "../components/inventory/BatchDetailsModal";
 import { useDebounce } from "@/hooks/useDebounce";
+import { Pagination } from "@/components/ui/pagination";
 import { DatePicker } from "@/components/ui/date-picker";
 import {
   useInventoryStock,
@@ -66,11 +67,7 @@ export function InventoryPage() {
   const [activeTab, setActiveTab] = useState<"stock" | "transactions">("stock");
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
-  const [stockCursors, setStockCursors] = useState<string[]>([]);
-  const currentStockCursor = stockCursors[stockCursors.length - 1] || undefined;
 
-  const [txCursors, setTxCursors] = useState<string[]>([]);
-  const currentTxCursor = txCursors[txCursors.length - 1] || undefined;
   const [isRestockOpen, setIsRestockOpen] = useState(false);
   const [isAdjustOpen, setIsAdjustOpen] = useState(false);
   const [isBulkOpen, setIsBulkOpen] = useState(false);
@@ -111,38 +108,29 @@ export function InventoryPage() {
   });
 
   const isNewSupplier = watchRestock("isNewSupplier");
+  const [stockPage, setStockPage] = useState(1);
+  const [txPage, setTxPage] = useState(1);
 
-  // Queries & Mutations
+
+  // Reset page when search changes
   useEffect(() => {
-    setStockCursors([]);
+    setStockPage(1);
   }, [debouncedSearch]);
 
   const { data: stockData, isLoading: isStockLoading } = useInventoryStock({
     search: debouncedSearch || undefined,
-    cursor: currentStockCursor,
+    page: stockPage,
     limit: 10,
   });
   const stockItems = stockData?.stock || [];
   const stockPagination = stockData?.pagination;
 
   const { data: txData, isLoading: isTxLoading } = useInventoryTransactions({
-    cursor: currentTxCursor,
+    page: txPage,
     limit: 10,
   });
   const transactions = txData?.transactions || [];
   const txPagination = txData?.pagination;
-
-  const handleStockNext = () => {
-    if (stockPagination?.nextCursor)
-      setStockCursors((prev) => [...prev, stockPagination.nextCursor!]);
-  };
-  const handleStockPrev = () => setStockCursors((prev) => prev.slice(0, -1));
-
-  const handleTxNext = () => {
-    if (txPagination?.nextCursor)
-      setTxCursors((prev) => [...prev, txPagination.nextCursor!]);
-  };
-  const handleTxPrev = () => setTxCursors((prev) => prev.slice(0, -1));
 
   const { data: suppliers = [] } = useSuppliers();
 
@@ -499,37 +487,13 @@ export function InventoryPage() {
                 </TableBody>
               </Table>
             </div>
-            {(stockCursors.length > 0 || stockPagination?.hasNextPage) && (
-              <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
-                <div className="text-sm text-ink-muted font-medium">
-                  Page {stockCursors.length + 1}
-                  {stockPagination?.totalItems ? (
-                    <>
-                      <span className="mx-2 text-border">|</span>
-                      Total: {stockPagination.totalItems} products
-                    </>
-                  ) : null}
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-sm h-9 px-4 font-medium"
-                    onClick={handleStockPrev}
-                    disabled={stockCursors.length === 0}
-                  >
-                    Prev
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-sm h-9 px-4 font-medium"
-                    onClick={handleStockNext}
-                    disabled={!stockPagination?.hasNextPage}
-                  >
-                    Next
-                  </Button>
-                </div>
+            {stockPagination?.totalPages > 1 && (
+              <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
+                <Pagination
+                  currentPage={stockPage}
+                  totalPages={stockPagination.totalPages}
+                  onPageChange={setStockPage}
+                />
               </div>
             )}
           </div>
@@ -637,37 +601,13 @@ export function InventoryPage() {
               </TableBody>
             </Table>
           </div>
-          {(txCursors.length > 0 || txPagination?.hasNextPage) && (
-            <div className="flex items-center justify-between p-5 bg-surface border-t border-border">
-              <div className="text-sm text-ink-muted font-medium">
-                Page {txCursors.length + 1}
-                {txPagination?.totalItems ? (
-                  <>
-                    <span className="mx-2 text-border">|</span>
-                    Total: {txPagination.totalItems} transactions
-                  </>
-                ) : null}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
-                  onClick={handleTxPrev}
-                  disabled={txCursors.length === 0}
-                >
-                  Trước
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium"
-                  onClick={handleTxNext}
-                  disabled={!txPagination?.hasNextPage}
-                >
-                  Sau
-                </Button>
-              </div>
+          {txPagination?.totalPages > 1 && (
+            <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
+              <Pagination
+                currentPage={txPage}
+                totalPages={txPagination.totalPages}
+                onPageChange={setTxPage}
+              />
             </div>
           )}
         </div>

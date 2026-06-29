@@ -6,7 +6,7 @@ export function useAuditLogs(params: {
   domain?: string;
   startDate?: string;
   endDate?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
 }) {
   return useQuery({

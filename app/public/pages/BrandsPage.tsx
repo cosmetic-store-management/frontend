@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ChevronRight, ChevronLeft } from "lucide-react";
@@ -150,9 +152,7 @@ export default function BrandsPage() {
       ══════════════════════════════════════════════════════════════ */}
       <div className="bg-[#1a1a1a] py-8 px-4">
         <div className="max-w-300 mx-auto">
-          <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">
-            Thương Hiệu Nổi Bật
-          </h2>
+          <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">{i18next.t("Thương Hiệu Nổi Bật")}</h2>
 
           <div className="relative">
             {/* Carousel track */}
@@ -242,9 +242,7 @@ export default function BrandsPage() {
             ))}
           </div>
         ) : brands.length === 0 ? (
-          <div className="py-20 text-center text-ink-muted">
-            Hiện chưa có thương hiệu nào
-          </div>
+          <div className="py-20 text-center text-ink-muted">{i18next.t("Hiện chưa có thương hiệu nào")}</div>
         ) : (
           <div className="flex flex-col gap-8">
             {ALPHABET.filter((l) => activeLetters.has(l)).map((letter) => (

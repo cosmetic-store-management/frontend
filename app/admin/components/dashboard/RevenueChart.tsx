@@ -73,19 +73,17 @@ export function RevenueChart({ startDate, endDate }: RevenueChartProps) {
   return (
     <div className="bg-card border border-border rounded-sm overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-border">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-border group">
         <div className="flex items-center gap-3">
           <div
-            className="w-8 h-8 rounded-sm flex items-center justify-center"
-            style={{ background: "hsl(352, 72%, 52%, 0.12)" }}
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-danger/10 text-danger transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6"
           >
             <TrendingUp
-              className="w-4 h-4"
-              style={{ color: "hsl(352, 72%, 52%)" }}
+              className="w-5 h-5"
             />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-foreground">
+            <h2 className="text-sm font-semibold text-foreground group-hover:text-danger transition-colors">
               Revenue Overview
             </h2>
             <p className="text-xs text-muted-foreground">

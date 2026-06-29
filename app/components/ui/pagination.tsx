@@ -17,36 +17,18 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   const pages = [];
-  const maxVisiblePages = 5;
+  let start = Math.max(1, currentPage - 2);
+  let end = Math.min(totalPages, currentPage + 2);
 
-  if (totalPages <= maxVisiblePages) {
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
-    }
-  } else {
-    pages.push(1);
-    if (currentPage > 3) {
-      pages.push("...");
-    }
+  if (currentPage <= 3) {
+    end = Math.min(totalPages, 5);
+  }
+  if (currentPage >= totalPages - 2) {
+    start = Math.max(1, totalPages - 4);
+  }
 
-    let start = Math.max(2, currentPage - 1);
-    let end = Math.min(totalPages - 1, currentPage + 1);
-
-    if (currentPage <= 3) {
-      end = 4;
-    }
-    if (currentPage >= totalPages - 2) {
-      start = totalPages - 3;
-    }
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    if (currentPage < totalPages - 2) {
-      pages.push("...");
-    }
-    pages.push(totalPages);
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
   }
 
   return (
@@ -64,24 +46,13 @@ export function Pagination({
         <span className="sr-only">Previous page</span>
       </button>
 
-      {pages.map((page, index) => {
-        if (page === "...") {
-          return (
-            <span
-              key={`ellipsis-${index}`}
-              className="flex h-9 w-9 items-center justify-center text-ink-muted"
-            >
-              <MoreHorizontal className="size-4" />
-            </span>
-          );
-        }
-
+      {pages.map((page) => {
         const isCurrent = page === currentPage;
         return (
           <button
             key={page}
             type="button"
-            onClick={() => onPageChange(page as number)}
+            onClick={() => onPageChange(page)}
             aria-current={isCurrent ? "page" : undefined}
             className={cn(
               "inline-flex h-9 w-9 items-center justify-center rounded-sm border text-sm font-medium transition-colors",

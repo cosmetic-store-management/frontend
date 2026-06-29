@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useProducts } from "../../hooks/useProducts";
 import { ProductCard } from "./ProductCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -47,9 +49,7 @@ export function RelatedProducts({
   return (
     <div className="mt-4 w-full bg-surface p-6 md:p-8 rounded-sm border border-border shadow-ui-soft">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-ink uppercase tracking-wider">
-          Sản phẩm liên quan
-        </h2>
+        <h2 className="text-xl md:text-2xl font-bold text-ink uppercase tracking-wider">{i18next.t("Sản phẩm liên quan")}</h2>
         <div className="flex gap-1">
           <button
             onClick={scrollLeft}

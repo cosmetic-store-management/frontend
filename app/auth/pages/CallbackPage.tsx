@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "@/lib/toast";
@@ -47,7 +49,7 @@ export default function CallbackPage() {
     <div className="flex min-h-[50vh] w-full items-center justify-center">
       <div className="text-center">
         <div className="w-8 h-8 border-4 border-[#8A151B] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-[#333333] font-medium">Đang xử lý đăng nhập...</p>
+        <p className="text-[#333333] font-medium">{i18next.t("Đang xử lý đăng nhập...")}</p>
       </div>
     </div>
   );

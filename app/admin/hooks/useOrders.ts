@@ -26,13 +26,12 @@ export function useOrders(
   channel?: string,
 ) {
   const queryClient = useQueryClient();
-  const { cursors, currentCursor, handleNext, handlePrev, resetCursors } =
-    useCursorPagination();
+  const [page, setPage] = useState(1);
   const debouncedKeyword = useDebounce(keyword, 500);
 
   // Reset to first page when search or filter changes
   useEffect(() => {
-    resetCursors();
+    setPage(1);
   }, [
     debouncedKeyword,
     filter,
@@ -40,13 +39,12 @@ export function useOrders(
     dateFrom,
     dateTo,
     channel,
-    resetCursors,
   ]);
 
   // 1. Fetch Orders
   const queryParams = useMemo(
     () => ({
-      cursor: currentCursor,
+      page,
       limit: 10,
       search: debouncedKeyword,
       orderStatus: filter === "all" ? undefined : filter,
@@ -56,7 +54,7 @@ export function useOrders(
       channel: channel || undefined,
     }),
     [
-      currentCursor,
+      page,
       debouncedKeyword,
       filter,
       paymentStatus,
@@ -80,16 +78,8 @@ export function useOrders(
   const pagination = ordersData?.pagination || {
     limit: 10,
     total: 0,
-    nextCursor: null,
-    hasNextPage: false,
-  };
-
-  const handleNextPage = () => {
-    handleNext(pagination.nextCursor);
-  };
-
-  const handlePrevPage = () => {
-    handlePrev();
+    page: 1,
+    totalPages: 1,
   };
   const error = queryError
     ? queryError instanceof Error
@@ -200,9 +190,9 @@ export function useOrders(
   return {
     orders,
     pagination,
-    cursors,
-    handleNext: handleNextPage,
-    handlePrev: handlePrevPage,
+    page,
+    setPage,
+    updateStatus: updateMut.mutate,
     loading,
     error,
     submitting,

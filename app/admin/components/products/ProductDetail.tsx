@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import type { Product } from "@/admin/types/product";
 import {
   Dialog,
@@ -107,9 +109,7 @@ export default function ProductDetail({
           </div>
         </div>
         <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Xác nhận
-          </Button>
+          <Button type="button" variant="outline" onClick={onClose}>{i18next.t("Xác nhận")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

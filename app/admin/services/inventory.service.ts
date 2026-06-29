@@ -64,7 +64,7 @@ export function createSupplier(data: Omit<Supplier, "id">): Promise<Supplier> {
 
 export function getStockList(params: {
   search?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
 }): Promise<{ stock: InventoryItem[]; pagination: any }> {
   return apiClient
@@ -76,7 +76,7 @@ export function getStockList(params: {
 }
 
 export function getTransactions(params: {
-  cursor?: string;
+  page?: number;
   limit?: number;
   type?: string;
 }): Promise<{ transactions: InventoryTransaction[]; pagination: any }> {

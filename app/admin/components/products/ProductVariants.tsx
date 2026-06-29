@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import {
   Controller,
   type Control,
@@ -41,9 +43,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
   return (
     <section>
       <div className="flex items-center justify-between mb-3 pb-2 border-b border-border">
-        <h3 className="text-sm font-bold text-ink uppercase tracking-wider">
-          Phân loại hàng
-        </h3>
+        <h3 className="text-sm font-bold text-ink uppercase tracking-wider">{i18next.t("Phân loại hàng")}</h3>
         <Button
           type="button"
           variant="outline"
@@ -56,8 +56,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
           }
           className="gap-1.5 h-8 text-xs border-border text-ink hover:bg-surface-soft bg-surface shadow-none"
         >
-          <Plus className="w-3.5 h-3.5" /> Thêm phân loại
-        </Button>
+          <Plus className="w-3.5 h-3.5" />{i18next.t("Thêm phân loại")}</Button>
       </div>
       {errors.variants?.message && (
         <p className="text-xs text-danger mb-3">{errors.variants.message}</p>
@@ -85,9 +84,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
             <div className="flex gap-4 items-start">
               {/* Ảnh variant */}
               <div className="shrink-0 w-20 space-y-1">
-                <Label className="text-xs font-medium text-ink-muted">
-                  Ảnh
-                </Label>
+                <Label className="text-xs font-medium text-ink-muted">{i18next.t("Ảnh")}</Label>
                 <Controller
                   control={control}
                   name={`variants.${idx}.imageUrl`}
@@ -105,8 +102,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
               {/* Fields */}
               <div className="flex-1 grid grid-cols-2 xl:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-ink">
-                    Tên phân loại <span className="text-danger">*</span>
+                  <Label className="text-xs font-semibold text-ink">{i18next.t("Tên phân loại")}<span className="text-danger">*</span>
                   </Label>
                   <Controller
                     control={control}
@@ -126,9 +122,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-ink">
-                    Mã SKU
-                  </Label>
+                  <Label className="text-xs font-semibold text-ink">{i18next.t("Mã SKU")}</Label>
                   <Controller
                     control={control}
                     name={`variants.${idx}.sku`}
@@ -142,8 +136,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-ink">
-                    Tồn kho <span className="text-danger">*</span>
+                  <Label className="text-xs font-semibold text-ink">{i18next.t("Tồn kho")}<span className="text-danger">*</span>
                   </Label>
                   <Controller
                     control={control}
@@ -164,8 +157,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-ink">
-                    Giá niêm yết <span className="text-danger">*</span>
+                  <Label className="text-xs font-semibold text-ink">{i18next.t("Giá niêm yết")}<span className="text-danger">*</span>
                   </Label>
                   <Controller
                     control={control}
@@ -185,9 +177,7 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-ink">
-                    Giá khuyến mãi
-                  </Label>
+                  <Label className="text-xs font-semibold text-ink">{i18next.t("Giá khuyến mãi")}</Label>
                   <Controller
                     control={control}
                     name={`variants.${idx}.discountPrice`}

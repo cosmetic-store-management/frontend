@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import "./app.css";
 import {
   Links,
@@ -13,6 +15,7 @@ import { Toaster } from "./components/ui/sonner";
 
 import React from "react";
 import * as ReactDOM from "react-dom";
+import "./lib/i18n";
 
 if (import.meta.env.DEV && typeof window !== "undefined") {
   import("@axe-core/react").then((axe) => {
@@ -21,17 +24,12 @@ if (import.meta.env.DEV && typeof window !== "undefined") {
 }
 
 // ── QueryClient ───────────────────────────────────────────────────────────────
-// staleTime phân tầng theo mức độ dynamic của data:
-//   10 phút — static (categories, brands, settings, vouchers)
-//   3 phút  — product catalog (có thể thay đổi stock/giá)
-//   60 giây — orders, cart, user (dynamic, cần fresh)
-// gcTime (unused cache cleanup) = 10 phút cho tất cả
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60 * 1000, // 60s (default — orders/cart/user)
-      gcTime: 10 * 60 * 1000, // 10 phút giữ cache trong memory
+      staleTime: 60 * 1000,
+      gcTime: 10 * 60 * 1000,
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
@@ -57,8 +55,9 @@ export function ErrorBoundary() {
     message = error.message;
   }
 
+  const language = useLanguageStore((state) => state.language);
   return (
-    <html lang="vi">
+    <html lang={language}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -127,9 +126,7 @@ export function ErrorBoundary() {
               fontSize: "0.9rem",
               textDecoration: "none",
             }}
-          >
-            🌸 Về trang chủ
-          </a>
+          >{i18next.t("🌸 Về trang chủ")}</a>
         </div>
         <Scripts />
       </body>
@@ -139,9 +136,12 @@ export function ErrorBoundary() {
 
 // ── App Root ──────────────────────────────────────────────────────────────────
 
+import { useLanguageStore } from "./store/language.store";
+
 export default function App() {
+  const language = useLanguageStore((state) => state.language);
   return (
-    <html lang="en">
+    <html lang={language}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

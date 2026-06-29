@@ -3,6 +3,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { useOrders } from "../hooks/useOrders";
+import { Pagination } from "@/components/ui/pagination";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -83,9 +84,8 @@ export function OrderPage() {
   const {
     orders,
     pagination,
-    cursors,
-    handleNext,
-    handlePrev,
+    page,
+    setPage,
     loading,
     error,
     submitting,
@@ -258,7 +258,7 @@ export function OrderPage() {
 
       <div className="premium-card rounded-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <Table className="min-w-250 table-fixed">
+          <Table className="min-w-[1000px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                 <TableHead
@@ -268,7 +268,6 @@ export function OrderPage() {
                   Order ID
                 </TableHead>
                 <TableHead
-                  style={{ width: "18%" }}
                   className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
                 >
                   Customer
@@ -286,7 +285,7 @@ export function OrderPage() {
                   Date
                 </TableHead>
                 <TableHead
-                  style={{ width: "13%" }}
+                  style={{ width: "12%" }}
                   className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
                   Payment
@@ -298,13 +297,13 @@ export function OrderPage() {
                   Status
                 </TableHead>
                 <TableHead
-                  style={{ width: "14%" }}
+                  style={{ width: "13%" }}
                   className="px-4 text-right text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
                   Total
                 </TableHead>
                 <TableHead
-                  style={{ width: "2%" }}
+                  style={{ width: "80px" }}
                   className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
                 >
                   Actions
@@ -420,19 +419,7 @@ export function OrderPage() {
                                 <Edit className="w-4 h-4 mr-2.5" />
                                 Edit
                               </DropdownMenuItem>
-                              {item.orderStatus !== "cancelled" &&
-                                item.orderStatus !== "completed" && (
-                                  <DropdownMenuItem
-                                    className="cursor-pointer rounded-sm text-danger focus:bg-danger/10 focus:text-danger"
-                                    onClick={() => {
-                                      clearError();
-                                      setModal({ type: "cancel", order: item });
-                                    }}
-                                  >
-                                    <Ban className="w-4 h-4 mr-2.5" />
-                                    Cancel
-                                  </DropdownMenuItem>
-                                )}
+
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -482,37 +469,13 @@ export function OrderPage() {
             </TableBody>
           </Table>
         </div>
-        {(cursors.length > 0 || pagination?.hasNextPage) && (
-          <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border rounded-b-sm">
-            <div className="text-sm text-ink-muted font-medium">
-              Page {cursors.length + 1}
-              {pagination?.total > 0 && (
-                <>
-                  <span className="mx-2 text-border">|</span>
-                  Total: {pagination.total} orders
-                </>
-              )}
-            </div>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                onClick={handlePrev}
-                disabled={cursors.length === 0}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                onClick={handleNext}
-                disabled={!pagination?.hasNextPage}
-              >
-                Next
-              </Button>
-            </div>
+        {pagination?.totalPages > 1 && (
+          <div className="flex items-center justify-center px-5 py-4 bg-surface border-t border-border rounded-b-sm">
+            <Pagination
+              currentPage={page}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
           </div>
         )}
       </div>

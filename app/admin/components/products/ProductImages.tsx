@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import {
   Controller,
   type Control,
@@ -48,8 +50,7 @@ export function ProductImages({
       <div className="p-5 space-y-5">
         {/* Ảnh đại diện */}
         <div className="space-y-2">
-          <Label className="text-sm font-semibold text-ink">
-            Ảnh đại diện <span className="text-danger">*</span>
+          <Label className="text-sm font-semibold text-ink">{i18next.t("Ảnh đại diện")}<span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -70,17 +71,14 @@ export function ProductImages({
         {/* Ảnh chi tiết — grid upload */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-semibold text-ink">
-              Ảnh chi tiết
-            </Label>
+            <Label className="text-sm font-semibold text-ink">{i18next.t("Ảnh chi tiết")}</Label>
             {imageUrlsList.length < MAX_DETAIL_IMAGES && (
               <button
                 type="button"
                 onClick={addDetailSlot}
                 className="flex items-center gap-1 text-[11px] text-brand hover:text-brand-dark font-medium transition-colors"
               >
-                <Plus className="w-3 h-3" /> Thêm
-              </button>
+                <Plus className="w-3 h-3" />{i18next.t("Thêm")}</button>
             )}
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -132,10 +130,8 @@ export function ProductImages({
         {/* Trạng thái */}
         <div className="p-4 bg-surface border border-border rounded-sm flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-ink">Hiển thị trên web</p>
-            <p className="text-xs text-ink-muted mt-0.5">
-              Bật → khách hàng thấy sản phẩm
-            </p>
+            <p className="text-sm font-semibold text-ink">{i18next.t("Hiển thị trên web")}</p>
+            <p className="text-xs text-ink-muted mt-0.5">{i18next.t("Bật → khách hàng thấy sản phẩm")}</p>
           </div>
           <Controller
             control={control}

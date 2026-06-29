@@ -12,7 +12,7 @@ export function getCategories(): Promise<Category[]> {
 export interface AdminCategoryQuery {
   search?: string;
   status?: "active" | "inactive";
-  cursor?: string;
+  page?: number;
   limit?: number;
 }
 
@@ -21,8 +21,8 @@ export interface CategoryListResult {
   pagination: {
     limit: number;
     total: number;
-    nextCursor: string | null;
-    hasNextPage: boolean;
+    page: number;
+    totalPages: number;
   };
 }
 

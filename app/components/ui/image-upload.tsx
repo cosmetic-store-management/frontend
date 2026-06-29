@@ -1,3 +1,5 @@
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 import React, { useState, useRef } from "react";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { toast } from "@/lib/toast";
@@ -106,9 +108,7 @@ export function ImageUpload({
             <>
               <Loader2 className="w-5 h-5 animate-spin text-brand" />
               {!compact && (
-                <span className="text-xs font-medium mt-1 text-ink-muted">
-                  Đang tải lên...
-                </span>
+                <span className="text-xs font-medium mt-1 text-ink-muted">{i18next.t("Đang tải lên...")}</span>
               )}
             </>
           ) : (
@@ -117,17 +117,11 @@ export function ImageUpload({
                 className={`text-ink-muted group-hover:text-brand transition-colors ${compact ? "w-5 h-5" : "w-8 h-8 mb-2"}`}
               />
               {compact ? (
-                <span className="text-[9px] text-ink-muted group-hover:text-brand transition-colors mt-1 leading-tight text-center">
-                  Tải lên
-                </span>
+                <span className="text-[9px] text-ink-muted group-hover:text-brand transition-colors mt-1 leading-tight text-center">{i18next.t("Tải lên")}</span>
               ) : (
                 <>
-                  <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">
-                    Bấm để tải ảnh lên
-                  </span>
-                  <span className="text-[10px] text-ink-muted/70 mt-1">
-                    PNG, JPG · tối đa 5MB
-                  </span>
+                  <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">{i18next.t("Bấm để tải ảnh lên")}</span>
+                  <span className="text-[10px] text-ink-muted/70 mt-1">{i18next.t("PNG, JPG · tối đa 5MB")}</span>
                 </>
               )}
             </>

@@ -7,12 +7,12 @@ export interface StaffResponse {
   users: User[];
   total: number;
   limit: number;
-  nextCursor: string | null;
-  hasNextPage: boolean;
+  page: number;
+  totalPages: number;
 }
 
 export function getAdminUsers(params?: {
-  cursor?: string;
+  page?: number;
   limit?: number;
   search?: string;
   status?: string;

@@ -10,6 +10,7 @@ import {
 import { toast } from "@/lib/toast";
 import { Loader2, ArrowLeft, Mail, Sparkles } from "lucide-react";
 import { useStats } from "@/public/hooks/useSetting";
+import i18next from "i18next";
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -39,7 +40,7 @@ export default function ForgotPasswordPage() {
         setSubmitted(true);
       },
       onError: (err) => {
-        toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+        toast.error(err instanceof Error ? err.message : i18next.t("Có lỗi xảy ra"));
       },
     });
   };
@@ -101,25 +102,25 @@ export default function ForgotPasswordPage() {
                 "var(--font-display, 'Playfair Display', Georgia, serif)",
             }}
           >
-            Your beauty,
+            {i18next.t(`Your beauty,`)}
             <br />
-            <em>your story.</em>
+            <em>{i18next.t(`your story.`)}</em>
           </h2>
 
           <p
             className="text-base leading-relaxed"
             style={{ color: "rgba(255,255,255,0.65)" }}
           >
-            Discover authentic skincare and cosmetics curated for the modern
-            woman. Sign in to unlock exclusive offers.
+            {i18next.t(`Discover authentic skincare and cosmetics curated for the modern
+            woman. Sign in to unlock exclusive offers.`)}
           </p>
 
           {/* Trust indicators */}
           <div className="mt-10 grid grid-cols-3 gap-4">
             {[
-              { num: formatStat(stats.products), label: "Products" },
-              { num: formatStat(stats.customers), label: "Customers" },
-              { num: Number(stats.rating).toFixed(1) + "★", label: "Rating" },
+              { num: formatStat(stats.products), label: i18next.t("Products") },
+              { num: formatStat(stats.customers), label: i18next.t("Customers") },
+              { num: Number(stats.rating).toFixed(1) + "★", label: i18next.t("Rating") },
             ].map(({ num, label }) => (
               <div key={label} className="text-center">
                 <p className="text-xl font-bold text-white">{num}</p>
@@ -162,16 +163,17 @@ export default function ForgotPasswordPage() {
             </span>
           </div>
 
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {i18next.t(`Back to login`)}
+          </Link>
+
           {!submitted ? (
             <>
               <div className="mb-8">
-                <Link
-                  to="/login"
-                  className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to sign in
-                </Link>
                 <h1
                   className="text-2xl font-bold text-foreground"
                   style={{
@@ -179,26 +181,25 @@ export default function ForgotPasswordPage() {
                       "var(--font-display, 'Playfair Display', Georgia, serif)",
                   }}
                 >
-                  Forgot Password
+                  {i18next.t(`Forgot password?`)}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1.5">
-                  Enter your email address and we'll send you a link to reset
-                  your password.
+                  {i18next.t(`No worries, we'll send you reset instructions.`)}
                 </p>
               </div>
 
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="space-y-4"
+                className="space-y-6"
                 noValidate
               >
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                    Email
+                    {i18next.t(`Email or Phone`)}
                   </label>
                   <input
-                    type="email"
-                    placeholder="you@example.com"
+                    type="text"
+                    placeholder="youremail@example.com"
                     {...register("identifier")}
                     className={`w-full h-11 px-4 rounded-sm border text-sm text-foreground bg-card placeholder:text-muted-foreground/50 focus:outline-none transition-all duration-200 ${
                       errors.identifier
@@ -216,47 +217,51 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="w-full h-11 rounded-sm text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99] mt-2"
+                  className="w-full h-11 rounded-sm text-sm font-semibold text-white transition-all duration-200 disabled:opacity-60 flex items-center justify-center gap-2 shadow-sm hover:shadow-md active:scale-[0.99]"
                   style={{ background: "hsl(352, 72%, 52%)" }}
                 >
                   {isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <>
-                      <Mail className="w-4 h-4" />
-                      Send Reset Link
-                    </>
+                    i18next.t(`Reset Password`)
                   )}
                 </button>
               </form>
             </>
           ) : (
             <div className="text-center py-8">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Mail className="w-8 h-8 text-green-600" />
+              <div
+                className="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center"
+                style={{ background: "hsl(352, 72%, 95%)" }}
+              >
+                <Mail
+                  className="w-8 h-8"
+                  style={{ color: "hsl(352, 72%, 52%)" }}
+                />
               </div>
-              <h1
-                className="text-2xl font-bold text-foreground mb-4"
+              <h2
+                className="text-2xl font-bold text-foreground mb-3"
                 style={{
                   fontFamily:
                     "var(--font-display, 'Playfair Display', Georgia, serif)",
                 }}
               >
-                Check your inbox
-              </h1>
-              <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
-                If an account exists for{" "}
-                <strong>{getValues("identifier")}</strong>, we have sent
-                password reset instructions. The link is valid for{" "}
-                <strong>1 hour</strong>.
+                {i18next.t(`Check your inbox`)}
+              </h2>
+              <p className="text-sm text-muted-foreground mb-8 max-w-sm mx-auto leading-relaxed">
+                {i18next.t(`We've sent password reset instructions to`)} <br />
+                <span className="font-semibold text-foreground">
+                  {getValues("identifier")}
+                </span>
               </p>
-              <Link
-                to="/login"
-                className="inline-flex h-11 items-center justify-center px-8 rounded-sm text-sm font-semibold text-white transition-all duration-200 shadow-sm hover:shadow-md"
-                style={{ background: "hsl(352, 72%, 52%)" }}
+              <button
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="text-sm font-semibold transition-colors"
+                style={{ color: "hsl(352, 72%, 48%)" }}
               >
-                Return to Login
-              </Link>
+                {i18next.t(`Try another email or phone number`)}
+              </button>
             </div>
           )}
         </div>

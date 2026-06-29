@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router";
-import { Lock, Loader2, Sparkles, Eye, EyeOff } from "lucide-react";
+import { Lock, Loader2, Sparkles, Eye, EyeOff, Check } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLogin } from "@/auth/hooks/useAuth";
@@ -7,6 +7,7 @@ import { loginSchema, type LoginForm } from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
 import { useStats } from "@/public/hooks/useSetting";
+import i18next from "i18next";
 
 export default function LoginPage() {
   const loginMutation = useLogin();
@@ -39,7 +40,7 @@ export default function LoginPage() {
         : { phone: data.identifier, password: data.password };
 
       const user = await loginMutation.mutateAsync(payload);
-      toast.success("Welcome back! ✨");
+      toast.success(i18next.t("Welcome back! ✨"));
       const params = new URLSearchParams(location.search);
       const returnUrl = params.get("returnUrl");
       if (["owner", "manager", "staff"].includes(user?.role || "")) {
@@ -51,7 +52,7 @@ export default function LoginPage() {
       toast.error(
         err instanceof Error
           ? err.message
-          : "Login failed. Please check your credentials.",
+          : i18next.t("Login failed. Please check your credentials."),
       );
     }
   };
@@ -113,25 +114,25 @@ export default function LoginPage() {
                 "var(--font-display, 'Playfair Display', Georgia, serif)",
             }}
           >
-            Your beauty,
+            {i18next.t(`Your beauty,`)}
             <br />
-            <em>your story.</em>
+            <em>{i18next.t(`your story.`)}</em>
           </h2>
 
           <p
             className="text-base leading-relaxed"
             style={{ color: "rgba(255,255,255,0.65)" }}
           >
-            Discover authentic skincare and cosmetics curated for the modern
-            woman. Sign in to unlock exclusive offers.
+            {i18next.t(`Discover authentic skincare and cosmetics curated for the modern
+            woman. Sign in to unlock exclusive offers.`)}
           </p>
 
           {/* Trust indicators */}
           <div className="mt-10 grid grid-cols-3 gap-4">
             {[
-              { num: formatStat(stats.products), label: "Products" },
-              { num: formatStat(stats.customers), label: "Customers" },
-              { num: Number(stats.rating).toFixed(1) + "★", label: "Rating" },
+              { num: formatStat(stats.products), label: i18next.t("Products") },
+              { num: formatStat(stats.customers), label: i18next.t("Customers") },
+              { num: Number(stats.rating).toFixed(1) + "★", label: i18next.t("Rating") },
             ].map(({ num, label }) => (
               <div key={label} className="text-center">
                 <p className="text-xl font-bold text-white">{num}</p>
@@ -178,10 +179,10 @@ export default function LoginPage() {
                   "var(--font-display, 'Playfair Display', Georgia, serif)",
               }}
             >
-              Welcome back
+              {i18next.t(`Welcome back`)}
             </h1>
             <p className="text-sm text-muted-foreground mt-1.5">
-              Sign in to your account to continue shopping.
+              {i18next.t(`Sign in to your account to continue shopping.`)}
             </p>
           </div>
 
@@ -193,7 +194,7 @@ export default function LoginPage() {
             {/* Email */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                Email
+                {i18next.t(`Email`)}
               </label>
               <input
                 type="text"
@@ -215,7 +216,7 @@ export default function LoginPage() {
             {/* Password */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                Password
+                {i18next.t(`Password`)}
               </label>
               <div className="relative">
                 <input
@@ -249,20 +250,27 @@ export default function LoginPage() {
 
             {/* Remember + Forgot */}
             <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  {...(register as any)("remember")}
-                  className="w-4 h-4 rounded border-border accent-brand cursor-pointer"
-                />
-                <span className="text-sm text-foreground">Remember me</span>
+              <label className="flex items-center gap-2 cursor-pointer group">
+                <div className="relative flex items-center justify-center">
+                  {/* Note: 'remember' was removed from schema previously. Since it's causing TS error if not in schema, we cast to any or remove it. I'll cast it for now to avoid breaking UI if they expect it. */}
+                  <input
+                    type="checkbox"
+                    {...(register as any)("remember")}
+                    className="peer sr-only"
+                  />
+                  <div className="w-4 h-4 border border-border rounded-sm peer-checked:bg-brand peer-checked:border-brand transition-colors" />
+                  <Check className="w-3 h-3 text-white absolute opacity-0 peer-checked:opacity-100 transition-opacity" />
+                </div>
+                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  {i18next.t(`Remember me`)}
+                </span>
               </label>
               <Link
                 to="/forgot-password"
                 className="text-sm font-medium transition-colors"
                 style={{ color: "hsl(352, 72%, 48%)" }}
               >
-                Forgot password?
+                {i18next.t(`Forgot password?`)}
               </Link>
             </div>
 
@@ -278,7 +286,7 @@ export default function LoginPage() {
               ) : (
                 <>
                   <Lock className="w-4 h-4" />
-                  Sign In
+                  {i18next.t(`Sign In`)}
                 </>
               )}
             </button>

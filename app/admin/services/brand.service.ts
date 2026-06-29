@@ -16,8 +16,8 @@ export interface AdminBrandListResult {
   pagination: {
     limit: number;
     total: number;
-    nextCursor: string | null;
-    hasNextPage: boolean;
+    page: number;
+    totalPages: number;
   };
 }
 
@@ -31,7 +31,7 @@ export function getAdminBrands(
   query: {
     search?: string;
     status?: string;
-    cursor?: string;
+    page?: number;
     limit?: number;
   } = {},
 ): Promise<AdminBrandListResult> {
