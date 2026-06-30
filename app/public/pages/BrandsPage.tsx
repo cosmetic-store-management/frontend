@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { ChevronRight, ChevronLeft } from "lucide-react";
@@ -88,8 +86,7 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function BrandsPage() {
-  const { t } = useTranslation();
-  const { data: brands = [], isLoading } = useBrands();
+    const { data: brands = [], isLoading } = useBrands();
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -152,7 +149,7 @@ export default function BrandsPage() {
       ══════════════════════════════════════════════════════════════ */}
       <div className="bg-[#1a1a1a] py-8 px-4">
         <div className="max-w-300 mx-auto">
-          <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">{t("Featured Brands")}</h2>
+          <h2 className="text-white font-black text-[15px] uppercase tracking-wider mb-5">{"Featured Brands"}</h2>
 
           <div className="relative">
             {/* Carousel track */}
@@ -204,8 +201,8 @@ export default function BrandsPage() {
           {/* Count heading */}
           <p className="text-center font-black text-[15px] uppercase tracking-widest text-ink mb-5">
             {isLoading
-              ? t("loading")
-              : t("View All Brands", { count: brands.length })}
+              ? "loading"
+              : "View All Brands"}
           </p>
 
           {/* A-Z navigation */}
@@ -241,7 +238,7 @@ export default function BrandsPage() {
             ))}
           </div>
         ) : brands.length === 0 ? (
-          <div className="py-20 text-center text-ink-muted">{t("Hiện chưa có thương hiệu nào")}</div>
+          <div className="py-20 text-center text-ink-muted">{"Hiện chưa có thương hiệu nào"}</div>
         ) : (
           <div className="flex flex-col gap-8">
             {ALPHABET.filter((l) => activeLetters.has(l)).map((letter) => (

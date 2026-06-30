@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 
 interface ProductImageGalleryProps {
@@ -103,7 +101,7 @@ export function ProductImageGallery({
         )}
 
         {!isActive && (
-          <div className="absolute top-3 left-3 bg-ink text-white text-xs font-bold px-3 py-1.5 rounded-sm uppercase tracking-wider z-10">{i18next.t("Ngừng kinh doanh")}</div>
+          <div className="absolute top-3 left-3 bg-ink text-white text-xs font-bold px-3 py-1.5 rounded-sm uppercase tracking-wider z-10">{"Ngừng kinh doanh"}</div>
         )}
       </div>
 

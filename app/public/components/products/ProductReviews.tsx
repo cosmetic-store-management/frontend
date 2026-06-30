@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -449,7 +447,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                     {editingReviewId === review.id ? (
                       <div className="mt-3 bg-surface-soft p-4 rounded-sm border border-border">
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="text-sm font-medium text-ink-muted">{i18next.t("Chất lượng:")}</span>
+                          <span className="text-sm font-medium text-ink-muted">{"Chất lượng:"}</span>
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
                               key={star}
@@ -518,7 +516,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                                   className="inline-flex items-center gap-2 cursor-pointer border border-dashed border-border hover:border-brand hover:text-brand transition-colors rounded-sm px-4 py-2 text-sm text-ink-muted bg-surface"
                                 >
                                   <Camera className="w-4 h-4" />
-                                  <span>{i18next.t("Thêm hình ảnh / video")}</span>
+                                  <span>{"Thêm hình ảnh / video"}</span>
                                 </label>
                               </div>
                             )}
@@ -585,7 +583,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                         {review.adminReply && (
                           <div className="bg-brand/5 border-l-2 border-brand p-3 mt-4 rounded-sm">
                             <p className="text-[13px] text-ink leading-relaxed break-words whitespace-pre-wrap">
-                              <span className="font-semibold text-brand mr-2">{i18next.t("Phản hồi từ Shop:")}</span>
+                              <span className="font-semibold text-brand mr-2">{"Phản hồi từ Shop:"}</span>
                               <span className="text-ink-muted">
                                 {review.adminReply}
                               </span>
@@ -761,7 +759,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               <div className="space-y-2">
                 <span className="text-ink font-bold text-[15px] block">
                   Review Images / Videos{" "}
-                  <span className="text-ink-muted font-normal text-[13px]">{i18next.t("(định dạng .jpg, .jpeg, .png, .mp4, .mov)")}</span>
+                  <span className="text-ink-muted font-normal text-[13px]">{"(định dạng .jpg, .jpeg, .png, .mp4, .mov)"}</span>
                 </span>
                 <div className="pt-2">
                   {mediaPreviewUrl ? (

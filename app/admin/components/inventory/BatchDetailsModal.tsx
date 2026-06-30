@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { PackageSearch, History, MoreVertical, Edit } from "lucide-react";
@@ -74,15 +72,15 @@ export default function BatchDetailsModal({
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="bg-surface-soft/50 border-b border-border text-ink-muted">
-                  <th className="py-2.5 px-4 font-semibold text-center">{i18next.t("Mã lô")}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Mã lô"}</th>
                   <th className="py-2.5 px-4 font-semibold text-center">
                     NSX - HSD
                   </th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{i18next.t("Ngày nhập")}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{i18next.t("Giá nhập")}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{i18next.t("SL Ban đầu")}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{i18next.t("SL Còn lại")}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center w-20">{i18next.t("Thao tác")}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Ngày nhập"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Giá nhập"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"SL Ban đầu"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"SL Còn lại"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center w-20">{"Thao tác"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -159,7 +157,7 @@ export default function BatchDetailsModal({
                                 setIsEditModalOpen(true);
                               }}
                             >
-                              <Edit className="w-4 h-4 mr-2" />{i18next.t("Chỉnh sửa")}</DropdownMenuItem>
+                              <Edit className="w-4 h-4 mr-2" />{"Chỉnh sửa"}</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>

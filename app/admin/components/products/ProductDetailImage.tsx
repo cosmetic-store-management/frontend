@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 type ProductDetailImageProps = {
   imageUrl?: string;
   name: string;
@@ -10,17 +8,17 @@ export default function ProductDetailImage({
   name,
 }: ProductDetailImageProps) {
   return (
-    <div className="relative shrink-0 bg-[linear-gradient(160deg,rgba(251,207,232,0.45)_0%,rgba(255,255,255,1)_70%)] md:w-[42%]">
-      <div className="absolute inset-x-8 top-6 h-16 bg-rose-200/30 blur-3xl" />
-      <div className="relative flex h-48 items-center justify-center overflow-hidden p-4 sm:p-5 md:h-full min-h-62.5">
+    <div className="relative shrink-0 bg-surface-muted/30 w-full h-full flex flex-col items-center justify-center p-8 min-h-62.5 md:min-h-full">
+      <div className="absolute inset-x-8 top-6 h-16 bg-rose-200/20 blur-3xl" />
+      <div className="relative w-full max-w-xs flex items-center justify-center">
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={name}
-            className="h-full max-h-85 w-full object-cover shadow-[0_16px_48px_rgba(15,23,42,0.12)] md:max-h-none"
+            className="w-full h-auto object-contain shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-md bg-white border border-border"
           />
         ) : (
-          <p className="text-ink-muted text-sm">{i18next.t("Chưa có hình ảnh")}</p>
+          <p className="text-ink-muted text-sm">{"Chưa có hình ảnh"}</p>
         )}
       </div>
     </div>

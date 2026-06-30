@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useState, useMemo, useRef } from "react";
 import { Trash2, Loader2, Package, Search, Upload } from "lucide-react";
 import * as XLSX from "xlsx";
@@ -312,14 +310,14 @@ export function BulkRestockModal({
         {/* Top Section: Supplier */}
         <div className="bg-surface-soft border border-border rounded-sm p-4 space-y-4">
           <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-            <Package className="w-4 h-4 text-brand" />{i18next.t("Thông tin nhà cung cấp")}</h3>
+            <Package className="w-4 h-4 text-brand" />{"Thông tin nhà cung cấp"}</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label
                 htmlFor="supplier"
                 className="text-xs font-semibold text-ink"
-              >{i18next.t("Nhà cung cấp *")}</Label>
+              >{"Nhà cung cấp *"}</Label>
               <Select
                 value={isNewSupplier ? "new" : supplierId}
                 onValueChange={(val) => {
@@ -342,7 +340,7 @@ export function BulkRestockModal({
                       {sup.name}
                     </SelectItem>
                   ))}
-                  <SelectItem value="new" className="text-brand font-semibold">{i18next.t("+ Thêm nhà cung cấp mới...")}</SelectItem>
+                  <SelectItem value="new" className="text-brand font-semibold">{"+ Thêm nhà cung cấp mới..."}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -351,7 +349,7 @@ export function BulkRestockModal({
               <div className="space-y-3 animate-scale-in border-l-2 border-brand pl-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{i18next.t("Tên nhà cung cấp *")}</Label>
+                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Tên nhà cung cấp *"}</Label>
                     <Input
                       placeholder="Tên nhà cung cấp..."
                       value={newSupplierName}
@@ -361,7 +359,7 @@ export function BulkRestockModal({
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{i18next.t("Số điện thoại *")}</Label>
+                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Số điện thoại *"}</Label>
                     <Input
                       placeholder="Số điện thoại..."
                       value={newSupplierPhone}
@@ -382,7 +380,7 @@ export function BulkRestockModal({
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{i18next.t("Địa chỉ")}</Label>
+                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Địa chỉ"}</Label>
                     <Input
                       placeholder="Địa chỉ..."
                       value={newSupplierAddress}
@@ -399,7 +397,7 @@ export function BulkRestockModal({
         {/* Bottom Section: Items Table */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h3 className="text-sm font-bold text-ink">{i18next.t("Danh sách sản phẩm nhập")}</h3>
+            <h3 className="text-sm font-bold text-ink">{"Danh sách sản phẩm nhập"}</h3>
 
             <div className="flex flex-col sm:flex-row items-center gap-2">
               <input
@@ -416,7 +414,7 @@ export function BulkRestockModal({
                 className="h-9 gap-1.5 whitespace-nowrap"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="w-4 h-4" />{i18next.t("Nhập từ Excel")}</Button>
+                <Upload className="w-4 h-4" />{"Nhập từ Excel"}</Button>
 
               <div className="relative w-full sm:w-72">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
@@ -451,7 +449,7 @@ export function BulkRestockModal({
                   </div>
                 )}
                 {searchQuery.trim() !== "" && searchResults.length === 0 && (
-                  <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface border border-border rounded-sm shadow-ui-soft p-3 text-center text-xs text-ink-muted">{i18next.t("Không tìm thấy sản phẩm.")}</div>
+                  <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface border border-border rounded-sm shadow-ui-soft p-3 text-center text-xs text-ink-muted">{"Không tìm thấy sản phẩm."}</div>
                 )}
               </div>
             </div>
@@ -459,20 +457,20 @@ export function BulkRestockModal({
 
           {items.length === 0 ? (
             <div className="py-8 border border-dashed border-border rounded-sm flex flex-col items-center justify-center text-ink-muted bg-surface-soft/30">
-              <p className="text-xs font-medium">{i18next.t("Chưa có sản phẩm nào được chọn")}</p>
-              <p className="text-[11px] mt-1">{i18next.t("Sử dụng thanh tìm kiếm để thêm sản phẩm vào phiếu nhập")}</p>
+              <p className="text-xs font-medium">{"Chưa có sản phẩm nào được chọn"}</p>
+              <p className="text-[11px] mt-1">{"Sử dụng thanh tìm kiếm để thêm sản phẩm vào phiếu nhập"}</p>
             </div>
           ) : (
             <div className="border border-border rounded-sm overflow-x-auto bg-surface">
               <table className="w-full text-left border-collapse text-sm min-w-225">
                 <thead className="bg-surface-soft text-ink-muted font-semibold text-xs border-b border-border">
                   <tr>
-                    <th className="py-2.5 px-3">{i18next.t("Sản phẩm / Biến thể")}</th>
-                    <th className="py-2.5 px-3 w-24 text-center">{i18next.t("Số lượng")}</th>
-                    <th className="py-2.5 px-3 w-32 text-right">{i18next.t("Đơn giá (đ)")}</th>
-                    <th className="py-2.5 px-3 w-32 text-center">{i18next.t("Mã lô")}</th>
+                    <th className="py-2.5 px-3">{"Sản phẩm / Biến thể"}</th>
+                    <th className="py-2.5 px-3 w-24 text-center">{"Số lượng"}</th>
+                    <th className="py-2.5 px-3 w-32 text-right">{"Đơn giá (đ)"}</th>
+                    <th className="py-2.5 px-3 w-32 text-center">{"Mã lô"}</th>
                     <th className="py-2.5 px-3 w-35 text-center">NSX & HSD</th>
-                    <th className="py-2.5 px-3 w-32 text-right">{i18next.t("Thành tiền (đ)")}</th>
+                    <th className="py-2.5 px-3 w-32 text-right">{"Thành tiền (đ)"}</th>
                     <th className="py-2.5 px-3 w-10 text-center"></th>
                   </tr>
                 </thead>
@@ -608,7 +606,7 @@ export function BulkRestockModal({
         {/* Custom Footer */}
         <div className="sticky bottom-0 -mx-6 -mb-6 mt-6 px-6 py-4 border-t border-surface-muted bg-surface/80 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-left flex-1">
-            <p className="text-xs text-ink-muted uppercase font-semibold">{i18next.t("Tổng cộng")}</p>
+            <p className="text-xs text-ink-muted uppercase font-semibold">{"Tổng cộng"}</p>
             <p className="text-xl font-bold text-brand tabular-nums">
               {totalAmount.toLocaleString("vi-VN")} đ
             </p>

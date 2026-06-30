@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import * as React from "react";
 import { format, parseISO } from "date-fns";
 import { vi } from "date-fns/locale";
@@ -146,14 +144,14 @@ export function DateTimePicker({
           {date ? (
             format(date, "dd/MM/yyyy", { locale: vi }) + " " + time
           ) : (
-            <span>{i18next.t("Chọn ngày giờ")}</span>
+            <span>{"Chọn ngày giờ"}</span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 border-border bg-surface shadow-ui-card">
         <Calendar mode="single" selected={date} onSelect={handleDateSelect} />
         <div className="p-3 border-t border-border flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-ink">{i18next.t("Thời gian")}</span>
+          <span className="text-sm font-medium text-ink">{"Thời gian"}</span>
           <Input
             type="text"
             placeholder="00:00"

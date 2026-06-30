@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import type { Variant } from "@/admin/types/product";
 
 type ProductDetailVariantsProps = {
@@ -17,14 +15,14 @@ export default function ProductDetailVariants({
 
   return (
     <div className="col-span-2 mt-2">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-2">{i18next.t("Phân loại hàng")}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-2">{"Phân loại hàng"}</p>
       <div className="overflow-x-auto border border-border rounded-sm">
         <table className="w-full text-left text-sm min-w-100">
           <thead className="bg-surface-soft text-ink-muted">
             <tr>
-              <th className="px-3 py-2 font-medium">{i18next.t("Tên")}</th>
+              <th className="px-3 py-2 font-medium">{"Tên"}</th>
               <th className="px-3 py-2 font-medium">SKU</th>
-              <th className="px-3 py-2 font-medium text-right">{i18next.t("Giá")}</th>
+              <th className="px-3 py-2 font-medium text-right">{"Giá"}</th>
               <th className="px-3 py-2 font-medium text-right">Kho</th>
             </tr>
           </thead>

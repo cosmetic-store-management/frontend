@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -136,7 +134,7 @@ export default function ProductEditor({
           variant="outline"
           onClick={onCancel}
           className="h-10 px-5"
-        >{i18next.t("Huỷ")}</Button>
+        >Huỷ</Button>
         <Button
           type="submit"
           disabled={loading}

@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Star, ArrowRight } from "lucide-react";
 import { useProducts } from "@/public/hooks/useProducts";
@@ -22,7 +20,7 @@ export function FlashSale() {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <Star className="w-8 h-8 text-brand fill-brand" />
-              <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight uppercase">{i18next.t("Sản Phẩm Bán Chạy")}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight uppercase">{"Sản Phẩm Bán Chạy"}</h2>
             </div>
           </div>
 

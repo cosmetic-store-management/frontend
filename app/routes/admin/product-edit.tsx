@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -104,7 +102,7 @@ export default function ProductEditPage() {
         />
       </div>
 
-      <div className="bg-surface rounded-xl shadow-ui-card border border-border p-6 md:p-8 min-h-[500px]">
+      <div className="bg-surface rounded-sm shadow-ui-card border border-border p-6 md:p-8 min-h-[500px]">
         {loadingProduct ? (
           <div className="flex items-center justify-center h-full min-h-[400px]">
             <Loader2 className="w-8 h-8 animate-spin text-brand" />
@@ -122,8 +120,8 @@ export default function ProductEditPage() {
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-ink-muted">
-            <p>{i18next.t("Không tìm thấy thông tin sản phẩm.")}</p>
-            <Button variant="outline" onClick={handleCancel} className="mt-4">{i18next.t("Quay lại")}</Button>
+            <p>{"Không tìm thấy thông tin sản phẩm."}</p>
+            <Button variant="outline" onClick={handleCancel} className="mt-4">{"Quay lại"}</Button>
           </div>
         )}
       </div>

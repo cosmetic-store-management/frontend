@@ -6,7 +6,7 @@ import { useRegister, useSocialLogin } from "@/auth/hooks/useAuth";
 import { registerSchema, type RegisterForm } from "../schemas/auth.schema";
 import { toast } from "@/lib/toast";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+
 
 const PERKS = [
   "Earn points on every purchase",
@@ -16,7 +16,7 @@ const PERKS = [
 ];
 
 export default function RegisterPage() {
-  const { t } = useTranslation();
+  
   const registerMutation = useRegister();
   const navigate = useNavigate();
   const [showPw, setShowPw] = useState(false);
@@ -45,13 +45,13 @@ export default function RegisterPage() {
         phone: data.phone,
         password: data.password,
       });
-      toast.success(t("Welcome to GlowUp! 🌸 Your account has been created."));
+      toast.success("Welcome to GlowUp! 🌸 Your account has been created.");
       navigate("/");
     } catch (err: any) {
       toast.error(
         err instanceof Error
           ? err.message
-          : t("Registration failed. Please try again."),
+          : "Registration failed. Please try again.",
       );
     }
   };
@@ -79,7 +79,7 @@ export default function RegisterPage() {
   }) => (
     <div className="space-y-1.5">
       <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-        {t(label)}
+        {label}
       </label>
       <div className="relative">
         <input
@@ -153,16 +153,16 @@ export default function RegisterPage() {
                 "var(--font-display, 'Playfair Display', Georgia, serif)",
             }}
           >
-            {t(`Join the glow`)}
+            {"Join the glow"}
             <br />
-            <em>{t(`community.`)}</em>
+            <em>{"community."}</em>
           </h2>
 
           <p
             className="text-sm leading-relaxed mb-8"
             style={{ color: "rgba(255,255,255,0.6)" }}
           >
-            {t(`Create your free account and unlock a world of beauty perks.`)}
+            {"Create your free account and unlock a world of beauty perks."}
           </p>
 
           <ul className="space-y-3 text-left">
@@ -178,7 +178,7 @@ export default function RegisterPage() {
                   className="text-sm"
                   style={{ color: "rgba(255,255,255,0.75)" }}
                 >
-                  {t(perk)}
+                  {perk}
                 </span>
               </li>
             ))}
@@ -217,10 +217,10 @@ export default function RegisterPage() {
                   "var(--font-display, 'Playfair Display', Georgia, serif)",
               }}
             >
-              {t(`Create account`)}
+              {"Create account"}
             </h1>
             <p className="text-sm text-muted-foreground mt-1.5">
-              {t(`It's free and only takes a minute.`)}
+              {"It's free and only takes a minute."}
             </p>
           </div>
 
@@ -232,7 +232,7 @@ export default function RegisterPage() {
             <Field
               label="Full Name"
               name="name"
-              placeholder={t("Nguyễn Thị Lan")}
+              placeholder={"Nguyễn Thị Lan"}
               error={errors.name?.message}
             />
             <Field
@@ -253,7 +253,7 @@ export default function RegisterPage() {
               label="Password"
               name="password"
               type={showPw ? "text" : "password"}
-              placeholder={t("Min. 6 characters")}
+              placeholder={"Min. 6 characters"}
               error={errors.password?.message}
               rightEl={
                 <button
@@ -273,7 +273,7 @@ export default function RegisterPage() {
               label="Confirm Password"
               name="confirmPassword"
               type={showConfirm ? "text" : "password"}
-              placeholder={t("Repeat password")}
+              placeholder={"Repeat password"}
               error={errors.confirmPassword?.message}
               rightEl={
                 <button
@@ -302,19 +302,19 @@ export default function RegisterPage() {
                 <Check className="w-3 h-3 text-white absolute opacity-0 peer-checked:opacity-100 transition-opacity" />
               </div>
               <span className="text-xs text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                {t(`By creating an account, you agree to GlowUp's`)}{" "}
+                {"By creating an account, you agree to GlowUp's"}{" "}
                 <Link
                   to="/terms"
                   className="text-foreground underline decoration-border underline-offset-4 hover:decoration-brand transition-colors"
                 >
-                  {t(`Terms of Service`)}
+                  {"Terms of Service"}
                 </Link>{" "}
-                {t(`and`)}{" "}
+                {"and"}{" "}
                 <Link
                   to="/privacy"
                   className="text-foreground underline decoration-border underline-offset-4 hover:decoration-brand transition-colors"
                 >
-                  {t(`Privacy Policy`)}
+                  {"Privacy Policy"}
                 </Link>
                 .
               </span>
@@ -332,7 +332,7 @@ export default function RegisterPage() {
               ) : (
                 <>
                   <UserPlus className="w-4 h-4" />
-                  {t(`Create Account`)}
+                  {"Create Account"}
                 </>
               )}
             </button>
@@ -344,7 +344,7 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center">
                 <span className="px-3 bg-background text-xs text-muted-foreground">
-                  {t(`or sign up with`)}
+                  {"or sign up with"}
                 </span>
               </div>
             </div>
@@ -380,13 +380,13 @@ export default function RegisterPage() {
           {/* Login CTA */}
           <div className="mt-8 text-center pb-8 lg:pb-0">
             <p className="text-sm text-muted-foreground">
-              {t(`Already have an account?`)}{" "}
+              {"Already have an account?"}{" "}
               <Link
                 to="/login"
                 className="font-semibold transition-colors"
                 style={{ color: "hsl(352, 72%, 48%)" }}
               >
-                {t(`Sign in`)}
+                {"Sign in"}
               </Link>
             </p>
           </div>

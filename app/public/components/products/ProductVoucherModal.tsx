@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { X, Copy } from "lucide-react";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { toast } from "@/lib/toast";
@@ -43,7 +41,7 @@ export function ProductVoucherModal({
       <div className="-m-6 relative">
         {/* Header */}
         <div className="bg-[#fff0f0] px-4 py-4 flex items-center justify-between relative">
-          <h2 className="text-[#8b0000] font-bold text-base uppercase tracking-wide">{i18next.t("Giảm giá đơn hàng")}</h2>
+          <h2 className="text-[#8b0000] font-bold text-base uppercase tracking-wide">{"Giảm giá đơn hàng"}</h2>
           <button
             onClick={onClose}
             className="text-ink-muted hover:text-ink transition-colors"
@@ -58,7 +56,7 @@ export function ProductVoucherModal({
 
           <div className="w-full space-y-4 mb-6">
             <div className="flex items-center">
-              <span className="text-ink-muted w-16 text-sm">{i18next.t("Mã:")}</span>
+              <span className="text-ink-muted w-16 text-sm">{"Mã:"}</span>
               <div className="flex items-center gap-2 font-bold text-ink text-sm">
                 {voucher.code}
                 <button
@@ -91,7 +89,7 @@ export function ProductVoucherModal({
           <button
             onClick={handleCopy}
             className="w-full bg-[#8b0000] hover:bg-[#700000] text-white font-bold py-3 rounded-sm transition-colors uppercase text-sm"
-          >{i18next.t("Sao chép")}</button>
+          >{"Sao chép"}</button>
         </div>
       </div>
     </BaseCrudModal>

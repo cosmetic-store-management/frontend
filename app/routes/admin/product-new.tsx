@@ -50,7 +50,7 @@ export default function ProductNewPage() {
         />
       </div>
 
-      <div className="bg-surface rounded-xl shadow-ui-card border border-border p-6 md:p-8">
+      <div className="bg-surface rounded-sm shadow-ui-card border border-border p-6 md:p-8">
         <ProductEditor
           mode="create"
           loading={submitting}

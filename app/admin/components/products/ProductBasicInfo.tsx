@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { lazy, Suspense } from "react";
 const ReactQuill = lazy(() =>
   import("react-quill-new").then((m) => ({ default: m.default || m })),
@@ -94,7 +92,7 @@ export function ProductBasicInfo({
     <>
       {/* Tên sản phẩm */}
       <div className="space-y-1.5">
-        <Label className="text-sm font-semibold text-ink">{i18next.t("Tên sản phẩm")}<span className="text-danger">*</span>
+        <Label className="text-sm font-semibold text-ink">Tên sản phẩm<span className="text-danger">*</span>
         </Label>
         <Controller
           control={control}
@@ -144,7 +142,7 @@ export function ProductBasicInfo({
       {/* Danh mục + Thương hiệu */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-sm font-semibold text-ink">{i18next.t("Danh mục")}<span className="text-danger">*</span>
+          <Label className="text-sm font-semibold text-ink">Danh mục<span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -183,7 +181,7 @@ export function ProductBasicInfo({
           )}
         </div>
         <div className="space-y-1.5">
-          <Label className="text-sm font-semibold text-ink">{i18next.t("Thương hiệu")}<span className="text-danger">*</span>
+          <Label className="text-sm font-semibold text-ink">Thương hiệu<span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -222,7 +220,7 @@ export function ProductBasicInfo({
 
       {/* Mô tả */}
       <div className="space-y-1.5">
-        <Label className="text-sm font-semibold text-ink">{i18next.t("Mô tả sản phẩm")}</Label>
+        <Label className="text-sm font-semibold text-ink">Mô tả sản phẩm</Label>
         <div className="min-h-50 [&_.ql-editor]:min-h-37.5">
           <Controller
             control={control}

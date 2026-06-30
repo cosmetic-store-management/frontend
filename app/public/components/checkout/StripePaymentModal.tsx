@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -112,7 +110,7 @@ export function StripePaymentModal({
         ) : (
           <div className="flex flex-col items-center justify-center py-10 space-y-3">
             <Loader2 className="w-8 h-8 animate-spin text-brand" />
-            <p className="text-sm text-ink-muted">{i18next.t("Đang kết nối cổng thanh toán...")}</p>
+            <p className="text-sm text-ink-muted">{"Đang kết nối cổng thanh toán..."}</p>
           </div>
         )}
       </div>

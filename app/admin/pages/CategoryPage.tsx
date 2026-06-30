@@ -250,15 +250,15 @@ export function CategoryPage() {
       reset(
         editing
           ? {
-              name: editing.name,
-              description: editing.description || "",
-              imageUrl: "",
-              iconUrl: editing.iconUrl || "",
-              bannerUrl: editing.bannerUrl || "",
-              parentId: editing.parentId || null,
-              isActive: editing.isActive,
-              sortOrder: editing.sortOrder ?? 1,
-            }
+            name: editing.name,
+            description: editing.description || "",
+            imageUrl: "",
+            iconUrl: editing.iconUrl || "",
+            bannerUrl: editing.bannerUrl || "",
+            parentId: editing.parentId || null,
+            isActive: editing.isActive,
+            sortOrder: editing.sortOrder ?? 1,
+          }
           : EMPTY_FORM,
       );
     }
@@ -300,7 +300,7 @@ export function CategoryPage() {
       error: (e: unknown) =>
         e instanceof Error ? e.message : "An error occurred",
     });
-    await action.then(() => setIsFormOpen(false)).catch(() => {});
+    await action.then(() => setIsFormOpen(false)).catch(() => { });
   };
 
   const confirmDelete = () => {
@@ -373,18 +373,21 @@ export function CategoryPage() {
             <Table className="min-w-187.5 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[28%] pl-4 text-left">
+                  <TableHead className="w-[24%] pl-4 text-left">
                     Category
                   </TableHead>
                   <TableHead className="w-[20%] text-center">
+                    Description
+                  </TableHead>
+                  <TableHead className="w-[16%] text-center">
                     Parent Category
                   </TableHead>
-                  <TableHead className="w-[12%] text-center">Order</TableHead>
-                  <TableHead className="w-[14%] text-center">
+                  <TableHead className="w-[10%] text-center">Order</TableHead>
+                  <TableHead className="w-[10%] text-center">
                     Products
                   </TableHead>
-                  <TableHead className="w-[14%] text-center">Status</TableHead>
-                  <TableHead className="w-[12%] text-center">Actions</TableHead>
+                  <TableHead className="w-[10%] text-center">Status</TableHead>
+                  <TableHead className="w-[10%] text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -443,6 +446,11 @@ export function CategoryPage() {
                             )}
                           </div>
                         </div>
+                      </TableCell>
+                      <TableCell className="text-sm overflow-hidden max-w-0 text-center text-ink-muted">
+                        <span className="truncate block w-full mx-auto" title={cat.description || ""}>
+                          {cat.description || "—"}
+                        </span>
                       </TableCell>
                       <TableCell className="text-sm overflow-hidden max-w-0 text-center">
                         {cat.parentId ? (
@@ -533,7 +541,7 @@ export function CategoryPage() {
         open={isFormOpen}
         onOpenChange={(o) => !o && setIsFormOpen(false)}
       >
-        <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] md:h-[80vh] flex flex-col p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
             <DialogTitle className="text-xl font-bold text-ink">
               {editing ? "Edit Category" : "Add New Category"}
@@ -544,7 +552,7 @@ export function CategoryPage() {
             className="flex flex-col flex-1 overflow-hidden"
           >
             <div className="p-6 overflow-y-auto flex-1 scrollbar-thin">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-8 gap-6">
                 <div className="md:col-span-2 space-y-5">
                   <div className="space-y-1.5">
                     <Label
@@ -558,7 +566,7 @@ export function CategoryPage() {
                       {...register("name")}
                       aria-invalid={!!errors.name}
                       placeholder="E.g. Skincare"
-                      className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                      className="h-10 rounded-sm bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                     />
                     {errors.name && (
                       <p className="text-xs text-danger">
@@ -578,7 +586,7 @@ export function CategoryPage() {
                       rows={4}
                       {...register("description")}
                       placeholder="Enter short description..."
-                      className="bg-surface border-border focus-visible:ring-brand focus-visible:border-brand resize-none"
+                      className="rounded-sm bg-surface border-border focus-visible:ring-brand focus-visible:border-brand resize-none"
                     />
                     {errors.description && (
                       <p className="text-xs text-danger">
@@ -601,7 +609,7 @@ export function CategoryPage() {
                             field.onChange(val === "none" ? null : val)
                           }
                         >
-                          <SelectTrigger className="w-full bg-surface border-border focus:ring-brand">
+                          <SelectTrigger className="w-full rounded-sm bg-surface border-border focus:ring-brand">
                             <SelectValue placeholder="Select parent category (Optional)" />
                           </SelectTrigger>
                           <SelectContent className="max-h-60">
@@ -633,9 +641,6 @@ export function CategoryPage() {
                         </Select>
                       )}
                     />
-                    <p className="text-xs text-ink-muted">
-                      Leave blank if this is a root category (level 1)
-                    </p>
                     {errors.parentId && (
                       <p className="text-xs text-danger">
                         {errors.parentId.message}
@@ -647,13 +652,13 @@ export function CategoryPage() {
                       htmlFor="catBanner"
                       className="text-sm font-semibold text-ink"
                     >
-                      Mega Menu Banner
+                      Category Banner
                     </Label>
                     <Input
                       id="catBanner"
                       {...register("bannerUrl")}
-                      placeholder="Paste banner URL (3:1 ratio, E.g. 900x300px)"
-                      className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                      placeholder="Banner Image URL"
+                      className="h-10 rounded-sm bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                     />
                     {bannerUrl && (
                       <div className="relative mt-2 rounded-md overflow-hidden border border-border bg-surface-muted">
@@ -668,50 +673,29 @@ export function CategoryPage() {
                             }}
                           />
                         </div>
-                        <span className="absolute top-1.5 right-1.5 text-[10px] bg-black/50 text-white px-1.5 py-0.5 rounded">
-                          Preview
-                        </span>
+                        <a
+                          href={bannerUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="absolute top-1.5 right-1.5 text-[10px] bg-black/50 hover:bg-black/80 text-white px-2 py-1 rounded cursor-pointer transition-colors"
+                          title="Click to view full size"
+                        >
+                          ⤢ Preview
+                        </a>
                       </div>
                     )}
-                    <p className="text-xs text-ink-muted">
-                      Only used for root categories. 3:1 ratio recommended.
-                    </p>
                   </div>
                   {/* Icon chỉ dùng cho danh mục gốc → nằm trong right column */}
                 </div>
-                <div className="md:col-span-1 space-y-6">
+                <div className="md:col-span-1 space-y-6 md:border-l md:border-border md:pl-8">
                   {/* Icon picker — chỉ cho danh mục gốc */}
                   {!parentIdValue && (
                     <div className="space-y-2">
                       <Label className="text-sm font-semibold text-ink">
-                        Main Category Icon
+                        Category Icon
                       </Label>
-                      {/* Preview icon hiện tại */}
-                      {iconUrl && (
-                        <div className="flex items-center gap-2 p-2 rounded-md bg-brand/5 border border-brand/20">
-                          <img
-                            src={iconUrl}
-                            alt="icon"
-                            className="w-8 h-8 object-contain shrink-0"
-                          />
-                          <span className="text-xs text-ink-muted flex-1 truncate">
-                            {iconUrl.split("/").pop()}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => setValue("iconUrl", "")}
-                            className="text-ink-muted hover:text-danger text-xs shrink-0"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      )}
-                      {/* Group 1: 9 icon danh mục chính */}
-                      <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-wide">
-                        Main Categories
-                      </p>
                       <div className="grid grid-cols-5 gap-1.5">
-                        {COSMETICS_ICONS.slice(0, 9).map(
+                        {COSMETICS_ICONS.map(
                           ({ url, label, hint }) => (
                             <button
                               type="button"
@@ -722,69 +706,31 @@ export function CategoryPage() {
                                 })
                               }
                               title={`${label} — ${hint}`}
-                              className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${
-                                iconUrl === url
-                                  ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
-                                  : "border-border bg-surface"
-                              }`}
+                              className={`flex flex-col items-center justify-center p-2 rounded-sm border transition-all hover:border-brand hover:bg-brand/5 ${iconUrl === url
+                                ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
+                                : "border-border bg-surface"
+                                }`}
                             >
                               <img
                                 src={url}
                                 alt={label}
-                                className="w-6 h-6 object-contain"
+                                className="w-7 h-7 object-contain"
                               />
-                              <span className="text-[9px] text-ink-muted leading-tight truncate w-full text-center">
-                                {label}
-                              </span>
-                            </button>
-                          ),
-                        )}
-                      </div>
-                      {/* Group 2: icon bổ sung cho danh mục con */}
-                      <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-wide pt-1">
-                        Sub-categories
-                      </p>
-                      <div className="grid grid-cols-5 gap-1.5">
-                        {COSMETICS_ICONS.slice(9).map(
-                          ({ url, label, hint }) => (
-                            <button
-                              type="button"
-                              key={url}
-                              onClick={() =>
-                                setValue("iconUrl", url, {
-                                  shouldValidate: true,
-                                })
-                              }
-                              title={`${label} — ${hint}`}
-                              className={`flex flex-col items-center gap-1 p-2 rounded-md border text-center transition-all hover:border-brand hover:bg-brand/5 ${
-                                iconUrl === url
-                                  ? "border-brand bg-brand/10 shadow-sm ring-1 ring-brand/30"
-                                  : "border-border bg-surface"
-                              }`}
-                            >
-                              <img
-                                src={url}
-                                alt={label}
-                                className="w-6 h-6 object-contain"
-                              />
-                              <span className="text-[9px] text-ink-muted leading-tight truncate w-full text-center">
-                                {label}
-                              </span>
                             </button>
                           ),
                         )}
                       </div>
                       {/* Custom URL input */}
-                      <div className="space-y-1">
-                        <p className="text-[11px] text-ink-muted font-medium">
-                          Or paste a custom icon URL (PNG/SVG transparent
-                          background):
-                        </p>
+                      <div className="space-y-1.5 mt-3">
+                        <Label htmlFor="catIcon" className="text-sm font-semibold text-ink">
+                          Custom Icon URL
+                        </Label>
                         <Input
                           id="catIcon"
-                          {...register("iconUrl")}
-                          placeholder="https://... (Image URL)"
-                          className="h-9 text-xs bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                          value={iconUrl || ""}
+                          onChange={(e) => setValue("iconUrl", e.target.value, { shouldValidate: true })}
+                          placeholder="Icon URL..."
+                          className="h-10 rounded-sm bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                         />
                       </div>
                       {errors.iconUrl && (
@@ -794,7 +740,7 @@ export function CategoryPage() {
                       )}
                     </div>
                   )}
-                  <div className="p-4 rounded-md border border-border bg-bg/50">
+                  <div className="p-4 rounded-sm border border-border">
                     <div className="flex items-center justify-between">
                       <Label
                         htmlFor="catActive"
@@ -810,11 +756,12 @@ export function CategoryPage() {
                             id="catActive"
                             checked={field.value}
                             onCheckedChange={field.onChange}
+                            className="data-[state=checked]:bg-brand"
                           />
                         )}
                       />
                     </div>
-                    <p className="text-xs text-ink-muted mt-2">
+                    <p className="text-xs text-ink-muted">
                       Show in application
                     </p>
                   </div>
@@ -823,18 +770,15 @@ export function CategoryPage() {
                       htmlFor="catSort"
                       className="text-sm font-semibold text-ink"
                     >
-                      Priority Order
+                      Sort Order <span className="text-brand">*</span>
                     </Label>
                     <Input
                       id="catSort"
                       type="number"
                       min={1}
                       {...register("sortOrder")}
-                      className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand font-mono"
+                      className="h-10 rounded-sm bg-surface border-border focus-visible:ring-brand focus-visible:border-brand font-mono"
                     />
-                    <p className="text-xs text-ink-muted">
-                      Smaller number means higher priority
-                    </p>
                     {errors.sortOrder && (
                       <p className="text-xs text-danger">
                         {errors.sortOrder.message}
@@ -848,14 +792,14 @@ export function CategoryPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="h-11 bg-surface"
+                className="h-11 rounded-sm bg-surface"
                 onClick={() => setIsFormOpen(false)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                className="h-11 bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
+                className="h-11 rounded-sm bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Confirm

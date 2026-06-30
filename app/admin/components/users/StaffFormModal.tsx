@@ -1,5 +1,5 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
+
+
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -105,7 +105,7 @@ export function StaffFormModal({
         id="staff-form"
       >
         <div className="space-y-1.5">
-          <Label htmlFor="sName" className="text-xs font-semibold text-ink">{i18next.t("Họ tên nhân viên *")}</Label>
+          <Label htmlFor="sName" className="text-xs font-semibold text-ink">{"Họ tên nhân viên *"}</Label>
           <Controller
             control={control}
             name="name"
@@ -118,7 +118,7 @@ export function StaffFormModal({
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="sEmail" className="text-xs font-semibold text-ink">{i18next.t("Email tài khoản *")}</Label>
+          <Label htmlFor="sEmail" className="text-xs font-semibold text-ink">{"Email tài khoản *"}</Label>
           <Controller
             control={control}
             name="email"
@@ -136,7 +136,7 @@ export function StaffFormModal({
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="sPhone" className="text-xs font-semibold text-ink">{i18next.t("Số điện thoại *")}</Label>
+          <Label htmlFor="sPhone" className="text-xs font-semibold text-ink">{"Số điện thoại *"}</Label>
           <Controller
             control={control}
             name="phone"
@@ -150,7 +150,7 @@ export function StaffFormModal({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-xs font-semibold text-ink block">{i18next.t("Cấp bậc")}</Label>
+          <Label className="text-xs font-semibold text-ink block">{"Cấp bậc"}</Label>
           <Controller
             control={control}
             name="role"
@@ -172,9 +172,9 @@ export function StaffFormModal({
                     />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-sm font-semibold text-ink">{i18next.t("Cấp Nhân viên")}</span>
-                    <span className="text-xs text-ink-muted">{i18next.t(`Khối thực thi. Chỉ có thể thực hiện thao tác được cấp
-                      quyền. Không thể quản lý nhân sự.`)}</span>
+                    <span className="text-sm font-semibold text-ink">{"Cấp Nhân viên"}</span>
+                    <span className="text-xs text-ink-muted">{`Khối thực thi. Chỉ có thể thực hiện thao tác được cấp
+                      quyền. Không thể quản lý nhân sự.`}</span>
                   </div>
                 </label>
 
@@ -195,9 +195,9 @@ export function StaffFormModal({
                       />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm font-semibold text-ink">{i18next.t("Cấp Quản lý")}</span>
-                      <span className="text-xs text-ink-muted">{i18next.t(`Khối điều hành. Có thể tạo và phân quyền cho Cấp Nhân
-                        viên.`)}</span>
+                      <span className="text-sm font-semibold text-ink">{"Cấp Quản lý"}</span>
+                      <span className="text-xs text-ink-muted">{`Khối điều hành. Có thể tạo và phân quyền cho Cấp Nhân
+                        viên.`}</span>
                     </div>
                   </label>
                 )}
@@ -211,7 +211,7 @@ export function StaffFormModal({
 
         <div className="pt-4 border-t border-border mt-4">
           <div className="flex items-center justify-between mb-3">
-            <Label className="text-sm font-semibold text-ink">{i18next.t("Mẫu phân quyền")}</Label>
+            <Label className="text-sm font-semibold text-ink">{"Mẫu phân quyền"}</Label>
             <Select
               onValueChange={(value) => {
                 if (value !== "custom") {
@@ -234,14 +234,14 @@ export function StaffFormModal({
                 <SelectValue placeholder="-- Tùy chỉnh quyền --" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="custom">{i18next.t("-- Tùy chỉnh quyền --")}</SelectItem>
+                <SelectItem value="custom">{"-- Tùy chỉnh quyền --"}</SelectItem>
                 {selectedRole === "manager" ? (
-                  <SelectItem value="store_manager">{i18next.t("Quản lý Cửa hàng")}</SelectItem>
+                  <SelectItem value="store_manager">{"Quản lý Cửa hàng"}</SelectItem>
                 ) : (
                   <>
-                    <SelectItem value="sales">{i18next.t("Nhân viên Bán hàng")}</SelectItem>
-                    <SelectItem value="inventory">{i18next.t("Nhân viên Kho")}</SelectItem>
-                    <SelectItem value="marketing">{i18next.t("Nhân viên Marketing")}</SelectItem>
+                    <SelectItem value="sales">{"Nhân viên Bán hàng"}</SelectItem>
+                    <SelectItem value="inventory">{"Nhân viên Kho"}</SelectItem>
+                    <SelectItem value="marketing">{"Nhân viên Marketing"}</SelectItem>
                   </>
                 )}
               </SelectContent>
@@ -252,7 +252,7 @@ export function StaffFormModal({
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-surface-soft border-b border-border">
                 <tr>
-                  <th className="px-3 py-2 font-semibold text-ink text-xs w-48">{i18next.t("Chức năng")}</th>
+                  <th className="px-3 py-2 font-semibold text-ink text-xs w-48">{"Chức năng"}</th>
                   {ACTIONS.map((action) => (
                     <th
                       key={action.id}

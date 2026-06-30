@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,7 +63,7 @@ export function StaffInfoModal({
         id="staff-info-form"
       >
         <div className="space-y-1.5">
-          <Label htmlFor="iName" className="text-xs font-semibold text-ink">{i18next.t("Họ tên nhân viên *")}</Label>
+          <Label htmlFor="iName" className="text-xs font-semibold text-ink">{"Họ tên nhân viên *"}</Label>
           <Controller
             control={control}
             name="name"
@@ -78,7 +76,7 @@ export function StaffInfoModal({
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="iEmail" className="text-xs font-semibold text-ink">{i18next.t("Email tài khoản")}</Label>
+          <Label htmlFor="iEmail" className="text-xs font-semibold text-ink">{"Email tài khoản"}</Label>
           <Controller
             control={control}
             name="email"
@@ -96,7 +94,7 @@ export function StaffInfoModal({
           )}
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="iPhone" className="text-xs font-semibold text-ink">{i18next.t("Số điện thoại *")}</Label>
+          <Label htmlFor="iPhone" className="text-xs font-semibold text-ink">{"Số điện thoại *"}</Label>
           <Controller
             control={control}
             name="phone"

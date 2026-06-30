@@ -10,10 +10,10 @@ import {
 import { toast } from "@/lib/toast";
 import { Loader2, ArrowLeft, Mail, Sparkles } from "lucide-react";
 import { useStats } from "@/public/hooks/useSetting";
-import { useTranslation } from "react-i18next";
+
 
 export default function ForgotPasswordPage() {
-  const { t } = useTranslation();
+  
   const [submitted, setSubmitted] = useState(false);
   const forgotPasswordMutation = useForgotPassword();
   const { stats } = useStats();
@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
         setSubmitted(true);
       },
       onError: (err) => {
-        toast.error(err instanceof Error ? err.message : t("Có lỗi xảy ra"));
+        toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
       },
     });
   };
@@ -103,25 +103,25 @@ export default function ForgotPasswordPage() {
                 "var(--font-display, 'Playfair Display', Georgia, serif)",
             }}
           >
-            {t(`Your beauty,`)}
+            {"Your beauty,"}
             <br />
-            <em>{t(`your story.`)}</em>
+            <em>{"your story."}</em>
           </h2>
 
           <p
             className="text-base leading-relaxed"
             style={{ color: "rgba(255,255,255,0.65)" }}
           >
-            {t(`Discover authentic skincare and cosmetics curated for the modern
-            woman. Sign in to unlock exclusive offers.`)}
+            {`Discover authentic skincare and cosmetics curated for the modern
+            woman. Sign in to unlock exclusive offers.`}
           </p>
 
           {/* Trust indicators */}
           <div className="mt-10 grid grid-cols-3 gap-4">
             {[
-              { num: formatStat(stats.products), label: t("Products") },
-              { num: formatStat(stats.customers), label: t("Customers") },
-              { num: Number(stats.rating).toFixed(1) + "★", label: t("Rating") },
+              { num: formatStat(stats.products), label: "Products" },
+              { num: formatStat(stats.customers), label: "Customers" },
+              { num: Number(stats.rating).toFixed(1) + "★", label: "Rating" },
             ].map(({ num, label }) => (
               <div key={label} className="text-center">
                 <p className="text-xl font-bold text-white">{num}</p>
@@ -169,7 +169,7 @@ export default function ForgotPasswordPage() {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
-            {t(`Back to login`)}
+            {"Back to login"}
           </Link>
 
           {!submitted ? (
@@ -182,10 +182,10 @@ export default function ForgotPasswordPage() {
                       "var(--font-display, 'Playfair Display', Georgia, serif)",
                   }}
                 >
-                  {t(`Forgot password?`)}
+                  {"Forgot password?"}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-1.5">
-                  {t(`No worries, we'll send you reset instructions.`)}
+                  {"No worries, we'll send you reset instructions."}
                 </p>
               </div>
 
@@ -196,7 +196,7 @@ export default function ForgotPasswordPage() {
               >
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
-                    {t(`Email or Phone`)}
+                    {"Email or Phone"}
                   </label>
                   <input
                     type="text"
@@ -224,7 +224,7 @@ export default function ForgotPasswordPage() {
                   {isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    t(`Reset Password`)
+                    "Reset Password"
                   )}
                 </button>
               </form>
@@ -247,10 +247,10 @@ export default function ForgotPasswordPage() {
                     "var(--font-display, 'Playfair Display', Georgia, serif)",
                 }}
               >
-                {t(`Check your inbox`)}
+                {"Check your inbox"}
               </h2>
               <p className="text-sm text-muted-foreground mb-8 max-w-sm mx-auto leading-relaxed">
-                {t(`We've sent password reset instructions to`)} <br />
+                {"We've sent password reset instructions to"} <br />
                 <span className="font-semibold text-foreground">
                   {getValues("identifier")}
                 </span>
@@ -261,7 +261,7 @@ export default function ForgotPasswordPage() {
                 className="text-sm font-semibold transition-colors"
                 style={{ color: "hsl(352, 72%, 48%)" }}
               >
-                {t(`Try another email or phone number`)}
+                {"Try another email or phone number"}
               </button>
             </div>
           )}

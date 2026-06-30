@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import {
@@ -63,7 +61,7 @@ function BankTransferInfo({
             alt="QR Code Chuyển Khoản"
             className="w-72 h-72 object-contain bg-white"
           />
-          <p className="text-[13px] text-gray-500 mt-4">{i18next.t("Mở app Ngân hàng để quét mã QR")}</p>
+          <p className="text-[13px] text-gray-500 mt-4">{"Mở app Ngân hàng để quét mã QR"}</p>
         </div>
       )}
       <div className="space-y-4 pt-2">
@@ -201,7 +199,7 @@ export function PaymentPage() {
           className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 transition-colors w-fit"
         >
           <ChevronLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">{i18next.t("Quay lại")}</span>
+          <span className="text-sm font-medium">{"Quay lại"}</span>
         </button>
       </div>
 
@@ -234,18 +232,18 @@ export function PaymentPage() {
           (isPaid ? (
             <div className="mt-8 bg-green-50 border border-green-200 rounded-sm overflow-hidden mx-auto max-w-105 p-8 animate-pulse-soft">
               <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold text-green-700 text-xl mb-2">{i18next.t("Thanh toán thành công!")}</h3>
-              <p className="text-sm text-green-800">{i18next.t("Hệ thống đã nhận được tiền chuyển khoản của bạn.")}</p>
+              <h3 className="font-bold text-green-700 text-xl mb-2">{"Thanh toán thành công!"}</h3>
+              <p className="text-sm text-green-800">{"Hệ thống đã nhận được tiền chuyển khoản của bạn."}</p>
             </div>
           ) : settingsLoading ? (
             <div className="mt-8 flex items-center justify-center gap-2 text-gray-500">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="text-sm">{i18next.t("Đang tải thông tin ngân hàng...")}</span>
+              <span className="text-sm">{"Đang tải thông tin ngân hàng..."}</span>
             </div>
           ) : timeLeft <= 0 ? (
             <div className="mt-8 bg-red-50 border border-red-200 rounded-sm mx-auto max-w-105 p-8">
-              <p className="text-red-600 font-bold mb-2">{i18next.t("Đã hết thời gian thanh toán")}</p>
-              <p className="text-sm text-red-500">{i18next.t("Vui lòng đặt lại đơn hàng mới.")}</p>
+              <p className="text-red-600 font-bold mb-2">{"Đã hết thời gian thanh toán"}</p>
+              <p className="text-sm text-red-500">{"Vui lòng đặt lại đơn hàng mới."}</p>
               <button
                 onClick={() => navigate(-1)}
                 className="mt-4 bg-brand text-white px-6 py-2 rounded-sm text-sm font-medium hover:bg-brand/90 transition-colors"

@@ -1,5 +1,5 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
+
+
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -154,8 +154,8 @@ export function FlashSaleEditor({
           <h1 className="text-3xl font-extrabold tracking-tight">
             {isEditing ? "Cập nhật Flash Sale" : "Tạo Flash Sale Mới"}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1 font-medium">{i18next.t(`Thiết lập chiến dịch giảm giá giới hạn thời gian một cách nhanh
-            chóng.`)}</p>
+          <p className="text-sm text-muted-foreground mt-1 font-medium">{`Thiết lập chiến dịch giảm giá giới hạn thời gian một cách nhanh
+            chóng.`}</p>
         </div>
       </div>
 
@@ -168,7 +168,7 @@ export function FlashSaleEditor({
           <Card className="shadow-sm rounded-sm border hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <Info className="w-5 h-5 text-primary" />{i18next.t("Thông tin cơ bản")}</CardTitle>
+                <Info className="w-5 h-5 text-primary" />{"Thông tin cơ bản"}</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -199,8 +199,8 @@ export function FlashSaleEditor({
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-sm border p-4 md:col-span-2 bg-muted/10">
                       <div className="space-y-1">
-                        <FormLabel className="text-sm font-bold">{i18next.t("Kích hoạt chương trình")}</FormLabel>
-                        <div className="text-sm text-muted-foreground">{i18next.t("Sẽ tự động chạy khi đến \"Thời gian bắt đầu\".")}</div>
+                        <FormLabel className="text-sm font-bold">{"Kích hoạt chương trình"}</FormLabel>
+                        <div className="text-sm text-muted-foreground">{"Sẽ tự động chạy khi đến \"Thời gian bắt đầu\"."}</div>
                       </div>
                       <FormControl>
                         <Switch
@@ -219,7 +219,7 @@ export function FlashSaleEditor({
           <Card className="shadow-sm rounded-sm border hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <CalendarClock className="w-5 h-5 text-primary" />{i18next.t("Thời gian diễn ra")}</CardTitle>
+                <CalendarClock className="w-5 h-5 text-primary" />{"Thời gian diễn ra"}</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -271,7 +271,7 @@ export function FlashSaleEditor({
             <CardHeader className="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <PackageSearch className="w-5 h-5 text-primary" />{i18next.t("Sản phẩm tham gia")}</CardTitle>
+                  <PackageSearch className="w-5 h-5 text-primary" />{"Sản phẩm tham gia"}</CardTitle>
               </div>
               {fields.length > 0 && (
                 <Button
@@ -280,7 +280,7 @@ export function FlashSaleEditor({
                   onClick={() => setIsProductModalOpen(true)}
                   className="shadow-sm"
                 >
-                  <Plus className="w-4 h-4" />{i18next.t("Thêm sản phẩm")}</Button>
+                  <Plus className="w-4 h-4" />{"Thêm sản phẩm"}</Button>
               )}
             </CardHeader>
             <CardContent className="pt-6">
@@ -295,15 +295,15 @@ export function FlashSaleEditor({
                   <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Package className="h-8 w-8 text-primary" />
                   </div>
-                  <h4 className="text-lg font-semibold mb-2">{i18next.t("Chưa có sản phẩm nào")}</h4>
-                  <p className="text-sm text-muted-foreground mb-6 max-w-sm">{i18next.t(`Hãy thêm sản phẩm vào chương trình để thiết lập giá Flash
-                    Sale và kích hoạt ưu đãi.`)}</p>
+                  <h4 className="text-lg font-semibold mb-2">{"Chưa có sản phẩm nào"}</h4>
+                  <p className="text-sm text-muted-foreground mb-6 max-w-sm">{`Hãy thêm sản phẩm vào chương trình để thiết lập giá Flash
+                    Sale và kích hoạt ưu đãi.`}</p>
                   <Button
                     type="button"
                     onClick={() => setIsProductModalOpen(true)}
                     className="shadow-sm"
                   >
-                    <Plus className="w-4 h-4" />{i18next.t("Thêm sản phẩm ngay")}</Button>
+                    <Plus className="w-4 h-4" />{"Thêm sản phẩm ngay"}</Button>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -311,7 +311,7 @@ export function FlashSaleEditor({
                     <div className="space-y-2 flex-1 sm:max-w-55">
                       {/* eslint-disable-next-line  */}
                       <label className="text-sm font-bold flex items-center gap-2">
-                        <Percent className="w-4 h-4 text-muted-foreground" />{i18next.t("Giảm giá đồng loạt")}</label>
+                        <Percent className="w-4 h-4 text-muted-foreground" />{"Giảm giá đồng loạt"}</label>
                       <Input
                         type="number"
                         min="1"
@@ -325,7 +325,7 @@ export function FlashSaleEditor({
                     <div className="space-y-2 flex-1 sm:max-w-55">
                       {/* eslint-disable-next-line  */}
                       <label className="text-sm font-bold flex items-center gap-2">
-                        <Package className="w-4 h-4 text-muted-foreground" />{i18next.t("Số lượng Flash Sale")}</label>
+                        <Package className="w-4 h-4 text-muted-foreground" />{"Số lượng Flash Sale"}</label>
                       <Input
                         type="number"
                         min="1"
@@ -340,17 +340,17 @@ export function FlashSaleEditor({
                       onClick={handleBulkApply}
                       className="gap-2 w-full sm:w-auto bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-sm font-bold px-6 shadow-sm"
                     >
-                      <CheckSquare className="w-4 h-4" />{i18next.t("Áp dụng tất cả")}</Button>
+                      <CheckSquare className="w-4 h-4" />{"Áp dụng tất cả"}</Button>
                   </div>
 
                   <div className="border rounded-sm overflow-x-auto">
                     <Table>
                       <TableHeader className="bg-muted/30">
                         <TableRow>
-                          <TableHead>{i18next.t("Sản phẩm")}</TableHead>
-                          <TableHead className="whitespace-nowrap text-center">{i18next.t("Giá gốc")}</TableHead>
-                          <TableHead className="whitespace-nowrap text-center">{i18next.t("Tồn Kho")}</TableHead>
-                          <TableHead className="w-45 whitespace-nowrap text-center">{i18next.t("Giá Flash Sale")}</TableHead>
+                          <TableHead>{"Sản phẩm"}</TableHead>
+                          <TableHead className="whitespace-nowrap text-center">{"Giá gốc"}</TableHead>
+                          <TableHead className="whitespace-nowrap text-center">{"Tồn Kho"}</TableHead>
+                          <TableHead className="w-45 whitespace-nowrap text-center">{"Giá Flash Sale"}</TableHead>
                           <TableHead className="w-37.5 whitespace-nowrap text-center">
                             SL Flash Sale
                           </TableHead>

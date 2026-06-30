@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { ProductVoucherModal } from "./ProductVoucherModal";
 
@@ -34,7 +32,7 @@ export function ProductVouchers() {
   return (
     <>
       <div className="flex items-center py-4 border-b border-border mt-2">
-        <span className="text-sm text-ink mr-4 shrink-0">{i18next.t("Mã giảm giá:")}</span>
+        <span className="text-sm text-ink mr-4 shrink-0">{"Mã giảm giá:"}</span>
 
         <div className="flex-1 relative group overflow-x-auto no-scrollbar">
           <div className="flex flex-wrap gap-2 pb-2 pt-1 items-center min-w-max">
@@ -55,7 +53,7 @@ export function ProductVouchers() {
               </button>
             ))}
             {vouchers.length === 0 && (
-              <span className="text-sm text-ink-muted italic">{i18next.t("Đang cập nhật mã giảm giá...")}</span>
+              <span className="text-sm text-ink-muted italic">{"Đang cập nhật mã giảm giá..."}</span>
             )}
           </div>
         </div>

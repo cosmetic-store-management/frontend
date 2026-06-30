@@ -1,5 +1,3 @@
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useAdminProductsSelector } from "@/admin/hooks/useProducts";
@@ -142,8 +140,8 @@ export function ProductSelectModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl w-[95vw] h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
         <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
-          <DialogTitle className="text-xl font-bold text-ink">{i18next.t("Chọn sản phẩm")}</DialogTitle>
-          <DialogDescription className="text-sm text-ink-muted">{i18next.t("Tìm kiếm và chọn sản phẩm/biến thể cần thiết.")}</DialogDescription>
+          <DialogTitle className="text-xl font-bold text-ink">{"Chọn sản phẩm"}</DialogTitle>
+          <DialogDescription className="text-sm text-ink-muted">{"Tìm kiếm và chọn sản phẩm/biến thể cần thiết."}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col flex-1 overflow-hidden">
@@ -173,7 +171,7 @@ export function ProductSelectModal({
                   <SelectValue placeholder="Danh mục" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  <SelectItem value="all">{i18next.t("Tất cả danh mục")}</SelectItem>
+                  <SelectItem value="all">{"Tất cả danh mục"}</SelectItem>
                   {categories?.categories?.map((cat: any) => (
                     <SelectItem key={cat.id} value={cat.slug || cat.id}>
                       {cat.name}
@@ -188,7 +186,7 @@ export function ProductSelectModal({
                   <SelectValue placeholder="Thương hiệu" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  <SelectItem value="all">{i18next.t("Tất cả thương hiệu")}</SelectItem>
+                  <SelectItem value="all">{"Tất cả thương hiệu"}</SelectItem>
                   {brands?.brands?.map((brand: any) => (
                     <SelectItem key={brand.id} value={brand.id}>
                       {brand.name}
@@ -216,9 +214,9 @@ export function ProductSelectModal({
               <TableHeader className="bg-muted/30 sticky top-0 z-10 shadow-sm">
                 <TableRow>
                   <TableHead className="w-12 text-center bg-muted/30"></TableHead>
-                  <TableHead className="bg-muted/30">{i18next.t("Sản phẩm")}</TableHead>
-                  <TableHead className="text-center w-25 bg-muted/30">{i18next.t("Tồn Kho")}</TableHead>
-                  <TableHead className="text-center w-37.5 bg-muted/30">{i18next.t("Giá gốc")}</TableHead>
+                  <TableHead className="bg-muted/30">{"Sản phẩm"}</TableHead>
+                  <TableHead className="text-center w-25 bg-muted/30">{"Tồn Kho"}</TableHead>
+                  <TableHead className="text-center w-37.5 bg-muted/30">{"Giá gốc"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -234,7 +232,7 @@ export function ProductSelectModal({
                     <TableCell
                       colSpan={4}
                       className="h-32 text-center text-muted-foreground"
-                    >{i18next.t("Không tìm thấy sản phẩm")}</TableCell>
+                    >{"Không tìm thấy sản phẩm"}</TableCell>
                   </TableRow>
                 ) : (
                   <>
@@ -407,7 +405,7 @@ export function ProductSelectModal({
               onClick={handleConfirm}
               disabled={localSelected.length === 0}
               className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-hover text-white shadow-ui-soft"
-            >{i18next.t("Xác nhận")}</Button>
+            >{"Xác nhận"}</Button>
           </div>
         </DialogFooter>
       </DialogContent>
