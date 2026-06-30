@@ -9,7 +9,7 @@ export function FavoritesPage() {
     <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-ink">Wishlist</h2>
+          <h1 className="text-lg font-bold text-ink">Wishlist</h1>
           <p className="text-xs text-ink-muted mt-0.5">Your saved products</p>
         </div>
         {favorites.length > 0 && (

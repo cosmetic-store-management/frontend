@@ -3,9 +3,32 @@ import { ProductVoucherModal } from "./ProductVoucherModal";
 
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/client";
+import { useGetWalletVouchers, useCollectVoucher } from "../../hooks/useVoucher";
+import { useAuthStore } from "@/auth/store/auth.store";
+import { toast } from "@/lib/toast";
 
 export function ProductVouchers() {
   const [selectedVoucher, setSelectedVoucher] = useState<any>(null);
+  const user = useAuthStore((s) => s.user);
+
+  const { data: savedVouchers = [] } = useGetWalletVouchers();
+  const savedVoucherMap = new Map(savedVouchers.map((v: any) => [v.code, v.status]));
+  const collectMutation = useCollectVoucher();
+
+  const handleCollect = (code: string) => {
+    if (!user) {
+      toast.error("Sign in to save vouchers");
+      return;
+    }
+    collectMutation.mutate(code, {
+      onSuccess: () => toast.success("Voucher saved to your wallet!"),
+      onError: (e: any) => {
+        if (!e?.message?.includes("đã lưu") && !e?.message?.includes("already saved")) {
+          toast.error(e?.message || "Unable to save voucher");
+        }
+      },
+    });
+  };
 
   const { data: vouchers = [] } = useQuery({
     queryKey: ["public", "vouchers"],
@@ -14,16 +37,16 @@ export function ProductVouchers() {
       return res.vouchers.map((v) => ({
         title:
           v.discountType === "percent"
-            ? `Giảm ${v.discountValue}%`
+            ? `${v.discountValue}% OFF`
             : v.discountType === "fixed"
-              ? `Giảm ${v.discountValue / 1000}K`
-              : "Freeship",
+              ? `${v.discountValue / 1000}K OFF`
+              : "Free Shipping",
         code: v.code,
         expiry: v.endDate
           ? new Date(v.endDate).toLocaleDateString("vi-VN")
-          : "Không thời hạn",
-        description: `Áp dụng cho đơn từ ${v.minOrderValue.toLocaleString()}đ.`,
-        condition: "Có giới hạn số lượt sử dụng",
+          : "No expiration",
+        description: `Min. spend ${v.minOrderValue.toLocaleString()}đ`,
+        condition: "Limited usage per customer",
         raw: v,
       }));
     },
@@ -31,11 +54,11 @@ export function ProductVouchers() {
 
   return (
     <>
-      <div className="flex items-center py-4 border-b border-border mt-2">
-        <span className="text-sm text-ink mr-4 shrink-0">{"Mã giảm giá:"}</span>
+      <div className="flex items-start py-4 border-b border-border mt-2">
+        <span className="text-sm text-ink mr-4 shrink-0 mt-1.5">{"Vouchers:"}</span>
 
-        <div className="flex-1 relative group overflow-x-auto no-scrollbar">
-          <div className="flex flex-wrap gap-2 pb-2 pt-1 items-center min-w-max">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap gap-2 items-center">
             {vouchers.map((v: any, i: number) => (
               <button
                 key={i}
@@ -53,7 +76,7 @@ export function ProductVouchers() {
               </button>
             ))}
             {vouchers.length === 0 && (
-              <span className="text-sm text-ink-muted italic">{"Đang cập nhật mã giảm giá..."}</span>
+              <span className="text-sm text-ink-muted italic">{"No vouchers available"}</span>
             )}
           </div>
         </div>
@@ -63,6 +86,11 @@ export function ProductVouchers() {
         isOpen={!!selectedVoucher}
         onClose={() => setSelectedVoucher(null)}
         voucher={selectedVoucher}
+        savedStatus={selectedVoucher ? savedVoucherMap.get(selectedVoucher.code) || "none" : "none"}
+        onCollect={() => {
+          if (selectedVoucher) handleCollect(selectedVoucher.code);
+        }}
+        isLoading={collectMutation.isPending}
       />
     </>
   );

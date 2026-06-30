@@ -129,7 +129,7 @@ export function OrdersPage() {
   return (
     <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-ink mb-1">My Orders</h2>
+        <h1 className="text-lg font-bold text-ink mb-1">My Orders</h1>
         <p className="text-xs text-ink-muted">
           Click on an order to view details.
         </p>
@@ -144,22 +144,20 @@ export function OrdersPage() {
               setStatusTab(tab.key);
               setExpandedId(null);
             }}
-            className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 ${
-              statusTab === tab.key
+            className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-1.5 ${statusTab === tab.key
                 ? "border-brand text-brand"
                 : "border-transparent text-ink-muted hover:text-brand"
-            }`}
+              }`}
           >
             {tab.label}
             {tab.key !== "all" &&
               orders.filter((o: any) => o.orderStatus === tab.key).length >
-                0 && (
+              0 && (
                 <span
-                  className={`shrink-0 inline-flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold rounded-full ${
-                    statusTab === tab.key
+                  className={`shrink-0 inline-flex items-center justify-center w-4.5 h-4.5 text-[10px] font-bold rounded-full ${statusTab === tab.key
                       ? "bg-brand text-white"
                       : "bg-border/70 text-ink-muted"
-                  }`}
+                    }`}
                 >
                   {orders.filter((o: any) => o.orderStatus === tab.key).length}
                 </span>
@@ -343,13 +341,12 @@ export function OrdersPage() {
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-ink-muted">Status</span>
                           <span
-                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-sm ${
-                              order.paymentStatus === "paid"
+                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-sm ${order.paymentStatus === "paid"
                                 ? "bg-success/10 text-success"
                                 : order.paymentStatus === "failed"
                                   ? "bg-danger/10 text-danger"
                                   : "bg-warning/10 text-warning"
-                            }`}
+                              }`}
                           >
                             {order.paymentStatus === "paid"
                               ? "Paid"
@@ -459,6 +456,8 @@ export function OrdersPage() {
                                 Reason for return/refund:
                               </p>
                               <textarea
+                                id="returnReason"
+                                name="returnReason"
                                 className="w-full text-sm border border-border rounded-sm p-2 focus:outline-none focus:border-brand min-h-15"
                                 placeholder="Enter reason and describe product condition..."
                                 value={returnReason}

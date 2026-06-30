@@ -11,6 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useSearchParams } from "react-router";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useEffect } from "react";
+import {
   Table,
   TableBody,
   TableCell,
@@ -18,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Pagination } from "@/components/ui/pagination";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { PageHeader } from "../components/common/PageHeader";
 import { toast } from "@/lib/toast";
@@ -61,19 +72,55 @@ const getStatusLabel = (fs: FlashSale) => {
 
 export function FlashSalePage() {
   const queryClient = useQueryClient();
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page") || "1");
+  const search = searchParams.get("search") || "";
+  const status = searchParams.get("status") || "all";
+
+  const setPage = (newPage: number) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", newPage.toString());
+    setSearchParams(newParams);
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value && value !== "all") {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+  };
+
   const [view, setView] = useState<"list" | "create" | "edit">("list");
   const [editingData, setEditingData] = useState<
     (FlashSaleFormData & { id?: string }) | undefined
   >(undefined);
-  const [search, setSearch] = useState("");
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
+  const [localSearch, setLocalSearch] = useState(search);
+  const debouncedSearch = useDebounce(localSearch, 500);
+
+  useEffect(() => {
+    if (debouncedSearch !== search) {
+      handleFilterChange("search", debouncedSearch);
+    }
+  }, [debouncedSearch]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ["admin_flash_sales", page],
+    queryKey: ["admin_flash_sales", page, search, status],
     queryFn: async () => {
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: "10",
+        ...(status !== "all" && { status }),
+        ...(search && { search }),
+      });
       const res = await apiClient.get<{ data: FlashSale[]; pagination: any }>(
-        `/flash-sales?page=${page}&limit=10`,
+        `/flash-sales?${queryParams.toString()}`,
       );
       return res;
     },
@@ -161,9 +208,6 @@ export function FlashSalePage() {
   };
 
   const flashSales = data?.data || [];
-  const filteredFlashSales = flashSales.filter((fs) =>
-    fs.name.toLowerCase().includes(search.toLowerCase()),
-  );
 
   return (
     <div className="space-y-6">
@@ -171,7 +215,7 @@ export function FlashSalePage() {
         <>
           <PageHeader
             title="Flash Sale"
-            description="Manage flash sales and discounted items."
+            description="Schedule and manage time-limited flash sale events to create urgency and boost revenue."
             actions={
               <Button
                 className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -184,14 +228,30 @@ export function FlashSalePage() {
             }
             filters={
               <div className="flex flex-col gap-3 w-full">
+                {/* Hàng 1: Search */}
                 <div className="group relative w-full sm:w-80">
                   <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
                   <Input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    value={localSearch}
+                    onChange={(e) => setLocalSearch(e.target.value)}
                     placeholder="Search flash sale programs..."
                     className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
                   />
+                </div>
+                
+                {/* Hàng 2: Filters */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
+                    <SelectTrigger className="w-[160px] h-9 bg-surface text-sm border-border">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="upcoming">Upcoming</SelectItem>
+                      <SelectItem value="ended">Ended</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             }
@@ -219,19 +279,19 @@ export function FlashSalePage() {
                       Loading...
                     </TableCell>
                   </TableRow>
-                ) : filteredFlashSales.length === 0 ? (
+                ) : flashSales.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={5}
                       className="text-center text-muted-foreground"
                     >
-                      {search
-                        ? "No matching flash sales found"
+                      {search || status !== "all"
+                        ? "No matching flash sales found for the applied filters."
                         : "No flash sales created yet"}
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredFlashSales.map((fs) => (
+                  flashSales.map((fs) => (
                     <TableRow key={fs.id}>
                       <TableCell className="font-medium pl-4">
                         {fs.name}
@@ -285,6 +345,16 @@ export function FlashSalePage() {
                 )}
               </TableBody>
             </Table>
+            
+            {data?.pagination && data.pagination.totalPages > 1 && (
+              <div className="py-4 border-t border-border bg-surface">
+                <Pagination
+                  currentPage={page}
+                  totalPages={data.pagination.totalPages}
+                  onPageChange={setPage}
+                />
+              </div>
+            )}
           </div>
           <DeleteModal
             open={!!deleteTargetId}

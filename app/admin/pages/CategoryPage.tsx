@@ -335,7 +335,7 @@ export function CategoryPage() {
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
         title="Category Management"
-        description="Manage product categories and sub-categories in a tree structure."
+        description="Organize your products into categories and subcategories to help customers navigate your store."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -373,7 +373,7 @@ export function CategoryPage() {
             <Table className="min-w-187.5 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[24%] pl-4 text-left">
+                  <TableHead className="w-[24%] text-center">
                     Category
                   </TableHead>
                   <TableHead className="w-[20%] text-center">

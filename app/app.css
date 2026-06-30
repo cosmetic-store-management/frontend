@@ -98,7 +98,7 @@
   --secondary: var(--neutral-100);
   --secondary-foreground: var(--neutral-950);
   --muted: var(--neutral-100);
-  --muted-foreground: var(--neutral-500);
+  --muted-foreground: var(--neutral-600);
   --accent: var(--neutral-100);
   --accent-foreground: var(--neutral-950);
   --destructive: hsl(4, 80%, 52%);

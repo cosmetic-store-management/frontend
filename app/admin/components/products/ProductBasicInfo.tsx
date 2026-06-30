@@ -92,7 +92,7 @@ export function ProductBasicInfo({
     <>
       {/* Tên sản phẩm */}
       <div className="space-y-1.5">
-        <Label className="text-sm font-semibold text-ink">Tên sản phẩm<span className="text-danger">*</span>
+        <Label className="text-sm font-semibold text-ink">Product Name<span className="text-danger">*</span>
         </Label>
         <Controller
           control={control}
@@ -101,7 +101,7 @@ export function ProductBasicInfo({
             <Input
               {...field}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Tên sản phẩm"
+              placeholder="Product Name"
               className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
             />
           )}
@@ -142,7 +142,7 @@ export function ProductBasicInfo({
       {/* Danh mục + Thương hiệu */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-sm font-semibold text-ink">Danh mục<span className="text-danger">*</span>
+          <Label className="text-sm font-semibold text-ink">Category<span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -150,7 +150,7 @@ export function ProductBasicInfo({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full h-10 border-border focus:ring-brand">
-                  <SelectValue placeholder="-- Chọn danh mục --" />
+                  <SelectValue placeholder="-- Select Category --" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
                   {buildFlatOptions(categories).map((opt) => (
@@ -181,7 +181,7 @@ export function ProductBasicInfo({
           )}
         </div>
         <div className="space-y-1.5">
-          <Label className="text-sm font-semibold text-ink">Thương hiệu<span className="text-danger">*</span>
+          <Label className="text-sm font-semibold text-ink">Brand<span className="text-danger">*</span>
           </Label>
           <Controller
             control={control}
@@ -189,7 +189,7 @@ export function ProductBasicInfo({
             render={({ field }) => (
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger className="w-full h-10 border-border focus:ring-brand">
-                  <SelectValue placeholder="-- Chọn thương hiệu --" />
+                  <SelectValue placeholder="-- Select Brand --" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
                   {brands?.map((b) => (
@@ -220,7 +220,7 @@ export function ProductBasicInfo({
 
       {/* Mô tả */}
       <div className="space-y-1.5">
-        <Label className="text-sm font-semibold text-ink">Mô tả sản phẩm</Label>
+        <Label className="text-sm font-semibold text-ink">Product Description</Label>
         <div className="min-h-50 [&_.ql-editor]:min-h-37.5">
           <Controller
             control={control}
@@ -237,7 +237,7 @@ export function ProductBasicInfo({
                   theme="snow"
                   value={field.value || ""}
                   onChange={field.onChange}
-                  placeholder="Nhập mô tả sản phẩm"
+                  placeholder="Enter product description"
                   className="bg-surface"
                 />
               </Suspense>

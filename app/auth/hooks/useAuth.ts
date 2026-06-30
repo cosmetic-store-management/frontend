@@ -58,6 +58,7 @@ export const useLogin = () => {
             item.variantId.imageUrl || item.variantId.productId.imageUrl,
           stock: item.variantId.stock,
           slug: item.variantId.productId.slug,
+          isActive: item.variantId.isActive !== false,
         }));
         setItems(mappedItems);
       } catch (err) {
@@ -94,6 +95,7 @@ export const useRegister = () => {
             item.variantId.imageUrl || item.variantId.productId.imageUrl,
           stock: item.variantId.stock,
           slug: item.variantId.productId.slug,
+          isActive: item.variantId.isActive !== false,
         }));
         setItems(mappedItems);
       } catch (err) {
@@ -184,6 +186,7 @@ export const useSocialLogin = () => {
             item.variantId.imageUrl || item.variantId.productId.imageUrl,
           stock: item.variantId.stock,
           slug: item.variantId.productId.slug,
+          isActive: item.variantId.isActive !== false,
         }));
         setItems(mappedItems);
       } catch (err) {

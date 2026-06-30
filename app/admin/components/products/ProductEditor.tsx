@@ -134,17 +134,17 @@ export default function ProductEditor({
           variant="outline"
           onClick={onCancel}
           className="h-10 px-5"
-        >Huỷ</Button>
+        >Cancel</Button>
         <Button
           type="submit"
           disabled={loading}
           className="h-10 px-8 font-bold bg-brand text-white hover:bg-brand-dark transition-all"
         >
           {loading
-            ? "Đang lưu..."
+            ? "Saving..."
             : mode === "create"
-              ? "Tạo sản phẩm"
-              : "Lưu thay đổi"}
+              ? "Create Product"
+              : "Save Changes"}
         </Button>
       </div>
     </form>

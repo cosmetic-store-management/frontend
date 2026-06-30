@@ -119,7 +119,7 @@ export function OrderPage() {
     <section className="space-y-4 animate-page-enter">
       <PageHeader
         title="Order Management"
-        description="Track order information, customers, totals, and processing status."
+        description="Manage all customer orders, track fulfillment status, and handle returns or cancellations."
         error={error}
         onClearError={clearError}
         actions={

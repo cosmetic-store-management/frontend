@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Ticket,
   Tag,
@@ -27,6 +27,7 @@ interface VoucherCardProps {
     title?: string;
     /** status được inject từ wallet/all endpoint */
     status?: "valid" | "used" | "expired" | "exhausted";
+    expiresAt?: string; // Thời gian giữ chỗ (TTL)
   };
 }
 
@@ -56,20 +57,49 @@ function getDaysLeft(endDate: string) {
 
 export function VoucherCard({ voucher }: VoucherCardProps) {
   const [copied, setCopied] = useState(false);
+  const [timeLeft, setTimeLeft] = useState("");
+  const [isFomo, setIsFomo] = useState(false);
+
+  useEffect(() => {
+    const targetTime = voucher.expiresAt || voucher.endDate;
+    if (!targetTime) return;
+
+    const calculateTime = () => {
+      const diff = new Date(targetTime).getTime() - Date.now();
+      if (diff <= 0) {
+        setTimeLeft("00:00:00");
+        setIsFomo(true);
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setTimeLeft(
+        `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+      );
+      setIsFomo(diff < 5 * 60 * 1000); // Dưới 5 phút thì nhấp nháy đỏ
+    };
+
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [voucher.expiresAt]);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigator.clipboard.writeText(voucher.code);
     setCopied(true);
-    toast.success("Đã sao chép mã " + voucher.code);
+    toast.success("Copied code " + voucher.code);
     setTimeout(() => setCopied(false), 2500);
   };
 
   const getDiscountDisplay = () => {
-    if (voucher.discountType === "freeship") return "Miễn phí vận chuyển";
+    if (voucher.discountType === "freeship") return "Free Shipping";
     if (voucher.discountType === "percent")
-      return `Giảm ${voucher.discountValue}%`;
-    return `Giảm ${voucher.discountValue.toLocaleString("vi-VN")}đ`;
+      return `${voucher.discountValue}% OFF`;
+    return `${(voucher.discountValue / 1000).toLocaleString("en-US")}K OFF`;
   };
 
   const getIcon = () => {
@@ -86,26 +116,26 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
 
   const minOrderText =
     voucher.minOrderValue > 0
-      ? `Đơn tối thiểu ${voucher.minOrderValue.toLocaleString("vi-VN")}đ`
-      : "Không giới hạn đơn tối thiểu";
+      ? `Min. spend ${(voucher.minOrderValue / 1000).toLocaleString("en-US")}K`
+      : "No min. spend";
 
   // Label badge cho trạng thái bất thường
   const statusBadge: Record<string, { label: string; cls: string } | null> = {
     valid: null,
     pending: {
-      label: "Chưa đến hạn",
+      label: "Upcoming",
       cls: "bg-amber-50 text-amber-600 border-amber-200",
     },
     used: {
-      label: "Đã sử dụng",
+      label: "Used",
       cls: "bg-blue-50 text-blue-500 border-blue-200",
     },
     expired: {
-      label: "Đã hết hạn",
+      label: "Expired",
       cls: "bg-red-50 text-red-500 border-red-200",
     },
     exhausted: {
-      label: "Đã hết lượt",
+      label: "Fully Claimed",
       cls: "bg-gray-50 text-gray-500 border-gray-200",
     },
   };
@@ -114,11 +144,10 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
 
   return (
     <div
-      className={`border rounded-sm flex flex-col relative overflow-visible transition-all ${
-        isDisabled
-          ? "bg-surface-soft border-border opacity-60"
+      className={`border rounded-sm flex flex-col relative overflow-visible transition-all ${isDisabled
+          ? "bg-surface-soft border-border opacity-70 grayscale-[0.8]"
           : "bg-brand/5 border-brand/20"
-      }`}
+        }`}
     >
       {/* Notch decoration */}
       <div
@@ -153,11 +182,13 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
 
         {/* Conditions */}
         <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-muted">
-          <span>{minOrderText}</span>
+          {voucher.minOrderValue > 0 && (
+            <span>Min. spend ${(voucher.minOrderValue / 1000).toLocaleString("en-US")}K</span>
+          )}
           {voucher.maxDiscount && voucher.maxDiscount > 0 && (
             <>
-              <span className="w-1 h-1 rounded-full bg-border/80 hidden sm:block"></span>
-              <span>Tối đa {voucher.maxDiscount.toLocaleString("vi-VN")}đ</span>
+              {voucher.minOrderValue > 0 && <span className="w-1 h-1 rounded-full bg-border/80 hidden sm:block"></span>}
+              <span>Max ${(voucher.maxDiscount / 1000).toLocaleString("en-US")}K</span>
             </>
           )}
         </div>
@@ -166,27 +197,24 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
         <div className="flex flex-wrap items-center gap-3 mt-2.5">
           {status === "pending" && voucher.startDate && (
             <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
-              Có hiệu lực từ{" "}
-              {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
+              Valid from{" "}
+              {new Date(voucher.startDate).toLocaleDateString("en-GB")}
             </span>
           )}
 
           {status !== "pending" && (
             <span
-              className={`text-[11px] flex items-center gap-1 font-medium ${
-                status === "expired" || status === "used"
+              className={`text-[11px] flex items-center gap-1.5 font-medium ${status === "expired" || status === "used"
                   ? "text-red-400"
-                  : isExpiringSoon
+                  : isFomo
                     ? "text-danger"
                     : "text-ink-muted"
-              }`}
+                }`}
             >
-              <Clock className="w-3 h-3" />
+              <Clock className="w-3.5 h-3.5" />
               {status === "expired" || status === "used"
-                ? `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`
-                : isExpiringSoon
-                  ? `Sắp hết hạn: Còn ${daysLeft} ngày`
-                  : `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`}
+                ? `Ended`
+                : `Expires in: ${timeLeft}`}
             </span>
           )}
         </div>
@@ -196,31 +224,29 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
           className={`mt-3 pt-3 border-t border-dashed ${isDisabled ? "border-border" : "border-brand/20"} flex justify-between items-center gap-2`}
         >
           <span
-            className={`text-sm font-mono px-2 py-1 rounded tracking-widest uppercase ${
-              isDisabled
+            className={`text-sm font-mono px-2 py-1 rounded tracking-widest uppercase ${isDisabled
                 ? "bg-surface-muted text-ink-muted"
                 : "bg-brand/10 text-brand"
-            }`}
+              }`}
           >
             {voucher.code}
           </span>
           <button
             onClick={handleCopy}
             disabled={isDisabled}
-            className={`text-xs font-bold px-3 py-1.5 rounded-sm transition-all flex items-center gap-1 ${
-              copied
+            className={`text-xs font-bold px-3 py-1.5 rounded-sm transition-all flex items-center gap-1 ${copied
                 ? "bg-success text-white"
                 : isDisabled
                   ? "bg-surface-muted text-ink-muted cursor-default"
                   : "bg-brand text-white hover:bg-brand-dark"
-            }`}
+              }`}
           >
             {copied ? (
               <Check className="w-3 h-3" />
             ) : (
               <Copy className="w-3 h-3" />
             )}
-            {copied ? "Đã sao chép" : "Sao chép"}
+            {copied ? "Copied" : "Copy"}
           </button>
         </div>
       </div>

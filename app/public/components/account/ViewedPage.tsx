@@ -33,9 +33,9 @@ export function ViewedPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-ink">Recently Viewed</h2>
-          <p className="text-xs text-ink-muted mt-0.5">
-            Your product browsing history
+          <h1 className="text-lg font-bold text-ink mb-1">Recently Viewed</h1>
+          <p className="text-sm text-ink-muted">
+            Products you have recently browsed.
           </p>
         </div>
         {total > 0 && (

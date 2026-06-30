@@ -9,10 +9,15 @@ import {
   MoreVertical,
   Upload,
   Download,
+  Package,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
 import { useBrands } from "../hooks/useBrand";
 import { useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getAdminProducts } from "@/admin/services/product.service";
 import type { Category } from "@/admin/types/category";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -124,6 +129,16 @@ export function ProductPage() {
   const brands = brandData?.brands ?? [];
   const brandsWithProducts = brands.filter((b) => (b.productCount ?? 0) > 0);
 
+  // Fetch all products for stats
+  const { data: allData } = useQuery({
+    queryKey: ["admin_products_stats"],
+    queryFn: () => getAdminProducts({ limit: 1000 }),
+  });
+  const allProducts = allData?.products ?? [];
+  const totalCount = allData?.pagination?.total ?? allProducts.length;
+  const activeCount = allProducts.filter((p) => p.isActive).length;
+  const inactiveCount = allProducts.filter((p) => !p.isActive).length;
+
   // ── Derived ────────────────────────────────────────────────────────────────
   const hasActiveFilter = !!(keyword || brandId || categoryId || status);
 
@@ -143,7 +158,7 @@ export function ProductPage() {
     <section className="space-y-4 animate-page-enter">
       <PageHeader
         title="Product Management"
-        description="Manage products, categories, pricing, and inventory."
+        description="Manage your product catalog, update pricing, and organize items to boost sales."
         error={error}
         onClearError={clearError}
         onRetry={refresh}
@@ -209,6 +224,17 @@ export function ProductPage() {
 
             {/* Filters row */}
             <div className="flex flex-wrap items-center gap-2">
+              <Select value={status || "all"} onValueChange={(val) => setStatus(val === "all" ? "" : val as any)}>
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select
                 value={brandId || "all"}
                 onValueChange={(v) => setBrandId(v === "all" ? "" : v)}
@@ -252,30 +278,52 @@ export function ProductPage() {
                   ))}
                 </SelectContent>
               </Select>
-
-              <div className="flex items-center gap-1 p-1 bg-surface-muted rounded-sm">
-                {(["all", "active", "inactive"] as const).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setStatus(s === "all" ? "" : s)}
-                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${
-                      (s === "all" && !status) || status === s
-                        ? "bg-surface text-brand shadow-sm"
-                        : "text-ink-muted hover:text-ink"
-                    }`}
-                  >
-                    {s === "all"
-                      ? "All"
-                      : s === "active"
-                        ? "Active"
-                        : "Inactive"}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         }
       />
+
+      {/* ── Stat Cards ─ */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        {[
+          {
+            icon: <Package className="w-5 h-5 text-brand" />,
+            bg: "bg-brand/10",
+            label: "Total Products",
+            val: totalCount,
+            cls: "text-ink",
+          },
+          {
+            icon: <CheckCircle2 className="w-5 h-5 text-success" />,
+            bg: "bg-success/10",
+            label: "Active",
+            val: activeCount,
+            cls: "text-success",
+          },
+          {
+            icon: <XCircle className="w-5 h-5 text-danger" />,
+            bg: "bg-danger/10",
+            label: "Inactive",
+            val: inactiveCount,
+            cls: "text-danger",
+          },
+        ].map(({ icon, bg, label, val, cls }) => (
+          <div
+            key={label}
+            className="border border-border rounded-sm bg-surface shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 p-4 flex items-center gap-4 group cursor-pointer"
+          >
+            <div
+              className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6`}
+            >
+              {icon}
+            </div>
+            <div>
+              <p className="text-xs text-ink-muted font-medium mb-0.5">{label}</p>
+              <p className={`text-2xl font-bold ${cls}`}>{val}</p>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div className="premium-card overflow-hidden">
         <CardContent className="p-0">
@@ -283,13 +331,13 @@ export function ProductPage() {
             <Table className="min-w-225 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="px-5 w-[25%] text-left">
+                  <TableHead className="px-5 w-[25%] text-center">
                     Product
                   </TableHead>
-                  <TableHead className="px-5 w-[14%] text-left ml-4">
+                  <TableHead className="px-5 w-[14%] text-center">
                     Brand
                   </TableHead>
-                  <TableHead className="px-5 w-[14%] text-left">
+                  <TableHead className="px-5 w-[14%] text-center">
                     Category
                   </TableHead>
                   <TableHead className="px-5 w-[12%] text-center">
@@ -340,13 +388,16 @@ export function ProductPage() {
                             >
                               {item.name}
                             </button>
+                            <span className="block truncate font-mono text-xs text-ink-muted mt-0.5 text-left">
+                              {item.variants?.[0]?.sku || "N/A"}
+                            </span>
                           </div>
                         </div>
                       </TableCell>
 
                       {/* Brand */}
                       <TableCell className="px-5 py-4 align-middle">
-                        <div className="flex items-center gap-2 min-w-0">
+                        <div className="flex items-center justify-center gap-2 min-w-0">
                           {item.brand?.imageUrl && (
                             <img
                               src={item.brand.imageUrl}
@@ -362,7 +413,7 @@ export function ProductPage() {
 
                       {/* Category */}
                       <TableCell className="px-5 py-4 align-middle">
-                        <span className="block text-sm text-ink-muted">
+                        <span className="block text-center text-sm text-ink-muted">
                           {item.category?.name ??
                             categoryNameById[item.categoryId] ??
                             "—"}

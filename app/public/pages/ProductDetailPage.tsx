@@ -118,7 +118,8 @@ export function ProductDetailPage() {
     );
   }
 
-  const variants = product.variants || [];
+  const variants = (product.variants || []).filter((v: any) => v.isActive !== false);
+  const allVariantsInactive = (product.variants || []).length > 0 && variants.length === 0;
   const minPrice =
     variants.length > 0 ? Math.min(...variants.map((v: any) => v.price)) : 0;
   const maxPrice =
@@ -409,46 +410,56 @@ export function ProductDetailPage() {
               </div>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={handleAddToCart}
-                  disabled={isOutOfStock || !product.isActive}
-                  className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-sm transition-all duration-150 hover:bg-brand/5 disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <ShoppingBag className="w-5 h-5" /> Add to Cart
-                </button>
-                <button
-                  onClick={handleBuyNow}
-                  disabled={isOutOfStock || !product.isActive}
-                  className="btn-hover flex-1 font-bold py-3.5 px-6 rounded-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-[0.99]"
-                  style={{ background: "hsl(352, 72%, 52%)" }}
-                >
-                  Buy Now
-                </button>
-              </div>
+              {allVariantsInactive ? (
+                <div className="mt-4 p-4 border border-destructive bg-destructive/5 rounded-sm text-center">
+                  <p className="text-sm font-semibold text-destructive">
+                    Sản phẩm đang tạm ngưng kinh doanh
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={isOutOfStock || !product.isActive}
+                    className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-sm transition-all duration-150 hover:bg-brand/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <ShoppingBag className="w-5 h-5" /> Add to Cart
+                  </button>
+                  <button
+                    onClick={handleBuyNow}
+                    disabled={isOutOfStock || !product.isActive}
+                    className="btn-hover flex-1 font-bold py-3.5 px-6 rounded-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-[0.99]"
+                    style={{ background: "hsl(352, 72%, 52%)" }}
+                  >
+                    Buy Now
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       {/* Mobile Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-100 md:hidden flex gap-3">
-        <button
-          onClick={handleAddToCart}
-          disabled={isOutOfStock || !product.isActive}
-          className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
-        >
-          <ShoppingBag className="w-4 h-4" /> Add to Cart
-        </button>
-        <button
-          onClick={handleBuyNow}
-          disabled={isOutOfStock || !product.isActive}
-          className="flex-1 text-white font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
-          style={{ background: "hsl(352, 72%, 52%)" }}
-        >
-          Buy Now
-        </button>
-      </div>
+      {!allVariantsInactive && (
+        <div className="fixed bottom-0 left-0 right-0 p-3 bg-background/95 backdrop-blur-md border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-100 md:hidden flex gap-3">
+          <button
+            onClick={handleAddToCart}
+            disabled={isOutOfStock || !product.isActive}
+            className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
+          >
+            <ShoppingBag className="w-4 h-4" /> Add to Cart
+          </button>
+          <button
+            onClick={handleBuyNow}
+            disabled={isOutOfStock || !product.isActive}
+            className="flex-1 text-white font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
+            style={{ background: "hsl(352, 72%, 52%)" }}
+          >
+            Buy Now
+          </button>
+        </div>
+      )}
 
       {/* Block 2: Related products */}
       {product.categoryId && (

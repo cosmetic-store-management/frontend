@@ -135,7 +135,7 @@ export const ProductCard = React.memo(function ProductCard({
               {product.brandName}
             </span>
           )}
-          <h3 className="text-sm font-medium text-ink line-clamp-2 leading-snug">
+          <h3 className="text-sm font-medium text-ink line-clamp-2 leading-snug group-hover:text-brand transition-colors">
             {product.name}
           </h3>
           <div className="flex items-center justify-between gap-2">
@@ -237,7 +237,7 @@ export const ProductCard = React.memo(function ProductCard({
         )}
 
         {/* Product name */}
-        <h3 className="text-[13px] font-medium text-ink line-clamp-2 leading-snug">
+        <h3 className="text-[13px] font-medium text-ink line-clamp-2 leading-snug group-hover:text-brand transition-colors">
           {product.name}
         </h3>
 

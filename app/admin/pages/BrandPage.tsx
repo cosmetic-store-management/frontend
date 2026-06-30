@@ -185,7 +185,7 @@ export function BrandPage() {
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
         title="Brand Management"
-        description="Manage product brands. Hiding a brand removes it from public filters — products are not affected."
+        description="Manage your brand portfolio. Active brands will be featured in customer search filters."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -287,10 +287,10 @@ export function BrandPage() {
             <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="py-4 px-5 w-[25%] text-left">
+                  <TableHead className="py-4 px-5 w-[25%] text-center">
                     Brand
                   </TableHead>
-                  <TableHead className="py-4 px-5 w-[15%] text-left">
+                  <TableHead className="py-4 px-5 w-[15%] text-center">
                     Origin
                   </TableHead>
                   <TableHead className="py-4 px-5 w-[30%] text-center">
@@ -340,7 +340,7 @@ export function BrandPage() {
                     </TableCell>
 
                     {/* Country (badge — single column, per user request) */}
-                    <TableCell className="py-3.5 px-5 overflow-hidden max-w-0">
+                    <TableCell className="py-3.5 px-5 text-center overflow-hidden max-w-0">
                       {brand.country ? (
                         <span className="inline-flex px-2 py-0.5 rounded-sm bg-bg text-xs font-medium text-ink-muted border border-border truncate max-w-full">
                           {brand.country}

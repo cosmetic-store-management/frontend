@@ -244,7 +244,7 @@ export function CustomerPage() {
     <section className="space-y-4 animate-page-enter text-left pb-12">
       <PageHeader
         title="Customer Management"
-        description="Monitor and care for GlowUp members, manage contact information and purchase history."
+        description="Manage your customer base, view purchase histories, and analyze shopping behaviors."
         filters={
           <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
@@ -397,7 +397,7 @@ export function CustomerPage() {
             <Table className="min-w-250 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="px-5 w-[25%] text-left">Customer</TableHead>
+                  <TableHead className="px-5 w-[25%] text-center">Customer</TableHead>
                   <TableHead className="px-5 w-[25%] text-center">Contact</TableHead>
                   <TableHead className="px-5 text-center w-[15%]">
                     Tier

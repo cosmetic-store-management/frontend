@@ -129,7 +129,7 @@ export function DateTimePicker({
   };
 
   return (
-    <Popover>
+    <Popover modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -148,7 +148,7 @@ export function DateTimePicker({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 border-border bg-surface shadow-ui-card">
+      <PopoverContent className="w-auto p-0 border-border bg-surface shadow-ui-card z-[100]">
         <Calendar mode="single" selected={date} onSelect={handleDateSelect} />
         <div className="p-3 border-t border-border flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-ink">{"Thời gian"}</span>

@@ -21,7 +21,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Pagination } from "@/components/ui/pagination";
 import { PageHeader } from "../components/common/PageHeader";
+import { useSearchParams } from "react-router";
 import {
   useVouchers,
   useCreateVoucher,
@@ -40,6 +42,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DateTimePicker } from "@/components/ui/date-picker";
 import {
   Table,
   TableBody,
@@ -58,37 +61,71 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/lib/toast";
 import DeleteModal from "@/components/ui/delete-modal";
+const toLocalDatetimeString = (dateInput: string | Date) => {
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return "";
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
 const EMPTY_FORM: VoucherFormData = {
   code: "",
   discountType: "percent",
   discountValue: 0,
   minOrderValue: 0,
   maxDiscount: 0,
-  startDate: new Date().toISOString().slice(0, 16),
-  endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 16),
+  startDate: toLocalDatetimeString(new Date()),
+  endDate: toLocalDatetimeString(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)),
   usageLimit: 0,
+  ttlMinutes: 0,
+  overbookingLimit: 0,
   isActive: true,
 };
 
 export function VoucherPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const page = parseInt(searchParams.get("page") || "1");
+  const search = searchParams.get("search") || "";
+  const status = searchParams.get("status") || "all";
+  const type = searchParams.get("type") || "all";
+
+  const setPage = (newPage: number) => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", newPage.toString());
+    setSearchParams(newParams);
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value && value !== "all") {
+      newParams.set(key, value);
+    } else {
+      newParams.delete(key);
+    }
+    newParams.set("page", "1");
+    setSearchParams(newParams);
+  };
+
   const [editing, setEditing] = useState<Voucher | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Voucher | null>(null);
 
-  const { data: vouchers, isLoading, error } = useVouchers();
+  const { data, isLoading, error } = useVouchers(page, 10, { search, status, type });
+  const vouchers = data?.vouchers || [];
+  const pagination = data?.pagination;
   const createMutation = useCreateVoucher();
   const updateMutation = useUpdateVoucher();
   const deleteMutation = useDeleteVoucher();
 
-  const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
+  const [localSearch, setLocalSearch] = useState(search);
+  const debouncedSearch = useDebounce(localSearch, 500);
 
-  const filteredVouchers =
-    vouchers?.filter((v) =>
-      v.code.toLowerCase().includes(debouncedSearch.toLowerCase()),
-    ) || [];
+  useEffect(() => {
+    if (debouncedSearch !== search) {
+      handleFilterChange("search", debouncedSearch);
+    }
+  }, [debouncedSearch]);
 
   const {
     register,
@@ -113,9 +150,11 @@ export function VoucherPage() {
           discountValue: editing.discountValue,
           minOrderValue: editing.minOrderValue,
           maxDiscount: editing.maxDiscount || 0,
-          startDate: editing.startDate.slice(0, 16),
-          endDate: editing.endDate.slice(0, 16),
+          startDate: toLocalDatetimeString(editing.startDate),
+          endDate: toLocalDatetimeString(editing.endDate),
           usageLimit: editing.usageLimit,
+          ttlMinutes: editing.ttlMinutes || 0,
+          overbookingLimit: editing.overbookingLimit || 0,
           isActive: editing.isActive,
         });
       } else {
@@ -129,8 +168,8 @@ export function VoucherPage() {
       ...data,
       maxDiscount:
         data.discountType === "percent" &&
-        data.maxDiscount &&
-        data.maxDiscount > 0
+          data.maxDiscount &&
+          data.maxDiscount > 0
           ? data.maxDiscount
           : undefined,
       startDate: new Date(data.startDate).toISOString(),
@@ -148,7 +187,7 @@ export function VoucherPage() {
         e instanceof Error ? e.message : "An error occurred",
     });
 
-    await action.then(() => setIsFormOpen(false)).catch(() => {});
+    await action.then(() => setIsFormOpen(false)).catch(() => { });
   };
 
   const confirmDelete = () => {
@@ -172,7 +211,7 @@ export function VoucherPage() {
     <div className="flex flex-col gap-6 animate-page-enter">
       <PageHeader
         title="Voucher Management"
-        description="Manage promotional campaigns and discount codes for customers."
+        description="Create and manage discount codes, promotional campaigns, and special offers to drive sales."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -187,14 +226,43 @@ export function VoucherPage() {
         }
         filters={
           <div className="flex flex-col gap-3 w-full">
+            {/* Hàng 1: Search */}
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Search by voucher code..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
+            </div>
+
+            {/* Hàng 2: Filters */}
+            <div className="flex flex-wrap items-center gap-3">
+              <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
+                <SelectTrigger className="w-[160px] h-9 bg-surface text-sm border-border">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="upcoming">Upcoming</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={type} onValueChange={(val) => handleFilterChange("type", val)}>
+                <SelectTrigger className="w-[160px] h-9 bg-surface text-sm border-border">
+                  <SelectValue placeholder="Discount Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="percent">Percentage %</SelectItem>
+                  <SelectItem value="fixed">Fixed Amount</SelectItem>
+                  <SelectItem value="freeship">Free Shipping</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         }
@@ -230,7 +298,7 @@ export function VoucherPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredVouchers.map((voucher, i) => (
+              {vouchers.map((voucher, i) => (
                 <TableRow
                   key={voucher.id}
                   className="animate-stagger"
@@ -271,11 +339,37 @@ export function VoucherPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-center">
-                    <span
-                      className={`px-2.5 py-1 text-[11px] uppercase font-bold rounded-sm ${voucher.isActive ? "bg-success/10 text-success" : "bg-ink-muted/10 text-ink-muted"}`}
-                    >
-                      {voucher.isActive ? "Active" : "Paused"}
-                    </span>
+                    {(() => {
+                      if (!voucher.isActive) {
+                        return (
+                          <span className="px-2.5 py-1 text-[11px] uppercase font-bold rounded-sm bg-ink-muted/10 text-ink-muted">
+                            Inactive
+                          </span>
+                        );
+                      }
+                      const now = new Date();
+                      const start = new Date(voucher.startDate);
+                      const end = new Date(voucher.endDate);
+                      if (now > end) {
+                        return (
+                          <span className="px-2.5 py-1 text-[11px] uppercase font-bold rounded-sm bg-danger/10 text-danger">
+                            Expired
+                          </span>
+                        );
+                      }
+                      if (now < start) {
+                        return (
+                          <span className="px-2.5 py-1 text-[11px] uppercase font-bold rounded-sm bg-info/10 text-info">
+                            Upcoming
+                          </span>
+                        );
+                      }
+                      return (
+                        <span className="px-2.5 py-1 text-[11px] uppercase font-bold rounded-sm bg-success/10 text-success">
+                          Active
+                        </span>
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center">
@@ -318,15 +412,22 @@ export function VoucherPage() {
               ))}
             </TableBody>
           </Table>
-          {(!vouchers || vouchers.length === 0) && (
+          {vouchers.length === 0 && (
             <p className="py-8 text-center text-sm text-ink-muted">
-              No vouchers found
+              {search || status !== "all" || type !== "all"
+                ? "No matching vouchers found for the applied filters."
+                : "No vouchers found"}
             </p>
           )}
-          {vouchers && vouchers.length > 0 && filteredVouchers.length === 0 && (
-            <p className="py-8 text-center text-sm text-ink-muted">
-              No matching vouchers found
-            </p>
+
+          {pagination && pagination.totalPages > 1 && (
+            <div className="py-4 border-t border-border bg-surface">
+              <Pagination
+                currentPage={page}
+                totalPages={pagination.totalPages}
+                onPageChange={setPage}
+              />
+            </div>
           )}
         </div>
       )}
@@ -498,12 +599,15 @@ export function VoucherPage() {
                   >
                     Start Date <span className="text-brand">*</span>
                   </Label>
-                  <Input
-                    id="startDate"
-                    type="datetime-local"
-                    {...register("startDate")}
-                    aria-invalid={!!errors.startDate}
-                    className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand cursor-pointer"
+                  <Controller
+                    control={control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
                   {errors.startDate && (
                     <p className="text-xs text-danger">
@@ -518,12 +622,15 @@ export function VoucherPage() {
                   >
                     End Date <span className="text-brand">*</span>
                   </Label>
-                  <Input
-                    id="endDate"
-                    type="datetime-local"
-                    {...register("endDate")}
-                    aria-invalid={!!errors.endDate}
-                    className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand cursor-pointer"
+                  <Controller
+                    control={control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <DateTimePicker
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
                   {errors.endDate && (
                     <p className="text-xs text-danger">
@@ -533,14 +640,70 @@ export function VoucherPage() {
                 </div>
               </div>
 
-              <div className="mt-6 p-4 rounded-md border border-border bg-bg/50">
-                <div className="flex items-center justify-between">
-                  <Label
-                    htmlFor="isActive"
-                    className="text-sm font-semibold text-ink cursor-pointer"
-                  >
-                    Active Status
-                  </Label>
+              {/* Advanced Settings */}
+              <div className="mt-8 space-y-6">
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="ttlMinutes"
+                      className="text-sm font-semibold text-ink flex items-center gap-2"
+                    >
+                      Minutes
+                    </Label>
+                    <Input
+                      id="ttlMinutes"
+                      type="number"
+                      min="0"
+                      placeholder="0 = No limit"
+                      {...register("ttlMinutes", { valueAsNumber: true })}
+                      aria-invalid={!!errors.ttlMinutes}
+                      className="h-10 bg-surface border-border focus-visible:ring-brand rounded-sm"
+                    />
+                    {errors.ttlMinutes && (
+                      <p className="text-xs text-danger">{errors.ttlMinutes.message}</p>
+                    )}
+                    <p className="text-[11px] text-ink-muted">
+                      0 = No limit. Used for reservation countdowns.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="overbookingLimit"
+                      className="text-sm font-semibold text-ink"
+                    >
+                      Overbooking
+                    </Label>
+                    <Input
+                      id="overbookingLimit"
+                      type="number"
+                      min="-1"
+                      placeholder="0 = Disabled"
+                      {...register("overbookingLimit", { valueAsNumber: true })}
+                      aria-invalid={!!errors.overbookingLimit}
+                      className="h-10 bg-surface border-border focus-visible:ring-brand rounded-sm"
+                    />
+                    {errors.overbookingLimit && (
+                      <p className="text-xs text-danger">{errors.overbookingLimit.message}</p>
+                    )}
+                    <p className="text-[11px] text-ink-muted">
+                      0 = Disabled, -1 = Infinite. Allows claiming beyond stock.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 border border-border/60 rounded-sm bg-surface">
+                  <div className="space-y-0.5">
+                    <Label
+                      htmlFor="isActive"
+                      className="text-sm font-semibold text-ink cursor-pointer"
+                    >
+                      Active Status
+                    </Label>
+                    <p className="text-[11px] text-ink-muted">
+                      Activate voucher immediately for customers
+                    </p>
+                  </div>
                   <Controller
                     name="isActive"
                     control={control}
@@ -553,9 +716,6 @@ export function VoucherPage() {
                     )}
                   />
                 </div>
-                <p className="text-xs text-ink-muted mt-2">
-                  Activate voucher immediately for customers
-                </p>
               </div>
             </div>
 

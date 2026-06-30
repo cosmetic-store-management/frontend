@@ -43,7 +43,7 @@ export function Sidebar({
             {user.avatar ? (
               <img
                 src={user.avatar}
-                alt={user.name}
+                alt=""
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
@@ -54,13 +54,13 @@ export function Sidebar({
             )}
           </div>
           <div className="overflow-hidden">
-            <h2 className="font-bold text-sm text-ink truncate">{user.name}</h2>
+            <p className="font-bold text-sm text-ink truncate">{user.name}</p>
             <p className="text-[11px] text-ink-muted truncate">{user.email}</p>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col py-4 flex-1 gap-2">
+        <nav aria-label="Account Settings" className="flex flex-col py-4 flex-1 gap-2">
           {NAV_ITEMS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}

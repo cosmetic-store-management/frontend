@@ -10,6 +10,7 @@ export interface CartItem {
   quantity: number;
   imageUrl: string;
   stock: number;
+  isActive?: boolean;
   /** Slug dùng để điều hướng đến trang chi tiết sản phẩm */
   slug?: string;
 }

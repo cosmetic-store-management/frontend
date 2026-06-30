@@ -64,7 +64,7 @@ export function AuditLogPage() {
     <div className="space-y-4 animate-page-enter">
       <PageHeader
         title="System Logs"
-        description="Monitor and trace system configuration activities, management, and data security"
+        description="Track administrative actions, monitor system changes, and ensure security compliance."
         filters={
           <div className="flex flex-col gap-3 w-full">
             <div className="group relative max-w-sm flex-1 min-w-50">
@@ -161,7 +161,7 @@ export function AuditLogPage() {
         <Table className="min-w-200 table-fixed">
           <TableHeader>
             <TableRow className="bg-surface-muted border-b border-border">
-              <TableHead className="w-[20%] text-left text-ink-muted font-medium pl-4">
+              <TableHead className="w-[20%] text-center text-ink-muted font-medium">
                 Account
               </TableHead>
               <TableHead className="text-center w-[12%] text-ink-muted font-medium">

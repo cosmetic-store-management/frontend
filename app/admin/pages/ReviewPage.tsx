@@ -126,7 +126,7 @@ export function ReviewPage() {
     <section className="space-y-4 animate-page-enter">
       <PageHeader
         title="Review Management"
-        description="View and moderate customer reviews. You can reply or delete spam/inappropriate reviews."
+        description="Monitor product feedback, moderate customer reviews, and maintain your store's reputation."
         filters={
           <div className="flex flex-col gap-3 w-full">
             <div className="group relative w-full sm:w-80">
@@ -199,7 +199,7 @@ export function ReviewPage() {
             <Table className="min-w-200 table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[20%] pl-4 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left">
+                  <TableHead className="w-[20%] py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                     Reviewer
                   </TableHead>
                   <TableHead className="w-[25%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">

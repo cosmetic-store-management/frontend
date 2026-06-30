@@ -17,9 +17,9 @@ export function TierPage() {
   return (
     <div className="animate-slide-up bg-surface rounded-sm px-6 py-6 flex-1">
       <div className="mb-6">
-        <h2 className="text-lg font-bold text-ink mb-1">Membership Tier</h2>
-        <p className="text-xs text-ink-muted">
-          Tier is calculated from total completed order spending
+        <h1 className="text-lg font-bold text-ink mb-1">Member Tier</h1>
+        <p className="text-sm text-ink-muted">
+          View your loyalty tier status and benefits.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export function TierPage() {
                   {user?.name}
                 </p>
                 <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">
-                  {tierInfo.tierLabelEn}
+                  {tierInfo.tierLabel}
                 </span>
               </div>
               <div className="flex items-end justify-between">
@@ -99,9 +99,9 @@ export function TierPage() {
           {tierInfo.nextTierLabel ? (
             <div className="bg-surface-soft p-5 rounded-sm border border-border mb-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-ink text-sm">
+                <h2 className="font-semibold text-ink text-sm">
                   Tier progress
-                </h3>
+                </h2>
                 <span className="text-xs text-ink-muted">
                   {tierInfo.progressPercent}%
                 </span>
@@ -127,9 +127,9 @@ export function TierPage() {
           ) : (
             <div className="bg-surface-soft p-5 rounded-sm border border-brand/30 text-center mb-6">
               <Award className="w-10 h-10 text-brand mx-auto mb-2" />
-              <h3 className="font-bold text-ink">
+              <h2 className="font-bold text-ink">
                 Congratulations! You have reached the highest tier 🎉
-              </h3>
+              </h2>
               <p className="text-xs text-ink-muted mt-1">
                 Thank you for being with GlowUp Beauty
               </p>
@@ -139,9 +139,9 @@ export function TierPage() {
           {/* ── Bảng quyền lợi ── */}
           <div className="bg-surface-soft rounded-sm border border-border overflow-hidden">
             <div className="px-5 py-3 border-b border-border">
-              <h3 className="font-semibold text-ink text-sm">
+              <h2 className="font-semibold text-ink text-sm">
                 Benefits by tier
-              </h3>
+              </h2>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

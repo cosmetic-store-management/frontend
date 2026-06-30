@@ -15,6 +15,8 @@ export const voucherSchema = z
     endDate: z.string().min(1, "Ngày kết thúc không được để trống"),
     usageLimit: z.number().min(0),
     isActive: z.boolean(),
+    ttlMinutes: z.number().min(0).optional(),
+    overbookingLimit: z.number().min(-1).optional(),
   })
   .refine(
     (data) => {

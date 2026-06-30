@@ -229,14 +229,16 @@ export function PersonalInfoPage() {
       <div className="animate-slide-up bg-surface rounded-sm flex-1">
         {/* ── Hồ sơ ── */}
         <div className="px-6 py-6 border-b border-border/50">
-          <h2 className="text-base font-bold text-ink mb-1">My Profile</h2>
-          <p className="text-xs text-ink-muted mb-6">
-            Manage profile information for account security
+          <h1 className="text-lg font-bold text-ink mb-1">My Profile</h1>
+          <p className="text-sm text-ink-muted mb-6">
+            Manage your profile information and account security.
           </p>
 
           {/* Avatar */}
           <div className="flex flex-col items-center gap-2 mb-8">
             <input
+              id="avatar"
+              name="avatar"
               ref={fileInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp"
@@ -472,9 +474,9 @@ export function PersonalInfoPage() {
 
         {/* ── Bảo mật ── */}
         <div className="px-6 py-6">
-          <h3 className="text-base font-bold text-ink mb-1">Security</h3>
-          <p className="text-xs text-ink-muted mb-6">
-            Change password periodically to protect your account
+          <h2 className="text-lg font-bold text-ink mb-1">Security</h2>
+          <p className="text-sm text-ink-muted mb-6">
+            Change your password periodically to protect your account.
           </p>
           <form
             onSubmit={handlePwdSubmit(onChangePassword)}
@@ -537,9 +539,9 @@ export function PersonalInfoPage() {
         createPortal(
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4">
             <div className="bg-surface w-full max-w-105 rounded-lg p-6 shadow-xl border border-border/50 animate-scale-up">
-              <h3 className="text-lg font-bold text-ink mb-1">
+              <h2 className="text-lg font-bold text-ink mb-1">
                 Email Verification
-              </h3>
+              </h2>
               <p className="text-sm text-ink-muted mb-5 leading-relaxed">
                 OTP code has been sent to{" "}
                 <strong className="text-brand font-semibold">

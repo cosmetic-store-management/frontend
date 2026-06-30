@@ -23,10 +23,18 @@ export interface VoucherPayload {
 // ── API Functions ─────────────────────────────────────────────────────────────
 
 /** Lấy toàn bộ vouchers (bao gồm inactive) cho admin */
-export const getAdminVouchers = (): Promise<Voucher[]> =>
-  apiClient
-    .get<{ vouchers: Voucher[] }>("/vouchers/admin")
-    .then((r) => r.vouchers);
+export const getAdminVouchers = (page = 1, limit = 10, filters: any = {}): Promise<{ vouchers: Voucher[]; pagination: any }> => {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+    ...(filters.status && filters.status !== "all" && { status: filters.status }),
+    ...(filters.type && filters.type !== "all" && { type: filters.type }),
+    ...(filters.search && { search: filters.search }),
+  });
+  return apiClient
+    .get<{ vouchers: Voucher[]; pagination: any }>(`/vouchers/admin?${queryParams.toString()}`)
+    .then((r) => r);
+};
 
 /** Tạo voucher mới */
 export const createAdminVoucher = (data: VoucherPayload): Promise<Voucher> =>

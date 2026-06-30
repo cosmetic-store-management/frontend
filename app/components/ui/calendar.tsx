@@ -57,9 +57,8 @@ function Calendar({
         ),
 
         // ── State classes (applied to day_button in v10) ─────────────────────
-        // selected = base: brand bg + white text. No rounding here — let
-        // range_start / range_end / single-selection handle rounding.
-        selected: "bg-brand text-white hover:bg-brand hover:text-white",
+        // selected = base: brand bg + white text.
+        selected: "bg-brand! text-white! hover:bg-brand! hover:text-white! rounded-sm",
 
         // Single-day selections get rounded via [&:not(.rdp-range_start):not(.rdp-range_end)]:rounded-sm
         // but in v10 class names we use separate class keys:

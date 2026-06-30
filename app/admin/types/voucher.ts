@@ -10,4 +10,6 @@ export interface Voucher {
   usageLimit: number;
   usedCount: number;
   isActive: boolean;
+  ttlMinutes?: number;
+  overbookingLimit?: number;
 }

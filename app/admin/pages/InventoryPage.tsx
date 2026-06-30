@@ -246,7 +246,7 @@ export function InventoryPage() {
     <div className="flex flex-col gap-6 animate-page-enter text-left">
       <PageHeader
         title="Inventory Management"
-        description="Track stock, import goods, and view transaction history."
+        description="Control your stock levels, manage goods receipts, and track all inventory transactions."
         actions={
           <Button
             className="gap-2 shrink-0 h-10 bg-brand text-white hover:bg-brand-hover shadow-none"
@@ -312,13 +312,13 @@ export function InventoryPage() {
               <Table className="min-w-205 table-fixed">
                 <TableHeader>
                   <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                    <TableHead className="w-[30%]">Product</TableHead>
+                    <TableHead className="w-[30%] text-center">Product</TableHead>
                     <TableHead className="text-center w-[11%]">Stock</TableHead>
                     <TableHead className="text-center w-[13%]">
                       Min Stock
                     </TableHead>
-                    <TableHead className="w-[16%]">Brand</TableHead>
-                    <TableHead className="w-[14%] text-right">
+                    <TableHead className="w-[16%] text-center">Brand</TableHead>
+                    <TableHead className="w-[14%] text-center">
                       Import Price
                     </TableHead>
                     <TableHead className="w-[16%] text-center">
@@ -406,7 +406,7 @@ export function InventoryPage() {
                             {item.minStock}
                           </TableCell>
                           <TableCell className="py-3.5 px-5 overflow-hidden max-w-0">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center justify-center gap-2">
                               {item.brandImage ? (
                                 <img
                                   src={item.brandImage}
@@ -419,7 +419,7 @@ export function InventoryPage() {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="py-3.5 px-5 text-right font-medium text-ink">
+                          <TableCell className="py-3.5 px-5 text-center font-medium text-ink">
                             {item.mac
                               ? `${item.mac.toLocaleString("vi-VN")}đ`
                               : "-"}

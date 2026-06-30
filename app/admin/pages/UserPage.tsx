@@ -223,7 +223,7 @@ export function UserPage() {
     <div className="flex flex-col gap-6 animate-page-enter text-left w-full pb-12">
       <PageHeader
         title="Staff Management"
-        description="Manage and assign permissions for store employees."
+        description="Manage staff accounts, control access levels, and assign administrative roles."
         actions={
           <Button
             className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
@@ -288,7 +288,7 @@ export function UserPage() {
           <Table className="min-w-200 table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted border-b border-border">
-                <TableHead className="w-[25%] text-left pl-4">Staff</TableHead>
+                <TableHead className="w-[25%] text-center">Staff</TableHead>
                 <TableHead className="w-[25%] text-center">Contact</TableHead>
                 <TableHead className="text-center w-[20%]">Role</TableHead>
                 <TableHead className="text-center w-[20%]">Status</TableHead>

@@ -82,6 +82,7 @@ export default function Header() {
         <div className="max-w-300 w-full mx-auto px-4 py-2.5 flex items-center gap-4">
           {/* Mobile Menu Toggle */}
           <button
+            aria-label="Toggle Menu"
             className="lg:hidden text-ink p-1"
             onClick={() => setMobileMenuOpen(true)}
           >
@@ -91,6 +92,7 @@ export default function Header() {
           {/* Logo */}
           <Link
             to="/"
+            aria-label="Home"
             className="flex items-center justify-center shrink-0 w-18 h-18 overflow-hidden rounded-full hover:opacity-90 transition-opacity"
           >
             <img
@@ -110,6 +112,9 @@ export default function Header() {
                 strokeWidth={1.5}
               />
               <input
+                id="search"
+                name="search"
+                aria-label="Search products"
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -143,6 +148,7 @@ export default function Header() {
             </span>
 
             <button
+              aria-label="Mobile Search"
               className="lg:hidden text-ink p-1 hover:text-brand"
               onClick={() => setMobileMenuOpen(true)}
             >
@@ -151,6 +157,7 @@ export default function Header() {
 
             {/* Auth Link */}
             <Link
+              aria-label="User Account"
               to={isAuthenticated ? "/account" : `/login?returnUrl=/account`}
               className="hidden sm:block p-1 hover:text-brand transition-colors relative"
             >
@@ -159,6 +166,7 @@ export default function Header() {
 
             {/* Cart Button → /cart route */}
             <Link
+              aria-label="Shopping Cart"
               to="/cart"
               className="relative p-1.5 rounded-full hover:bg-brand/8 transition-colors group"
             >
@@ -178,7 +186,7 @@ export default function Header() {
         {/* =========================================
             TIER 3: CATEGORY NAVIGATION BAR
             ========================================= */}
-        <nav className="hidden lg:flex bg-background/80 backdrop-blur-sm relative z-40 border-t border-border/60">
+        <nav aria-label="Main Navigation" className="hidden lg:flex bg-background/80 backdrop-blur-sm relative z-40 border-t border-border/60">
           <div className="max-w-300 w-full mx-auto px-4 flex items-stretch gap-6 text-[13px] font-semibold text-foreground">
             {/* Mega Menu Trigger */}
             <div

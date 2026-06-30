@@ -102,11 +102,11 @@ export function FlashSalePage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="h-64 bg-muted animate-pulse rounded-2xl mb-8" />
-        <div className="h-16 bg-muted animate-pulse rounded-xl mb-8" />
+        <div className="h-64 bg-muted animate-pulse rounded-sm mb-8" />
+        <div className="h-16 bg-muted animate-pulse rounded-sm mb-8" />
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((n) => (
-            <div key={n} className="h-72 bg-muted animate-pulse rounded-xl" />
+            <div key={n} className="h-72 bg-muted animate-pulse rounded-sm" />
           ))}
         </div>
       </div>
@@ -133,7 +133,7 @@ export function FlashSalePage() {
     <div className="bg-[#f5f5f5] min-h-screen pb-12">
       <div className="container mx-auto px-4 max-w-7xl pt-6">
         {/* Banner */}
-        <div className="w-full relative overflow-hidden bg-brand-dark rounded-lg shadow-md mb-6">
+        <div className="w-full relative overflow-hidden bg-brand-dark rounded-sm shadow-md mb-6">
           <div className="absolute inset-0 bg-gradient-to-br from-brand via-brand/90 to-rose-600"></div>
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent"></div>
           <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_45%,rgba(255,255,255,0.05)_50%,transparent_55%)] bg-[length:30px_30px]"></div>
@@ -204,7 +204,7 @@ export function FlashSalePage() {
         </div>
 
         {/* Timeline Tabs */}
-        <div className="flex overflow-x-auto no-scrollbar bg-card shadow-sm mb-4 border border-border/40 rounded-2xl overflow-hidden">
+        <div className="flex overflow-x-auto no-scrollbar bg-card shadow-sm mb-4 border border-border/40 rounded-sm overflow-hidden">
           {displayTabs.map((fs, index) => {
             const fsStart = new Date(fs.startTime);
             const fsEnd = new Date(fs.endTime);
@@ -239,21 +239,21 @@ export function FlashSalePage() {
         </div>
 
         {/* Countdown */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6 bg-card py-4 shadow-sm border border-border/40 rounded-xl">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-6 bg-card py-4 shadow-sm border border-border/40 rounded-sm">
           <span className="text-sm font-bold text-foreground uppercase">
             {isActive ? "Ends in" : "Starts in"}
           </span>
           {timeLeft && (
             <div className="flex items-center gap-1.5">
-              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-lg">
+              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-sm">
                 {String(timeLeft.hours).padStart(2, "0")}
               </span>
               <span className="text-foreground font-bold text-lg">:</span>
-              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-lg">
+              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-sm">
                 {String(timeLeft.minutes).padStart(2, "0")}
               </span>
               <span className="text-foreground font-bold text-lg">:</span>
-              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-lg">
+              <span className="bg-foreground text-background font-bold w-9 h-9 flex items-center justify-center text-sm shadow-sm rounded-sm">
                 {String(timeLeft.seconds).padStart(2, "0")}
               </span>
             </div>
@@ -277,7 +277,7 @@ export function FlashSalePage() {
               <Link
                 key={index}
                 to={`/product/${item.productSlug}`}
-                className={`group flex flex-col h-full bg-card border border-border/40 hover:border-brand hover:shadow-md transition-all duration-300 overflow-hidden rounded-xl ${isUpcoming ? "opacity-80" : ""}`}
+                className={`group flex flex-col h-full bg-card border border-border/40 hover:border-brand hover:shadow-md transition-all duration-300 overflow-hidden rounded-sm ${isUpcoming ? "opacity-80" : ""}`}
               >
                 {/* Image */}
                 <div className="relative aspect-square w-full overflow-hidden bg-surface-soft">
@@ -288,7 +288,7 @@ export function FlashSalePage() {
                   />
                   {isUpcoming && (
                     <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                      <span className="bg-black/60 text-white font-bold text-sm px-4 py-2 rounded-full uppercase tracking-wider backdrop-blur-sm">{"Sắp diễn ra"}</span>
+                      <span className="bg-black/60 text-white font-bold text-sm px-4 py-2 rounded-sm uppercase tracking-wider backdrop-blur-sm">{"Sắp diễn ra"}</span>
                     </div>
                   )}
                 </div>
@@ -340,7 +340,7 @@ export function FlashSalePage() {
                       </span>
                     </div>
                     {item.originalPrice > item.flashPrice && (
-                      <div className="w-8 h-8 bg-[#84cc16] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 rounded-full">
+                      <div className="w-8 h-8 bg-[#84cc16] text-white flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 rounded-sm">
                         -
                         {Math.round(
                           (1 - item.flashPrice / item.originalPrice) * 100,
@@ -351,9 +351,9 @@ export function FlashSalePage() {
                   </div>
 
                   <div className="mt-3 w-full">
-                    <div className="h-1 w-full bg-surface-soft rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-surface-soft rounded-sm overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all duration-500 ${isUpcoming ? "bg-border" : "bg-brand"}`}
+                        className={`h-full rounded-sm transition-all duration-500 ${isUpcoming ? "bg-border" : "bg-brand"}`}
                         style={{ width: `${percentSold}%` }}
                       />
                     </div>

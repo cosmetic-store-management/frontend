@@ -9,10 +9,10 @@ import {
 
 const QUERY_KEY = ["admin-vouchers"] as const;
 
-export const useVouchers = () =>
+export const useVouchers = (page = 1, limit = 10, filters: any = {}) =>
   useQuery({
-    queryKey: QUERY_KEY,
-    queryFn: getAdminVouchers,
+    queryKey: [...QUERY_KEY, page, limit, filters],
+    queryFn: () => getAdminVouchers(page, limit, filters),
   });
 
 export const useCreateVoucher = () => {

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Ticket, Tag, Truck, Gift, Check, ChevronRight } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Ticket, Tag, Truck, Gift, Check, ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router";
 import {
   useVouchers,
@@ -45,12 +45,12 @@ function getVoucherMeta(voucher: Voucher) {
 
 function HomeSingleVoucher({
   voucher,
-  isSaved,
+  savedStatus,
   onCollect,
   isLoading,
 }: {
   voucher: Voucher;
-  isSaved: boolean;
+  savedStatus: string;
   onCollect: (code: string) => void;
   isLoading: boolean;
 }) {
@@ -58,39 +58,46 @@ function HomeSingleVoucher({
   const { icon, title, desc } = getVoucherMeta(voucher);
 
   const handleCollect = () => {
-    if (isSaved || justSaved) return;
+    if (savedStatus !== "none" || justSaved) return;
     onCollect(voucher.code);
     setJustSaved(true);
   };
 
-  const saved = isSaved || justSaved;
+  const saved = savedStatus === "valid" || justSaved;
+  const isExpired = savedStatus === "expired" || savedStatus === "used" || savedStatus === "exhausted";
 
   return (
-    <div className="bg-brand/5 border border-brand/20 rounded-sm p-4 flex flex-col relative shrink-0 min-w-56 max-w-64 transition-colors hover:bg-brand/10">
-      <div className="absolute top-1/2 -left-px w-2 h-4 bg-background rounded-r-full -translate-y-1/2 border border-l-0 border-brand/20" />
-      <div className="absolute top-1/2 -right-px w-2 h-4 bg-background rounded-l-full -translate-y-1/2 border border-r-0 border-brand/20" />
+    <div className={`border rounded-sm p-4 flex flex-col relative shrink-0 min-w-56 max-w-64 transition-colors ${
+      isExpired ? "bg-surface-soft border-border opacity-70 grayscale-[0.8]" : "bg-brand/5 border-brand/20 hover:bg-brand/10"
+    }`}>
+      <div className={`absolute top-1/2 -left-px w-2 h-4 bg-background rounded-r-full -translate-y-1/2 border border-l-0 ${isExpired ? "border-border" : "border-brand/20"}`} />
+      <div className={`absolute top-1/2 -right-px w-2 h-4 bg-background rounded-l-full -translate-y-1/2 border border-r-0 ${isExpired ? "border-border" : "border-brand/20"}`} />
 
-      <span className="font-black text-brand text-xl flex items-center gap-2 leading-tight tracking-tight">
+      <span className={`font-black text-xl flex items-center gap-2 leading-tight tracking-tight ${isExpired ? "text-ink-muted" : "text-brand"}`}>
         {icon} {title}
       </span>
       <span className="text-[11px] text-ink-muted mt-1.5 whitespace-nowrap overflow-hidden text-ellipsis">
         {desc}
       </span>
 
-      <div className="mt-3.5 pt-3.5 border-t border-dashed border-brand/20 flex justify-between items-center gap-2">
-        <span className="text-[11px] font-mono bg-brand/10 text-brand px-2 py-1 rounded-sm uppercase tracking-widest truncate">
+      <div className={`mt-3.5 pt-3.5 border-t border-dashed flex justify-between items-center gap-2 ${isExpired ? "border-border" : "border-brand/20"}`}>
+        <span className={`text-[11px] font-mono px-2 py-1 rounded-sm uppercase tracking-widest truncate ${isExpired ? "bg-surface-muted text-ink-muted" : "bg-brand/10 text-brand"}`}>
           {voucher.code}
         </span>
         <button
           onClick={handleCollect}
-          disabled={isLoading || saved}
+          disabled={isLoading || saved || isExpired}
           className={`text-[11px] font-bold px-3 py-1.5 rounded-sm transition-all flex items-center gap-1.5 shrink-0 disabled:cursor-default ${
-            saved
-              ? "bg-success/10 text-success"
-              : "bg-brand text-white hover:bg-brand-dark"
+            isExpired
+              ? "bg-surface-muted text-ink-muted"
+              : saved
+                ? "bg-success/10 text-success"
+                : "bg-brand text-white hover:bg-brand-dark"
           }`}
         >
-          {saved ? (
+          {isExpired ? (
+             savedStatus === "used" ? "Used" : savedStatus === "exhausted" ? "Claimed" : "Expired"
+          ) : saved ? (
             <>
               <Check className="w-3 h-3" /> Saved
             </>
@@ -111,7 +118,39 @@ export function HomeVouchers() {
   const { data: walletVouchers } = useGetWalletVouchers();
   const collectMutation = useCollectVoucher();
 
-  const savedCodes = new Set((walletVouchers || []).map((v: any) => v.code));
+  const savedVoucherMap = new Map((walletVouchers || []).map((v: any) => [v.code, v.status]));
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(Math.ceil(scrollLeft) < scrollWidth - clientWidth - 1);
+    }
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(checkScroll, 100);
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [vouchers]);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollContainerRef.current) {
+      const { current } = scrollContainerRef;
+      const scrollAmount = current.clientWidth * 0.8;
+      current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
 
   const handleCollect = (code: string) => {
     if (!user) {
@@ -144,23 +183,52 @@ export function HomeVouchers() {
         )}
       </div>
 
-      <div className="flex overflow-x-auto gap-3 pb-2 hide-scrollbar">
-        {isLoading
-          ? [...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="min-w-45 h-22 bg-surface-soft border border-border rounded-sm animate-pulse shrink-0"
-              />
-            ))
-          : vouchers!.map((v) => (
-              <HomeSingleVoucher
-                key={v.id}
-                voucher={v}
-                isSaved={savedCodes.has(v.code)}
-                onCollect={handleCollect}
-                isLoading={collectMutation.isPending}
-              />
-            ))}
+      <div className="relative group">
+        {/* Nút Left */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-1 md:-left-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            aria-label="Previous vouchers"
+          >
+            <ChevronLeft className="w-6 h-6 ml-[-2px]" strokeWidth={2} />
+          </button>
+        )}
+
+        {/* Nút Right */}
+        {canScrollRight && (
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-1 md:-right-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            aria-label="Next vouchers"
+          >
+            <ChevronRight className="w-6 h-6 mr-[-2px]" strokeWidth={2} />
+          </button>
+        )}
+
+        <div 
+          ref={scrollContainerRef}
+          onScroll={checkScroll}
+          className="flex overflow-x-auto gap-3 pb-2 no-scrollbar snap-x snap-mandatory pt-1 px-1 -mx-1"
+        >
+          {isLoading
+            ? [...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className="min-w-45 h-22 bg-surface-soft border border-border rounded-sm animate-pulse shrink-0 snap-start"
+                />
+              ))
+            : (vouchers || []).map((v) => (
+                <div key={v.id} className="snap-start shrink-0">
+                  <HomeSingleVoucher
+                    voucher={v}
+                    savedStatus={savedVoucherMap.get(v.code) || "none"}
+                    onCollect={handleCollect}
+                    isLoading={collectMutation.isPending}
+                  />
+                </div>
+              ))}
+        </div>
       </div>
     </section>
   );

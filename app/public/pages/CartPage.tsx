@@ -34,6 +34,7 @@ export function CartPage() {
   const validateVoucherMutation = useValidateVoucher();
   const subtotal = getSubtotal();
   const total = getTotal();
+  const hasInactiveItems = items.some((item) => item.isActive === false);
 
   const handleApplyVoucher = async () => {
     if (!voucherInput.trim()) return;
@@ -135,6 +136,11 @@ export function CartPage() {
                     <span className="inline-block text-[11px] bg-muted text-muted-foreground px-2 py-0.5 rounded-sm mt-0.5 font-medium">
                       {item.variantName}
                     </span>
+                  )}
+                  {item.isActive === false && (
+                    <div className="mt-1 text-xs font-semibold text-destructive">
+                      Sản phẩm đã ngừng kinh doanh
+                    </div>
                   )}
                   {/* Mobile */}
                   <div className="flex items-center justify-between sm:hidden mt-2">
@@ -352,14 +358,20 @@ export function CartPage() {
             </div>
           </div>
 
-          <div className="px-6 pb-6">
+          <div className="px-6 pb-6 space-y-2">
             <button
               onClick={() => navigate("/checkout")}
-              className="w-full text-white font-bold py-3.5 rounded-sm transition-all duration-150 flex justify-center items-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99]"
+              disabled={hasInactiveItems}
+              className="w-full text-white font-bold py-3.5 rounded-sm transition-all duration-150 flex justify-center items-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               Checkout <ArrowRight className="w-4 h-4" />
             </button>
+            {hasInactiveItems && (
+              <p className="text-xs text-destructive text-center font-medium">
+                Vui lòng xóa các sản phẩm ngừng kinh doanh khỏi giỏ hàng
+              </p>
+            )}
           </div>
         </div>
       </div>

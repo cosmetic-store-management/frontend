@@ -45,13 +45,13 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
       to={`/products?brandId=${brand.id}`}
       className={`group flex flex-col items-center transition-all duration-300 overflow-hidden rounded-sm
         ${dark
-          ? "border border-white/10 hover:border-white/25 hover:-translate-y-1"
-          : "border border-border/40 bg-surface hover:border-brand/50 hover:shadow-md hover:-translate-y-1"
+          ? "hover:-translate-y-1"
+          : "bg-surface hover:border-brand/50 hover:shadow-md hover:-translate-y-1"
         }`}
     >
       {/* Logo area — always white bg so logo image shows correctly */}
       <div
-        className={`w-full aspect-2/1 flex items-center justify-center p-4 bg-surface overflow-hidden ${dark ? "opacity-80 group-hover:opacity-100 transition-opacity" : ""}`}
+        className={`w-full aspect-2/1 flex items-center justify-center p-4 bg-surface overflow-hidden rounded-t-sm ${dark ? "opacity-80 group-hover:opacity-100 transition-opacity" : ""}`}
       >
         {brand.imageUrl && !imgFailed ? (
           <img
@@ -69,8 +69,8 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
 
       {/* Brand name — white in dark section, gray in light section */}
       <div
-        className={`w-full px-2 py-2 text-center
-        ${dark ? "bg-[#1e1e1e]" : "bg-white border-t border-[#e8e8e8]"}`}
+        className={`w-full px-2 py-2 text-center transition-colors duration-300 rounded-b-sm
+        ${dark ? "bg-[#1e1e1e] group-hover:bg-[#2a2a2a]" : "bg-white"}`}
       >
         <span
           className={`text-[10px] font-bold uppercase tracking-widest line-clamp-1
@@ -155,14 +155,14 @@ export default function BrandsPage() {
             {/* Carousel track */}
             <div
               ref={carouselRef}
-              className="flex overflow-x-auto scrollbar-none gap-px border border-white/10"
+              className="flex overflow-x-auto no-scrollbar gap-2 pt-2 pb-2 -mt-2"
               style={{ scrollSnapType: "x mandatory" }}
             >
               {isLoading
                 ? Array.from({ length: 5 }).map((_, i) => (
                   <div
                     key={i}
-                    className="min-w-50 flex-1 aspect-4/3 bg-[#2a2a2a] animate-pulse"
+                    className="min-w-50 flex-1 aspect-4/3 bg-[#2a2a2a] animate-pulse rounded-sm"
                   />
                 ))
                 : featured.map((brand: any) => (
@@ -202,7 +202,7 @@ export default function BrandsPage() {
           <p className="text-center font-black text-[15px] uppercase tracking-widest text-ink mb-5">
             {isLoading
               ? "loading"
-              : "View All Brands"}
+              : `View All ${brands.length} Brands`}
           </p>
 
           {/* A-Z navigation */}

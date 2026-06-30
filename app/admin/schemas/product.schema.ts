@@ -3,42 +3,42 @@ import { z } from "zod";
 export const variantSchema = z
   .object({
     id: z.string().optional(),
-    name: z.string().min(1, "Tên phân loại không được để trống"),
-    sku: z.string().min(1, "SKU không được để trống"),
+    name: z.string().min(1, "Variant name is required"),
+    sku: z.string().min(1, "SKU is required"),
     price: z
       .string()
-      .min(1, "Giá không được để trống")
+      .min(1, "Price is required")
       .refine(
         (val) => !isNaN(Number(val)) && Number(val) >= 0,
-        "Giá phải là số ≥ 0",
+        "Price must be ≥ 0",
       ),
     discountPrice: z
       .string()
       .optional()
       .refine(
         (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
-        "Giá KM phải là số ≥ 0",
+        "Sale price must be ≥ 0",
       ),
     stock: z
       .string()
-      .min(1, "Tồn kho không được để trống")
+      .min(1, "Stock is required")
       .refine(
         (val) => !isNaN(Number(val)) && Number(val) >= 0,
-        "Tồn kho phải là số ≥ 0",
+        "Stock must be ≥ 0",
       ),
     minStock: z
       .string()
-      .min(1, "Mức tối thiểu không được để trống")
+      .min(1, "Min stock is required")
       .refine(
         (val) => !isNaN(Number(val)) && Number(val) >= 0,
-        "Mức tối thiểu phải là số ≥ 0",
+        "Min stock must be ≥ 0",
       ),
     weight: z
       .string()
       .optional()
       .refine(
         (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
-        "Trọng lượng phải là số ≥ 0",
+        "Weight must be ≥ 0",
       ),
     imageUrl: z.string().optional(),
     isActive: z.boolean().default(true),
@@ -50,7 +50,7 @@ export const variantSchema = z
       if (!isNaN(p) && !isNaN(dp) && dp >= p) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Giá khuyến mãi phải nhỏ hơn giá gốc",
+          message: "Sale price must be less than regular price",
           path: ["discountPrice"],
         });
       }
@@ -58,16 +58,16 @@ export const variantSchema = z
   });
 
 export const productSchema = z.object({
-  name: z.string().min(1, "Tên sản phẩm không được để trống"),
+  name: z.string().min(1, "Product name is required"),
   slug: z.string().optional(),
   description: z.string().optional(),
-  categoryId: z.string().min(1, "Vui lòng chọn danh mục chính"),
+  categoryId: z.string().min(1, "Please select a category"),
   categoryIds: z.array(z.string()).default([]), // secondary N:M categories
-  brandId: z.string().min(1, "Vui lòng chọn thương hiệu"),
-  imageUrl: z.string().min(1, "Ảnh đại diện không được để trống"),
+  brandId: z.string().min(1, "Please select a brand"),
+  imageUrl: z.string().min(1, "Thumbnail image is required"),
   imageUrls: z.array(z.string()).default([]),
   isActive: z.boolean().default(true),
-  variants: z.array(variantSchema).min(1, "Cần ít nhất 1 phân loại"),
+  variants: z.array(variantSchema).default([]),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;

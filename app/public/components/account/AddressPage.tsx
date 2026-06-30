@@ -104,9 +104,9 @@ export function AddressPage() {
       onSubmit={handleSubmit(onSave)}
       className={`border border-border bg-surface-soft p-5 rounded-sm ${isInline ? "mt-3" : "mb-6"} animate-scale-up`}
     >
-      <h3 className="font-bold text-ink mb-4 text-sm">
+      <h2 className="font-bold text-ink mb-4 text-sm">
         {editingId ? "Update Address" : "New Address"}
-      </h3>
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div className="space-y-1.5">
@@ -297,7 +297,7 @@ export function AddressPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-ink mb-1">Address Book</h2>
+          <h1 className="text-lg font-bold text-ink mb-1">Address Book</h1>
           <p className="text-xs text-ink-muted">
             Your saved shipping addresses
           </p>
@@ -406,7 +406,7 @@ export function AddressPage() {
           ))}
         </div>
       )}
-      
+
       <DeleteModal
         open={!!deleteTargetId}
         loading={deleteMutation.isPending}
