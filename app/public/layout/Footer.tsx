@@ -99,12 +99,12 @@ export default function Footer() {
 
           {/* About Links */}
           <div className="lg:col-span-2">
-            <h4
+            <h3
               className="text-[11px] font-bold uppercase tracking-widest mb-5"
-              style={{ color: "hsl(352, 72%, 62%)" }}
+              style={{ color: "hsl(345, 10%, 94%)" }}
             >
-              About
-            </h4>
+              ABOUT
+            </h3>
             <ul className="space-y-3 text-sm">
               {[
                 { to: "/about", label: "Our Story" },
@@ -135,12 +135,12 @@ export default function Footer() {
 
           {/* Support Links */}
           <div className="lg:col-span-2">
-            <h4
+            <h3
               className="text-[11px] font-bold uppercase tracking-widest mb-5"
-              style={{ color: "hsl(352, 72%, 62%)" }}
+              style={{ color: "hsl(345, 10%, 94%)" }}
             >
-              Support
-            </h4>
+              SUPPORT
+            </h3>
             <ul className="space-y-3 text-sm">
               {[
                 { to: "#", label: "Help Center (FAQ)" },
@@ -171,13 +171,13 @@ export default function Footer() {
 
           {/* Newsletter + Social */}
           <div className="lg:col-span-4">
-            <h4
+            <h3
               className="text-[11px] font-bold uppercase tracking-widest mb-5"
-              style={{ color: "hsl(352, 72%, 62%)" }}
+              style={{ color: "hsl(345, 10%, 94%)" }}
             >
-              Stay in the Glow
-            </h4>
-            <p className="text-sm mb-5" style={{ color: "hsl(345, 8%, 55%)" }}>
+              STAY IN THE GLOW
+            </h3>
+            <p className="text-sm mb-5 text-white/70">
               Beauty tips, exclusive offers, and new arrivals — straight to your
               inbox.
             </p>
@@ -201,12 +201,12 @@ export default function Footer() {
               </button>
             </form>
 
-            <h4
+            <h3
               className="text-[11px] font-bold uppercase tracking-widest mb-4"
-              style={{ color: "hsl(352, 72%, 62%)" }}
+              style={{ color: "hsl(345, 10%, 94%)" }}
             >
-              Follow Us
-            </h4>
+              FOLLOW US
+            </h3>
             <div className="flex items-center gap-2.5">
               {settings.facebookUrl && (
                 <a

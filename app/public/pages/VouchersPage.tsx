@@ -26,7 +26,7 @@ function getVoucherMeta(voucher: Voucher) {
   if (voucher.discountType === "freeship") {
     return {
       icon: <Truck className="w-5 h-5" />,
-      title: "Miễn phí vận chuyển",
+      title: "Free shipping",
       badge: "FREESHIP",
       color: "text-sky-600 bg-sky-50 border-sky-200",
       badgeColor: "bg-sky-100 text-sky-700",
@@ -35,7 +35,7 @@ function getVoucherMeta(voucher: Voucher) {
   if (voucher.discountType === "percent") {
     return {
       icon: <Tag className="w-5 h-5" />,
-      title: `Giảm ${voucher.discountValue}%`,
+      title: `Save ${voucher.discountValue}%`,
       badge: `${voucher.discountValue}%`,
       color: "text-brand bg-brand/5 border-brand/20",
       badgeColor: "bg-brand/10 text-brand",
@@ -43,8 +43,8 @@ function getVoucherMeta(voucher: Voucher) {
   }
   return {
     icon: <Ticket className="w-5 h-5" />,
-    title: `Giảm ${voucher.discountValue.toLocaleString("vi-VN")}₫`,
-    badge: `${voucher.discountValue.toLocaleString("vi-VN")}₫`,
+    title: `Save ${voucher.discountValue.toLocaleString("en-US")} ₫`,
+    badge: `${voucher.discountValue.toLocaleString("en-US")} ₫`,
     color: "text-amber-600 bg-amber-50 border-amber-200",
     badgeColor: "bg-amber-100 text-amber-700",
   };
@@ -83,7 +83,7 @@ function VoucherCardFull({
   const handleCopy = () => {
     navigator.clipboard.writeText(voucher.code);
     setCopied(true);
-    toast.success("Đã sao chép mã " + voucher.code);
+    toast.success("Copied code " + voucher.code);
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -113,13 +113,13 @@ function VoucherCardFull({
           <div>
             <h3 className="font-bold text-ink text-sm">{title}</h3>
             <p className="text-xs text-ink-muted mt-0.5">
-              Đơn tối thiểu{" "}
+              Minimum order{" "}
               {voucher.minOrderValue > 0
-                ? `${voucher.minOrderValue.toLocaleString("vi-VN")}₫`
-                : "0₫"}
+                ? `${voucher.minOrderValue.toLocaleString("en-US")} ₫`
+                : "0 ₫"}
               {voucher.maxDiscount &&
                 voucher.maxDiscount > 0 &&
-                ` · Giảm tối đa ${voucher.maxDiscount.toLocaleString("vi-VN")}₫`}
+                ` · Max discount ${voucher.maxDiscount.toLocaleString("en-US")} ₫`}
             </p>
           </div>
         </div>
@@ -129,12 +129,12 @@ function VoucherCardFull({
           <div>
             <div className="flex justify-between text-[10px] text-ink-muted mb-1">
               <span>
-                Đã dùng {voucher.usedCount}/{voucher.usageLimit}
+                Used {voucher.usedCount}/{voucher.usageLimit}
               </span>
               <span>
                 {isFull
-                  ? "Đã hết"
-                  : `Còn ${voucher.usageLimit - voucher.usedCount} lượt`}
+                  ? "Sold out"
+                  : `${voucher.usageLimit - voucher.usedCount} left`}
               </span>
             </div>
             <div className="h-1.5 bg-black/10 rounded-full overflow-hidden">
@@ -153,15 +153,15 @@ function VoucherCardFull({
           >
             <Clock className="w-3 h-3" />
             {isExpiringSoon
-              ? `Còn ${daysLeft} ngày`
-              : `HSD: ${new Date(voucher.endDate).toLocaleDateString("vi-VN")}`}
+              ? `${daysLeft} days left`
+              : `Expires: ${new Date(voucher.endDate).toLocaleDateString("en-US")}`}
           </div>
 
           {/* Actions */}
           <div className="flex items-center gap-2">
             <button
               onClick={handleCopy}
-              title="Sao chép mã"
+              title="Copy code"
               className="flex items-center gap-1 text-[11px] font-mono bg-black/10 hover:bg-black/20 px-2 py-1 rounded transition-colors"
             >
               {copied ? (
@@ -186,15 +186,15 @@ function VoucherCardFull({
               >
                 {isSaved ? (
                   <>
-                    <Check className="w-3 h-3" />{"Đã lưu"}</>
+                    <Check className="w-3 h-3" />{"Saved"}</>
                 ) : (
                   <>
-                    <Gift className="w-3 h-3" />{"Lưu mã"}</>
+                    <Gift className="w-3 h-3" />{"Save code"}</>
                 )}
               </button>
             )}
             {isFull && (
-              <span className="text-[11px] font-bold text-ink-muted border border-border px-3 py-1 rounded-sm">{"Hết lượt"}</span>
+              <span className="text-[11px] font-bold text-ink-muted border border-border px-3 py-1 rounded-sm">{"Sold out"}</span>
             )}
           </div>
         </div>
@@ -217,19 +217,19 @@ export function VouchersPage() {
 
   const handleCollect = (code: string) => {
     if (!user) {
-      toast.error("Vui lòng đăng nhập để lưu mã giảm giá");
+      toast.error("Please log in to save vouchers");
       return;
     }
     collectMutation.mutate(code, {
-      onSuccess: () => toast.success("Đã lưu mã vào kho của bạn!"),
-      onError: (e: any) => toast.error(e?.message || "Không thể lưu mã"),
+      onSuccess: () => toast.success("Voucher saved to your wallet!"),
+      onError: (e: any) => toast.error(e?.message || "Unable to save voucher"),
     });
   };
 
   const handleUncollect = (code: string) => {
     uncollectMutation.mutate(code, {
-      onSuccess: () => toast.success("Đã xóa mã khỏi kho"),
-      onError: (e: any) => toast.error(e?.message || "Có lỗi xảy ra"),
+      onSuccess: () => toast.success("Voucher removed from your wallet"),
+      onError: (e: any) => toast.error(e?.message || "Something went wrong"),
     });
   };
 
@@ -311,7 +311,7 @@ export function VouchersPage() {
           <div className="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center">
             <LogIn className="w-8 h-8 text-brand" />
           </div>
-          <p className="text-ink-muted text-sm">{"Đăng nhập để xem kho voucher của bạn"}</p>
+          <p className="text-ink-muted text-sm">{"Log in to view your voucher wallet"}</p>
           <Link
             to="/auth/login"
             className="px-6 py-2.5 text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-sm text-sm"
@@ -344,8 +344,8 @@ export function VouchersPage() {
             </div>
             <p className="text-ink-muted text-sm">
               {tab === "wallet"
-                ? 'Bạn chưa lưu mã nào. Hãy khám phá và lưu mã ở tab "Tất cả mã"!'
-                : "Hiện chưa có mã giảm giá nào."}
+                ? 'You have not saved any vouchers yet. Browse and save them in the "All vouchers" tab!'
+                : "No vouchers are available yet."}
             </p>
             {tab === "wallet" && (
               <button

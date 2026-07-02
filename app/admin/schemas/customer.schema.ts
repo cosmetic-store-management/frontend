@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const updateCustomerSchema = z.object({
-  name: z.string().min(2, "Họ tên ít nhất 2 ký tự"),
-  email: z.string().email("Email không hợp lệ"),
-  phone: z.string().regex(/^[0-9]{9,11}$/, "Số điện thoại không hợp lệ"),
+  name: z.string().min(2, "Full name must be at least 2 characters"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().regex(/^[0-9]{9,11}$/, "Invalid phone number"),
   province: z.string().optional(),
   district: z.string().optional(),
   ward: z.string().optional(),
@@ -18,8 +18,8 @@ export const adjustPointsSchema = z.object({
   pointsChanged: z.coerce
     .number()
     .min(-100000)
-    .max(100000, "Số điểm không hợp lệ"),
-  reason: z.string().min(1, "Lý do không được để trống"),
+    .max(100000, "Invalid points value"),
+  reason: z.string().min(1, "Reason is required"),
 });
 
 export type UpdateCustomerFormData = z.infer<typeof updateCustomerSchema>;

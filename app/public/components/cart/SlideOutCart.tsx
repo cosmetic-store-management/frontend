@@ -101,7 +101,7 @@ export function SlideOutCart() {
                   <div className="flex-1 flex flex-col">
                     <div className="flex justify-between items-start gap-2">
                       <div>
-                        <h4 className="text-sm font-bold text-ink line-clamp-2 leading-tight group-hover:text-brand transition-colors">
+                        <h4 className="text-sm font-bold text-ink line-clamp-2 leading-tight transition-colors">
                           {item.name}
                         </h4>
                         <p className="text-xs text-ink-muted mt-1">

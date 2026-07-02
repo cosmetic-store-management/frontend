@@ -41,14 +41,14 @@ const queryClient = new QueryClient({
 export function ErrorBoundary() {
   const error = useRouteError();
 
-  let title = "Đã xảy ra lỗi";
-  let message = "Vui lòng tải lại trang hoặc quay lại trang chủ.";
+  let title = "An error occurred";
+  let message = "Please reload the page or return to the homepage.";
   let status = 500;
 
   if (isRouteErrorResponse(error)) {
     status = error.status;
     title =
-      error.status === 404 ? "Không tìm thấy trang" : `Lỗi ${error.status}`;
+      error.status === 404 ? "Page not found" : `Error ${error.status}`;
     message = error.data ?? message;
   } else if (error instanceof Error) {
     message = error.message;
@@ -125,7 +125,7 @@ export function ErrorBoundary() {
               fontSize: "0.9rem",
               textDecoration: "none",
             }}
-          >🌸 Về trang chủ</a>
+          >Home</a>
         </div>
         <Scripts />
       </body>
@@ -140,7 +140,7 @@ import { useLanguageStore } from "./store/language.store";
 export default function App() {
   const language = useLanguageStore((state) => state.language);
   return (
-    <html lang={language}>
+    <html lang={language} suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -164,7 +164,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div id="google_translate_element" style={{ position: "fixed", bottom: "20px", left: "20px", zIndex: 9999 }}></div>
         <script
           dangerouslySetInnerHTML={{

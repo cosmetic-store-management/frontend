@@ -1,12 +1,12 @@
 /**
  * apiClient — HTTP client trung tâm cho toàn bộ frontend.
  *
- * Tự động:
- *  - Gắn base URL từ VITE_API_URL
- *  - Đọc accessToken từ auth store (Zustand) — không đọc localStorage trực tiếp
- *  - Unwrap `response.data` từ BE envelope { success, message, data }
- *  - Throw lỗi với message từ server nếu response không OK
- *  - Nếu 401 → thử refresh token → retry request gốc → nếu vẫn lỗi → clear auth + redirect
+ * Automatically:
+ *  - Uses the base URL from VITE_API_URL
+ *  - Reads the access token from the auth store (Zustand) — never from localStorage directly
+ *  - Unwraps `response.data` from the BE envelope { success, message, data }
+ *  - Throws an error with the server message if the response is not OK
+ *  - If 401 → tries refresh token → retries the original request → if it still fails → clears auth + redirects
  */
 
 import { useAuthStore } from "@/auth/store/auth.store";
@@ -16,15 +16,15 @@ const BASE_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:8000/api"
 ).trim();
 
-/** Timeout mặc định cho mọi request (30 giây) */
+/** Default timeout for every request (30 seconds) */
 const REQUEST_TIMEOUT_MS = 30_000;
 
-/** Tạo AbortSignal có timeout để tránh request treo vô hạn */
+/** Create an AbortSignal with timeout to avoid hanging requests */
 function timeoutSignal(): AbortSignal {
   return AbortSignal.timeout(REQUEST_TIMEOUT_MS);
 }
 
-// Flag chống lặp vô hạn khi refresh token cũng thất bại
+// Prevent infinite loops when token refresh also fails
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
 
@@ -41,8 +41,8 @@ function buildHeaders(isJson = true, isFormData = false): HeadersInit {
 }
 
 /**
- * Thử refresh access token bằng refresh token hiện có trong store.
- * Trả về access token mới hoặc null nếu thất bại.
+ * Try to refresh the access token using the refresh token in the store.
+ * Returns a new access token or null on failure.
  */
 async function tryRefreshToken(): Promise<string | null> {
   const store = getActiveStore();
@@ -65,11 +65,11 @@ async function tryRefreshToken(): Promise<string | null> {
     const data = json?.data ?? json;
 
     if (data?.accessToken) {
-      // Cập nhật access token trong store (không cần login lại)
+      // Update the access token in the store (no need to log in again)
       store.setAccessToken(data.accessToken);
-      // Cập nhật refresh token mới nếu có (token rotation)
+      // Update the refresh token if the server issued a new one (token rotation)
       if (data.refreshToken) {
-        // setAuth giữ user cũ + tokens mới
+        // Keep the current user and swap in the new tokens
         const currentUser = store.user!;
         store.setAuth(currentUser, data.accessToken, data.refreshToken);
       }
@@ -94,7 +94,7 @@ async function handleResponse<T>(
     res.url.includes("/refresh");
 
   if (res.status === 401 && !isAuthRoute) {
-    // Thử refresh token — chỉ 1 lần, dùng promise chung để tránh race condition
+    // Try refreshing once, sharing the promise to avoid race conditions
     if (!isRefreshing) {
       isRefreshing = true;
       refreshPromise = tryRefreshToken().finally(() => {
@@ -106,7 +106,7 @@ async function handleResponse<T>(
     const newToken = await refreshPromise;
 
     if (newToken) {
-      // Retry request gốc với token mới
+      // Retry the original request with the new token
       const retryRes = await retryFn();
       if (retryRes.ok) {
         const json = await retryRes.json();
@@ -124,7 +124,7 @@ async function handleResponse<T>(
       }
     }
 
-    // Refresh thất bại → clear auth + redirect
+    // Refresh failed -> clear auth + redirect
     const store = getActiveStore();
     const hadToken = !!store.token;
     store.clearAuth();
@@ -135,12 +135,12 @@ async function handleResponse<T>(
       if (currentPath !== "/login")
         window.location.href = `/login?returnUrl=${encodeURIComponent(currentPath)}`;
     }
-    throw new Error("Phiên đăng nhập hết hạn");
+    throw new Error("Your session has expired");
   }
 
   if (!res.ok) {
     const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? `Lỗi ${res.status}`);
+    throw new Error(body?.message ?? `Error ${res.status}`);
   }
 
   if (res.status === 204) return undefined as T;

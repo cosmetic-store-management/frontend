@@ -31,7 +31,7 @@ type PaymentMethod =
   | "transfer";
 
 function copyText(text: string) {
-  navigator.clipboard.writeText(text).then(() => toast.success("Đã sao chép!"));
+  navigator.clipboard.writeText(text).then(() => toast.success("Copied!"));
 }
 
 function BankTransferInfo({

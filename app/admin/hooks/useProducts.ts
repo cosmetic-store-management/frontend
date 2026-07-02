@@ -97,7 +97,7 @@ export function useProducts(filters: ProductFilters) {
   const error = productsError
     ? productsError instanceof Error
       ? productsError.message
-      : "Không thể tải dữ liệu"
+      : "Unable to load data"
     : null;
   const loading = loadingProducts;
 
@@ -106,9 +106,9 @@ export function useProducts(filters: ProductFilters) {
     mutationFn: (values: ProductFormValues) => createProduct(values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
-      toast.success("Sản phẩm đã được tạo thành công!");
+      toast.success("Product created successfully!");
     },
-    onError: (err: any) => handleMutationError(err, "Failed to update product"),
+    onError: (err: any) => handleMutationError(err, "Failed to create product"),
   });
 
   const updateMut = useMutation({
@@ -116,10 +116,10 @@ export function useProducts(filters: ProductFilters) {
       updateProduct(id, values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
-      toast.success("Sản phẩm đã được cập nhật thành công!");
+      toast.success("Product updated successfully!");
     },
     onError: (err: any) => {
-      toast.error(err.message || "Cập nhật sản phẩm thất bại");
+      toast.error(err.message || "Failed to update product");
     },
   });
 
@@ -128,10 +128,10 @@ export function useProducts(filters: ProductFilters) {
       updateProductStatus(id, isActive),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
-      toast.success("Trạng thái sản phẩm đã được thay đổi!");
+      toast.success("Product status updated!");
     },
     onError: (err: any) => {
-      toast.error(err.message || "Cập nhật trạng thái thất bại");
+      toast.error(err.message || "Failed to update status");
     },
   });
 
@@ -139,9 +139,9 @@ export function useProducts(filters: ProductFilters) {
     mutationFn: (id: string) => deleteProduct(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
-      toast.success("Sản phẩm đã được xóa khỏi hệ thống!");
+      toast.success("Product deleted from the system!");
     },
-    onError: (err: any) => handleMutationError(err, "Failed to create product"),
+    onError: (err: any) => handleMutationError(err, "Failed to delete product"),
   });
 
   const submitting =
@@ -249,9 +249,9 @@ export function useProducts(filters: ProductFilters) {
 
       const fileName = `Export_Products_${new Date().toISOString().slice(0, 10)}.xlsx`;
       xlsx.writeFile(workbook, fileName);
-      toast.success("Xuất file Excel thành công!");
+      toast.success("Excel export successful!");
     } catch (err: any) {
-      toast.error("Lỗi khi xuất file Excel: " + err.message);
+      toast.error("Error exporting Excel file: " + err.message);
     }
   };
 

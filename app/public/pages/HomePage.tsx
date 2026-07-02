@@ -139,9 +139,9 @@ export default function HomePage() {
                   className="group rounded-sm overflow-hidden border border-border/40 aspect-2/1 bg-surface flex items-center justify-center p-4 hover:border-brand/50 hover:shadow-md hover:-translate-y-1 transition-all"
                 >
                   {(brand.imageUrl || brand.logoUrl) &&
-                  !(brand.imageUrl || brand.logoUrl || "").includes(
-                    "ui-avatars",
-                  ) ? (
+                    !(brand.imageUrl || brand.logoUrl || "").includes(
+                      "ui-avatars",
+                    ) ? (
                     <img
                       src={brand.imageUrl || brand.logoUrl}
                       alt={brand.name}

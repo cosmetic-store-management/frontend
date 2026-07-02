@@ -84,7 +84,7 @@ export function useOrders(
   const error = queryError
     ? queryError instanceof Error
       ? queryError.message
-      : "Không thể tải đơn hàng"
+      : "Unable to load orders"
     : null;
 
   // 2. Mutations
@@ -93,7 +93,7 @@ export function useOrders(
       updateOrderStatus(id, { orderStatus: values.orderStatus }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
-      toast.success("Trạng thái đơn hàng đã được cập nhật");
+      toast.success("Order status updated");
     },
     onError: (err: any) => handleMutationError(err, "Failed to update order"),
   });
@@ -102,7 +102,7 @@ export function useOrders(
     mutationFn: (id: string) => cancelOrder(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
-      toast.success("Đã hủy đơn hàng thành công");
+      toast.success("Order cancelled successfully");
     },
     onError: (err: any) => handleMutationError(err, "Failed to cancel order"),
   });
@@ -111,7 +111,7 @@ export function useOrders(
     mutationFn: (id: string) => processRefund(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
-      toast.success("Đã xác nhận hoàn tiền thành công");
+      toast.success("Refund confirmed successfully");
     },
     onError: (err: any) => handleMutationError(err, "Failed to refund"),
   });
@@ -120,7 +120,7 @@ export function useOrders(
     mutationFn: (id: string) => approveReturn(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
-      toast.success("Đã duyệt yêu cầu trả hàng");
+      toast.success("Return request approved");
     },
     onError: (err: any) => handleMutationError(err, "Failed to approve return"),
   });
@@ -130,7 +130,7 @@ export function useOrders(
       rejectReturn(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
-      toast.success("Đã từ chối yêu cầu trả hàng");
+      toast.success("Return request rejected");
     },
     onError: (err: any) => handleMutationError(err, "Failed to reject return"),
   });

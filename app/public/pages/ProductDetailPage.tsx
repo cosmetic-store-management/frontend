@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { ProductDetailSkeleton } from "@/components/ui/skeleton";
+import { useFavoriteStore } from "@/public/store/favorite.store";
 
 export function ProductDetailPage() {
   const { slug } = useParams();
@@ -45,6 +46,8 @@ export function ProductDetailPage() {
   }, [product?.id, isLoggedIn]);
 
   // Removed old document.title useEffect to use react-helmet-async
+
+  const { itemIds: localFavorites, toggleFavorite: toggleLocalFavorite } = useFavoriteStore();
 
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [quantity, setQuantity] = useState(1);
@@ -134,11 +137,18 @@ export function ProductDetailPage() {
   const stock = selectedVariant ? selectedVariant.stock : 0;
   const isOutOfStock = stock === 0;
 
-  const isFavorite = favorites?.some((p: any) => p.id === product.id);
+  const isFavorite = isLoggedIn
+    ? favorites?.some((p: any) => p.id === product.id)
+    : localFavorites.includes(product.id);
 
   const handleToggleFavorite = () => {
     if (!isLoggedIn) {
-      toast.error("Please login to save favorite product");
+      toggleLocalFavorite(product.id);
+      toast.success(
+        localFavorites.includes(product.id)
+          ? "Removed from wishlist"
+          : "Added to wishlist"
+      );
       return;
     }
     toggleFavoriteMutation.mutate(product.id);
@@ -154,7 +164,7 @@ export function ProductDetailPage() {
       productId: product.id,
       variantId: selectedVariant.id || selectedVariant.sku,
       name: product.name,
-      variantName: selectedVariant.name || selectedVariant.sku || "Mặc định",
+      variantName: selectedVariant.name || selectedVariant.sku || "Default",
       price:
         selectedVariant.discountPrice &&
         selectedVariant.discountPrice < selectedVariant.price
@@ -165,13 +175,17 @@ export function ProductDetailPage() {
       stock: selectedVariant.stock ?? 999,
       slug: product.slug,
     });
-    toast.success("Đã thêm vào giỏ hàng!");
+    toast.success("Added to cart!");
   };
 
   const handleBuyNow = () => {
     handleAddToCart();
     if (selectedVariant) {
-      navigate("/checkout");
+      if (!isLoggedIn) {
+        navigate("/login?returnUrl=/checkout");
+      } else {
+        navigate("/checkout");
+      }
     }
   };
 
@@ -196,7 +210,7 @@ export function ProductDetailPage() {
           content={
             (product as any).metaDescription ||
             product.description?.substring(0, 160).replace(/<[^>]+>/g, "") ||
-            "Mua sắm mỹ phẩm chính hãng tại GlowUp Cosmetics"
+            "Shop authentic cosmetics at GlowUp Cosmetics"
           }
         />
         {(product as any).metaKeywords && (
@@ -265,6 +279,7 @@ export function ProductDetailPage() {
 
               <button
                 onClick={handleToggleFavorite}
+                aria-label={isFavorite ? "Remove from wishlist" : "Add to wishlist"}
                 className={cn(
                   "p-2 rounded-full hover:bg-surface transition-colors flex items-center justify-center",
                   isFavorite
@@ -371,6 +386,7 @@ export function ProductDetailPage() {
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
+                    aria-label="Decrease quantity"
                     className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-brand transition-colors disabled:opacity-40"
                   >
                     <Minus className="w-4 h-4" />
@@ -392,6 +408,7 @@ export function ProductDetailPage() {
                   <button
                     onClick={() => setQuantity(Math.min(stock, quantity + 1))}
                     disabled={quantity >= stock}
+                    aria-label="Increase quantity"
                     className="w-10 h-full flex items-center justify-center text-muted-foreground hover:text-brand transition-colors disabled:opacity-40"
                   >
                     <Plus className="w-4 h-4" />

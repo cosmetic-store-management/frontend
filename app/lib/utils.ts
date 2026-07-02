@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-/** Merge Tailwind classes, xử lý conflict tự động */
+/** Merge Tailwind classes with automatic conflict resolution */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -14,7 +14,7 @@ export function exportToCSV<T extends Record<string, any>>(
 ) {
   if (!data || data.length === 0) return;
 
-  // Thêm BOM để Excel đọc đúng tiếng Việt (UTF-8)
+  // Add BOM so Excel reads UTF-8 correctly
   const BOM = "\uFEFF";
 
   const headerRow = headers.map((h) => `"${h.label}"`).join(",");

@@ -4,8 +4,8 @@ import RegisterPage from "../../auth/pages/RegisterPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Đăng ký",
-    description: "Tạo tài khoản GlowUp mới",
+    title: "Sign Up",
+    description: "Create a new GlowUp account",
   });
 
 export default function RegisterRoute() {

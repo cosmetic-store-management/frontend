@@ -50,17 +50,17 @@ export function StaffPermissionsModal({
     <BaseCrudModal
       open={!!user}
       onOpenChange={onOpenChange}
-      title="Phân quyền nhân sự"
-      description={`Thiết lập quyền truy cập cho tài khoản ${user.name}.`}
+      title="Staff permissions"
+      description={`Set access permissions for the account ${user.name}.`}
       size="lg"
-      primaryActionText="Xác nhận"
-      secondaryActionText="Huỷ"
+      primaryActionText="Confirm"
+      secondaryActionText="Cancel"
       onPrimaryAction={onSave}
       isLoading={isLoading}
     >
       <div className="space-y-4 my-2">
         <div className="space-y-2">
-          <Label className="text-xs font-semibold text-ink block">{"Cấp bậc"}</Label>
+          <Label className="text-xs font-semibold text-ink block">{"Role"}</Label>
           <div className="flex flex-col space-y-2">
             <label
               className={`flex items-start space-x-3 p-3 rounded-sm border cursor-pointer transition-colors ${editRole === "staff" ? "bg-surface-soft border-brand" : "bg-surface border-border hover:bg-surface-hover"} ${!isOwner ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -80,9 +80,9 @@ export function StaffPermissionsModal({
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-semibold text-ink">{"Cấp Nhân viên"}</span>
-                <span className="text-xs text-ink-muted">{`Khối thực thi. Chỉ có thể thực hiện thao tác được cấp quyền.
-                  Không thể quản lý nhân sự.`}</span>
+                <span className="text-sm font-semibold text-ink">{"Staff"}</span>
+                <span className="text-xs text-ink-muted">{`Execution role. Can only perform granted actions.
+                  Cannot manage staff.`}</span>
               </div>
             </label>
 
@@ -103,8 +103,8 @@ export function StaffPermissionsModal({
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-ink">{"Cấp Quản lý"}</span>
-                  <span className="text-xs text-ink-muted">{"Khối điều hành. Có thể tạo và phân quyền cho Cấp Nhân viên."}</span>
+                  <span className="text-sm font-semibold text-ink">{"Manager"}</span>
+                  <span className="text-xs text-ink-muted">{"Operations role. Can create and assign permissions to staff."}</span>
                 </div>
               </label>
             )}
@@ -113,7 +113,7 @@ export function StaffPermissionsModal({
 
         <div className="pt-4 border-t border-border mt-4">
           <div className="flex items-center justify-between mb-3">
-            <Label className="text-sm font-semibold text-ink">{"Mẫu phân quyền"}</Label>
+            <Label className="text-sm font-semibold text-ink">{"Permission template"}</Label>
             <Select
               onValueChange={(value) => {
                 if (value !== "custom") {
@@ -139,17 +139,17 @@ export function StaffPermissionsModal({
               }
             >
               <SelectTrigger className="w-50 h-8 text-xs bg-surface border-input focus:ring-brand">
-                <SelectValue placeholder="-- Tùy chỉnh quyền --" />
+                <SelectValue placeholder="-- Custom permissions --" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="custom">{"-- Tùy chỉnh quyền --"}</SelectItem>
+                <SelectItem value="custom">{"-- Custom permissions --"}</SelectItem>
                 {editRole === "manager" ? (
-                  <SelectItem value="store_manager">{"Quản lý Cửa hàng"}</SelectItem>
+                  <SelectItem value="store_manager">{"Store Manager"}</SelectItem>
                 ) : (
                   <>
-                    <SelectItem value="sales">{"Nhân viên Bán hàng"}</SelectItem>
-                    <SelectItem value="inventory">{"Nhân viên Kho"}</SelectItem>
-                    <SelectItem value="marketing">{"Nhân viên Marketing"}</SelectItem>
+                    <SelectItem value="sales">{"Sales Staff"}</SelectItem>
+                    <SelectItem value="inventory">{"Inventory Staff"}</SelectItem>
+                    <SelectItem value="marketing">{"Marketing Staff"}</SelectItem>
                   </>
                 )}
               </SelectContent>
@@ -160,7 +160,7 @@ export function StaffPermissionsModal({
             <table className="w-full text-left text-sm whitespace-nowrap">
               <thead className="bg-surface-soft border-b border-border">
                 <tr>
-                  <th className="px-3 py-2 font-semibold text-ink text-xs w-48">{"Chức năng"}</th>
+                  <th className="px-3 py-2 font-semibold text-ink text-xs w-48">{"Feature"}</th>
                   {ACTIONS.map((action) => (
                     <th
                       key={action.id}

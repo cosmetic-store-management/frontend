@@ -14,6 +14,7 @@ import { useCartStore } from "@/public/store/cart.store";
 import { useValidateVoucher } from "@/public/hooks/useVoucher";
 import { VoucherWalletModal } from "../components/vouchers/VoucherWalletModal";
 import { toast } from "@/lib/toast";
+import { useAuth } from "@/auth/hooks/useAuth";
 
 export function CartPage() {
   const {
@@ -31,6 +32,7 @@ export function CartPage() {
   const [voucherInput, setVoucherInput] = useState("");
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const validateVoucherMutation = useValidateVoucher();
   const subtotal = getSubtotal();
   const total = getTotal();
@@ -360,7 +362,13 @@ export function CartPage() {
 
           <div className="px-6 pb-6 space-y-2">
             <button
-              onClick={() => navigate("/checkout")}
+              onClick={() => {
+                if (!isLoggedIn) {
+                  navigate("/login?returnUrl=/checkout");
+                } else {
+                  navigate("/checkout");
+                }
+              }}
               disabled={hasInactiveItems}
               className="w-full text-white font-bold py-3.5 rounded-sm transition-all duration-150 flex justify-center items-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
               style={{ background: "hsl(352, 72%, 52%)" }}

@@ -8,6 +8,7 @@ import {
 } from "../../hooks/useVoucher";
 import { useAuthStore } from "@/auth/store/auth.store";
 import { toast } from "@/lib/toast";
+import { useNavigate } from "react-router";
 import type { Voucher } from "../../services/voucher.service";
 
 function getVoucherMeta(voucher: Voucher) {
@@ -117,6 +118,7 @@ export function HomeVouchers() {
   const { data: vouchers, isLoading } = useVouchers();
   const { data: walletVouchers } = useGetWalletVouchers();
   const collectMutation = useCollectVoucher();
+  const navigate = useNavigate();
 
   const savedVoucherMap = new Map((walletVouchers || []).map((v: any) => [v.code, v.status]));
 
@@ -154,7 +156,7 @@ export function HomeVouchers() {
 
   const handleCollect = (code: string) => {
     if (!user) {
-      toast.error("Sign in to save vouchers");
+      navigate("/login?returnUrl=/");
       return;
     }
     collectMutation.mutate(code, {

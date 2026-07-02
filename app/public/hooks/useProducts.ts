@@ -43,6 +43,14 @@ import { getCategories } from "../services/category.service";
 export function useCategories() {
   return useQuery({
     queryKey: QK.categories(),
-    queryFn: () => getCategories(),
+    queryFn: async () => {
+      const data = await getCategories();
+      // Sort main categories by the number of subcategories (descending)
+      return data.sort((a: any, b: any) => {
+        const aCount = a.subCategories ? a.subCategories.length : 0;
+        const bCount = b.subCategories ? b.subCategories.length : 0;
+        return bCount - aCount;
+      });
+    },
   });
 }

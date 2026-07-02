@@ -4,7 +4,7 @@ import CallbackPage from "../../auth/pages/CallbackPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Xác thực",
+    title: "Authentication",
     noindex: true,
   });
 

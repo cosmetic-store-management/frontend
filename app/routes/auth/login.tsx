@@ -4,8 +4,8 @@ import LoginPage from "../../auth/pages/LoginPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Đăng nhập",
-    description: "Đăng nhập vào tài khoản GlowUp của bạn",
+    title: "Log In",
+    description: "Log in to your GlowUp account",
   });
 
 export default function LoginRoute() {

@@ -3,10 +3,10 @@ import HomePage from "../public/pages/HomePage";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "GlowUp Cosmetics - Mỹ phẩm chính hãng" },
+    { title: "GlowUp Cosmetics - Authentic Cosmetics" },
     {
       name: "description",
-      content: "Đánh thức vẻ đẹp tự nhiên của bạn với mỹ phẩm chính hãng",
+      content: "Reveal your natural beauty with authentic cosmetics",
     },
   ];
 };

@@ -16,7 +16,7 @@ export default function CallbackPage() {
     const error = searchParams.get("error");
 
     if (error) {
-      toast.error("Đăng nhập thất bại hoặc bị hủy bỏ.");
+      toast.error("Login failed or was cancelled.");
       navigate("/login", { replace: true });
       return;
     }
@@ -29,11 +29,11 @@ export default function CallbackPage() {
         { token, refreshToken },
         {
           onSuccess: () => {
-            toast.success("Đăng nhập thành công!");
+            toast.success("Login successful!");
             navigate("/", { replace: true });
           },
           onError: () => {
-            toast.error("Không thể lấy thông tin người dùng.");
+            toast.error("Unable to fetch user information.");
             navigate("/login", { replace: true });
           },
         },
@@ -47,7 +47,7 @@ export default function CallbackPage() {
     <div className="flex min-h-[50vh] w-full items-center justify-center">
       <div className="text-center">
         <div className="w-8 h-8 border-4 border-[#8A151B] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-        <p className="text-[#333333] font-medium">{"Đang xử lý đăng nhập..."}</p>
+        <p className="text-[#333333] font-medium">{"Processing login..."}</p>
       </div>
     </div>
   );

@@ -4,15 +4,15 @@ export const voucherSchema = z
   .object({
     code: z
       .string()
-      .min(3, "Mã giảm giá phải có ít nhất 3 ký tự")
+      .min(3, "Voucher code must be at least 3 characters")
       .trim()
       .toUpperCase(),
     discountType: z.enum(["percent", "fixed", "freeship"]),
-    discountValue: z.number().min(0, "Giá trị giảm không được âm"),
+    discountValue: z.number().min(0, "Discount value cannot be negative"),
     minOrderValue: z.number().min(0),
     maxDiscount: z.number().min(0).optional(),
-    startDate: z.string().min(1, "Ngày bắt đầu không được để trống"),
-    endDate: z.string().min(1, "Ngày kết thúc không được để trống"),
+    startDate: z.string().min(1, "Start date is required"),
+    endDate: z.string().min(1, "End date is required"),
     usageLimit: z.number().min(0),
     isActive: z.boolean(),
     ttlMinutes: z.number().min(0).optional(),
@@ -25,7 +25,7 @@ export const voucherSchema = z
       return start < end;
     },
     {
-      message: "Ngày kết thúc phải sau ngày bắt đầu",
+      message: "End date must be after start date",
       path: ["endDate"],
     },
   )
@@ -37,7 +37,7 @@ export const voucherSchema = z
       return true;
     },
     {
-      message: "Giá trị giảm không được vượt quá 100%",
+      message: "Discount value cannot exceed 100%",
       path: ["discountValue"],
     },
   );

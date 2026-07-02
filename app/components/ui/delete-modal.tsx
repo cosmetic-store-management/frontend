@@ -18,8 +18,8 @@ export type DeleteModalProps = {
 
 export default function DeleteModal({
   open,
-  title = "Xác nhận xóa",
-  description = "Bạn có chắc chắn muốn xoá dữ liệu này khỏi hệ thống? Hành động này không thể hoàn tác.",
+  title = "Confirm Delete",
+  description = "Are you sure you want to delete this data from the system? This action cannot be undone.",
   onClose,
   onConfirm,
   loading = false,

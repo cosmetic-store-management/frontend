@@ -8,14 +8,14 @@ export const restockSchema = z
     newSupplierPhone: z.string().optional(),
     newSupplierEmail: z.string().optional(),
     newSupplierAddress: z.string().optional(),
-    importPrice: z.coerce.number().min(1, "Giá nhập phải lớn hơn 0"),
-    restockQty: z.coerce.number().min(1, "Số lượng phải lớn hơn 0"),
-    batchCode: z.string().min(1, "Mã lô không được để trống"),
+    importPrice: z.coerce.number().min(1, "Import price must be greater than 0"),
+    restockQty: z.coerce.number().min(1, "Quantity must be greater than 0"),
+    batchCode: z.string().min(1, "Batch code is required"),
     manufactureDate: z.coerce.date({
-      message: "Vui lòng chọn ngày sản xuất",
+      message: "Please select a manufacture date",
     }),
     expiryDate: z.coerce.date({
-      message: "Vui lòng chọn hạn sử dụng",
+      message: "Please select an expiry date",
     }),
   })
   .superRefine((data, ctx) => {
@@ -23,14 +23,14 @@ export const restockSchema = z
       if (!data.newSupplierName || data.newSupplierName.trim() === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Tên nhà cung cấp không được để trống",
+          message: "Supplier name is required",
           path: ["newSupplierName"],
         });
       }
       if (!data.newSupplierPhone || data.newSupplierPhone.trim() === "") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Số điện thoại không được để trống",
+          message: "Phone number is required",
           path: ["newSupplierPhone"],
         });
       }
@@ -38,7 +38,7 @@ export const restockSchema = z
       if (!data.supplierId || data.supplierId === "new") {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Vui lòng chọn nhà cung cấp",
+          message: "Please select a supplier",
           path: ["supplierId"],
         });
       }
@@ -46,8 +46,8 @@ export const restockSchema = z
   });
 
 export const adjustStockSchema = z.object({
-  actualStock: z.coerce.number().min(0, "Tồn kho thực tế không hợp lệ"),
-  minStock: z.coerce.number().min(0, "Hạn mức tối thiểu không được âm"),
+  actualStock: z.coerce.number().min(0, "Invalid actual stock"),
+  minStock: z.coerce.number().min(0, "Minimum stock cannot be negative"),
   reason: z.string().trim().optional(),
 });
 

@@ -68,7 +68,7 @@ export function FlashSale() {
                   <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-1">
                     {product.brand?.name || "Thương hiệu"}
                   </span>
-                  <h3 className="font-semibold text-ink leading-tight line-clamp-2 mb-2 group-hover:text-brand transition-colors text-sm">
+                  <h3 className="font-semibold text-ink leading-tight line-clamp-2 mb-2 transition-colors text-sm">
                     {product.name}
                   </h3>
 

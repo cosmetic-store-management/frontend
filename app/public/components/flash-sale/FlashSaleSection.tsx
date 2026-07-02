@@ -196,7 +196,7 @@ export function FlashSaleSection() {
                     <div className="relative aspect-square w-full overflow-hidden bg-surface-soft">
                       <img
                         src={item.productImage || "/placeholder.jpg"}
-                        alt={item.productName}
+                        alt=""
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
@@ -219,7 +219,7 @@ export function FlashSaleSection() {
                           {item.productBrand}
                         </span>
                       )}
-                      <h3 className="text-[13px] font-medium text-ink line-clamp-2 leading-snug flex-1 group-hover:text-brand transition-colors">
+                      <h3 className="text-[13px] font-medium text-ink line-clamp-2 leading-snug flex-1 transition-colors">
                         {item.productName}
                       </h3>
                       {item.variantName &&

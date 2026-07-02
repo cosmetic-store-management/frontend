@@ -19,7 +19,6 @@ interface CartState {
   items: CartItem[];
   voucherCode: string | null;
   discountAmount: number;
-  isOpen: boolean;
 
   addItem: (item: CartItem) => void;
   removeItem: (productId: string, variantId: string) => void;
@@ -37,7 +36,6 @@ interface CartState {
 
   getSubtotal: () => number;
   getTotal: () => number;
-  setIsOpen: (isOpen: boolean) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -46,7 +44,6 @@ export const useCartStore = create<CartState>()(
       items: [],
       voucherCode: null,
       discountAmount: 0,
-      isOpen: false,
 
       addItem: (newItem) => {
         set((state) => {
@@ -67,13 +64,11 @@ export const useCartStore = create<CartState>()(
                   ? { ...i, quantity: newQty, stock: newItem.stock }
                   : i,
               ),
-              isOpen: true,
             };
           }
           const clampedQty = Math.min(newItem.quantity, newItem.stock);
           return {
             items: [...state.items, { ...newItem, quantity: clampedQty }],
-            isOpen: true,
           };
         });
       },
@@ -124,7 +119,6 @@ export const useCartStore = create<CartState>()(
         return Math.max(0, sub - disc);
       },
 
-      setIsOpen: (isOpen) => set({ isOpen }),
     }),
     {
       name: "glowup-cart-storage",

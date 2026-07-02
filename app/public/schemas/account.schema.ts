@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const accountUpdateSchema = z.object({
-  name: z.string().min(1, "Họ tên không được để trống"),
-  email: z.string().email("Email không hợp lệ").optional().or(z.literal("")),
+  name: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
   phone: z
     .string()
-    .min(8, "Số điện thoại không hợp lệ")
+    .min(8, "Invalid phone number")
     .optional()
     .or(z.literal("")),
   dob: z.string().optional(),
@@ -14,20 +14,20 @@ export const accountUpdateSchema = z.object({
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(6, "Mật khẩu hiện tại ít nhất 6 ký tự"),
-    newPassword: z.string().min(6, "Mật khẩu mới ít nhất 6 ký tự"),
-    confirmPassword: z.string().min(6, "Xác nhận mật khẩu ít nhất 6 ký tự"),
+    currentPassword: z.string().min(6, "Current password must be at least 6 characters"),
+    newPassword: z.string().min(6, "New password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Mật khẩu xác nhận không khớp",
+    message: "Confirm password does not match",
     path: ["confirmPassword"],
   });
 
 export const addressSchema = z.object({
-  province: z.string().min(1, "Tỉnh/Thành phố không được để trống"),
-  district: z.string().min(1, "Quận/Huyện không được để trống"),
-  ward: z.string().min(1, "Phường/Xã không được để trống"),
-  street: z.string().min(1, "Số nhà, Tên đường không được để trống"),
+  province: z.string().min(1, "Province/City is required"),
+  district: z.string().min(1, "District is required"),
+  ward: z.string().min(1, "Ward/Commune is required"),
+  street: z.string().min(1, "Street address is required"),
   isDefault: z.boolean(),
 });
 

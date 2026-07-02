@@ -4,8 +4,8 @@ import ForgotPasswordPage from "../../auth/pages/ForgotPasswordPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Quên mật khẩu",
-    description: "Khôi phục mật khẩu tài khoản GlowUp",
+    title: "Forgot Password",
+    description: "Recover your GlowUp account password",
   });
 
 export default function ForgotPasswordRoute() {

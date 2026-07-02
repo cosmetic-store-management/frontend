@@ -15,9 +15,9 @@ export const meta: MetaFunction = ({ params }) => {
     .join(" ");
 
   return buildMeta({
-    title: readableTitle || "Chi tiết sản phẩm",
-    description: `Xem thông tin chi tiết, đánh giá và đặt mua ${readableTitle} chính hãng tại GlowUp Cosmetics.`,
-    keywords: `${readableTitle}, mỹ phẩm chính hãng, GlowUp`,
+    title: readableTitle || "Product Details",
+    description: `View details, reviews, and buy authentic ${readableTitle} products at GlowUp Cosmetics.`,
+    keywords: `${readableTitle}, authentic cosmetics, GlowUp`,
   });
 };
 

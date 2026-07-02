@@ -116,8 +116,8 @@ export function FlashSalePage() {
   if (!displayTabs || displayTabs.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center max-w-7xl">
-        <h1 className="text-2xl font-bold text-ink mb-2">{"Không có chương trình Flash Sale nào"}</h1>
-        <p className="text-ink-muted">{"Vui lòng quay lại sau."}</p>
+        <h1 className="text-2xl font-bold text-ink mb-2">{"No flash sale program is available"}</h1>
+        <p className="text-ink-muted">{"Please check back later."}</p>
       </div>
     );
   }
@@ -150,8 +150,8 @@ export function FlashSalePage() {
 
               <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 mt-2 md:mt-4">
                 <div className="flex flex-col items-center md:items-end text-center md:text-right leading-none">
-                  <span className="text-2xl md:text-[40px] font-black italic text-white drop-shadow-md tracking-tighter">{"KHUNG GIỜ VÀNG"}</span>
-                  <span className="text-2xl md:text-[40px] font-black italic text-white drop-shadow-md tracking-tighter mt-1 md:mt-2">{"GIÁ GIẢM ĐẾN"}</span>
+                  <span className="text-2xl md:text-[40px] font-black italic text-white drop-shadow-md tracking-tighter">{"GOLDEN HOUR"}</span>
+                  <span className="text-2xl md:text-[40px] font-black italic text-white drop-shadow-md tracking-tighter mt-1 md:mt-2">{"UP TO OFF"}</span>
                 </div>
                 <span className="text-6xl md:text-[120px] font-black italic text-white drop-shadow-lg leading-none mt-2 md:mt-0">
                   25%
@@ -166,7 +166,7 @@ export function FlashSalePage() {
                     <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 absolute -top-1 right-0 rotate-12 z-10" />
                     <div className="w-8 h-8 md:w-10 md:h-10"></div>
                   </div>
-                  <span className="text-white font-bold text-xs md:text-sm uppercase tracking-wide">{"Duy nhất tháng này"}</span>
+                  <span className="text-white font-bold text-xs md:text-sm uppercase tracking-wide">{"This month only"}</span>
                   <div className="flex gap-1.5 ml-2">
                     {displayTabs.slice(0, 4).map((fs) => (
                       <span
@@ -188,7 +188,7 @@ export function FlashSalePage() {
                     <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 absolute -top-1 right-0 rotate-12 z-10" />
                     <div className="w-8 h-8 md:w-10 md:h-10"></div>
                   </div>
-                  <span className="text-white font-bold text-xs md:text-sm uppercase tracking-wide">{"Độc quyền tại website GlowUp"}</span>
+                  <span className="text-white font-bold text-xs md:text-sm uppercase tracking-wide">{"Exclusive on the GlowUp website"}</span>
                   <div className="flex gap-1.5 ml-2">
                     <span className="bg-surface text-brand font-bold px-2 py-0.5 rounded-full text-[10px] md:text-xs">
                       12:00
@@ -312,7 +312,7 @@ export function FlashSalePage() {
                     </span>
                   )}
                   <h3
-                    className={`text-[13px] font-medium text-ink line-clamp-2 leading-snug flex-1 transition-colors ${!isUpcoming ? "group-hover:text-brand" : ""}`}
+                    className={`text-[13px] font-medium text-ink line-clamp-2 leading-snug flex-1 transition-colors`}
                   >
                     {item.productName}
                   </h3>

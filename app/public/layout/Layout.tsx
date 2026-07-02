@@ -2,12 +2,29 @@ import { Outlet } from "react-router";
 import { useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { SlideOutCart } from "@/public/components/cart/SlideOutCart";
 import { useSetting } from "@/public/hooks/useSetting";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { useAuth } from "@/auth/hooks/useAuth";
+import { useFavoriteStore } from "@/public/store/favorite.store";
+import { useToggleFavorite } from "@/public/hooks/useUser";
 
 export default function Layout() {
   const { settings } = useSetting();
+  const { isLoggedIn } = useAuth();
+  const { itemIds: localFavorites, clearFavorites } = useFavoriteStore();
+  const toggleFavoriteMutation = useToggleFavorite();
+
+  // Sync local favorites to server upon login
+  useEffect(() => {
+    if (isLoggedIn && localFavorites.length > 0) {
+      Promise.all(localFavorites.map((id) => toggleFavoriteMutation.mutateAsync(id)))
+        .then(() => {
+          clearFavorites();
+        })
+        .catch(console.error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
 
   // Inject SEO metadata dynamically
   useEffect(() => {
@@ -52,7 +69,6 @@ export default function Layout() {
         </ErrorBoundary>
       </main>
       <Footer />
-      <SlideOutCart />
     </div>
   );
 }

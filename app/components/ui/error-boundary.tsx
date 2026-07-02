@@ -74,9 +74,9 @@ function DefaultErrorFallback({ error, onReset }: FallbackProps) {
         </div>
 
         <div className="space-y-3">
-          <h2 className="text-2xl font-bold text-ink tracking-tight">{"Đã xảy ra lỗi"}</h2>
-          <p className="text-sm text-ink-muted leading-relaxed">{`Trang này gặp sự cố không mong muốn. Vui lòng thử tải lại hoặc liên
-            hệ hỗ trợ nếu lỗi vẫn tiếp diễn.`}</p>
+          <h2 className="text-2xl font-bold text-ink tracking-tight">{"An error occurred"}</h2>
+          <p className="text-sm text-ink-muted leading-relaxed">{`This page encountered an unexpected issue. Please try reloading or
+            contact support if the problem persists.`}</p>
 
           {process.env.NODE_ENV === "development" && error && (
             <details className="text-left mt-4 p-4 bg-surface-muted rounded-sm border border-border">
@@ -94,12 +94,12 @@ function DefaultErrorFallback({ error, onReset }: FallbackProps) {
           <button
             onClick={onReset}
             className="btn-hover px-6 py-2.5 rounded-sm bg-brand text-white text-sm font-semibold hover:bg-brand-dark transition-colors "
-          >{"Thử lại"}</button>
+          >{"Try again"}</button>
           <button
             onClick={() => window.location.reload()}
             className="px-6 py-2.5 rounded-sm border border-border text-sm font-medium text-ink-muted hover:bg-surface-muted transition-colors"
           >
-            Tải lại trang
+            Reload page
           </button>
         </div>
       </div>

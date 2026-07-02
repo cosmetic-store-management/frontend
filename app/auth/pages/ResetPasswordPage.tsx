@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (data: ResetPasswordForm) => {
     if (!token) {
-      toast.error("Không tìm thấy token. Link không hợp lệ.");
+      toast.error("Token not found. The link is invalid.");
       return;
     }
 
@@ -35,11 +35,11 @@ export default function ResetPasswordPage() {
       { token, newPassword: data.password },
       {
         onSuccess: () => {
-          toast.success("Đặt lại mật khẩu thành công!");
+          toast.success("Password reset successfully!");
           navigate("/login");
         },
         onError: (err) => {
-          toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+          toast.error(err instanceof Error ? err.message : "Something went wrong");
         },
       },
     );
@@ -50,10 +50,10 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-125 mx-auto py-20 px-4">
         <div className="w-full text-center">
           <h1 className="text-xl uppercase tracking-widest font-semibold text-[#8A151B] mb-2">
-            Lỗi
+            Error
           </h1>
           <p className="text-sm text-[#757575]">
-            Link đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.
+            The password reset link is invalid or has expired.
           </p>
         </div>
       </div>
@@ -65,10 +65,10 @@ export default function ResetPasswordPage() {
       <div className="w-full">
         <div className="text-center mb-8">
           <h1 className="text-xl uppercase tracking-widest font-semibold text-[#333333]">
-            Đặt lại mật khẩu
+            Reset Password
           </h1>
           <p className="text-sm text-[#757575] mt-3">
-            Vui lòng nhập mật khẩu mới của bạn.
+            Please enter your new password.
           </p>
         </div>
 
@@ -98,7 +98,7 @@ export default function ResetPasswordPage() {
           <div className="relative">
             <input
               type="password"
-              placeholder="Xác nhận mật khẩu mới"
+              placeholder="Confirm new password"
               {...register("confirmPassword")}
               className={`w-full h-12 px-4 bg-white border ${
                 errors.confirmPassword
@@ -122,7 +122,7 @@ export default function ResetPasswordPage() {
               {isSubmitting || resetPasswordMutation.isPending ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                "Xác nhận đặt lại"
+                "Confirm Reset"
               )}
             </button>
           </div>

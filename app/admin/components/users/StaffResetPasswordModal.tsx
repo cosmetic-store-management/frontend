@@ -24,22 +24,22 @@ export function StaffResetPasswordModal({
     <BaseCrudModal
       open={!!user}
       onOpenChange={onOpenChange}
-      title="Đặt lại mật khẩu"
+      title="Reset password"
       size="sm"
-      primaryActionText="Xác nhận"
-      secondaryActionText="Huỷ"
+      primaryActionText="Confirm"
+      secondaryActionText="Cancel"
       onPrimaryAction={onConfirm}
       isLoading={isLoading}
       isDanger={true}
     >
-      <div className="text-[15px] text-ink-muted leading-relaxed">{"Mật khẩu của tài khoản"}<strong>{user.name}</strong>{`sẽ được đặt lại về
-        mặc định là:`}<br />
+      <div className="text-[15px] text-ink-muted leading-relaxed">{"The account password for"}<strong>{user.name}</strong>{`will be reset to
+        the default value:`}<br />
         <br />
         <code className="bg-surface-muted px-2 py-1 rounded-sm text-brand font-bold text-sm">
           GlowUp@123456
         </code>
         <br />
-        <br />{"Bạn có chắc chắn muốn đặt lại không?"}</div>
+        <br />{"Are you sure you want to reset it?"}</div>
     </BaseCrudModal>
   );
 }

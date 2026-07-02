@@ -60,7 +60,7 @@ export function useAdminReviews() {
   const error = queryError
     ? queryError instanceof Error
       ? queryError.message
-      : "Lỗi khi lấy danh sách đánh giá"
+      : "Failed to load reviews"
     : null;
 
   // 2. Mutations
@@ -70,7 +70,7 @@ export function useAdminReviews() {
       queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
     },
     onError: (err: any) => {
-      setSubmitError(err.message || "Lỗi khi xóa đánh giá");
+      setSubmitError(err.message || "Failed to delete review");
       handleMutationError(err, "Failed to delete review");
     },
   });
@@ -82,7 +82,7 @@ export function useAdminReviews() {
       queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
     },
     onError: (err: any) => {
-      setSubmitError(err.message || "Lỗi khi phản hồi đánh giá");
+      setSubmitError(err.message || "Failed to reply to review");
       handleMutationError(err, "Failed to reply to review");
     },
   });

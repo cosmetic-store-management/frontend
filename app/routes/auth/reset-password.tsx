@@ -4,8 +4,8 @@ import ResetPasswordPage from "../../auth/pages/ResetPasswordPage";
 
 export const meta: MetaFunction = () =>
   buildMeta({
-    title: "Đặt lại mật khẩu",
-    description: "Đặt lại mật khẩu tài khoản GlowUp",
+    title: "Reset Password",
+    description: "Reset your GlowUp account password",
   });
 
 export default function ResetPasswordRoute() {
