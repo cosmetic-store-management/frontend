@@ -36,7 +36,7 @@ test.describe("Admin — Login Page", () => {
   test("[Happy] Trang đăng nhập admin render đúng các thành phần", async ({
     page,
   }) => {
-    await page.goto("/admin/login");
+    await page.goto("/login");
     await page.waitForLoadState("networkidle").catch(() => {});
 
     // Không check document.title (trang không có <title> tag)
@@ -51,12 +51,12 @@ test.describe("Admin — Login Page", () => {
   test("[Error] Login với credentials sai hiển thị error message", async ({
     page,
   }) => {
-    await page.goto("/admin/login");
+    await page.goto("/login");
     await page.waitForLoadState("networkidle").catch(() => {});
 
     const emailOrPhone = page
       .locator(
-        "input[type='email'], input[name='email'], input[type='tel'], input[name='phone']",
+        "input[name='identifier'], input[placeholder*='example.com'], input[type='email'], input[name='email']",
       )
       .first();
     await emailOrPhone.fill("wrong@test.com");
@@ -71,7 +71,7 @@ test.describe("Admin — Login Page", () => {
   });
 
   test("[Error] Submit form trống hiển thị validation", async ({ page }) => {
-    await page.goto("/admin/login");
+    await page.goto("/login");
     await page.click("button[type='submit']");
 
     const validationOrError = page

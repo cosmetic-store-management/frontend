@@ -17,8 +17,9 @@ test.describe("Cart & Auth Flow", () => {
     // Giao diện login xuất hiện
     await expect(
       page
-        .locator("h1:has-text('Đăng nhập')")
-        .or(page.locator("h2:has-text('Đăng nhập')")),
+        .locator("h1:has-text('Welcome back')")
+        .or(page.locator("h1:has-text('Sign in')"))
+        .or(page.locator("h2:has-text('Welcome back')")),
     ).toBeVisible();
   });
 

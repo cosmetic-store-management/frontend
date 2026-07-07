@@ -22,7 +22,7 @@ test.describe("Public Auth — Đăng nhập khách hàng", () => {
 
     await expect(
       page
-        .locator("input[type='tel'], input[placeholder*='điện thoại']")
+        .locator("input[name='identifier'], input[placeholder*='example.com']")
         .first(),
     ).toBeVisible();
     await expect(page.locator("input[type='password']").first()).toBeVisible();
@@ -34,7 +34,7 @@ test.describe("Public Auth — Đăng nhập khách hàng", () => {
     await page.waitForLoadState("networkidle").catch(() => {});
 
     await page.fill(
-      "input[type='tel'], input[placeholder*='điện thoại']",
+      "input[name='identifier'], input[placeholder*='example.com']",
       "0901234567",
     );
     await page.fill("input[type='password']", "wrong_password_xyz_999");
@@ -52,13 +52,18 @@ test.describe("Public Auth — Đăng nhập khách hàng", () => {
     await page.waitForLoadState("networkidle").catch(() => {});
     await page.click("button[type='submit']");
 
-    // HTML5 required validation hoặc sonner toast
+    // HTML5 required validation, sonner toast, hoặc inline error text
     const hasValidation = (await page.locator("input:invalid").count()) > 0;
     const hasToast = await page
       .locator("[data-sonner-toast]")
       .isVisible()
       .catch(() => false);
-    expect(hasValidation || hasToast).toBeTruthy();
+    const hasDestructiveText = await page
+      .locator(".text-destructive")
+      .first()
+      .isVisible()
+      .catch(() => false);
+    expect(hasValidation || hasToast || hasDestructiveText).toBeTruthy();
   });
 });
 
@@ -69,11 +74,11 @@ test.describe("Public Auth — Đăng ký tài khoản", () => {
     await page.goto("/register");
     await page.waitForLoadState("networkidle").catch(() => {});
 
-    // Inputs không có name attr, dùng placeholder
+    // Inputs dùng name hoặc placeholder
     await expect(
-      page.locator("input[placeholder='Nhập họ và tên']").first(),
+      page.locator("input[name='name']").first(),
     ).toBeVisible();
-    await expect(page.locator("input[type='tel']").first()).toBeVisible();
+    await expect(page.locator("input[name='phone'], input[type='tel']").first()).toBeVisible();
     await expect(page.locator("input[type='password']").first()).toBeVisible();
     await expect(page.locator("button[type='submit']").first()).toBeVisible();
   });
@@ -82,17 +87,17 @@ test.describe("Public Auth — Đăng ký tài khoản", () => {
     await page.goto("/register");
     await page.waitForLoadState("networkidle").catch(() => {});
 
-    await page.fill("input[placeholder='Nhập họ và tên']", "Test User");
-    await page.fill("input[type='tel']", "0912345678");
+    await page.fill("input[name='name']", "Test User");
+    await page.fill("input[name='phone'], input[type='tel']", "0912345678");
     // Fill 2 password fields khác nhau
     const passwordInputs = page.locator("input[type='password']");
     await passwordInputs.nth(0).fill("pass12345");
     await passwordInputs.nth(1).fill("different_pass");
     await page.click("button[type='submit']");
 
-    // Phải hiển thị lỗi mật khẩu không khớp qua sonner
-    const toast = page.locator("[data-sonner-toast]").first();
-    await expect(toast).toBeVisible({ timeout: 5_000 });
+    // Phải hiển thị lỗi mật khẩu không khớp
+    const errorText = page.locator(".text-destructive").first();
+    await expect(errorText).toBeVisible({ timeout: 5_000 });
   });
 });
 
@@ -102,7 +107,7 @@ test.describe("Admin Auth — Đăng nhập quản trị", () => {
   test("[Happy] Admin login page render đúng các thành phần", async ({
     page,
   }) => {
-    await page.goto("/admin/login");
+    await page.goto("/login");
     await page.waitForLoadState("networkidle").catch(() => {});
 
     // Không check title (trang không có <title> tag)
@@ -116,12 +121,12 @@ test.describe("Admin Auth — Đăng nhập quản trị", () => {
   test("[Error] Thông báo lỗi khi đăng nhập admin với credentials sai", async ({
     page,
   }) => {
-    await page.goto("/admin/login");
+    await page.goto("/login");
     await page.waitForLoadState("networkidle").catch(() => {});
 
     const emailOrPhone = page
       .locator(
-        "input[type='email'], input[name='email'], input[type='tel'], input[placeholder*='phone'], input[placeholder*='email']",
+        "input[name='identifier'], input[placeholder*='example.com'], input[type='email'], input[name='email'], input[type='tel']",
       )
       .first();
     await emailOrPhone.fill("wrong@test.com");
@@ -153,7 +158,7 @@ test.describe("Auth — Quên mật khẩu", () => {
 
     const phoneInput = page
       .locator(
-        "input[type='tel'], input[type='email'], input[placeholder*='điện thoại'], input[placeholder*='phone']",
+        "input[name='identifier'], input[placeholder*='example.com']",
       )
       .first();
     await expect(phoneInput).toBeVisible({ timeout: 5_000 });

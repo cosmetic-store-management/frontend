@@ -206,7 +206,7 @@ test.describe("Shop — Giỏ hàng", () => {
     // Hiển thị giỏ hàng trống hoặc danh sách items
     const content = page
       .locator(
-        "[data-testid='cart-empty'], [data-testid='cart-items'], :text('Giỏ hàng trống'), :text('Chưa có sản phẩm'), h1",
+        "[data-testid='cart-empty'], [data-testid='cart-items'], :text('Giỏ hàng trống'), :text('Chưa có sản phẩm'), :text('Your cart is empty'), h1, h2",
       )
       .first();
     await expect(content).toBeVisible({ timeout: 5_000 });

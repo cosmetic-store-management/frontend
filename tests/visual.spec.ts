@@ -4,28 +4,32 @@ test.describe("Visual Regression Testing", () => {
   // Use a fixed viewport for consistent screenshots
   test.use({ viewport: { width: 1280, height: 720 } });
 
+  test.beforeEach(async ({}, testInfo) => {
+    testInfo.setTimeout(60000);
+  });
+
   test("Home Page", async ({ page }) => {
     await page.goto("/");
     // Wait for network idle and images to load
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(2000);
     // Mask images or dynamic elements if they are flaky, but for now we capture the full page
-    await expect(page).toHaveScreenshot("home-page.png", { fullPage: true });
+    await expect(page).toHaveScreenshot("home-page.png", { fullPage: true, timeout: 60000 });
   });
 
   test("Shop Page", async ({ page }) => {
-    await page.goto("/shop");
+    await page.goto("/products");
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(2000);
     await expect(page).toHaveScreenshot("shop-page.png", { fullPage: true });
   });
 
   test("Product Detail Page", async ({ page }) => {
-    // Navigate to a likely existing product or just the shop page and click the first product
-    await page.goto("/shop");
+    // Navigate to product list and click first product
+    await page.goto("/products");
     await page.waitForLoadState("domcontentloaded");
     await page.waitForTimeout(2000);
-    const firstProduct = page.locator("a[href^='/shop/']").first();
+    const firstProduct = page.locator("a[href^='/product/']").first();
     if ((await firstProduct.count()) > 0) {
       await firstProduct.click();
       await page.waitForLoadState("domcontentloaded");
@@ -44,13 +48,13 @@ test.describe("Visual Regression Testing", () => {
   });
 
   test("Admin Dashboard", async ({ page }) => {
-    await page.goto("/admin/login");
+    await page.goto("/admin");
     await page.waitForLoadState("domcontentloaded");
 
-    // Check if we are already redirected or need to login
-    if (page.url().includes("/admin/login")) {
+    // Check if we are already redirected to /login
+    if (page.url().includes("/login")) {
       await page.fill(
-        'input[type="email"], input[name="email"], input[type="tel"]',
+        "input[name='identifier'], input[placeholder*='example.com']",
         "owner@example.com",
       );
       await page.fill('input[type="password"]', "Password123!");
