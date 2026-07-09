@@ -138,16 +138,16 @@ export function ProductReviews({ product }: ProductReviewsProps) {
 
     if (ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("Kích thước ảnh tối đa là 5MB");
+        toast.error("Max image size is 5MB");
         return;
       }
     } else if (ACCEPTED_VIDEO_TYPES.includes(file.type)) {
       if (file.size > 15 * 1024 * 1024) {
-        toast.error("Kích thước video tối đa là 15MB");
+        toast.error("Max video size is 15MB");
         return;
       }
     } else {
-      toast.error("Vui lòng chọn file JPEG, PNG, WebP, MP4 hoặc MOV");
+      toast.error("Please select a JPEG, PNG, WebP, MP4 or MOV file");
       return;
     }
 
@@ -205,7 +205,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
           setIsModalOpen(false);
         },
         onError: (err: any) => {
-          toast.error(err.message || "Có lỗi xảy ra");
+          toast.error(err.message || "An error occurred");
         },
         onSettled: () => {
           setIsUploading(false);
@@ -230,7 +230,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
           setEditingReviewId(null);
         },
         onError: (err: any) => {
-          toast.error(err.message || "Cập nhật thất bại");
+          toast.error(err.message || "Update failed");
         },
       },
     );
@@ -447,7 +447,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                     {editingReviewId === review.id ? (
                       <div className="mt-3 bg-surface-soft p-4 rounded-sm border border-border">
                         <div className="flex items-center gap-2 mb-3">
-                          <span className="text-sm font-medium text-ink-muted">{"Chất lượng:"}</span>
+                          <span className="text-sm font-medium text-ink-muted">{"Quality:"}</span>
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button
                               key={star}
@@ -516,7 +516,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                                   className="inline-flex items-center gap-2 cursor-pointer border border-dashed border-border hover:border-brand hover:text-brand transition-colors rounded-sm px-4 py-2 text-sm text-ink-muted bg-surface"
                                 >
                                   <Camera className="w-4 h-4" />
-                                  <span>{"Thêm hình ảnh / video"}</span>
+                                  <span>{"Add Image / Video"}</span>
                                 </label>
                               </div>
                             )}
@@ -526,7 +526,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                               onClick={() => setEditingReviewId(null)}
                               className="text-sm px-4 py-1.5 rounded-sm hover:bg-surface-muted transition-colors"
                             >
-                              Hủy
+                              Cancel
                             </button>
                             <button
                               onClick={() => handleUpdateSubmit(review.id)}
@@ -534,8 +534,8 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                               className="btn-hover bg-brand text-white text-sm font-bold px-4 py-1.5 rounded-sm hover:bg-brand-dark transition-colors disabled:opacity-50"
                             >
                               {updateReview.isPending
-                                ? "Đang lưu..."
-                                : "Lưu thay đổi"}
+                                ? "Saving..."
+                                : "Save changes"}
                             </button>
                           </div>
                         </div>
@@ -544,7 +544,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                       <>
                         <p className="text-ink text-[14px] leading-relaxed mb-3 break-words whitespace-pre-wrap">
                           {review.comment ||
-                            "Người dùng không để lại bình luận."}
+                            "User left no comment."}
                         </p>
 
                         {review.images && review.images.length > 0 && (
@@ -583,7 +583,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                         {review.adminReply && (
                           <div className="bg-brand/5 border-l-2 border-brand p-3 mt-4 rounded-sm">
                             <p className="text-[13px] text-ink leading-relaxed break-words whitespace-pre-wrap">
-                              <span className="font-semibold text-brand mr-2">{"Phản hồi từ Shop:"}</span>
+                              <span className="font-semibold text-brand mr-2">{"Shop Response:"}</span>
                               <span className="text-ink-muted">
                                 {review.adminReply}
                               </span>
@@ -662,7 +662,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               <button
                 className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-10000 text-white hover:text-brand bg-black/70 hover:bg-black border border-white/20 rounded-full transition-all p-1.5 "
                 onClick={() => setViewImage(null)}
-                title="Đóng"
+                title="Close"
               >
                 <XIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
@@ -759,7 +759,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               <div className="space-y-2">
                 <span className="text-ink font-bold text-[15px] block">
                   Review Images / Videos{" "}
-                  <span className="text-ink-muted font-normal text-[13px]">{"(định dạng .jpg, .jpeg, .png, .mp4, .mov)"}</span>
+                  <span className="text-ink-muted font-normal text-[13px]">{"(formats: .jpg, .jpeg, .png, .mp4, .mov)"}</span>
                 </span>
                 <div className="pt-2">
                   {mediaPreviewUrl ? (

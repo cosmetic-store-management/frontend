@@ -201,7 +201,7 @@ export function ProductPage() {
           </>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full">
             {/* Search */}
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
@@ -222,63 +222,63 @@ export function ProductPage() {
               )}
             </div>
 
-            {/* Filters row */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Select value={status || "all"} onValueChange={(val) => setStatus(val === "all" ? "" : val as any)}>
-                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Status Dropdown */}
+            <Select value={status || "all"} onValueChange={(val) => setStatus(val === "all" ? "" : val as any)}>
+              <SelectTrigger className="w-[160px] h-10 rounded-sm border-border bg-surface text-sm text-ink-muted px-3 focus-visible:ring-brand/20">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
 
-              <Select
-                value={brandId || "all"}
-                onValueChange={(v) => setBrandId(v === "all" ? "" : v)}
-              >
-                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
-                  <SelectValue placeholder="Brand" />
-                </SelectTrigger>
-                <SelectContent className="max-h-48 overflow-y-auto">
-                  <SelectItem value="all">All brands</SelectItem>
-                  {brandsWithProducts.map((b) => (
-                    <SelectItem key={b.id} value={b.id}>
-                      {b.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Brand Dropdown */}
+            <Select
+              value={brandId || "all"}
+              onValueChange={(v) => setBrandId(v === "all" ? "" : v)}
+            >
+              <SelectTrigger className="w-[160px] h-10 rounded-sm border-border bg-surface text-sm text-ink-muted px-3 focus-visible:ring-brand/20">
+                <SelectValue placeholder="Brand" />
+              </SelectTrigger>
+              <SelectContent className="max-h-48 overflow-y-auto">
+                <SelectItem value="all">All brands</SelectItem>
+                {brandsWithProducts.map((b) => (
+                  <SelectItem key={b.id} value={b.id}>
+                    {b.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-              <Select
-                value={categoryId || "all"}
-                onValueChange={(v) => setCategoryId(v === "all" ? "" : v)}
-              >
-                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent className="max-h-60">
-                  <SelectItem value="all">All categories</SelectItem>
-                  {buildFlatCatOptions(categories).map((opt) => (
-                    <SelectItem key={opt.id} value={opt.id}>
-                      <span
-                        style={{ paddingLeft: `${opt.depth * 14}px` }}
-                        className="flex items-center gap-1"
-                      >
-                        {opt.depth > 0 && (
-                          <span className="text-muted-foreground/50 text-xs">
-                            └
-                          </span>
-                        )}
-                        {opt.label}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Category Dropdown */}
+            <Select
+              value={categoryId || "all"}
+              onValueChange={(v) => setCategoryId(v === "all" ? "" : v)}
+            >
+              <SelectTrigger className="w-[160px] h-10 rounded-sm border-border bg-surface text-sm text-ink-muted px-3 focus-visible:ring-brand/20">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                <SelectItem value="all">All categories</SelectItem>
+                {buildFlatCatOptions(categories).map((opt) => (
+                  <SelectItem key={opt.id} value={opt.id}>
+                    <span
+                      style={{ paddingLeft: `${opt.depth * 14}px` }}
+                      className="flex items-center gap-1"
+                    >
+                      {opt.depth > 0 && (
+                        <span className="text-muted-foreground/50 text-xs">
+                          └
+                        </span>
+                      )}
+                      {opt.label}
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         }
       />
@@ -327,33 +327,32 @@ export function ProductPage() {
 
       <div className="premium-card overflow-hidden">
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table className="min-w-225 table-fixed">
-              <TableHeader>
-                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="px-5 w-[25%] text-center">
-                    Product
-                  </TableHead>
-                  <TableHead className="px-5 w-[14%] text-center">
-                    Brand
-                  </TableHead>
-                  <TableHead className="px-5 w-[14%] text-center">
-                    Category
-                  </TableHead>
-                  <TableHead className="px-5 w-[12%] text-center">
-                    Status
-                  </TableHead>
-                  <TableHead className="px-5 w-[15%] text-center">
-                    Price Range
-                  </TableHead>
-                  <TableHead className="px-5 w-[10%] text-center">
-                    Stock
-                  </TableHead>
-                  <TableHead className="px-5 w-[10%] text-center">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
+          <Table className="min-w-[1150px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-72 text-center">
+                  Product
+                </TableHead>
+                <TableHead className="w-40 text-center">
+                  Brand
+                </TableHead>
+                <TableHead className="w-40 text-center">
+                  Category
+                </TableHead>
+                <TableHead className="w-32 text-center">
+                  Status
+                </TableHead>
+                <TableHead className="w-48 text-center">
+                  Price Range
+                </TableHead>
+                <TableHead className="w-32 text-center">
+                  Stock
+                </TableHead>
+                <TableHead className="w-24 pl-4 pr-8 text-center">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
 
               <TableBody>
                 {loading && (
@@ -371,8 +370,8 @@ export function ProductPage() {
                   products.map((item) => (
                     <TableRow key={item.id}>
                       {/* Product name */}
-                      <TableCell className="px-5 py-4 align-middle overflow-hidden max-w-0">
-                        <div className="flex w-full items-center gap-3 text-left">
+                      <TableCell className="px-5 py-4 align-middle text-center">
+                        <div className="flex w-full items-center justify-center gap-3 text-left">
                           <img
                             src={item.imageUrl}
                             alt={item.name}
@@ -396,7 +395,7 @@ export function ProductPage() {
                       </TableCell>
 
                       {/* Brand */}
-                      <TableCell className="px-5 py-4 align-middle">
+                      <TableCell className="px-5 py-4 align-middle text-center">
                         <div className="flex items-center justify-center gap-2 min-w-0">
                           {item.brand?.imageUrl && (
                             <img
@@ -412,7 +411,7 @@ export function ProductPage() {
                       </TableCell>
 
                       {/* Category */}
-                      <TableCell className="px-5 py-4 align-middle">
+                      <TableCell className="px-5 py-4 align-middle text-center">
                         <span className="block text-center text-sm text-ink-muted">
                           {item.category?.name ??
                             categoryNameById[item.categoryId] ??
@@ -485,7 +484,7 @@ export function ProductPage() {
                       </TableCell>
 
                       {/* Actions */}
-                      <TableCell className="px-5 py-4 text-center align-middle">
+                      <TableCell className="pl-4 pr-8 py-4 text-center align-middle">
                         <div className="flex items-center justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -541,7 +540,6 @@ export function ProductPage() {
                 )}
               </TableBody>
             </Table>
-          </div>
 
           {pagination?.totalPages > 1 && (
             <div className="flex items-center justify-center px-5 py-4 bg-surface border-t border-border rounded-b-sm">

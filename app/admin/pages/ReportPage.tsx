@@ -33,6 +33,7 @@ import {
   Line,
   AreaChart,
   Area,
+  ComposedChart,
 } from "recharts";
 
 export function ReportPage() {
@@ -108,7 +109,7 @@ export function ReportPage() {
     cash: "Cash",
     qr: "QR Code",
     transfer: "Bank Transfer",
-    pos_card: "International Payment",
+    pos_card: "POS Card",
     stripe: "Stripe",
   };
 
@@ -117,6 +118,12 @@ export function ReportPage() {
     value: p.revenue,
   }));
   const hasPaymentData = paymentChartData.some((d) => d.value > 0);
+
+  const channelChartData = [
+    { name: "Online Store", value: (data as any).channelStats?.online?.revenue || 0 },
+    { name: "POS Register", value: (data as any).channelStats?.pos?.revenue || 0 },
+  ];
+  const hasChannelData = channelChartData.some((d) => d.value > 0);
 
   return (
     <div className="flex flex-col gap-6 animate-page-enter text-left">
@@ -227,7 +234,7 @@ export function ReportPage() {
         {revenueData && revenueData.length > 0 ? (
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
+              <ComposedChart
                 data={revenueData}
                 margin={{ top: 10, right: 30, left: 20, bottom: 0 }}
               >
@@ -277,7 +284,7 @@ export function ReportPage() {
                   name="Orders"
                   strokeWidth={2}
                 />
-              </AreaChart>
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         ) : (
@@ -287,7 +294,7 @@ export function ReportPage() {
         )}
       </div>
 
-      {/* Advanced Charts Section 1 */}
+      {/* Product & Sales Channel Split Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Category Performance */}
         <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between">
@@ -295,35 +302,33 @@ export function ReportPage() {
             <div className="flex items-center gap-2 mb-6">
               <Tag className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Category Performance (by Revenue)
+                Category Performance
               </h3>
             </div>
 
             {categoryData && categoryData.length > 0 ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+                  <PieChart margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
                     <Pie
-                      data={categoryData}
+                      data={categoryData.filter((d) => d.revenue > 0)}
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
+                      innerRadius={55}
+                      outerRadius={80}
                       paddingAngle={5}
                       dataKey="revenue"
                       nameKey="category"
                       label={
                         (({
-                          name,
                           percent,
                         }: {
-                          name: string;
                           percent?: number;
                         }) =>
-                          `${name} ${((percent ?? 0) * 100).toFixed(0)}%`) as any
+                          `${((percent ?? 0) * 100).toFixed(0)}%`) as any
                       }
                     >
-                      {categoryData.map((_entry, index) => (
+                      {categoryData.filter((d) => d.revenue > 0).map((_entry, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}
@@ -338,6 +343,7 @@ export function ReportPage() {
                         ]) as any
                       }
                     />
+                    <Legend verticalAlign="bottom" height={36} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -349,73 +355,116 @@ export function ReportPage() {
           </div>
         </div>
 
-        {/* Payment Methods */}
+        {/* Sales Channel Performance */}
         <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <CreditCard className="w-5 h-5 text-ink" />
+              <BarChart3 className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Payment Methods Stats
+                Sales Channel Performance
               </h3>
             </div>
-
-            {hasPaymentData ? (
-              <div className="h-72 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={paymentChartData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                    <XAxis
-                      type="number"
-                      tickFormatter={(v) => `${v / 1000000}M`}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <YAxis
-                      dataKey="name"
-                      type="category"
-                      width={160}
-                      tick={{ fontSize: 12 }}
-                    />
-                    <Tooltip
-                      formatter={
-                        ((value: number) => [
-                          `${value.toLocaleString("vi-VN")}đ`,
-                          "Revenue",
-                        ]) as any
-                      }
-                    />
-                    <Bar
-                      dataKey="value"
-                      fill="#3b82f6"
-                      radius={[0, 4, 4, 0]}
-                      maxBarSize={40}
-                    >
-                      {paymentChartData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
+            
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 items-center">
+              {/* Chart Section */}
+              <div className="sm:col-span-3">
+                {hasChannelData ? (
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
+                        <Pie
+                          data={channelChartData.filter((d) => d.value > 0)}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={75}
+                          paddingAngle={5}
+                          dataKey="value"
+                          nameKey="name"
+                          label={
+                            (({
+                              percent,
+                            }: {
+                              percent?: number;
+                            }) =>
+                              `${((percent ?? 0) * 100).toFixed(0)}%`) as any
+                          }
+                        >
+                          {channelChartData.filter((d) => d.value > 0).map((entry) => (
+                            <Cell
+                              key={entry.name}
+                              fill={entry.name === "Online Store" ? "#db2777" : "#10b981"}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={
+                            ((value: number) => [
+                              `${value.toLocaleString("vi-VN")}₫`,
+                              "Revenue",
+                            ]) as any
+                          }
                         />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                        <Legend verticalAlign="bottom" height={36} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-64 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
+                    <p className="text-sm">No sales data available</p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
-                <p className="text-sm">No payment data available</p>
+
+              {/* Details Section */}
+              <div className="sm:col-span-2 grid grid-cols-1 gap-3">
+                {/* Online Card */}
+                <div className="p-3.5 rounded-sm border border-brand/10 bg-brand-light/5">
+                  <h4 className="text-xs font-bold text-brand mb-2.5">Online Store</h4>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-ink-muted">Revenue:</span>
+                      <span className="font-semibold text-ink">{((data as any).channelStats?.online?.revenue || 0).toLocaleString("vi-VN")}₫</span>
+                    </div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-ink-muted">Total Orders:</span>
+                      <span className="font-semibold text-ink">{((data as any).channelStats?.online?.orders || 0)} orders</span>
+                    </div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-ink-muted">Profit:</span>
+                      <span className="font-semibold text-brand">{((data as any).channelStats?.online?.profit || 0).toLocaleString("vi-VN")}₫</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* POS Card */}
+                <div className="p-3.5 rounded-sm border border-emerald-600/10 bg-emerald-50/5">
+                  <h4 className="text-xs font-bold text-emerald-600 mb-2.5">POS Register</h4>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-ink-muted">Revenue:</span>
+                      <span className="font-semibold text-ink">{((data as any).channelStats?.pos?.revenue || 0).toLocaleString("vi-VN")}₫</span>
+                    </div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-ink-muted">Total Orders:</span>
+                      <span className="font-semibold text-ink">{((data as any).channelStats?.pos?.orders || 0)} orders</span>
+                    </div>
+                    <div className="flex justify-between text-[11px]">
+                      <span className="text-ink-muted">Profit:</span>
+                      <span className="font-semibold text-emerald-600">{((data as any).channelStats?.pos?.profit || 0).toLocaleString("vi-VN")}₫</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Advanced Charts Section 2 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Order Completion Rate Chart */}
-        <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between">
+      {/* Operational & Marketing Breakdowns */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Order Completion Rate */}
+        <div className="lg:col-span-1 bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-6">
               <Package className="w-5 h-5 text-ink" />
@@ -427,33 +476,38 @@ export function ReportPage() {
             {hasOrderData ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+                  <PieChart margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
                     <Pie
                       data={orderPieData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={70}
-                      outerRadius={100}
+                      innerRadius={50}
+                      outerRadius={75}
                       fill="#8884d8"
                       paddingAngle={5}
                       dataKey="value"
                       label={
                         (({
-                          name,
                           percent,
                         }: {
-                          name: string;
                           percent?: number;
                         }) =>
-                          `${name} ${((percent ?? 0) * 100).toFixed(0)}%`) as any
+                          `${((percent ?? 0) * 100).toFixed(0)}%`) as any
                       }
                     >
-                      {orderPieData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
+                      {orderPieData.map((entry) => {
+                        const orderStatusColors: Record<string, string> = {
+                          Completed: "#22c55e",
+                          Cancelled: "#ef4444",
+                          Processing: "#f59e0b",
+                        };
+                        return (
+                          <Cell
+                            key={entry.name}
+                            fill={orderStatusColors[entry.name] || "#3b82f6"}
+                          />
+                        );
+                      })}
                     </Pie>
                     <Tooltip
                       formatter={
@@ -473,63 +527,125 @@ export function ReportPage() {
           </div>
         </div>
 
-        {/* Voucher Usage Bar Chart */}
-        <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between">
+        {/* Payment Methods */}
+        <div className="lg:col-span-2 bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <Ticket className="w-5 h-5 text-ink" />
+              <CreditCard className="w-5 h-5 text-ink" />
               <h3 className="font-semibold text-base text-ink">
-                Voucher Usage Stats
+                Payment Methods Stats
               </h3>
             </div>
 
-            {voucherBarData.length > 0 ? (
+            {hasPaymentData ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={voucherBarData}
-                    margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                    data={paymentChartData}
+                    layout="vertical"
+                    margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
                   >
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      vertical={false}
-                      stroke="#eee"
-                    />
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                     <XAxis
-                      dataKey="name"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 12, fill: "#666" }}
+                      type="number"
+                      tickFormatter={(v) => `${v / 1000000}M`}
+                      tick={{ fontSize: 11 }}
                     />
                     <YAxis
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 12, fill: "#666" }}
+                      dataKey="name"
+                      type="category"
+                      width={90}
+                      tick={{ fontSize: 11 }}
                     />
-                    <Tooltip cursor={{ fill: "#f5f5f5" }} />
-                    <Legend />
+                    <Tooltip
+                      formatter={
+                        ((value: number) => [
+                          `${value.toLocaleString("vi-VN")}đ`,
+                          "Revenue",
+                        ]) as any
+                      }
+                    />
                     <Bar
-                      dataKey="Used"
-                      fill="#ef4444"
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={40}
-                    />
-                    <Bar
-                      dataKey="Limit"
-                      fill="#e5e5e5"
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={40}
-                    />
+                      dataKey="value"
+                      fill="#3b82f6"
+                      radius={[0, 4, 4, 0]}
+                      maxBarSize={30}
+                    >
+                      {paymentChartData.map((_entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             ) : (
               <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
-                <Ticket className="w-8 h-8 opacity-20 mb-2" />
-                <p className="text-sm">No voucher data available</p>
+                <p className="text-sm">No payment data available</p>
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Voucher Usage Bar Chart */}
+      <div className="bg-surface border border-border rounded-sm p-6 shadow-ui-soft flex flex-col justify-between w-full">
+        <div>
+          <div className="flex items-center gap-2 mb-6">
+            <Ticket className="w-5 h-5 text-ink" />
+            <h3 className="font-semibold text-base text-ink">
+              Voucher Usage Stats
+            </h3>
+          </div>
+
+          {voucherBarData.length > 0 ? (
+            <div className="h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={voucherBarData}
+                  margin={{ top: 20, right: 20, left: -20, bottom: 5 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#eee"
+                  />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: "#666" }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fontSize: 11, fill: "#666" }}
+                  />
+                  <Tooltip cursor={{ fill: "#f5f5f5" }} />
+                  <Legend />
+                  <Bar
+                    dataKey="Used"
+                    fill="#ef4444"
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={30}
+                  />
+                  <Bar
+                    dataKey="Limit"
+                    fill="#e5e5e5"
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={30}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="h-72 flex flex-col items-center justify-center text-ink-muted bg-surface-soft/50 rounded-lg border border-dashed border-border">
+              <Ticket className="w-8 h-8 opacity-20 mb-2" />
+              <p className="text-sm">No voucher data available</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -100,11 +100,11 @@ function HomeSingleVoucher({
              savedStatus === "used" ? "Used" : savedStatus === "exhausted" ? "Claimed" : "Expired"
           ) : saved ? (
             <>
-              <Check className="w-3 h-3" /> Saved
+              <Check className="w-3 h-3" /> Collected
             </>
           ) : (
             <>
-              <Gift className="w-3 h-3" /> Save
+              <Gift className="w-3 h-3" /> Collect
             </>
           )}
         </button>
@@ -190,7 +190,7 @@ export function HomeVouchers() {
         {canScrollLeft && (
           <button
             onClick={() => scroll("left")}
-            className="absolute left-1 md:-left-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute left-1 md:-left-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-sm shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
             aria-label="Previous vouchers"
           >
             <ChevronLeft className="w-6 h-6 ml-[-2px]" strokeWidth={2} />
@@ -201,7 +201,7 @@ export function HomeVouchers() {
         {canScrollRight && (
           <button
             onClick={() => scroll("right")}
-            className="absolute right-1 md:-right-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute right-1 md:-right-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-sm shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
             aria-label="Next vouchers"
           >
             <ChevronRight className="w-6 h-6 mr-[-2px]" strokeWidth={2} />

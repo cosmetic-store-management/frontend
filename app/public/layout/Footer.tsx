@@ -306,7 +306,7 @@ export default function Footer() {
             style={{ color: "hsl(345, 6%, 40%)" }}
           >
             © {new Date().getFullYear()}{" "}
-            <span className="text-white font-medium">
+            <span className="text-white font-medium notranslate">
               {settings.storeName || "GlowUp"}
             </span>
             . All rights reserved.

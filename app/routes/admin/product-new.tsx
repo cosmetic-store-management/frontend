@@ -43,8 +43,8 @@ export default function ProductNewPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <PageHeader
-          title="Thêm sản phẩm mới"
-          description="Điền thông tin cơ bản, thuộc tính và hình ảnh để tạo sản phẩm mới."
+          title="Add New Product"
+          description="Fill in basic details, variants, and images to create a new product."
           error={error}
           onClearError={clearError}
         />

@@ -257,7 +257,7 @@ export function CheckoutPage() {
       );
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || err.message || "Đặt hàng thất bại",
+        err.response?.data?.message || err.message || "Order placement failed",
       );
     }
   };

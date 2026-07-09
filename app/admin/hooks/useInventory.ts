@@ -4,6 +4,8 @@ import {
   getTransactions,
   getSuppliers,
   createSupplier,
+  updateSupplier,
+  deleteSupplier,
   createGoodsReceipt,
   adjustStock,
   updateMinStock,
@@ -12,7 +14,7 @@ import {
 import { handleMutationError } from "@/lib/api-helper";
 
 export function useInventoryStock(
-  params: { search?: string; page?: number; limit?: number } = {},
+  params: { search?: string; page?: number; limit?: number; stockStatus?: string } = {},
 ) {
   return useQuery({
     queryKey: ["stock", params],
@@ -46,6 +48,30 @@ export function useCreateSupplier() {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
     },
     onError: (err) => handleMutationError(err, "Failed to create supplier"),
+  });
+}
+
+export function useUpdateSupplier() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => updateSupplier(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+      queryClient.invalidateQueries({ queryKey: ["brands"] });
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
+    },
+    onError: (err) => handleMutationError(err, "Failed to update supplier"),
+  });
+}
+
+export function useDeleteSupplier() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteSupplier,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["suppliers"] });
+    },
+    onError: (err) => handleMutationError(err, "Failed to delete supplier"),
   });
 }
 

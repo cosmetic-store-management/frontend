@@ -61,7 +61,7 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
             onError={() => setImgFailed(true)}
           />
         ) : (
-          <span className="text-[11px] font-black uppercase tracking-widest text-center leading-tight text-ink/25">
+          <span className="text-[11px] font-black uppercase tracking-widest text-center leading-tight text-ink/25 notranslate">
             {brand.name}
           </span>
         )}
@@ -73,7 +73,7 @@ function BrandCard({ brand, dark = false }: { brand: any; dark?: boolean }) {
         ${dark ? "bg-[#1e1e1e] group-hover:bg-[#2a2a2a]" : "bg-white"}`}
       >
         <span
-          className={`text-[10px] font-bold uppercase tracking-widest line-clamp-1
+          className={`text-[10px] font-bold uppercase tracking-widest line-clamp-1 notranslate
           ${dark ? "text-white/60 group-hover:text-white" : "text-ink/60 group-hover:text-brand"} transition-colors`}
         >
           {brand.name}
@@ -143,7 +143,7 @@ export default function BrandsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
+    <div className="min-h-screen bg-background">
       {/* ══════════════════════════════════════════════════════════════
           THƯƠNG HIỆU NỔI BẬT — dark section
       ══════════════════════════════════════════════════════════════ */}
@@ -196,7 +196,7 @@ export default function BrandsPage() {
       {/* ══════════════════════════════════════════════════════════════
           XEM TẤT CẢ X THƯƠNG HIỆU
       ══════════════════════════════════════════════════════════════ */}
-      <div className="bg-white border-b border-[#e8e8e8] py-6 px-4">
+      <div className="bg-background border-b border-border py-6 px-4">
         <div className="max-w-300 mx-auto">
           {/* Count heading */}
           <p className="text-center font-black text-[15px] uppercase tracking-widest text-ink mb-5">
@@ -238,7 +238,7 @@ export default function BrandsPage() {
             ))}
           </div>
         ) : brands.length === 0 ? (
-          <div className="py-20 text-center text-ink-muted">{"Hiện chưa có thương hiệu nào"}</div>
+          <div className="py-20 text-center text-ink-muted">{"No brands found"}</div>
         ) : (
           <div className="flex flex-col gap-8">
             {ALPHABET.filter((l) => activeLetters.has(l)).map((letter) => (
@@ -250,7 +250,7 @@ export default function BrandsPage() {
                 className="scroll-mt-36"
               >
                 {/* Letter heading */}
-                <div className="flex items-center gap-4 mb-4 pb-2 border-b border-[#e8e8e8]">
+                <div className="flex items-center gap-4 mb-4 pb-2 border-b border-border">
                   <span className="text-[13px] font-bold text-ink">
                     {letter}
                   </span>

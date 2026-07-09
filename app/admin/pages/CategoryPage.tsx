@@ -346,7 +346,7 @@ export function CategoryPage() {
           </Button>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
@@ -369,27 +369,26 @@ export function CategoryPage() {
         </div>
       ) : (
         <div className="premium-card rounded-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table className="min-w-187.5 table-fixed">
-              <TableHeader>
-                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[24%] text-center">
-                    Category
-                  </TableHead>
-                  <TableHead className="w-[20%] text-center">
-                    Description
-                  </TableHead>
-                  <TableHead className="w-[16%] text-center">
-                    Parent Category
-                  </TableHead>
-                  <TableHead className="w-[10%] text-center">Order</TableHead>
-                  <TableHead className="w-[10%] text-center">
-                    Products
-                  </TableHead>
-                  <TableHead className="w-[10%] text-center">Status</TableHead>
-                  <TableHead className="w-[10%] text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
+          <Table className="min-w-[1000px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-52 text-center">
+                  Category
+                </TableHead>
+                <TableHead className="w-48 text-center">
+                  Description
+                </TableHead>
+                <TableHead className="w-40 text-center">
+                  Parent Category
+                </TableHead>
+                <TableHead className="w-28 text-center">Order</TableHead>
+                <TableHead className="w-28 text-center">
+                  Products
+                </TableHead>
+                <TableHead className="w-28 text-center">Status</TableHead>
+                <TableHead className="w-24 pl-4 pr-8 text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
               <TableBody>
                 {treeRows.map(({ cat, depth }) => {
                   const hasChildren = (childrenCount[cat.id] || 0) > 0;
@@ -402,7 +401,7 @@ export function CategoryPage() {
                       key={cat.id}
                       className={`transition-colors hover:bg-bg/40 ${depth > 0 ? "bg-surface-soft/30" : ""}`}
                     >
-                      <TableCell className="overflow-hidden max-w-0 pl-4">
+                      <TableCell className="pl-4">
                         <div
                           className="flex items-center gap-2"
                           style={{ paddingLeft: `${depth * 20}px` }}
@@ -447,12 +446,12 @@ export function CategoryPage() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm overflow-hidden max-w-0 text-center text-ink-muted">
+                      <TableCell className="text-sm text-center text-ink-muted">
                         <span className="truncate block w-full mx-auto" title={cat.description || ""}>
                           {cat.description || "—"}
                         </span>
                       </TableCell>
-                      <TableCell className="text-sm overflow-hidden max-w-0 text-center">
+                      <TableCell className="text-sm text-center">
                         {cat.parentId ? (
                           <span className="inline-flex items-center px-2 py-0.5 bg-surface-muted rounded text-xs text-ink-muted truncate max-w-full">
                             {categoryNameById[cat.parentId] || "—"}
@@ -479,7 +478,7 @@ export function CategoryPage() {
                           />
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="pl-4 pr-8 text-center">
                         <div className="flex items-center justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -518,7 +517,6 @@ export function CategoryPage() {
                 })}
               </TableBody>
             </Table>
-          </div>
           {categories.length === 0 && (
             <p className="py-8 text-center text-sm text-ink-muted">
               No categories found

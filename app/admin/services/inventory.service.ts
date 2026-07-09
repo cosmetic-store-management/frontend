@@ -32,8 +32,15 @@ export interface Supplier {
   id: string;
   name: string;
   phone: string;
-  email: string;
-  address: string;
+  email?: string;
+  address?: string;
+  taxCode?: string;
+  contactPerson?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  contactPosition?: string;
+  isActive?: boolean;
+  notes?: string;
 }
 
 export function getSuppliers(): Promise<Supplier[]> {
@@ -46,6 +53,13 @@ export function getSuppliers(): Promise<Supplier[]> {
         phone: s.phone,
         email: s.email,
         address: s.address,
+        taxCode: s.taxCode,
+        contactPerson: s.contactPerson,
+        contactPhone: s.contactPhone,
+        contactEmail: s.contactEmail,
+        contactPosition: s.contactPosition,
+        isActive: s.isActive,
+        notes: s.notes,
       })),
     );
 }
@@ -59,13 +73,47 @@ export function createSupplier(data: Omit<Supplier, "id">): Promise<Supplier> {
       phone: res.supplier.phone,
       email: res.supplier.email,
       address: res.supplier.address,
+      taxCode: res.supplier.taxCode,
+      contactPerson: res.supplier.contactPerson,
+      contactPhone: res.supplier.contactPhone,
+      contactEmail: res.supplier.contactEmail,
+      contactPosition: res.supplier.contactPosition,
+      isActive: res.supplier.isActive,
+      notes: res.supplier.notes,
     }));
+}
+
+export function updateSupplier(
+  id: string,
+  data: Partial<Omit<Supplier, "id">>,
+): Promise<Supplier> {
+  return apiClient
+    .put<{ supplier: any }>(`/inventory/suppliers/${id}`, data)
+    .then((res) => ({
+      id: res.supplier._id || res.supplier.id,
+      name: res.supplier.name,
+      phone: res.supplier.phone,
+      email: res.supplier.email,
+      address: res.supplier.address,
+      taxCode: res.supplier.taxCode,
+      contactPerson: res.supplier.contactPerson,
+      contactPhone: res.supplier.contactPhone,
+      contactEmail: res.supplier.contactEmail,
+      contactPosition: res.supplier.contactPosition,
+      isActive: res.supplier.isActive,
+      notes: res.supplier.notes,
+    }));
+}
+
+export function deleteSupplier(id: string): Promise<void> {
+  return apiClient.delete(`/inventory/suppliers/${id}`);
 }
 
 export function getStockList(params: {
   search?: string;
   page?: number;
   limit?: number;
+  stockStatus?: string;
 }): Promise<{ stock: InventoryItem[]; pagination: any }> {
   return apiClient
     .get<{

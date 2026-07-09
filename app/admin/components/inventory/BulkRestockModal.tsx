@@ -72,7 +72,6 @@ export function BulkRestockModal({
         let notFoundCount = 0;
 
         data.forEach((row) => {
-          // Flexible column mapping (supports 'SKU', 'Mã SKU', 'Số lượng', 'Quantity', 'Giá nhập', 'Price')
           const sku = row["SKU"] || row["Mã SKU"] || row["sku"];
           const rawQty = row["Số lượng"] || row["Quantity"] || row["qty"];
           const rawPrice = row["Giá nhập"] || row["Price"] || row["price"];
@@ -96,7 +95,6 @@ export function BulkRestockModal({
             row["expiryDate"] ||
             "";
 
-          // Find product in stockItems
           const matchedItem = stockItems.find(
             (s) => s.sku.toLowerCase() === String(sku).toLowerCase().trim(),
           );
@@ -124,18 +122,17 @@ export function BulkRestockModal({
         });
 
         setItems(newItems);
-        toast.success(`Đã thêm ${addedCount} sản phẩm từ Excel.`);
+        toast.success(`Added ${addedCount} products from Excel.`);
         if (notFoundCount > 0) {
           toast.warning(
-            `Không tìm thấy ${notFoundCount} mã SKU trong hệ thống.`,
+            `SKU not found for ${notFoundCount} products.`,
           );
         }
       } catch (error) {
-        toast.error("Lỗi khi đọc file Excel. Vui lòng kiểm tra lại định dạng.");
+        toast.error("Error reading Excel file. Please check format.");
       }
     };
     reader.readAsBinaryString(file);
-    // Reset input so the same file can be selected again
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -150,7 +147,7 @@ export function BulkRestockModal({
           s.sku.toLowerCase().includes(q) ||
           (s.barcode && s.barcode.toLowerCase() === q),
       )
-      .slice(0, 5); // Limit results
+      .slice(0, 5);
   }, [searchQuery, stockItems]);
 
   const handleSelectItem = (variantId: string) => {
@@ -168,8 +165,6 @@ export function BulkRestockModal({
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      // Quét mã vạch thường tự động có phím Enter.
-      // Tìm xem có sản phẩm nào khớp đúng barcode (hoặc khớp duy nhất 1 kết quả)
       if (searchResults.length > 0) {
         const exactMatch = searchResults.find(
           (s) =>
@@ -220,7 +215,7 @@ export function BulkRestockModal({
     e.preventDefault();
 
     if (items.length === 0) {
-      toast.error("Vui lòng thêm ít nhất một sản phẩm!");
+      toast.error("Please add at least one product!");
       return;
     }
 
@@ -234,7 +229,7 @@ export function BulkRestockModal({
         !item.expiryDate,
     );
     if (invalidItems) {
-      toast.error("Vui lòng điền đầy đủ và hợp lệ thông tin tất cả sản phẩm!");
+      toast.error("Please fill in complete and valid details for all products!");
       return;
     }
 
@@ -242,7 +237,7 @@ export function BulkRestockModal({
 
     if (isNewSupplier) {
       if (!newSupplierName.trim() || !newSupplierPhone.trim()) {
-        toast.error("Vui lòng điền tên và số điện thoại nhà cung cấp!");
+        toast.error("Please fill in supplier name and phone number!");
         return;
       }
       try {
@@ -254,13 +249,13 @@ export function BulkRestockModal({
         });
         finalSupplierId = created.id;
       } catch (err: any) {
-        toast.error(err.message || "Không thể tạo nhà cung cấp!");
+        toast.error(err.message || "Failed to create supplier!");
         return;
       }
     }
 
     if (!finalSupplierId) {
-      toast.error("Vui lòng chọn hoặc tạo nhà cung cấp!");
+      toast.error("Please select or create a supplier!");
       return;
     }
 
@@ -270,11 +265,11 @@ export function BulkRestockModal({
         items: items,
       });
 
-      toast.success("Tạo phiếu nhập kho thành công!");
+      toast.success("Created restock ticket successfully!");
       resetForm();
       onOpenChange(false);
     } catch (err: any) {
-      toast.error(err.message || "Lỗi tạo phiếu nhập kho!");
+      toast.error(err.message || "Failed to create restock ticket!");
     }
   };
 
@@ -297,8 +292,8 @@ export function BulkRestockModal({
         if (!o) resetForm();
         onOpenChange(o);
       }}
-      title="Nhập hàng loạt"
-      description="Tải lên file Excel mẫu để nhập hàng loạt cho các biến thể đang có."
+      title="Bulk Restock"
+      description="Upload an Excel file to bulk import inventory restocks for existing variants."
       size="xl"
       hideFooter={true}
     >
@@ -310,14 +305,14 @@ export function BulkRestockModal({
         {/* Top Section: Supplier */}
         <div className="bg-surface-soft border border-border rounded-sm p-4 space-y-4">
           <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-            <Package className="w-4 h-4 text-brand" />{"Thông tin nhà cung cấp"}</h3>
+            <Package className="w-4 h-4 text-brand" />{"Supplier Information"}</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label
                 htmlFor="supplier"
                 className="text-xs font-semibold text-ink"
-              >{"Nhà cung cấp *"}</Label>
+              >{"Supplier *"}</Label>
               <Select
                 value={isNewSupplier ? "new" : supplierId}
                 onValueChange={(val) => {
@@ -332,7 +327,7 @@ export function BulkRestockModal({
                 required
               >
                 <SelectTrigger id="supplier" className="w-full h-9 bg-surface">
-                  <SelectValue placeholder="-- Chọn nhà cung cấp --" />
+                  <SelectValue placeholder="-- Select Supplier --" />
                 </SelectTrigger>
                 <SelectContent>
                   {suppliers.map((sup: any) => (
@@ -340,7 +335,7 @@ export function BulkRestockModal({
                       {sup.name}
                     </SelectItem>
                   ))}
-                  <SelectItem value="new" className="text-brand font-semibold">{"+ Thêm nhà cung cấp mới..."}</SelectItem>
+                  <SelectItem value="new" className="text-brand font-semibold">{"+ Add New Supplier..."}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -349,9 +344,9 @@ export function BulkRestockModal({
               <div className="space-y-3 animate-scale-in border-l-2 border-brand pl-4">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Tên nhà cung cấp *"}</Label>
+                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Supplier Name *"}</Label>
                     <Input
-                      placeholder="Tên nhà cung cấp..."
+                      placeholder="Supplier name..."
                       value={newSupplierName}
                       onChange={(e) => setNewSupplierName(e.target.value)}
                       className="h-8 text-sm"
@@ -359,9 +354,9 @@ export function BulkRestockModal({
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Số điện thoại *"}</Label>
+                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Phone Number *"}</Label>
                     <Input
-                      placeholder="Số điện thoại..."
+                      placeholder="Phone number..."
                       value={newSupplierPhone}
                       onChange={(e) => setNewSupplierPhone(e.target.value)}
                       className="h-8 text-sm"
@@ -380,9 +375,9 @@ export function BulkRestockModal({
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Địa chỉ"}</Label>
+                    <Label className="text-[11px] font-semibold text-ink-muted uppercase">{"Address"}</Label>
                     <Input
-                      placeholder="Địa chỉ..."
+                      placeholder="Address..."
                       value={newSupplierAddress}
                       onChange={(e) => setNewSupplierAddress(e.target.value)}
                       className="h-8 text-sm"
@@ -397,7 +392,7 @@ export function BulkRestockModal({
         {/* Bottom Section: Items Table */}
         <div className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h3 className="text-sm font-bold text-ink">{"Danh sách sản phẩm nhập"}</h3>
+            <h3 className="text-sm font-bold text-ink">{"Restock Product List"}</h3>
 
             <div className="flex flex-col sm:flex-row items-center gap-2">
               <input
@@ -414,13 +409,13 @@ export function BulkRestockModal({
                 className="h-9 gap-1.5 whitespace-nowrap"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="w-4 h-4" />{"Nhập từ Excel"}</Button>
+                <Upload className="w-4 h-4" />{"Import from Excel"}</Button>
 
               <div className="relative w-full sm:w-72">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <Input
                   type="text"
-                  placeholder="Quét mã vạch hoặc nhập tên, SKU..."
+                  placeholder="Scan barcode or enter name, SKU..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearchKeyDown}
@@ -441,7 +436,7 @@ export function BulkRestockModal({
                           {s.name}
                         </p>
                         <p className="text-[11px] text-ink-muted">
-                          {s.sku} • Tồn:{" "}
+                          {s.sku} • Stock:{" "}
                           <strong className="text-ink">{s.stock}</strong>
                         </p>
                       </button>
@@ -449,7 +444,7 @@ export function BulkRestockModal({
                   </div>
                 )}
                 {searchQuery.trim() !== "" && searchResults.length === 0 && (
-                  <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface border border-border rounded-sm shadow-ui-soft p-3 text-center text-xs text-ink-muted">{"Không tìm thấy sản phẩm."}</div>
+                  <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-surface border border-border rounded-sm shadow-ui-soft p-3 text-center text-xs text-ink-muted">{"Product not found."}</div>
                 )}
               </div>
             </div>
@@ -457,20 +452,20 @@ export function BulkRestockModal({
 
           {items.length === 0 ? (
             <div className="py-8 border border-dashed border-border rounded-sm flex flex-col items-center justify-center text-ink-muted bg-surface-soft/30">
-              <p className="text-xs font-medium">{"Chưa có sản phẩm nào được chọn"}</p>
-              <p className="text-[11px] mt-1">{"Sử dụng thanh tìm kiếm để thêm sản phẩm vào phiếu nhập"}</p>
+              <p className="text-xs font-medium">{"No products selected"}</p>
+              <p className="text-[11px] mt-1">{"Use the search bar to add products to the restock ticket"}</p>
             </div>
           ) : (
             <div className="border border-border rounded-sm overflow-x-auto bg-surface">
               <table className="w-full text-left border-collapse text-sm min-w-225">
                 <thead className="bg-surface-soft text-ink-muted font-semibold text-xs border-b border-border">
                   <tr>
-                    <th className="py-2.5 px-3">{"Sản phẩm / Biến thể"}</th>
-                    <th className="py-2.5 px-3 w-24 text-center">{"Số lượng"}</th>
-                    <th className="py-2.5 px-3 w-32 text-right">{"Đơn giá (đ)"}</th>
-                    <th className="py-2.5 px-3 w-32 text-center">{"Mã lô"}</th>
-                    <th className="py-2.5 px-3 w-35 text-center">NSX & HSD</th>
-                    <th className="py-2.5 px-3 w-32 text-right">{"Thành tiền (đ)"}</th>
+                    <th className="py-2.5 px-3">{"Product / Variant"}</th>
+                    <th className="py-2.5 px-3 w-24 text-center">{"Quantity"}</th>
+                    <th className="py-2.5 px-3 w-32 text-right">{"Unit Price in VND"}</th>
+                    <th className="py-2.5 px-3 w-32 text-center">{"Batch Code"}</th>
+                    <th className="py-2.5 px-3 w-35 text-center">MFG and EXP</th>
+                    <th className="py-2.5 px-3 w-32 text-right">{"Total Price in VND"}</th>
                     <th className="py-2.5 px-3 w-10 text-center"></th>
                   </tr>
                 </thead>
@@ -486,7 +481,7 @@ export function BulkRestockModal({
                       >
                         <td className="p-2 whitespace-normal min-w-50">
                           <p className="text-sm font-semibold text-ink line-clamp-2 leading-tight">
-                            {stockInfo?.name || "Sản phẩm không rõ"}
+                            {stockInfo?.name || "Unknown Product"}
                           </p>
                           <p className="text-[11px] text-ink-muted mt-0.5">
                             {stockInfo?.sku || "N/A"}
@@ -513,8 +508,8 @@ export function BulkRestockModal({
                             type="text"
                             value={
                               item.importPrice !== undefined &&
-                                item.importPrice !== null
-                                ? item.importPrice.toLocaleString("vi-VN")
+                              item.importPrice !== null
+                                ? item.importPrice.toLocaleString("en-US")
                                 : "0"
                             }
                             onChange={(e) =>
@@ -527,7 +522,7 @@ export function BulkRestockModal({
                         <td className="p-2">
                           <Input
                             type="text"
-                            placeholder="Mã lô..."
+                            placeholder="Batch code..."
                             value={item.batchCode || ""}
                             onChange={(e) =>
                               handleItemChange(
@@ -557,7 +552,7 @@ export function BulkRestockModal({
                             }
                             className="h-8 text-xs px-2"
                             required
-                            title="Ngày sản xuất"
+                            title="Manufacture Date"
                           />
                           <Input
                             type="date"
@@ -575,20 +570,20 @@ export function BulkRestockModal({
                             }
                             className="h-8 text-xs px-2"
                             required
-                            title="Hạn sử dụng"
+                            title="Expiry Date"
                           />
                         </td>
                         <td className="p-2 text-right font-bold text-ink text-sm tabular-nums">
                           {(
                             (item.quantity || 0) * (item.importPrice || 0)
-                          ).toLocaleString("vi-VN")}
+                          ).toLocaleString("en-US")}
                         </td>
                         <td className="p-2 text-center">
                           <button
                             type="button"
                             onClick={() => handleRemoveItem(index)}
                             className="text-ink-muted hover:text-danger p-1 rounded-sm transition-colors"
-                            title="Xóa"
+                            title="Remove"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -606,9 +601,9 @@ export function BulkRestockModal({
         {/* Custom Footer */}
         <div className="sticky bottom-0 -mx-6 -mb-6 mt-6 px-6 py-4 border-t border-surface-muted bg-surface/80 backdrop-blur-sm flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-left flex-1">
-            <p className="text-xs text-ink-muted uppercase font-semibold">{"Tổng cộng"}</p>
+            <p className="text-xs text-ink-muted uppercase font-semibold">{"Total Amount"}</p>
             <p className="text-xl font-bold text-brand tabular-nums">
-              {totalAmount.toLocaleString("vi-VN")} đ
+              {totalAmount.toLocaleString("en-US")} VND
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -618,19 +613,19 @@ export function BulkRestockModal({
               onClick={() => onOpenChange(false)}
               className="rounded-sm font-medium px-5"
             >
-              Huỷ
+              Cancel
             </Button>
             <Button
               type="submit"
               disabled={
                 restockMutation.isPending || createSupplierMutation.isPending
               }
-              className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-hover text-brand-foreground"
+              className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-dark text-white"
             >
               {restockMutation.isPending || createSupplierMutation.isPending ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : null}
-              Xác nhận
+              Confirm
             </Button>
           </div>
         </div>

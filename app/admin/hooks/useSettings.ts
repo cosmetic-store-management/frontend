@@ -6,6 +6,8 @@ import {
 import { updateAccount } from "@/admin/services/user.service";
 import { useAuthStore } from "@/auth/store/auth.store";
 
+import { QK } from "@/lib/queryKeys";
+
 export function useSettings() {
   return useQuery({
     queryKey: ["settings"],
@@ -19,6 +21,7 @@ export function useSaveSettings() {
     mutationFn: saveGeneralSettings,
     onSuccess: (settings) => {
       queryClient.setQueryData(["settings"], settings);
+      queryClient.invalidateQueries({ queryKey: QK.settings() });
     },
   });
 }

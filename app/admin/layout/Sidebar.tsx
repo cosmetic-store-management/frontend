@@ -20,6 +20,8 @@ import {
   MessageSquare,
   ServerCog,
   Zap,
+  Clock,
+  Truck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth, useLogout } from "@/auth/hooks/useAuth";
@@ -41,7 +43,7 @@ function NavItem({
     <Link
       to={to}
       className={cn(
-        "relative flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-medium transition-all duration-200",
+        "relative flex items-center gap-3 px-3 py-2 rounded-[3px] text-sm font-medium transition-all duration-200",
         active
           ? "bg-brand/10 text-brand shadow-sm"
           : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
@@ -71,7 +73,7 @@ function SubNavItem({
     <Link
       to={to}
       className={cn(
-        "flex items-center gap-2.5 py-1.5 px-2.5 rounded-sm text-xs font-medium transition-all duration-150",
+        "flex items-center gap-2.5 py-1.5 px-2.5 rounded-[3px] text-xs font-medium transition-all duration-150",
         active
           ? "bg-brand/10 text-brand"
           : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
@@ -103,7 +105,7 @@ function NavGroup({
       <button
         onClick={onToggle}
         className={cn(
-          "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-sm text-sm font-medium transition-all duration-200",
+          "w-full flex items-center justify-between gap-3 px-3 py-2 rounded-[3px] text-sm font-medium transition-all duration-200",
           isActive
             ? "text-brand"
             : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
@@ -130,11 +132,8 @@ function NavGroup({
 }
 
 function SectionLabel({ label }: { label: string }) {
-  return (
-    <p className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60 select-none">
-      {label}
-    </p>
-  );
+  if (label === "Main") return null;
+  return <div className="pt-3" />;
 }
 
 // ── Main Sidebar ──────────────────────────────────────────────────────────────
@@ -164,6 +163,7 @@ export default function AdminSidebar() {
     pathname === "/admin/products" ||
     pathname === "/admin/categories" ||
     pathname === "/admin/brands" ||
+    pathname === "/admin/suppliers" ||
     pathname === "/admin/inventory";
   const isCustomerRoute =
     pathname === "/admin/customers" || pathname === "/admin/reviews";
@@ -210,7 +210,7 @@ export default function AdminSidebar() {
           />
           <div>
             <p
-              className="font-bold text-xl tracking-wide text-ink leading-none"
+              className="font-bold text-xl tracking-wide text-ink leading-none notranslate"
               style={{
                 fontFamily:
                   "var(--font-display, 'Playfair Display', Georgia, serif)",
@@ -298,6 +298,12 @@ export default function AdminSidebar() {
                 icon={Bookmark}
                 label="Brands"
                 active={pathname === "/admin/brands"}
+              />
+              <SubNavItem
+                to="/admin/suppliers"
+                icon={Truck}
+                label="Suppliers"
+                active={pathname === "/admin/suppliers"}
               />
             </NavGroup>
           </>
@@ -393,6 +399,7 @@ export default function AdminSidebar() {
                 label="Staff"
                 active={pathname === "/admin/staff"}
               />
+
               {isOwner && (
                 <SubNavItem
                   to="/admin/audit-logs"
@@ -418,7 +425,7 @@ export default function AdminSidebar() {
       <div className="border-t border-border p-3">
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 px-3 py-2 rounded-sm text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 font-medium"
+          className="flex w-full items-center gap-3 px-3 py-2 rounded-[3px] text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 font-medium"
         >
           <LogOut className="w-4 h-4" />
           Log Out

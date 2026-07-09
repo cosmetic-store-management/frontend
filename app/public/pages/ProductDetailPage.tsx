@@ -167,7 +167,7 @@ export function ProductDetailPage() {
       variantName: selectedVariant.name || selectedVariant.sku || "Default",
       price:
         selectedVariant.discountPrice &&
-        selectedVariant.discountPrice < selectedVariant.price
+          selectedVariant.discountPrice < selectedVariant.price
           ? selectedVariant.discountPrice
           : selectedVariant.price,
       quantity,
@@ -197,7 +197,7 @@ export function ProductDetailPage() {
           onClick={() => navigate(-1)}
           className="hover:text-foreground transition-colors flex items-center gap-1.5 font-medium px-3 py-1.5 rounded-sm bg-muted hover:bg-muted/80"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back
+          <ArrowLeft className="w-3.5 h-3.5" /> Go Back
         </button>
       </div>
 
@@ -297,7 +297,7 @@ export function ProductDetailPage() {
             {/* Price block */}
             <div className="flex items-baseline gap-3 mb-4">
               {selectedVariant?.discountPrice &&
-              selectedVariant.discountPrice < selectedVariant.price ? (
+                selectedVariant.discountPrice < selectedVariant.price ? (
                 <>
                   <span
                     className="text-3xl font-black tracking-tight"
@@ -316,7 +316,7 @@ export function ProductDetailPage() {
                     {Math.round(
                       (1 -
                         selectedVariant.discountPrice / selectedVariant.price) *
-                        100,
+                      100,
                     )}
                     %
                   </span>
@@ -348,14 +348,13 @@ export function ProductDetailPage() {
                         );
                       }}
                       disabled={v.stock === 0}
-                      className={`flex items-center gap-2 h-10 px-4 rounded-sm border-2 text-sm font-semibold transition-all duration-150 ${
-                        selectedVariant?.id === v.id ||
-                        (selectedVariant && selectedVariant.name === v.name)
+                      className={`flex items-center gap-2 h-10 px-4 rounded-sm border-2 text-sm font-semibold transition-all duration-150 ${selectedVariant?.id === v.id ||
+                          (selectedVariant && selectedVariant.name === v.name)
                           ? "border-brand bg-brand/5 text-brand shadow-sm"
                           : v.stock === 0
                             ? "border-border opacity-40 cursor-not-allowed"
                             : "border-border hover:border-brand/50 text-foreground"
-                      }`}
+                        }`}
                     >
                       {v.imageUrl && (
                         <img
@@ -415,13 +414,13 @@ export function ProductDetailPage() {
                   </button>
                 </div>
                 {selectedVariant && (
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground flex items-center gap-1">
+                    <span>In stock:</span>
                     <span
                       className={`font-semibold ${stock <= 5 ? "text-destructive" : "text-foreground"}`}
                     >
                       {stock}
-                    </span>{" "}
-                    in stock
+                    </span>
                   </span>
                 )}
               </div>
@@ -430,7 +429,7 @@ export function ProductDetailPage() {
               {allVariantsInactive ? (
                 <div className="mt-4 p-4 border border-destructive bg-destructive/5 rounded-sm text-center">
                   <p className="text-sm font-semibold text-destructive">
-                    Sản phẩm đang tạm ngưng kinh doanh
+                    This product is temporarily unavailable
                   </p>
                 </div>
               ) : (

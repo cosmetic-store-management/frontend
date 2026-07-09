@@ -17,6 +17,8 @@ export function getAdminUsers(params?: {
   search?: string;
   status?: string;
   role?: string;
+  hiringStatus?: string;
+  workingShift?: string;
 }): Promise<StaffResponse> {
   return apiClient.get<StaffResponse>("/users", params);
 }
@@ -45,7 +47,7 @@ export function updateRole(
 
 export function updateStaffInfo(
   id: string,
-  data: { name?: string; phone?: string; email?: string },
+  data: any,
 ): Promise<User> {
   return apiClient
     .patch<{ user: User }>(`/users/${id}`, data)
@@ -138,14 +140,7 @@ export function createCustomer(data: {
     .then((data) => data.customer);
 }
 
-export function createStaff(data: {
-  name: string;
-  email: string;
-  phone: string;
-  password?: string;
-  role?: string;
-  permissions?: string[];
-}): Promise<User> {
+export function createStaff(data: any): Promise<User> {
   return apiClient
     .post<{ staff: User }>("/users/staff", data)
     .then((data) => data.staff);

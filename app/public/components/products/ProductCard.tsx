@@ -72,7 +72,7 @@ export const ProductCard = React.memo(function ProductCard({
   const isOutOfStock =
     variants.length > 0 && variants.every((v: any) => v.stock === 0);
   const isInactive = product.isActive === false;
-  
+
   const isNew = isNewProduct(product.createdAt);
   const isHot = !isNew && (product.soldCount || 0) >= 100;
 
@@ -91,7 +91,7 @@ export const ProductCard = React.memo(function ProductCard({
   const { data: favorites = [] } = useFavorites();
   const toggleFavoriteMutation = useToggleFavorite();
   const { itemIds: localFavorites, toggleFavorite: toggleLocalFavorite } = useFavoriteStore();
-  
+
   const isFavorite = isLoggedIn
     ? favorites.some((fav: any) => fav.id === product.id)
     : localFavorites.includes(product.id);
@@ -142,7 +142,7 @@ export const ProductCard = React.memo(function ProductCard({
         </div>
         <div className="flex flex-col flex-1 p-3 justify-between min-w-0">
           {product.brandName && (
-            <span className="text-[11px] text-ink-muted uppercase tracking-wider">
+            <span className="text-[11px] text-ink-muted uppercase tracking-wider notranslate">
               {product.brandName}
             </span>
           )}
@@ -179,7 +179,7 @@ export const ProductCard = React.memo(function ProductCard({
       className="premium-card group flex flex-col h-full"
     >
       {/* ── Image ── */}
-      <div className="relative aspect-square overflow-hidden bg-surface-soft">
+      <div className="relative aspect-[3/4] overflow-hidden bg-surface-soft">
         {/* Primary image */}
         {product.imageUrl ? (
           <img
@@ -242,7 +242,7 @@ export const ProductCard = React.memo(function ProductCard({
 
         {/* Brand */}
         {product.brandName && (
-          <span className="text-[10px] text-ink-muted uppercase tracking-wider line-clamp-1 mb-0.5">
+          <span className="text-[10px] text-ink-muted uppercase tracking-wider line-clamp-1 mb-0.5 notranslate">
             {product.brandName}
           </span>
         )}
@@ -266,7 +266,7 @@ export const ProductCard = React.memo(function ProductCard({
           </div>
           {hasDiscount && (
             <div
-              className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 text-white"
+              className="px-1.5 py-0.5 rounded-sm flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 text-white"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               -{discountPct}%
@@ -282,7 +282,7 @@ export const ProductCard = React.memo(function ProductCard({
                 <span className="font-semibold text-foreground">
                   {product.soldCount >= 1000
                     ? (product.soldCount / 1000).toFixed(1).replace(".0", "") +
-                      "k"
+                    "k"
                     : product.soldCount}
                 </span>{" "}
                 sold

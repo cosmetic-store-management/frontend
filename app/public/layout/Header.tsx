@@ -440,7 +440,7 @@ export default function Header() {
                           <Link
                             key={brand.id || brand._id}
                             to={`/products?brandId=${brand.id || brand._id}`}
-                            className="text-[13.5px] text-ink hover:text-brand font-medium transition-colors truncate pr-2"
+                            className="text-[13.5px] text-ink hover:text-brand font-medium transition-colors truncate pr-2 notranslate"
                           >
                             {brand.name}
                           </Link>

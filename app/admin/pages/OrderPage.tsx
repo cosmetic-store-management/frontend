@@ -1,8 +1,10 @@
-import { Search, Edit, Ban, X, MoreVertical } from "lucide-react";
+import { Search, Edit, Ban, X, MoreVertical, Eye, XCircle, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
 import { useOrders } from "../hooks/useOrders";
+import { usePOSReturn } from "../hooks/usePOS";
+import { toast } from "@/lib/toast";
 import { Pagination } from "@/components/ui/pagination";
 
 import { Input } from "@/components/ui/input";
@@ -45,18 +47,6 @@ import type { Order, OrderStatus } from "@/admin/types/order";
 import type { FilterKey } from "../hooks/useOrders";
 import { exportToCSV } from "@/lib/utils";
 
-const STATUS_TABS: {
-  key: FilterKey | "processing" | "returned";
-  label: string;
-}[] = [
-  { key: "all", label: "All" },
-  { key: "pending", label: "Pending" },
-  { key: "processing", label: "Processing" },
-  { key: "shipping", label: "Shipping" },
-  { key: "completed", label: "Completed" },
-  { key: "returned", label: "Returned" },
-  { key: "cancelled", label: "Cancelled" },
-];
 
 function fmtDate(v?: string) {
   if (!v) return "-";
@@ -68,9 +58,11 @@ type ModalState =
   | { type: "none" }
   | { type: "edit"; order: Order }
   | { type: "cancel"; order: Order }
-  | { type: "detail"; order: Order };
+  | { type: "detail"; order: Order }
+  | { type: "pos_return"; order: Order };
 
 export function OrderPage() {
+  const posReturnMutation = usePOSReturn();
   const [keyword, setKeyword] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [paymentFilter, setPaymentFilter] = useState("");
@@ -157,14 +149,14 @@ export function OrderPage() {
           </Button>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full">
             {/* Search */}
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
               <Input
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Search by order code, customer, phone..."
+                placeholder="Search code, customer, phone..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {keyword && (
@@ -180,22 +172,23 @@ export function OrderPage() {
 
             {/* Pill Tabs + Date/Payment filters */}
             <div className="flex flex-wrap items-center gap-2">
-              {/* Status pill tabs */}
-              <div className="flex items-center gap-1 p-1 bg-surface-muted rounded-sm">
-                {STATUS_TABS.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setFilter(tab.key as FilterKey)}
-                    className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all duration-150 ${
-                      filter === tab.key
-                        ? "bg-surface text-brand shadow-sm"
-                        : "text-ink-muted hover:text-ink"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+              <Select
+                value={filter || "all"}
+                onValueChange={(v) => setFilter(v as FilterKey)}
+              >
+                <SelectTrigger className="h-9 rounded-sm w-fit text-xs border-border bg-surface text-ink-muted">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All orders</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipping">Shipping</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="returned">Returned</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
 
               <Popover>
                 <PopoverTrigger asChild>
@@ -257,59 +250,35 @@ export function OrderPage() {
       />
 
       <div className="premium-card rounded-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table className="min-w-[1000px] table-fixed">
-            <TableHeader>
-              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead
-                  style={{ width: "16%" }}
-                  className="px-4 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
-                >
-                  Order ID
-                </TableHead>
-                <TableHead
-                  className="px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-left"
-                >
-                  Customer
-                </TableHead>
-                <TableHead
-                  style={{ width: "13%" }}
-                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Phone
-                </TableHead>
-                <TableHead
-                  style={{ width: "14%" }}
-                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Date
-                </TableHead>
-                <TableHead
-                  style={{ width: "12%" }}
-                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Payment
-                </TableHead>
-                <TableHead
-                  style={{ width: "12%" }}
-                  className="px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Status
-                </TableHead>
-                <TableHead
-                  style={{ width: "13%" }}
-                  className="px-4 text-right text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Total
-                </TableHead>
-                <TableHead
-                  style={{ width: "80px" }}
-                  className="px-3.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap"
-                >
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
+        <Table className="min-w-[1100px] table-fixed">
+          <TableHeader>
+            <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+              <TableHead className="w-44 text-center">
+                Order ID
+              </TableHead>
+              <TableHead className="w-48 text-center">
+                Customer
+              </TableHead>
+              <TableHead className="w-36 text-center">
+                Phone
+              </TableHead>
+              <TableHead className="w-36 text-center">
+                Date
+              </TableHead>
+              <TableHead className="w-32 text-center">
+                Payment
+              </TableHead>
+              <TableHead className="w-36 text-center">
+                Status
+              </TableHead>
+              <TableHead className="w-36 text-center">
+                Total
+              </TableHead>
+              <TableHead className="w-24 pl-3.5 pr-8 text-center">
+                Actions
+              </TableHead>
+            </TableRow>
+          </TableHeader>
 
             <TableBody>
               {loading && (
@@ -331,7 +300,7 @@ export function OrderPage() {
                   const StatusIcon = meta.icon;
                   return (
                     <TableRow key={item.id}>
-                      <TableCell className="px-4 py-3.5 align-middle">
+                      <TableCell className="px-4 py-3.5 align-middle text-center">
                         <button
                           type="button"
                           onClick={() => {
@@ -339,15 +308,15 @@ export function OrderPage() {
                             setModal({ type: "detail", order: item });
                           }}
                           title={item.code}
-                          className="block truncate font-semibold text-ink transition-colors hover:text-brand hover:underline"
+                          className="block text-center mx-auto max-w-full truncate font-semibold text-ink transition-colors hover:text-brand hover:underline"
                         >
                           {item.code}
                         </button>
                       </TableCell>
-                      <TableCell className="px-3.5 py-3.5 align-middle">
+                      <TableCell className="px-3.5 py-3.5 align-middle text-center">
                         <span
                           title={item.receiverName}
-                          className="block truncate text-ink font-medium"
+                          className="block text-center truncate text-ink font-medium"
                         >
                           {item.receiverName}
                         </span>
@@ -365,35 +334,35 @@ export function OrderPage() {
                       <TableCell className="px-3.5 py-3.5 align-middle text-center">
                         {/* Payment status badge */}
                         {item.paymentStatus === "paid" ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-success/10 text-success">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-[4px] bg-success/10 text-success">
                             Paid
                           </span>
                         ) : item.paymentStatus === "refund_pending" ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-purple-500/10 text-purple-600 border border-purple-500/20">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-[4px] bg-purple-500/10 text-purple-600 border border-purple-500/20">
                             Refund pending
                           </span>
                         ) : item.paymentStatus === "failed" ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-danger/10 text-danger">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-[4px] bg-danger/10 text-danger">
                             Failed
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-sm bg-warning/10 text-warning">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-[4px] bg-warning/10 text-warning">
                             Pending
                           </span>
                         )}
                       </TableCell>
                       <TableCell className="px-3.5 py-3.5 text-center align-middle">
                         <span
-                          className={`inline-flex min-h-8 items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-sm ${meta.badgeClass}`}
+                          className={`inline-flex min-h-8 items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-[4px] ${meta.badgeClass}`}
                         >
                           <StatusIcon className="h-3 w-3" />
                           {meta.label}
                         </span>
                       </TableCell>
-                      <TableCell className="px-4 py-3.5 text-right align-middle font-semibold tabular-nums text-ink">
+                      <TableCell className="px-4 py-3.5 text-center align-middle font-semibold tabular-nums text-ink">
                         {formatVnd(item.totalAmount ?? 0)}
                       </TableCell>
-                      <TableCell className="px-4 py-3.5 text-center align-middle">
+                      <TableCell className="pl-3.5 pr-8 py-3.5 text-center align-middle">
                         <div className="flex items-center justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -413,12 +382,46 @@ export function OrderPage() {
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => {
                                   clearError();
+                                  setModal({ type: "detail", order: item });
+                                }}
+                              >
+                                <Eye className="w-4 h-4 mr-2.5" />
+                                Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => {
+                                  clearError();
                                   setModal({ type: "edit", order: item });
                                 }}
                               >
                                 <Edit className="w-4 h-4 mr-2.5" />
                                 Edit
                               </DropdownMenuItem>
+                              {item.orderStatus === "completed" && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                  onClick={() => {
+                                    clearError();
+                                    setModal({ type: "pos_return", order: item });
+                                  }}
+                                >
+                                  <RotateCcw className="w-4 h-4 mr-2.5" />
+                                  Return
+                                </DropdownMenuItem>
+                              )}
+                              {item.orderStatus === "pending" && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer rounded-sm text-danger focus:bg-danger/5 focus:text-danger"
+                                  onClick={() => {
+                                    clearError();
+                                    setModal({ type: "cancel", order: item });
+                                  }}
+                                >
+                                  <XCircle className="w-4 h-4 mr-2.5" />
+                                  Cancel
+                                </DropdownMenuItem>
+                              )}
 
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -468,7 +471,6 @@ export function OrderPage() {
               )}
             </TableBody>
           </Table>
-        </div>
         {pagination?.totalPages > 1 && (
           <div className="flex items-center justify-center px-5 py-4 bg-surface border-t border-border rounded-b-sm">
             <Pagination
@@ -494,9 +496,28 @@ export function OrderPage() {
       />
 
       <OrderDetail
-        open={modal.type === "detail"}
-        order={modal.type === "detail" ? modal.order : null}
+        open={modal.type === "detail" || modal.type === "pos_return"}
+        order={
+          modal.type === "detail" || modal.type === "pos_return"
+            ? modal.order
+            : null
+        }
+        initialOpenPOSReturn={modal.type === "pos_return"}
         onClose={closeModal}
+        onPOSReturn={async (orderId, returnItems, returnReason) => {
+          await toast.promise(
+            posReturnMutation
+              .mutateAsync({ orderId, returnItems, returnReason })
+              .then(() => {
+                closeModal();
+              }),
+            {
+              loading: "Processing counter return...",
+              success: "Return completed successfully!",
+              error: (err: any) => err.message || "Failed to process return",
+            }
+          );
+        }}
       />
 
       <OrderModal

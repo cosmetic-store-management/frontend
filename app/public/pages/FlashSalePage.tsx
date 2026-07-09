@@ -160,7 +160,7 @@ export function FlashSalePage() {
 
               {/* Badges */}
               <div className="mt-8 md:mt-12 flex flex-wrap justify-center gap-4">
-                <div className="bg-black/90 rounded-full py-1.5 md:py-2 px-4 md:px-5 flex items-center gap-2 border-2 border-brand/50">
+                <div className="bg-black/90 rounded-sm py-1.5 md:py-2 px-4 md:px-5 flex items-center gap-2 border-2 border-brand/50">
                   <div className="relative flex -ml-2 -mt-1 md:-ml-4 md:-mt-2 mr-1">
                     <AlarmClock className="w-8 h-8 md:w-10 md:h-10 text-white fill-brand absolute rotate-[-15deg] drop-shadow-md" />
                     <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 absolute -top-1 right-0 rotate-12 z-10" />
@@ -171,7 +171,7 @@ export function FlashSalePage() {
                     {displayTabs.slice(0, 4).map((fs) => (
                       <span
                         key={fs._id}
-                        className="bg-surface text-brand font-bold px-2 py-0.5 rounded-full text-[10px] md:text-xs"
+                        className="bg-surface text-brand font-bold px-2 py-0.5 rounded-sm text-[10px] md:text-xs"
                       >
                         {String(new Date(fs.startTime).getHours()).padStart(
                           2,
@@ -182,7 +182,7 @@ export function FlashSalePage() {
                     ))}
                   </div>
                 </div>
-                <div className="bg-black/90 rounded-full py-1.5 md:py-2 px-4 md:px-5 flex items-center gap-2 border-2 border-brand/50">
+                <div className="bg-black/90 rounded-sm py-1.5 md:py-2 px-4 md:px-5 flex items-center gap-2 border-2 border-brand/50">
                   <div className="relative flex -ml-2 -mt-1 md:-ml-4 md:-mt-2 mr-1">
                     <AlarmClock className="w-8 h-8 md:w-10 md:h-10 text-white fill-brand absolute rotate-[-15deg] drop-shadow-md" />
                     <Zap className="w-4 h-4 text-yellow-300 fill-yellow-300 absolute -top-1 right-0 rotate-12 z-10" />
@@ -190,10 +190,10 @@ export function FlashSalePage() {
                   </div>
                   <span className="text-white font-bold text-xs md:text-sm uppercase tracking-wide">{"Exclusive on the GlowUp website"}</span>
                   <div className="flex gap-1.5 ml-2">
-                    <span className="bg-surface text-brand font-bold px-2 py-0.5 rounded-full text-[10px] md:text-xs">
+                    <span className="bg-surface text-brand font-bold px-2 py-0.5 rounded-sm text-[10px] md:text-xs">
                       12:00
                     </span>
-                    <span className="bg-surface text-brand font-bold px-2 py-0.5 rounded-full text-[10px] md:text-xs">
+                    <span className="bg-surface text-brand font-bold px-2 py-0.5 rounded-sm text-[10px] md:text-xs">
                       18:00
                     </span>
                   </div>
@@ -268,10 +268,10 @@ export function FlashSalePage() {
               Math.round((item.soldQuantity / item.quantityLimit) * 100),
             );
             const statusText = isUpcoming
-              ? "SẮP MỞ BÁN"
+              ? "COMING SOON"
               : percentSold >= 100
-                ? "ĐÃ BÁN HẾT"
-                : `Đang diễn ra ${percentSold}%`;
+                ? "SOLD OUT"
+                : `Ongoing ${percentSold}%`;
 
             return (
               <Link
@@ -280,7 +280,7 @@ export function FlashSalePage() {
                 className={`group flex flex-col h-full bg-card border border-border/40 hover:border-brand hover:shadow-md transition-all duration-300 overflow-hidden rounded-sm ${isUpcoming ? "opacity-80" : ""}`}
               >
                 {/* Image */}
-                <div className="relative aspect-square w-full overflow-hidden bg-surface-soft">
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface-soft">
                   <img
                     src={item.productImage || "/placeholder.jpg"}
                     alt={item.productName}
@@ -288,7 +288,7 @@ export function FlashSalePage() {
                   />
                   {isUpcoming && (
                     <div className="absolute inset-0 bg-black/10 flex items-center justify-center">
-                      <span className="bg-black/60 text-white font-bold text-sm px-4 py-2 rounded-sm uppercase tracking-wider backdrop-blur-sm">{"Sắp diễn ra"}</span>
+                      <span className="bg-black/60 text-white font-bold text-sm px-4 py-2 rounded-sm uppercase tracking-wider backdrop-blur-sm">{"Upcoming"}</span>
                     </div>
                   )}
                 </div>

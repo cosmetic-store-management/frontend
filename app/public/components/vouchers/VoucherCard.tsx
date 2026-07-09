@@ -124,19 +124,19 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
     valid: null,
     pending: {
       label: "Upcoming",
-      cls: "bg-amber-50 text-amber-600 border-amber-200",
+      cls: "bg-warning/10 text-warning border-warning/20",
     },
     used: {
       label: "Used",
-      cls: "bg-blue-50 text-blue-500 border-blue-200",
+      cls: "bg-info/10 text-info border-info/20",
     },
     expired: {
       label: "Expired",
-      cls: "bg-red-50 text-red-500 border-red-200",
+      cls: "bg-danger/10 text-danger border-danger/20",
     },
     exhausted: {
       label: "Fully Claimed",
-      cls: "bg-gray-50 text-gray-500 border-gray-200",
+      cls: "bg-surface-soft text-ink-muted border-border",
     },
   };
 

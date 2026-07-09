@@ -44,7 +44,7 @@ const CheckoutForm = ({
 
     if (error) {
       setErrorMessage(
-        error.message || "Thanh toán thất bại. Vui lòng thử lại.",
+        error.message || "Payment failed. Please try again.",
       );
       setIsLoading(false);
     }
@@ -65,7 +65,7 @@ const CheckoutForm = ({
         className="w-full h-11"
       >
         {isLoading ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
-        Thanh toán {amount.toLocaleString("vi-VN")} ₫
+        Pay {amount.toLocaleString("vi-VN")} ₫
       </Button>
     </form>
   );
@@ -90,8 +90,8 @@ export function StripePaymentModal({
     <BaseCrudModal
       open={isOpen}
       onOpenChange={onClose}
-      title="Thanh toán an toàn qua Stripe"
-      description="Nhập thông tin thẻ quốc tế của bạn. Đơn hàng của bạn sẽ được xác nhận ngay lập tức sau khi thanh toán thành công."
+      title="Secure Payment via Stripe"
+      description="Enter your international card details. Your order will be confirmed immediately after successful payment."
       size="md"
       hideFooter={true}
     >
@@ -110,7 +110,7 @@ export function StripePaymentModal({
         ) : (
           <div className="flex flex-col items-center justify-center py-10 space-y-3">
             <Loader2 className="w-8 h-8 animate-spin text-brand" />
-            <p className="text-sm text-ink-muted">{"Đang kết nối cổng thanh toán..."}</p>
+            <p className="text-sm text-ink-muted">{"Connecting to payment gateway..."}</p>
           </div>
         )}
       </div>

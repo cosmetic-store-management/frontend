@@ -13,14 +13,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/sonner";
 
 import React from "react";
-import * as ReactDOM from "react-dom";
 
-
-if (import.meta.env.DEV && typeof window !== "undefined") {
-  import("@axe-core/react").then((axe) => {
-    axe.default(React, ReactDOM, 1000);
-  });
-}
 
 // ── QueryClient ───────────────────────────────────────────────────────────────
 
@@ -138,13 +131,48 @@ export function ErrorBoundary() {
 import { useLanguageStore } from "./store/language.store";
 
 export default function App() {
-  const language = useLanguageStore((state) => state.language);
+  React.useEffect(() => {
+    const initTranslate = () => {
+      if ((window as any).google?.translate?.TranslateElement) {
+        new (window as any).google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "vi,en",
+            layout: (window as any).google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    };
+
+    (window as any).googleTranslateElementInit = initTranslate;
+
+    if ((window as any).google?.translate?.TranslateElement) {
+      initTranslate();
+    }
+
+    // Interval to detect if the user closes/resets the translation (reverts to original English)
+    const checkInterval = setInterval(() => {
+      const cookie = document.cookie;
+      const hasViCookie = cookie.includes("googtrans=/en/vi");
+      const currentLang = useLanguageStore.getState().language;
+
+      if (!hasViCookie && currentLang === "vi") {
+        useLanguageStore.getState().setLanguage("en");
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(checkInterval);
+    };
+  }, []);
+
   return (
-    <html lang={language} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -166,19 +194,6 @@ export default function App() {
       </head>
       <body suppressHydrationWarning>
         <div id="google_translate_element" style={{ position: "fixed", bottom: "20px", left: "20px", zIndex: 9999 }}></div>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              function googleTranslateElementInit() {
-                new window.google.translate.TranslateElement({
-                  pageLanguage: 'en',
-                  includedLanguages: 'vi,en',
-                  layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
-                }, 'google_translate_element');
-              }
-            `,
-          }}
-        />
         <script
           src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
           async

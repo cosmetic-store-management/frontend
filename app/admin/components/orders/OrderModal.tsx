@@ -36,17 +36,14 @@ type OrderModalProps = {
 
 function formatCurrency(value?: number) {
   if (typeof value !== "number") return "—";
-  return new Intl.NumberFormat("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  }).format(value);
+  return new Intl.NumberFormat("en-US").format(value) + " VND";
 }
 
 function formatDate(value?: string) {
   if (!value) return "—";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
-  return new Intl.DateTimeFormat("vi-VN", {
+  return new Intl.DateTimeFormat("en-US", {
     dateStyle: "short",
     timeStyle: "short",
   }).format(d);

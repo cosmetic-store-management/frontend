@@ -87,7 +87,7 @@ export function CategoriesPage() {
   }, [categories, search]);
 
   return (
-    <div className="bg-white w-full flex-1">
+    <div className="bg-background w-full flex-1">
       <div className="max-w-300 w-full mx-auto px-4 py-8 animate-page-enter">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-border/50">

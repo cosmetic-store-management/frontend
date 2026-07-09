@@ -20,7 +20,7 @@ export function FlashSale() {
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
               <Star className="w-8 h-8 text-brand fill-brand" />
-              <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight uppercase">{"Sản Phẩm Bán Chạy"}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight uppercase">{"Best Sellers"}</h2>
             </div>
           </div>
 
@@ -28,7 +28,7 @@ export function FlashSale() {
             to="/products"
             className="text-brand hover:text-brand-dark font-semibold text-sm flex items-center gap-1 group"
           >
-            Xem tất cả Deal{" "}
+            See All Deals{" "}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -47,7 +47,7 @@ export function FlashSale() {
                 to={`/product/${product.slug}`}
                 className="group flex flex-col bg-surface rounded-sm overflow-hidden card-hover shadow-ui-soft border border-border relative"
               >
-                <div className="relative aspect-square overflow-hidden bg-surface-soft">
+                <div className="relative aspect-[3/4] overflow-hidden bg-surface-soft">
                   <img
                     src={
                       product.imageUrl ||
@@ -59,14 +59,14 @@ export function FlashSale() {
                   />
                   {product.soldCount > 0 && (
                     <div className="btn-hover absolute bottom-0 left-0 right-0 bg-brand/80 text-white text-[10px] uppercase font-bold py-1 text-center backdrop-blur-sm">
-                      Đã bán {product.soldCount}+
+                      {product.soldCount}+ sold
                     </div>
                   )}
                 </div>
 
                 <div className="p-4 flex flex-col flex-1">
                   <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider mb-1">
-                    {product.brand?.name || "Thương hiệu"}
+                    {product.brand?.name || "Brand"}
                   </span>
                   <h3 className="font-semibold text-ink leading-tight line-clamp-2 mb-2 transition-colors text-sm">
                     {product.name}

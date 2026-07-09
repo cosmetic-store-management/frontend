@@ -245,7 +245,7 @@ export function HeroCarousel() {
           startTimer();
         }}
         aria-label="Previous slide"
-        className="absolute left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+        className="absolute left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
         style={{
           background: "rgba(255,255,255,0.12)",
           backdropFilter: "blur(8px)",
@@ -260,7 +260,7 @@ export function HeroCarousel() {
           startTimer();
         }}
         aria-label="Next slide"
-        className="absolute right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
+        className="absolute right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-sm flex items-center justify-center text-white transition-all duration-200 hover:scale-110"
         style={{
           background: "rgba(255,255,255,0.12)",
           backdropFilter: "blur(8px)",
@@ -277,7 +277,7 @@ export function HeroCarousel() {
             key={index}
             onClick={() => goTo(index)}
             aria-label={`Go to slide ${index + 1}`}
-            className="transition-all duration-300 rounded-full"
+            className="transition-all duration-300 rounded-sm"
             style={{
               width: index === current ? "28px" : "7px",
               height: "7px",

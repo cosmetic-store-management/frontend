@@ -136,7 +136,7 @@ export default function RegisterPage() {
               />
             </div>
             <span
-              className="text-2xl font-bold text-white tracking-tight"
+              className="text-2xl font-bold text-white tracking-tight notranslate"
               style={{
                 fontFamily:
                   "var(--font-display, 'Playfair Display', Georgia, serif)",
@@ -192,7 +192,7 @@ export default function RegisterPage() {
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-6">
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
+              className="w-8 h-8 rounded-sm flex items-center justify-center"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               <Sparkles className="w-4 h-4 text-white" />

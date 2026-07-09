@@ -66,8 +66,8 @@ export function AuditLogPage() {
         title="System Logs"
         description="Track administrative actions, monitor system changes, and ensure security compliance."
         filters={
-          <div className="flex flex-col gap-3 w-full">
-            <div className="group relative max-w-sm flex-1 min-w-50">
+          <div className="flex flex-wrap items-center gap-3 w-full">
+            <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 placeholder="Search account, content..."
@@ -113,7 +113,7 @@ export function AuditLogPage() {
                       ) {
                         startDateRef.current.showPicker();
                       }
-                    } catch (err) {}
+                    } catch (err) { }
                   }}
                 >
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
@@ -137,7 +137,7 @@ export function AuditLogPage() {
                       ) {
                         endDateRef.current.showPicker();
                       }
-                    } catch (err) {}
+                    } catch (err) { }
                   }}
                 >
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-hover:text-brand pointer-events-none" />
@@ -158,22 +158,22 @@ export function AuditLogPage() {
 
       {/* Logs Table */}
       <div className="premium-card rounded-sm overflow-hidden">
-        <Table className="min-w-200 table-fixed">
+        <Table className="min-w-[1050px] table-fixed">
           <TableHeader>
             <TableRow className="bg-surface-muted border-b border-border">
-              <TableHead className="w-[20%] text-center text-ink-muted font-medium">
+              <TableHead className="w-56 text-center text-ink-muted font-medium">
                 Account
               </TableHead>
-              <TableHead className="text-center w-[12%] text-ink-muted font-medium">
+              <TableHead className="w-32 text-center text-ink-muted font-medium">
                 Action
               </TableHead>
-              <TableHead className="text-center w-[13%] text-ink-muted font-medium">
+              <TableHead className="w-36 text-center text-ink-muted font-medium">
                 Domain
               </TableHead>
-              <TableHead className="text-center w-[40%] text-ink-muted font-medium">
+              <TableHead className="w-96 text-center text-ink-muted font-medium">
                 Details
               </TableHead>
-              <TableHead className="text-center w-[15%] text-ink-muted font-medium">
+              <TableHead className="w-44 pl-4 pr-8 text-center text-ink-muted font-medium">
                 Timestamp
               </TableHead>
             </TableRow>
@@ -203,34 +203,33 @@ export function AuditLogPage() {
             ) : (
               logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell className="font-medium text-ink-muted pl-4">
+                  <TableCell className="font-medium text-ink-muted text-center">
                     {log.userName}
                   </TableCell>
                   <TableCell className="text-center">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase ${
-                        ["create", "add", "import"].includes(
-                          log.action.toLowerCase(),
-                        )
-                          ? "bg-emerald-100 text-emerald-700"
+                      className={`inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase ${["create", "add", "import"].includes(
+                        log.action.toLowerCase(),
+                      )
+                          ? "bg-success/10 text-success"
                           : ["update", "edit", "modify"].includes(
+                            log.action.toLowerCase(),
+                          )
+                            ? "bg-warning/10 text-warning"
+                            : ["delete", "remove", "destroy"].includes(
+                              log.action.toLowerCase(),
+                            )
+                              ? "bg-danger/10 text-danger"
+                              : ["login", "logout"].includes(
                                 log.action.toLowerCase(),
                               )
-                            ? "bg-amber-100 text-amber-700"
-                            : ["delete", "remove", "destroy"].includes(
+                                ? "bg-info/10 text-info"
+                                : ["export", "download"].includes(
                                   log.action.toLowerCase(),
                                 )
-                              ? "bg-red-100 text-red-700"
-                              : ["login", "logout"].includes(
-                                    log.action.toLowerCase(),
-                                  )
-                                ? "bg-blue-100 text-blue-700"
-                                : ["export", "download"].includes(
-                                      log.action.toLowerCase(),
-                                    )
-                                  ? "bg-indigo-100 text-indigo-700"
-                                  : "bg-gray-100 text-gray-700"
-                      }`}
+                                  ? "bg-brand/10 text-brand"
+                                  : "bg-surface-soft text-ink-muted"
+                        }`}
                     >
                       {log.action}
                     </span>
@@ -241,7 +240,7 @@ export function AuditLogPage() {
                   <TableCell className="font-medium text-ink-muted break-words max-w-xs text-center">
                     {log.description}
                   </TableCell>
-                  <TableCell className="text-ink-muted text-xs font-medium text-center">
+                  <TableCell className="pl-4 pr-8 text-ink-muted text-xs font-medium text-center">
                     {log.timestamp}
                   </TableCell>
                 </TableRow>

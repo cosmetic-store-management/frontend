@@ -246,7 +246,7 @@ export function CustomerPage() {
         title="Customer Management"
         description="Manage your customer base, view purchase histories, and analyze shopping behaviors."
         filters={
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
@@ -393,26 +393,25 @@ export function CustomerPage() {
 
       <div className="premium-card rounded-sm overflow-hidden">
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table className="min-w-250 table-fixed">
-              <TableHeader>
-                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="px-5 w-[25%] text-center">Customer</TableHead>
-                  <TableHead className="px-5 w-[25%] text-center">Contact</TableHead>
-                  <TableHead className="px-5 text-center w-[15%]">
-                    Tier
-                  </TableHead>
-                  <TableHead className="px-5 text-center w-[15%]">
-                    Spent
-                  </TableHead>
-                  <TableHead className="px-5 text-center w-[10%] whitespace-nowrap">
-                    Status
-                  </TableHead>
-                  <TableHead className="px-5 text-center w-[10%]">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
+          <Table className="min-w-[1100px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-64 text-center">Customer</TableHead>
+                <TableHead className="w-72 text-center">Contact</TableHead>
+                <TableHead className="w-36 text-center">
+                  Tier
+                </TableHead>
+                <TableHead className="w-40 text-center">
+                  Spent
+                </TableHead>
+                <TableHead className="w-32 text-center whitespace-nowrap">
+                  Status
+                </TableHead>
+                <TableHead className="w-28 pl-4 pr-8 text-center">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
@@ -521,7 +520,7 @@ export function CustomerPage() {
                             </Badge>
                           </div>
                         </TableCell>
-                        <TableCell className="px-5 py-4 align-middle text-center">
+                        <TableCell className="pl-4 pr-8 py-4 align-middle text-center">
                           <div className="flex items-center justify-center">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -604,7 +603,6 @@ export function CustomerPage() {
                 )}
               </TableBody>
             </Table>
-          </div>
           {/* Pagination UI */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">

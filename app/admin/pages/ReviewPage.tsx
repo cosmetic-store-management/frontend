@@ -128,7 +128,7 @@ export function ReviewPage() {
         title="Review Management"
         description="Monitor product feedback, moderate customer reviews, and maintain your store's reputation."
         filters={
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
@@ -195,27 +195,26 @@ export function ReviewPage() {
 
       <div className="premium-card rounded-sm overflow-hidden">
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table className="min-w-200 table-fixed">
-              <TableHeader>
-                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[20%] py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
-                    Reviewer
-                  </TableHead>
-                  <TableHead className="w-[25%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
-                    Product
-                  </TableHead>
-                  <TableHead className="w-[15%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
-                    Rating
-                  </TableHead>
-                  <TableHead className="w-[30%] px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
-                    Content
-                  </TableHead>
-                  <TableHead className="w-[10%] px-4 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
+          <Table className="min-w-[1000px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-52 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                  Reviewer
+                </TableHead>
+                <TableHead className="w-56 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                  Product
+                </TableHead>
+                <TableHead className="w-32 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                  Rating
+                </TableHead>
+                <TableHead className="w-80 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                  Content
+                </TableHead>
+                <TableHead className="w-24 pl-4 pr-8 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
               <TableBody>
                 {loading && (
                   <TableRow>
@@ -230,8 +229,8 @@ export function ReviewPage() {
                 {!loading &&
                   reviews.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell className="px-4 py-3.5 align-middle">
-                        <div className="flex items-center gap-2">
+                      <TableCell className="px-4 py-3.5 align-middle text-center">
+                        <div className="flex items-center justify-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center overflow-hidden shrink-0">
                             {item.userAvatar ? (
                               <img
@@ -318,7 +317,7 @@ export function ReviewPage() {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell className="px-4 py-3.5 text-center align-middle">
+                      <TableCell className="pl-4 pr-8 py-3.5 text-center align-middle">
                         <div className="flex justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -373,7 +372,6 @@ export function ReviewPage() {
                 )}
               </TableBody>
             </Table>
-          </div>
           {pagination?.totalPages > 1 && (
             <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
               <Pagination

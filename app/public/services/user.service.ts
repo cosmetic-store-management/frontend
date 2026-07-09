@@ -54,9 +54,9 @@ export function getFavorites() {
 }
 
 export function toggleFavorite(productId: string) {
-  return apiClient.post<{ action: "added" | "removed" }>(
+  return apiClient.post<{ result: { action: "added" | "removed" } }>(
     `/users/me/favorites/${productId}`,
-  );
+  ).then((d) => d.result);
 }
 
 export interface ViewedResponse {

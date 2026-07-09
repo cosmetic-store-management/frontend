@@ -168,7 +168,7 @@ export function FlashSaleEditor({
           <Card className="shadow-sm rounded-sm border hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <Info className="w-5 h-5 text-primary" />{"Thông tin cơ bản"}</CardTitle>
+                <Info className="w-5 h-5 text-primary" />{"Basic Information"}</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -178,12 +178,12 @@ export function FlashSaleEditor({
                   render={({ field }) => (
                     <FormItem className="md:col-span-2 space-y-1">
                       <FormLabel className="text-sm font-bold">
-                        Tên chương trình{" "}
+                        Campaign Name{" "}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="VD: Siêu Sale Giữa Tháng"
+                          placeholder="e.g., Mid-Month Flash Sale"
                           className="bg-muted border-0 rounded-sm focus-visible:ring-1"
                           {...field}
                         />
@@ -199,8 +199,8 @@ export function FlashSaleEditor({
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-sm border p-4 md:col-span-2 bg-muted/10">
                       <div className="space-y-1">
-                        <FormLabel className="text-sm font-bold">{"Kích hoạt chương trình"}</FormLabel>
-                        <div className="text-sm text-muted-foreground">{"Sẽ tự động chạy khi đến \"Thời gian bắt đầu\"."}</div>
+                        <FormLabel className="text-sm font-bold">{"Activate Campaign"}</FormLabel>
+                        <div className="text-sm text-muted-foreground">{"Will automatically start when the start time is reached."}</div>
                       </div>
                       <FormControl>
                         <Switch
@@ -219,7 +219,7 @@ export function FlashSaleEditor({
           <Card className="shadow-sm rounded-sm border hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 transition-all duration-300">
             <CardHeader className="border-b pb-4">
               <CardTitle className="text-lg font-bold flex items-center gap-2">
-                <CalendarClock className="w-5 h-5 text-primary" />{"Thời gian diễn ra"}</CardTitle>
+                <CalendarClock className="w-5 h-5 text-primary" />{"Campaign Duration"}</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -229,7 +229,7 @@ export function FlashSaleEditor({
                   render={({ field }) => (
                     <FormItem className="space-y-1">
                       <FormLabel className="text-sm font-bold">
-                        Thời gian bắt đầu{" "}
+                        Start Time{" "}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
@@ -249,7 +249,7 @@ export function FlashSaleEditor({
                   render={({ field }) => (
                     <FormItem className="space-y-1">
                       <FormLabel className="text-sm font-bold">
-                        Thời gian kết thúc{" "}
+                        End Time{" "}
                         <span className="text-destructive">*</span>
                       </FormLabel>
                       <FormControl>
@@ -271,7 +271,7 @@ export function FlashSaleEditor({
             <CardHeader className="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <CardTitle className="text-lg font-bold flex items-center gap-2">
-                  <PackageSearch className="w-5 h-5 text-primary" />{"Sản phẩm tham gia"}</CardTitle>
+                  <PackageSearch className="w-5 h-5 text-primary" />{"Participating Products"}</CardTitle>
               </div>
               {fields.length > 0 && (
                 <Button
@@ -280,7 +280,7 @@ export function FlashSaleEditor({
                   onClick={() => setIsProductModalOpen(true)}
                   className="shadow-sm"
                 >
-                  <Plus className="w-4 h-4" />{"Thêm sản phẩm"}</Button>
+                  <Plus className="w-4 h-4" />{"Add Product"}</Button>
               )}
             </CardHeader>
             <CardContent className="pt-6">
@@ -295,15 +295,14 @@ export function FlashSaleEditor({
                   <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                     <Package className="h-8 w-8 text-primary" />
                   </div>
-                  <h4 className="text-lg font-semibold mb-2">{"Chưa có sản phẩm nào"}</h4>
-                  <p className="text-sm text-muted-foreground mb-6 max-w-sm">{`Hãy thêm sản phẩm vào chương trình để thiết lập giá Flash
-                    Sale và kích hoạt ưu đãi.`}</p>
+                  <h4 className="text-lg font-semibold mb-2">{"No products added"}</h4>
+                  <p className="text-sm text-muted-foreground mb-6 max-w-sm">{"Add products to the campaign to configure Flash Sale prices."}</p>
                   <Button
                     type="button"
                     onClick={() => setIsProductModalOpen(true)}
                     className="shadow-sm"
                   >
-                    <Plus className="w-4 h-4" />{"Thêm sản phẩm ngay"}</Button>
+                    <Plus className="w-4 h-4" />{"Add Product Now"}</Button>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -311,12 +310,12 @@ export function FlashSaleEditor({
                     <div className="space-y-2 flex-1 sm:max-w-55">
                       {/* eslint-disable-next-line  */}
                       <label className="text-sm font-bold flex items-center gap-2">
-                        <Percent className="w-4 h-4 text-muted-foreground" />{"Giảm giá đồng loạt"}</label>
+                        <Percent className="w-4 h-4 text-muted-foreground" />{"Batch Discount %"}</label>
                       <Input
                         type="number"
                         min="1"
                         max="100"
-                        placeholder="VD: 15, 20, 50..."
+                        placeholder="e.g., 15, 20, 50..."
                         value={bulkDiscount}
                         onChange={(e) => setBulkDiscount(e.target.value)}
                         className="bg-muted border-0 rounded-sm focus-visible:ring-1"
@@ -325,11 +324,11 @@ export function FlashSaleEditor({
                     <div className="space-y-2 flex-1 sm:max-w-55">
                       {/* eslint-disable-next-line  */}
                       <label className="text-sm font-bold flex items-center gap-2">
-                        <Package className="w-4 h-4 text-muted-foreground" />{"Số lượng Flash Sale"}</label>
+                        <Package className="w-4 h-4 text-muted-foreground" />{"Flash Sale Qty"}</label>
                       <Input
                         type="number"
                         min="1"
-                        placeholder="Nhập số lượng..."
+                        placeholder="Enter quantity..."
                         value={bulkQuantity}
                         onChange={(e) => setBulkQuantity(e.target.value)}
                         className="bg-muted border-0 rounded-sm focus-visible:ring-1"
@@ -340,19 +339,19 @@ export function FlashSaleEditor({
                       onClick={handleBulkApply}
                       className="gap-2 w-full sm:w-auto bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-sm font-bold px-6 shadow-sm"
                     >
-                      <CheckSquare className="w-4 h-4" />{"Áp dụng tất cả"}</Button>
+                      <CheckSquare className="w-4 h-4" />{"Apply to All"}</Button>
                   </div>
 
                   <div className="border rounded-sm overflow-x-auto">
                     <Table>
                       <TableHeader className="bg-muted/30">
                         <TableRow>
-                          <TableHead>{"Sản phẩm"}</TableHead>
-                          <TableHead className="whitespace-nowrap text-center">{"Giá gốc"}</TableHead>
-                          <TableHead className="whitespace-nowrap text-center">{"Tồn Kho"}</TableHead>
-                          <TableHead className="w-45 whitespace-nowrap text-center">{"Giá Flash Sale"}</TableHead>
+                          <TableHead>{"Product"}</TableHead>
+                          <TableHead className="whitespace-nowrap text-center">{"Original Price"}</TableHead>
+                          <TableHead className="whitespace-nowrap text-center">{"Stock"}</TableHead>
+                          <TableHead className="w-45 whitespace-nowrap text-center">{"Flash Price"}</TableHead>
                           <TableHead className="w-37.5 whitespace-nowrap text-center">
-                            SL Flash Sale
+                            Flash Qty
                           </TableHead>
                           <TableHead className="w-12 text-center"></TableHead>
                         </TableRow>
@@ -456,7 +455,7 @@ export function FlashSaleEditor({
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              {isEditing ? "Lưu thay đổi" : "Tạo chương trình"}
+              {isEditing ? "Save Changes" : "Create Campaign"}
             </Button>
           </div>
         </form>

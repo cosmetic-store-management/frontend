@@ -109,7 +109,7 @@ export function CustomerOrderHistoryModal({
                       )}
                     </TableCell>
                     <TableCell className="py-3 px-4 text-center font-bold text-brand">
-                      {o.totalAmount.toLocaleString("vi-VN")}₫
+                      {o.totalAmount.toLocaleString("en-US")} VND
                     </TableCell>
                     <TableCell className="py-3 px-4 text-center">
                       <Badge
@@ -121,7 +121,7 @@ export function CustomerOrderHistoryModal({
                     </TableCell>
                     <TableCell className="py-3 px-4 text-ink-muted text-xs">
                       {o.createdAt
-                        ? new Date(o.createdAt).toLocaleDateString("vi-VN")
+                        ? new Date(o.createdAt).toLocaleDateString("en-US")
                         : "N/A"}
                     </TableCell>
                   </TableRow>

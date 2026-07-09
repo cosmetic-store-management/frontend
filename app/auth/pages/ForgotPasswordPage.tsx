@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
               />
             </div>
             <span
-              className="text-3xl font-bold text-white tracking-tight"
+              className="text-3xl font-bold text-white tracking-tight notranslate"
               style={{
                 fontFamily:
                   "var(--font-display, 'Playfair Display', Georgia, serif)",
@@ -143,7 +143,7 @@ export default function ForgotPasswordPage() {
           {/* Mobile logo */}
           <div className="flex lg:hidden items-center gap-2 mb-8">
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden"
+              className="w-8 h-8 rounded-sm flex items-center justify-center overflow-hidden"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               <img

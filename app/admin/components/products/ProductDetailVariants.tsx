@@ -5,7 +5,7 @@ type ProductDetailVariantsProps = {
 };
 
 function formatPrice(value?: number) {
-  return `${(value ?? 0).toLocaleString("vi-VN")} đ`;
+  return `${(value ?? 0).toLocaleString("en-US")} VND`;
 }
 
 export default function ProductDetailVariants({
@@ -15,15 +15,15 @@ export default function ProductDetailVariants({
 
   return (
     <div className="col-span-2 mt-2">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-2">{"Phân loại hàng"}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-2">{"Variants"}</p>
       <div className="overflow-x-auto border border-border rounded-sm">
         <table className="w-full text-left text-sm min-w-100">
           <thead className="bg-surface-soft text-ink-muted">
             <tr>
-              <th className="px-3 py-2 font-medium">{"Tên"}</th>
+              <th className="px-3 py-2 font-medium">{"Name"}</th>
               <th className="px-3 py-2 font-medium">SKU</th>
-              <th className="px-3 py-2 font-medium text-right">{"Giá"}</th>
-              <th className="px-3 py-2 font-medium text-right">Kho</th>
+              <th className="px-3 py-2 font-medium text-right">{"Price"}</th>
+              <th className="px-3 py-2 font-medium text-right">Stock</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/60">
@@ -50,7 +50,7 @@ export default function ProductDetailVariants({
                   )}
                 </td>
                 <td className="px-3 py-2 text-right text-ink-muted">
-                  {v.stock.toLocaleString("vi-VN")}
+                  {v.stock.toLocaleString("en-US")}
                 </td>
               </tr>
             ))}

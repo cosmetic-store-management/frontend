@@ -6,62 +6,58 @@ export interface PermissionModule {
 }
 
 export const ACTIONS = [
-  { id: "view", label: "Xem" },
-  { id: "create", label: "Thêm" },
-  { id: "edit", label: "Sửa" },
-  { id: "delete", label: "Xóa" },
+  { id: "view", label: "View" },
+  { id: "create", label: "Create" },
+  { id: "edit", label: "Edit" },
+  { id: "delete", label: "Delete" },
 ];
 
 export const MODULES: PermissionModule[] = [
   {
     id: "products",
-    label: "Quản lý Kho hàng & Sản phẩm",
+    label: "Inventory and Product Management",
     actions: ["view", "create", "edit", "delete"],
     allowedRoles: ["manager", "staff"],
   },
   {
     id: "orders",
-    label: "Quản lý Đơn hàng & Bán hàng",
+    label: "Order and Sales Management",
     actions: ["view", "create", "edit", "delete"],
     allowedRoles: ["manager", "staff"],
   },
   {
     id: "customers",
-    label: "Quản lý Khách hàng",
+    label: "Customer Management",
     actions: ["view", "create", "edit", "delete"],
     allowedRoles: ["manager", "staff"],
   },
   {
     id: "marketing",
-    label: "Quản lý Marketing & CSKH",
+    label: "Marketing and Customer Care",
     actions: ["view", "create", "edit", "delete"],
     allowedRoles: ["manager", "staff"],
   },
   {
     id: "reports",
-    label: "Quản lý Báo cáo Doanh thu",
+    label: "Sales Reports Management",
     actions: ["view"],
     allowedRoles: ["manager", "staff"],
   },
-
-  // Đặc quyền Hệ thống (Chỉ cấp Quản lý mới được phép cấp quyền Nhân sự)
   {
     id: "users",
-    label: "Quản lý Tài khoản Nhân sự",
+    label: "Staff Accounts Management",
     actions: ["view", "create", "edit", "delete"],
     allowedRoles: ["manager"],
   },
-
-  // Tài chính và Cài đặt là đặc quyền tuyệt đối của Owner, không ai được cấp
   {
     id: "finance",
-    label: "Quản lý Báo cáo Tài chính",
+    label: "Financial Reports Management",
     actions: ["view"],
     allowedRoles: [],
   },
   {
     id: "settings",
-    label: "Quản lý Cấu hình Hệ thống",
+    label: "System Settings Management",
     actions: ["view", "edit"],
     allowedRoles: [],
   },
@@ -107,3 +103,55 @@ export const PERMISSION_TEMPLATES: Record<string, string[]> = {
 
 export const DEFAULT_MANAGER_PERMISSIONS = PERMISSION_TEMPLATES.store_manager;
 export const DEFAULT_STAFF_PERMISSIONS = PERMISSION_TEMPLATES.sales;
+
+export function backendToUiPermissions(backendPerms: string[]): string[] {
+  const uiPerms: string[] = [];
+  backendPerms.forEach((perm) => {
+    if (perm === "products.view") uiPerms.push("products.view");
+    else if (perm === "products.manage") {
+      uiPerms.push("products.create", "products.edit", "products.delete");
+    } else if (perm === "orders.view") uiPerms.push("orders.view");
+    else if (perm === "orders.manage") {
+      uiPerms.push("orders.edit", "orders.delete");
+    } else if (perm === "pos.access") uiPerms.push("orders.create");
+    else if (perm === "customers.view") uiPerms.push("customers.view");
+    else if (perm === "customers.manage") {
+      uiPerms.push("customers.create", "customers.edit", "customers.delete");
+    } else if (perm === "vouchers.view") uiPerms.push("marketing.view");
+    else if (perm === "vouchers.manage") {
+      uiPerms.push("marketing.create", "marketing.delete");
+    } else if (perm === "reviews.manage") uiPerms.push("marketing.edit");
+    else if (perm === "reports.view") uiPerms.push("reports.view");
+  });
+  return Array.from(new Set(uiPerms));
+}
+
+export function uiToBackendPermissions(uiPerms: string[]): string[] {
+  const backendPerms: string[] = [];
+  uiPerms.forEach((perm) => {
+    if (perm === "products.view") backendPerms.push("products.view");
+    else if (
+      perm === "products.create" ||
+      perm === "products.edit" ||
+      perm === "products.delete"
+    ) {
+      backendPerms.push("products.manage");
+    } else if (perm === "orders.view") backendPerms.push("orders.view");
+    else if (perm === "orders.create") backendPerms.push("pos.access");
+    else if (perm === "orders.edit" || perm === "orders.delete") {
+      backendPerms.push("orders.manage");
+    } else if (perm === "customers.view") backendPerms.push("customers.view");
+    else if (
+      perm === "customers.create" ||
+      perm === "customers.edit" ||
+      perm === "customers.delete"
+    ) {
+      backendPerms.push("customers.manage");
+    } else if (perm === "marketing.view") backendPerms.push("vouchers.view");
+    else if (perm === "marketing.create" || perm === "marketing.delete") {
+      backendPerms.push("vouchers.manage");
+    } else if (perm === "marketing.edit") backendPerms.push("reviews.manage");
+    else if (perm === "reports.view") backendPerms.push("reports.view");
+  });
+  return Array.from(new Set(backendPerms));
+}

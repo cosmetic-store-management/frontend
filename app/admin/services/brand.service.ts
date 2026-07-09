@@ -8,7 +8,25 @@ export interface Brand {
   imageUrl: string;
   country: string;
   isActive: boolean;
-  productCount?: number; // server-computed, not sent on create/update
+  productCount?: number;
+  website?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  supplierName?: string;
+  minimumOrderValue?: number;
+  leadTimeDays?: number;
+  supplierId?: string;
+  supplier?: {
+    id: string;
+    name: string;
+    phone: string;
+    email?: string;
+    address?: string;
+    contactPerson?: string;
+    contactPhone?: string;
+    contactEmail?: string;
+    contactPosition?: string;
+  };
 }
 
 export interface AdminBrandListResult {
@@ -31,6 +49,7 @@ export function getAdminBrands(
   query: {
     search?: string;
     status?: string;
+    country?: string;
     page?: number;
     limit?: number;
   } = {},

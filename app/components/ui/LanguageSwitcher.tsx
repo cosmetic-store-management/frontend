@@ -15,14 +15,21 @@ export default function LanguageSwitcher() {
   const changeLanguage = (lng: 'en' | 'vi') => {
     setLanguage(lng);
     
+    // Set or clear Google Translate cookie
+    if (lng === 'en') {
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.aisq.site;";
+    } else {
+      document.cookie = `googtrans=/en/${lng}; path=/;`;
+      document.cookie = `googtrans=/en/${lng}; path=/; domain=.aisq.site;`;
+    }
+    
     // Trigger Google Translate Widget
     const select = document.querySelector('.goog-te-combo') as HTMLSelectElement | null;
     if (select) {
       select.value = lng;
       select.dispatchEvent(new Event('change'));
     } else {
-      // Fallback if widget hasn't fully loaded
-      document.cookie = `googtrans=/en/${lng}; path=/`;
       window.location.reload();
     }
   };

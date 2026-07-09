@@ -204,40 +204,40 @@ export function useProducts(filters: ProductFilters) {
       allData.products.forEach((p: any) => {
         if (!p.variants || p.variants.length === 0) {
           flatData.push({
-            "ID Sản phẩm": p.id,
-            "Tên sản phẩm": p.name,
+            "Product ID": p.id,
+            "Product Name": p.name,
             Slug: p.slug,
-            "Thương hiệu": p.brandName || "",
-            "Danh mục":
+            "Brand": p.brandName || "",
+            "Category":
               p.category?.name || categoryNameById[p.categoryId] || "",
-            "Mô tả": p.description || "",
-            "Trạng thái (Sản phẩm)": p.isActive ? "Đang bán" : "Ngừng bán",
-            "Biến thể ID": "",
-            "Tên biến thể": "Mặc định",
+            "Description": p.description || "",
+            "Product Status": p.isActive ? "Active" : "Inactive",
+            "Variant ID": "",
+            "Variant Name": "Default",
             SKU: "",
-            "Giá bán": 0,
-            "Giá khuyến mãi": 0,
-            "Tồn kho": 0,
-            "Trạng thái (Biến thể)": "",
+            "Price": 0,
+            "Sale Price": 0,
+            "Stock": 0,
+            "Variant Status": "",
           });
         } else {
           p.variants.forEach((v: any) => {
             flatData.push({
-              "ID Sản phẩm": p.id,
-              "Tên sản phẩm": p.name,
+              "Product ID": p.id,
+              "Product Name": p.name,
               Slug: p.slug,
-              "Thương hiệu": p.brandName || "",
-              "Danh mục":
+              "Brand": p.brandName || "",
+              "Category":
                 p.category?.name || categoryNameById[p.categoryId] || "",
-              "Mô tả": p.description || "",
-              "Trạng thái (Sản phẩm)": p.isActive ? "Đang bán" : "Ngừng bán",
-              "Biến thể ID": v.id,
-              "Tên biến thể": v.name,
+              "Description": p.description || "",
+              "Product Status": p.isActive ? "Active" : "Inactive",
+              "Variant ID": v.id,
+              "Variant Name": v.name,
               SKU: v.sku,
-              "Giá bán": v.price,
-              "Giá khuyến mãi": v.discountPrice || "",
-              "Tồn kho": v.stock,
-              "Trạng thái (Biến thể)": v.isActive ? "Đang bán" : "Ngừng bán",
+              "Price": v.price,
+              "Sale Price": v.discountPrice || "",
+              "Stock": v.stock,
+              "Variant Status": v.isActive ? "Active" : "Inactive",
             });
           });
         }

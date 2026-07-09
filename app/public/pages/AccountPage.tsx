@@ -63,7 +63,7 @@ export function AccountPage() {
   const handleLogout = async () => {
     await logoutMutation.mutateAsync();
     clearAuth();
-    toast.success("Đã đăng xuất");
+    toast.success("Logged out successfully");
     navigate("/");
   };
 

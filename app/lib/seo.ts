@@ -20,7 +20,7 @@ export interface SeoMeta {
 
 const SITE_NAME = "GlowUp Cosmetics";
 const DEFAULT_DESC =
-  "Khám phá hàng ngàn sản phẩm mỹ phẩm chính hãng. Skincare, makeup và chăm sóc sắc đẹp với ưu đãi hấp dẫn.";
+  "Discover thousands of authentic cosmetics. Skincare, makeup, and beauty care with attractive deals.";
 const DEFAULT_OG = "/og-image.jpg";
 
 /** Tạo mảng meta objects theo format React Router v7 MetaFunction */
@@ -72,7 +72,7 @@ export function buildProductMeta(opts: {
 }) {
   const desc = opts.description
     ? `${stripHtml(opts.description).substring(0, 155)}…`
-    : `Mua ${opts.name} chính hãng tại GlowUp. Cam kết hàng thật, giao hàng nhanh.`;
+    : `Buy authentic ${opts.name} at GlowUp. Genuine products guaranteed, fast delivery.`;
 
   return buildMeta({
     title: opts.name,

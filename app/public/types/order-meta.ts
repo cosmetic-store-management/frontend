@@ -66,15 +66,15 @@ export const paymentMethodLabel: Record<
   Order["paymentMethod"] | "cash" | "card",
   string
 > = {
-  cod: "Cash on Delivery",
+  cod: "Cash on Delivery (COD)",
   bank: "Bank Transfer",
   ewallet: "E-Wallet",
   qr: "QR Code",
   cash: "Cash",
   card: "Card",
   stripe: "Stripe",
-  pos_card: "POS Card",
-  transfer: "Transfer",
+  pos_card: "Card (POS)",
+  transfer: "QR Code",
 };
 
 export const paymentStatusMeta: Record<

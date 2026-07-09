@@ -8,7 +8,7 @@ export default function POSRoute() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  let message = "Đã xảy ra lỗi không xác định tại trang POS.";
+  let message = "An unknown error occurred on the POS page.";
 
   if (isRouteErrorResponse(error)) {
     message = error.data || error.statusText;
@@ -21,14 +21,14 @@ export function ErrorBoundary() {
       <div className="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mb-4">
         <span className="text-2xl">⚠️</span>
       </div>
-      <h2 className="text-xl font-bold text-ink mb-2">{"Lỗi tải trang POS"}</h2>
+      <h2 className="text-xl font-bold text-ink mb-2">{"POS Page Load Error"}</h2>
       <p className="text-sm text-ink-muted mb-6 max-w-md">{message}</p>
       <Button
         onClick={() => window.location.reload()}
         variant="outline"
         className="px-6"
       >
-        Tải lại trang
+        Reload Page
       </Button>
     </div>
   );

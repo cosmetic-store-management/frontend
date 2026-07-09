@@ -21,6 +21,8 @@ export function useUsers(
     search?: string;
     status?: string;
     role?: string;
+    hiringStatus?: string;
+    workingShift?: string;
   } = {},
 ) {
   return useQuery({
@@ -78,7 +80,7 @@ export function useUpdateStaffInfo() {
       data,
     }: {
       id: string;
-      data: { name?: string; phone?: string; email?: string };
+      data: any;
     }) => updateStaffInfo(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "users"] }),
   });

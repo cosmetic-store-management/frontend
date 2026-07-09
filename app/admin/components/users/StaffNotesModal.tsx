@@ -45,11 +45,11 @@ export function StaffNotesModal({
     <BaseCrudModal
       open={!!user}
       onOpenChange={onOpenChange}
-      title="Ghi chú nội bộ"
-      description={`Ghi chú về hiệu suất, thái độ hoặc các thông tin đặc biệt của ${user?.name}.`}
+      title="Internal Notes"
+      description={`Notes regarding performance, behavior or specific information about ${user?.name}.`}
       size="sm"
-      primaryActionText="Xác nhận"
-      secondaryActionText="Huỷ"
+      primaryActionText="Confirm"
+      secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit(onSubmit)}
       isLoading={isLoading}
     >
@@ -58,7 +58,7 @@ export function StaffNotesModal({
         className="space-y-4"
         id="staff-notes-form"
       >
-        <Label htmlFor="internalNotes" className="sr-only">{"Nội dung ghi chú"}</Label>
+        <Label htmlFor="internalNotes" className="sr-only">{"Note Content"}</Label>
         <Controller
           control={control}
           name="internalNotes"
@@ -66,7 +66,7 @@ export function StaffNotesModal({
             <Textarea
               {...field}
               id="internalNotes"
-              placeholder="Ví dụ: Nhân viên hoàn thành xuất sắc KPI tháng 10..."
+              placeholder="Example: Employee completed outstanding KPI for October..."
               rows={6}
               className="resize-none focus-visible:ring-brand"
             />

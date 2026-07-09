@@ -225,8 +225,8 @@ export function VoucherPage() {
           </Button>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
-            {/* Hàng 1: Search */}
+          <div className="flex flex-wrap items-center gap-3 w-full">
+            {/* Search */}
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
@@ -237,33 +237,32 @@ export function VoucherPage() {
               />
             </div>
 
-            {/* Hàng 2: Filters */}
-            <div className="flex flex-wrap items-center gap-3">
-              <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
-                <SelectTrigger className="w-[160px] h-9 bg-surface text-sm border-border">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                  <SelectItem value="upcoming">Upcoming</SelectItem>
-                  <SelectItem value="expired">Expired</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Status Dropdown */}
+            <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
+              <SelectTrigger className="w-[160px] h-10 bg-surface text-sm border-border focus-visible:ring-brand/20">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="upcoming">Upcoming</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+              </SelectContent>
+            </Select>
 
-              <Select value={type} onValueChange={(val) => handleFilterChange("type", val)}>
-                <SelectTrigger className="w-[160px] h-9 bg-surface text-sm border-border">
-                  <SelectValue placeholder="Discount Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="percent">Percentage %</SelectItem>
-                  <SelectItem value="fixed">Fixed Amount</SelectItem>
-                  <SelectItem value="freeship">Free Shipping</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {/* Type Dropdown */}
+            <Select value={type} onValueChange={(val) => handleFilterChange("type", val)}>
+              <SelectTrigger className="w-[160px] h-10 bg-surface text-sm border-border focus-visible:ring-brand/20">
+                <SelectValue placeholder="Discount Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="percent">Percentage %</SelectItem>
+                <SelectItem value="fixed">Fixed Amount</SelectItem>
+                <SelectItem value="freeship">Free Shipping</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         }
       />
@@ -274,27 +273,27 @@ export function VoucherPage() {
         </div>
       ) : (
         <div className="premium-card rounded-sm overflow-hidden">
-          <Table className="table-fixed">
+          <Table className="min-w-[1100px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-[15%] text-left pl-4">
+                <TableHead className="w-40 text-center">
                   Voucher Code
                 </TableHead>
-                <TableHead className="w-[12%] text-center">
+                <TableHead className="w-32 text-center">
                   Discount Type
                 </TableHead>
-                <TableHead className="w-[12%] text-center">
+                <TableHead className="w-32 text-center">
                   Discount Value
                 </TableHead>
-                <TableHead className="w-[12%] text-center">Min Order</TableHead>
-                <TableHead className="w-[12%] text-center">
+                <TableHead className="w-32 text-center">Min Order</TableHead>
+                <TableHead className="w-36 text-center">
                   Usage Limit / Used
                 </TableHead>
-                <TableHead className="w-[15%] text-center">
+                <TableHead className="w-48 text-center">
                   Validity Period
                 </TableHead>
-                <TableHead className="w-[12%] text-center">Status</TableHead>
-                <TableHead className="w-[10%] text-center">Actions</TableHead>
+                <TableHead className="w-28 text-center">Status</TableHead>
+                <TableHead className="w-24 pl-4 pr-8 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -304,7 +303,7 @@ export function VoucherPage() {
                   className="animate-stagger"
                   style={{ "--i": i } as React.CSSProperties}
                 >
-                  <TableCell className="font-bold text-ink uppercase">
+                  <TableCell className="font-bold text-ink uppercase text-center">
                     {voucher.code}
                   </TableCell>
                   <TableCell className="text-center">
@@ -371,7 +370,7 @@ export function VoucherPage() {
                       );
                     })()}
                   </TableCell>
-                  <TableCell className="text-center">
+                  <TableCell className="text-center pl-4 pr-8">
                     <div className="flex items-center justify-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

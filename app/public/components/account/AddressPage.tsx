@@ -358,7 +358,7 @@ export function AddressPage() {
                         {user.phone}
                       </span>
                       {address.isDefault && (
-                        <span className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-brand border border-brand/60 bg-brand/5 px-2 py-0.5 rounded-sm">
+                        <span className="inline-flex items-center text-[10px] uppercase tracking-wider font-bold text-brand border border-brand/60 bg-brand/5 px-2 py-0.5 leading-none rounded-[3px]">
                           Default
                         </span>
                       )}

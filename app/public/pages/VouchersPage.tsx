@@ -35,7 +35,7 @@ function getVoucherMeta(voucher: Voucher) {
   if (voucher.discountType === "percent") {
     return {
       icon: <Tag className="w-5 h-5" />,
-      title: `Save ${voucher.discountValue}%`,
+      title: `Discount ${voucher.discountValue}%`,
       badge: `${voucher.discountValue}%`,
       color: "text-brand bg-brand/5 border-brand/20",
       badgeColor: "bg-brand/10 text-brand",
@@ -43,7 +43,7 @@ function getVoucherMeta(voucher: Voucher) {
   }
   return {
     icon: <Ticket className="w-5 h-5" />,
-    title: `Save ${voucher.discountValue.toLocaleString("en-US")} ₫`,
+    title: `Discount ${voucher.discountValue.toLocaleString("en-US")} ₫`,
     badge: `${voucher.discountValue.toLocaleString("en-US")} ₫`,
     color: "text-amber-600 bg-amber-50 border-amber-200",
     badgeColor: "bg-amber-100 text-amber-700",
@@ -186,10 +186,10 @@ function VoucherCardFull({
               >
                 {isSaved ? (
                   <>
-                    <Check className="w-3 h-3" />{"Saved"}</>
+                    <Check className="w-3 h-3" />{"Collected"}</>
                 ) : (
                   <>
-                    <Gift className="w-3 h-3" />{"Save code"}</>
+                    <Gift className="w-3 h-3" />{"Claim code"}</>
                 )}
               </button>
             )}
@@ -262,15 +262,15 @@ export function VouchersPage() {
           Voucher Store
         </h1>
         <p className="text-sm text-muted-foreground mt-2">
-          Save vouchers and use them at checkout
+          Collect vouchers and use them at checkout
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-muted border border-border rounded-xl p-1 mb-6 w-fit mx-auto">
+      <div className="flex gap-1 bg-muted border border-border rounded-sm p-1 mb-6 w-fit mx-auto">
         <button
           onClick={() => setTab("all")}
-          className={`px-6 py-2 text-sm font-semibold rounded-lg transition-all ${
+          className={`px-6 py-2 text-sm font-semibold rounded-sm transition-all ${
             tab === "all"
               ? "text-white shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -283,7 +283,7 @@ export function VouchersPage() {
         </button>
         <button
           onClick={() => setTab("wallet")}
-          className={`px-6 py-2 text-sm font-semibold rounded-lg transition-all ${
+          className={`px-6 py-2 text-sm font-semibold rounded-sm transition-all ${
             tab === "wallet"
               ? "text-white shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -314,7 +314,7 @@ export function VouchersPage() {
           <p className="text-ink-muted text-sm">{"Log in to view your voucher wallet"}</p>
           <Link
             to="/auth/login"
-            className="px-6 py-2.5 text-white font-bold rounded-xl hover:opacity-90 transition-all shadow-sm text-sm"
+            className="px-6 py-2.5 text-white font-bold rounded-sm hover:opacity-90 transition-all shadow-sm text-sm"
             style={{ background: "hsl(352, 72%, 52%)" }}
           >
             Sign in
@@ -350,10 +350,10 @@ export function VouchersPage() {
             {tab === "wallet" && (
               <button
                 onClick={() => setTab("all")}
-                className="px-5 py-2 text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
+                className="px-5 py-2 text-white rounded-sm font-semibold text-sm hover:opacity-90 transition-all shadow-sm"
                 style={{ background: "hsl(352, 72%, 52%)" }}
               >
-                Explore vouchers
+                Browse vouchers
               </button>
             )}
           </div>

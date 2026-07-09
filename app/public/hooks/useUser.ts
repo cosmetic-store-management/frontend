@@ -154,8 +154,8 @@ export function useToggleFavorite() {
     onSuccess: (res) => {
       toast.success(
         res.action === "added"
-          ? "Đã thêm vào yêu thích ❤️"
-          : "Đã xóa khỏi yêu thích",
+          ? "Added to favorites ❤️"
+          : "Removed from favorites",
       );
     },
 
@@ -164,7 +164,7 @@ export function useToggleFavorite() {
       if (context?.previous !== undefined) {
         queryClient.setQueryData(QK.favorites(), context.previous);
       }
-      toast.error("Có lỗi xảy ra, vui lòng thử lại sau");
+      toast.error("Something went wrong. Please try again later.");
     },
 
     // Luôn sync lại với server sau khi xong
@@ -207,10 +207,10 @@ export function useClearViewed() {
     mutationFn: () => clearRecentlyViewed(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recentlyViewed"] });
-      toast.success("Đã xóa toàn bộ lịch sử xem");
+      toast.success("Recently viewed history cleared");
     },
     onError: (error: any) => {
-      toast.error(error.message || "Có lỗi xảy ra, vui lòng thử lại");
+      toast.error(error.message || "An error occurred, please try again");
     },
   });
 }
@@ -246,11 +246,11 @@ export function useRemoveViewed() {
           queryClient.setQueryData(queryKey, data);
         });
       }
-      toast.error("Có lỗi xảy ra, vui lòng thử lại");
+      toast.error("An error occurred, please try again");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["recentlyViewed"] });
-      toast.success("Đã xóa sản phẩm khỏi lịch sử");
+      toast.success("Product removed from history");
     },
   });
 }

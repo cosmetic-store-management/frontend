@@ -51,15 +51,15 @@ function BankTransferInfo({
   const finalQrUrl = dynamicQrUrl || settings?.bankQrCodeUrl;
 
   return (
-    <div className="mx-auto max-w-105 bg-white rounded shadow-[0_2px_12px_rgba(0,0,0,0.04)] p-8">
+    <div className="mx-auto max-w-105 bg-card rounded-sm border border-border/40 shadow-sm p-8">
       {finalQrUrl && (
         <div className="flex flex-col items-center justify-center mb-8">
           <img
             src={finalQrUrl}
             alt="Bank Transfer QR Code"
-            className="w-72 h-72 object-contain bg-white"
+            className="w-72 h-72 object-contain bg-white rounded-sm border border-border/20"
           />
-          <p className="text-[13px] text-gray-500 mt-4">{"Open your banking app to scan the QR code"}</p>
+          <p className="text-[13px] text-ink-muted mt-4">{"Open your banking app to scan the QR code"}</p>
         </div>
       )}
       <div className="space-y-4 pt-2">
@@ -94,13 +94,13 @@ function BankTransferInfo({
             key={label}
             className="flex items-center justify-between gap-3 text-sm"
           >
-            <span className="text-gray-500 shrink-0">{label}</span>
-            <div className="flex items-center gap-1.5 font-bold text-gray-900">
+            <span className="text-ink-muted shrink-0">{label}</span>
+            <div className="flex items-center gap-1.5 font-bold text-ink">
               <span className="text-right">{value}</span>
               {copy && value !== "Not configured" && (
                 <button
                   onClick={() => copyText(value)}
-                  className="p-1 rounded hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 -mr-1"
+                  className="p-1 rounded-sm hover:bg-surface-soft transition-colors text-ink-muted/50 hover:text-ink -mr-1"
                         title="Copy"
                 >
                   <Copy className="w-3.5 h-3.5" />
@@ -194,7 +194,7 @@ export function PaymentPage() {
       <div className="mb-4 sm:mb-8">
         <button
           onClick={handleBack}
-          className="flex items-center gap-1.5 text-gray-500 hover:text-gray-900 transition-colors w-fit"
+          className="flex items-center gap-1.5 text-ink-muted hover:text-ink transition-colors w-fit"
         >
           <ChevronLeft className="w-5 h-5" />
           <span className="text-sm font-medium">{"Back"}</span>
@@ -204,7 +204,7 @@ export function PaymentPage() {
       <div className="max-w-2xl mx-auto text-center">
         {/* Status Icon */}
         <div
-          className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${paymentMethod === "bank" && !isPaid ? "bg-[#F3E8DF] text-[#D97706]" : "bg-green-100 text-green-600"}`}
+          className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${paymentMethod === "bank" && !isPaid ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}`}
         >
           {paymentMethod === "bank" && !isPaid ? (
             <Clock className="w-9 h-9" />
@@ -214,12 +214,12 @@ export function PaymentPage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-[26px] font-bold text-gray-900 mb-3">
+        <h1 className="text-[26px] font-bold text-ink mb-3">
           {paymentMethod === "bank" && !isPaid
             ? "Order Pending Payment"
             : "Order Placed Successfully!"}
         </h1>
-        <p className="text-gray-500 mb-8">
+        <p className="text-ink-muted mb-8">
           {paymentMethod === "bank" && !isPaid
             ? "Please scan the QR code below to complete the payment."
             : "Thank you for choosing GlowUp. Your order has been received."}
@@ -228,20 +228,20 @@ export function PaymentPage() {
         {/* Bank Transfer Details */}
         {paymentMethod === "bank" &&
           (isPaid ? (
-            <div className="mt-8 bg-green-50 border border-green-200 rounded-sm overflow-hidden mx-auto max-w-105 p-8 animate-pulse-soft">
-              <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold text-green-700 text-xl mb-2">{"Payment Successful!"}</h3>
-              <p className="text-sm text-green-800">{"We have received your bank transfer."}</p>
+            <div className="mt-8 bg-success/5 border border-success/20 rounded-sm overflow-hidden mx-auto max-w-105 p-8 animate-pulse-soft">
+              <CheckCircle2 className="w-12 h-12 text-success mx-auto mb-4" />
+              <h3 className="font-bold text-success text-xl mb-2">{"Payment Successful!"}</h3>
+              <p className="text-sm text-success">{"We have received your bank transfer."}</p>
             </div>
           ) : settingsLoading ? (
-            <div className="mt-8 flex items-center justify-center gap-2 text-gray-500">
+            <div className="mt-8 flex items-center justify-center gap-2 text-ink-muted">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span className="text-sm">{"Loading bank information..."}</span>
             </div>
           ) : timeLeft <= 0 ? (
-            <div className="mt-8 bg-red-50 border border-red-200 rounded-sm mx-auto max-w-105 p-8">
-              <p className="text-red-600 font-bold mb-2">{"Payment Time Expired"}</p>
-              <p className="text-sm text-red-500">{"Please place a new order."}</p>
+            <div className="mt-8 bg-danger/5 border border-danger/20 rounded-sm mx-auto max-w-105 p-8">
+              <p className="text-danger font-bold mb-2">{"Payment Time Expired"}</p>
+              <p className="text-sm text-danger/80">{"Please place a new order."}</p>
               <button
                 onClick={() => navigate(-1)}
                 className="mt-4 bg-brand text-white px-6 py-2 rounded-sm text-sm font-medium hover:bg-brand/90 transition-colors"
@@ -257,7 +257,7 @@ export function PaymentPage() {
                 settings={settings}
                 banks={banks}
               />
-              <div className="flex items-center gap-2 bg-[#fff7ed] text-[#ea580c] px-6 py-3 rounded-sm font-semibold text-[15px] w-full max-w-105 justify-center">
+              <div className="flex items-center gap-2 bg-warning/10 text-warning px-6 py-3 rounded-sm font-semibold text-[15px] w-full max-w-105 justify-center">
                 <Timer className="h-4.5 w-4.5" strokeWidth={2.5} />
                 <span>Order will expire in: {formatTime(timeLeft)}</span>
               </div>

@@ -26,7 +26,14 @@ export function PageHeader({
         {/* Header row */}
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div className="min-w-0 space-y-1.5 flex-1">
-            <CardTitle className="text-2xl font-bold tracking-tight text-ink">
+            <CardTitle 
+              className="text-2xl font-bold text-ink"
+              style={{
+                fontFamily: "var(--font-display, 'Playfair Display', Georgia, serif)",
+                letterSpacing: "-0.02em",
+                lineHeight: "1.1",
+              }}
+            >
               {title}
             </CardTitle>
             <CardDescription className="max-w-3xl text-sm leading-6 text-ink-muted">
@@ -67,7 +74,7 @@ export function PageHeader({
 
         {/* Filter bar */}
         {filters && (
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex flex-row flex-wrap gap-3 items-center w-full">
             {filters}
           </div>
         )}

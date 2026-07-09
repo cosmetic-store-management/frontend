@@ -28,6 +28,24 @@ export const useAuth = () => {
     logout: store.clearAuth,
   };
 };
+// Helper to map and sanitize server cart items defensively
+const mapServerCartItems = (items: any[]): any[] => {
+  if (!items || !Array.isArray(items)) return [];
+  return items
+    .filter((item) => item?.variantId && item.variantId.productId)
+    .map((item) => ({
+      productId: item.variantId.productId._id,
+      variantId: item.variantId._id,
+      name: item.variantId.productId.name,
+      variantName: item.variantId.name,
+      price: item.variantId.price,
+      quantity: item.quantity,
+      imageUrl: item.variantId.imageUrl || item.variantId.productId.imageUrl,
+      stock: item.variantId.stock,
+      slug: item.variantId.productId.slug,
+      isActive: item.variantId.isActive !== false,
+    }));
+};
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -47,19 +65,7 @@ export const useLogin = () => {
         }));
         const serverCart = await syncCartAPI(localItems);
         // Map server cart to local cart
-        const mappedItems = serverCart.items.map((item: any) => ({
-          productId: item.variantId.productId._id,
-          variantId: item.variantId._id,
-          name: item.variantId.productId.name,
-          variantName: item.variantId.name,
-          price: item.variantId.price,
-          quantity: item.quantity,
-          imageUrl:
-            item.variantId.imageUrl || item.variantId.productId.imageUrl,
-          stock: item.variantId.stock,
-          slug: item.variantId.productId.slug,
-          isActive: item.variantId.isActive !== false,
-        }));
+        const mappedItems = mapServerCartItems(serverCart.items);
         setItems(mappedItems);
       } catch (err) {
         console.error("Failed to sync cart", err);
@@ -84,19 +90,7 @@ export const useRegister = () => {
           quantity: i.quantity,
         }));
         const serverCart = await syncCartAPI(localItems);
-        const mappedItems = serverCart.items.map((item: any) => ({
-          productId: item.variantId.productId._id,
-          variantId: item.variantId._id,
-          name: item.variantId.productId.name,
-          variantName: item.variantId.name,
-          price: item.variantId.price,
-          quantity: item.quantity,
-          imageUrl:
-            item.variantId.imageUrl || item.variantId.productId.imageUrl,
-          stock: item.variantId.stock,
-          slug: item.variantId.productId.slug,
-          isActive: item.variantId.isActive !== false,
-        }));
+        const mappedItems = mapServerCartItems(serverCart.items);
         setItems(mappedItems);
       } catch (err) {
         console.error("Failed to sync cart", err);
@@ -175,19 +169,7 @@ export const useSocialLogin = () => {
           quantity: i.quantity,
         }));
         const serverCart = await syncCartAPI(localItems);
-        const mappedItems = serverCart.items.map((item: any) => ({
-          productId: item.variantId.productId._id,
-          variantId: item.variantId._id,
-          name: item.variantId.productId.name,
-          variantName: item.variantId.name,
-          price: item.variantId.price,
-          quantity: item.quantity,
-          imageUrl:
-            item.variantId.imageUrl || item.variantId.productId.imageUrl,
-          stock: item.variantId.stock,
-          slug: item.variantId.productId.slug,
-          isActive: item.variantId.isActive !== false,
-        }));
+        const mappedItems = mapServerCartItems(serverCart.items);
         setItems(mappedItems);
       } catch (err) {
         console.error("Failed to sync cart", err);

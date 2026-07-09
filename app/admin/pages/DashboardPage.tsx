@@ -223,9 +223,20 @@ export function DashboardPage() {
 
         {/* Filter bar */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5 bg-muted/60 border border-border rounded-sm px-3 py-2">
+          <div
+            onClick={(e) => {
+              const input = e.currentTarget.querySelector("input");
+              if (input) {
+                try {
+                  input.showPicker();
+                } catch (err) {
+                  input.focus();
+                }
+              }
+            }}
+            className="flex items-center gap-1.5 bg-muted/60 border border-border rounded-sm px-3 py-2 cursor-pointer hover:bg-muted transition-colors"
+          >
             <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">From</span>
             <input
               type="date"
               value={dateRange.start}
@@ -235,8 +246,21 @@ export function DashboardPage() {
               className="bg-transparent border-0 outline-none text-xs text-foreground w-32 cursor-pointer"
             />
           </div>
-          <div className="flex items-center gap-1.5 bg-muted/60 border border-border rounded-sm px-3 py-2">
-            <span className="text-xs text-muted-foreground">To</span>
+          <span className="text-muted-foreground font-light text-sm mx-0.5">-</span>
+          <div
+            onClick={(e) => {
+              const input = e.currentTarget.querySelector("input");
+              if (input) {
+                try {
+                  input.showPicker();
+                } catch (err) {
+                  input.focus();
+                }
+              }
+            }}
+            className="flex items-center gap-1.5 bg-muted/60 border border-border rounded-sm px-3 py-2 cursor-pointer hover:bg-muted transition-colors"
+          >
+            <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
             <input
               type="date"
               value={dateRange.end}

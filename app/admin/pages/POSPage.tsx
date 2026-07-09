@@ -10,6 +10,9 @@ import {
   ShoppingCart,
   CheckCircle,
   Printer,
+  LogOut,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,9 +25,13 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { usePOSProducts, usePOSCheckout } from "../hooks/usePOS";
+import {
+  usePOSProducts,
+  usePOSCheckout,
+} from "../hooks/usePOS";
 import { useCustomers } from "../hooks/useCustomer";
 import { useOrderPreview } from "@/public/hooks/useOrder";
+import { useSetting } from "@/public/hooks/useSetting";
 import type { Order } from "@/admin/types/order";
 
 interface POSProduct {
@@ -35,6 +42,8 @@ interface POSProduct {
   imageUrl: string;
   stock: number;
   category: string;
+  sku: string;
+  barcode: string;
 }
 
 interface CartItem {
@@ -43,6 +52,7 @@ interface CartItem {
 }
 
 export function POSPage() {
+  const { settings = {} as any } = useSetting();
   const [search, setSearch] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<
@@ -55,6 +65,8 @@ export function POSPage() {
   const [usedPoints, setUsedPoints] = useState(0);
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [lastOrder, setLastOrder] = useState<Order | null>(null);
+
+
 
   // Fetch products
   const { data, isLoading } = usePOSProducts(search);
@@ -117,6 +129,8 @@ export function POSPage() {
           imageUrl: v.imageUrl || p.imageUrl,
           stock: v.stock,
           category: p.category?.name || "Cosmetics",
+          sku: v.sku || "",
+          barcode: v.barcode || "",
         });
       });
     }
@@ -127,23 +141,78 @@ export function POSPage() {
       toast.error("Product is out of stock!");
       return;
     }
-    const existing = cart.find((item) => item.product.id === product.id);
-    if (existing) {
-      if (existing.quantity >= product.stock) {
-        toast.warning(`Only ${product.stock} items left in stock`);
-        return;
-      }
-      setCart(
-        cart.map((item) =>
+    setCart((prevCart) => {
+      const existing = prevCart.find((item) => item.product.id === product.id);
+      if (existing) {
+        if (existing.quantity >= product.stock) {
+          toast.warning(`Only ${product.stock} items left in stock`);
+          return prevCart;
+        }
+        return prevCart.map((item) =>
           item.product.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item,
-        ),
-      );
-    } else {
-      setCart([...cart, { product, quantity: 1 }]);
-    }
+        );
+      } else {
+        return [...prevCart, { product, quantity: 1 }];
+      }
+    });
   };
+
+  // Global Barcode Scanner Event Listener
+  useEffect(() => {
+    let buffer = "";
+    let lastKeyTime = Date.now();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const currentTime = Date.now();
+
+      // If the time since last key is > 40ms, it's likely manual typing.
+      if (buffer.length > 0 && currentTime - lastKeyTime > 40) {
+        buffer = ""; // Reset buffer
+      }
+
+      lastKeyTime = currentTime;
+
+      // Capture single character keys (avoid Shift, Control, etc.)
+      if (e.key.length === 1) {
+        buffer += e.key;
+      } else if (e.key === "Enter") {
+        // Barcode scans usually have a minimum length (e.g., SKU/EAN are >= 4 chars)
+        if (buffer.length >= 4) {
+          e.preventDefault();
+          const scannedCode = buffer.trim();
+          buffer = ""; // Reset immediately
+
+          // Find product by SKU or Barcode
+          const foundProduct = products.find(
+            (p) =>
+              (p.barcode && p.barcode.toLowerCase() === scannedCode.toLowerCase()) ||
+              (p.sku && p.sku.toLowerCase() === scannedCode.toLowerCase())
+          );
+
+          if (foundProduct) {
+            // Check if input element is currently focused, clear and blur it
+            if (document.activeElement instanceof HTMLInputElement) {
+              document.activeElement.value = "";
+              document.activeElement.blur();
+            }
+            addToCart(foundProduct);
+            toast.success(`Scanned: ${foundProduct.name}`);
+          } else {
+            toast.error(`No product found with Barcode/SKU: "${scannedCode}"`);
+          }
+        } else {
+          buffer = ""; // Reset buffer if too short
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [products, addToCart]);
 
   const updateQuantity = (id: string, amount: number) => {
     setCart(
@@ -200,10 +269,11 @@ export function POSPage() {
       })),
       discountAmount: discount > 0 ? discount : 0,
       usedPoints: usedPoints > 0 ? usedPoints : 0,
-      note:
-        discount > 0
-          ? `Discount: ${discount.toLocaleString("vi-VN")}₫`
-          : undefined,
+      note: [
+        discount > 0 ? `Discount: ${discount.toLocaleString("vi-VN")}₫` : null,
+        paymentMethod === "cash" ? `CashReceived:${Number(receivedCash)}` : null,
+        paymentMethod === "cash" ? `ChangeDue:${changeDue}` : null
+      ].filter(Boolean).join(" | ") || undefined,
       customerPhone: customerPhone || undefined,
       customerName: !matchedCustomer && customerName ? customerName : undefined,
     };
@@ -256,11 +326,11 @@ export function POSPage() {
         {/* Product Grid */}
         <div className="flex-1 overflow-y-auto pr-1">
           {isLoading ? (
-            <div className="py-10 flex items-center justify-center text-gray-500">
+            <div className="py-10 flex items-center justify-center text-ink-muted">
               <span className="animate-pulse">Loading products...</span>
             </div>
           ) : products.length === 0 ? (
-            <div className="py-10 flex items-center justify-center text-gray-500">
+            <div className="py-10 flex items-center justify-center text-ink-muted">
               No products found
             </div>
           ) : (
@@ -269,9 +339,9 @@ export function POSPage() {
                 <button
                   key={p.id}
                   onClick={() => addToCart(p)}
-                  className="flex flex-col text-left bg-white border border-gray-200 rounded shadow-sm overflow-hidden p-2 hover:border-blue-500 hover:shadow-md transition-all duration-200"
+                  className="flex flex-col text-left bg-card border border-border rounded-sm shadow-sm overflow-hidden p-2 hover:border-brand hover:shadow-md transition-all duration-200"
                 >
-                  <div className="h-32 w-full bg-gray-50 flex items-center justify-center mb-2 overflow-hidden rounded">
+                  <div className="h-32 w-full bg-surface-soft flex items-center justify-center mb-2 overflow-hidden rounded-sm border border-border/10">
                     {p.imageUrl ? (
                       <img
                         src={p.imageUrl}
@@ -279,17 +349,17 @@ export function POSPage() {
                         className="max-w-full max-h-full object-contain mix-blend-multiply"
                       />
                     ) : (
-                      <span className="text-xs text-gray-400">No Image</span>
+                      <span className="text-xs text-ink-muted/50">No Image</span>
                     )}
                   </div>
-                  <h4 className="text-sm font-medium text-gray-900 line-clamp-2 min-h-10 leading-tight">
+                  <h4 className="text-sm font-medium text-ink line-clamp-2 min-h-10 leading-tight">
                     {p.name || "Unnamed product"}
                   </h4>
                   <div className="mt-auto w-full pt-2 flex justify-between items-end">
-                    <span className="text-red-600 font-bold">
+                    <span className="text-[#C81D25] font-bold">
                       {p.price ? p.price.toLocaleString("vi-VN") : 0}₫
                     </span>
-                    <span className="text-[11px] text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">
+                    <span className="text-[11px] text-ink-muted bg-surface-soft px-1.5 py-0.5 rounded-sm border border-border">
                       Kho: {p.stock ?? 0}
                     </span>
                   </div>
@@ -417,14 +487,13 @@ export function POSPage() {
             )}
 
             <div className="flex justify-between items-center text-xs text-ink-muted">
-              <span>Discount (Manual)</span>
+              <span>Discount</span>
               <Input
-                type="number"
-                min="0"
-                value={discount || ""}
+                type="text"
+                value={discount ? discount.toLocaleString("vi-VN") : ""}
                 onChange={(e) => {
-                  const val = Number(e.target.value);
-                  setDiscount(val < 0 ? 0 : val);
+                  const rawVal = e.target.value.replace(/\D/g, "");
+                  setDiscount(Number(rawVal) || 0);
                 }}
                 placeholder="0"
                 className="w-24 h-7 text-right text-xs"
@@ -482,31 +551,28 @@ export function POSPage() {
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setPaymentMethod("cash")}
-                className={`relative py-2.5 rounded-sm border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
-                  paymentMethod === "cash"
+                className={`relative py-2.5 rounded-sm border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${paymentMethod === "cash"
                     ? "bg-brand/5 border-brand text-brand ring-1 ring-brand/20 shadow-[0_0_12px_rgba(251,207,232,0.5)]"
                     : "border-border text-ink-muted bg-surface hover:bg-surface-muted/50 hover:border-border/80"
-                }`}
+                  }`}
               >
                 <DollarSign className="w-4 h-4" /> Cash
               </button>
               <button
                 onClick={() => setPaymentMethod("pos_card")}
-                className={`relative py-2.5 rounded-sm border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
-                  paymentMethod === "pos_card"
+                className={`relative py-2.5 rounded-sm border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${paymentMethod === "pos_card"
                     ? "bg-brand/5 border-brand text-brand ring-1 ring-brand/20 shadow-[0_0_12px_rgba(251,207,232,0.5)]"
                     : "border-border text-ink-muted bg-surface hover:bg-surface-muted/50 hover:border-border/80"
-                }`}
+                  }`}
               >
                 <CreditCard className="w-4 h-4" /> Card
               </button>
               <button
                 onClick={() => setPaymentMethod("transfer")}
-                className={`relative py-2.5 rounded-sm border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${
-                  paymentMethod === "transfer"
+                className={`relative py-2.5 rounded-sm border text-xs font-medium flex flex-col items-center gap-1.5 transition-all ${paymentMethod === "transfer"
                     ? "bg-brand/5 border-brand text-brand ring-1 ring-brand/20 shadow-[0_0_12px_rgba(251,207,232,0.5)]"
                     : "border-border text-ink-muted bg-surface hover:bg-surface-muted/50 hover:border-border/80"
-                }`}
+                  }`}
               >
                 <QrCode className="w-4 h-4" /> QR Code
               </button>
@@ -515,28 +581,33 @@ export function POSPage() {
 
           {/* Cash details */}
           {paymentMethod === "cash" && (
-            <div className="space-y-2 animate-scale-in">
+            <div className="space-y-2 animate-scale-in border-t border-border/40 pt-2">
               <div className="flex justify-between items-center gap-3">
-                <span className="text-xs text-ink-muted">Cash Received</span>
+                <span className="text-xs font-medium text-ink-muted">Cash Received</span>
                 <Input
-                  type="number"
-                  min="0"
+                  type="text"
                   placeholder="0"
-                  value={receivedCash}
+                  value={receivedCash ? Number(receivedCash).toLocaleString("vi-VN") : ""}
                   onChange={(e) => {
-                    const val = Number(e.target.value);
-                    if (val < 0) return;
-                    setReceivedCash(e.target.value);
+                    const rawVal = e.target.value.replace(/\D/g, "");
+                    setReceivedCash(rawVal);
                   }}
-                  className="w-36 h-8 text-right text-xs"
+                  className="w-36 h-8 text-right text-xs font-semibold"
                 />
               </div>
-              {Number(receivedCash) >= total && (
-                <div className="flex justify-between text-xs font-medium text-success">
-                  <span>Change</span>
-                  <span>{changeDue.toLocaleString("vi-VN")}₫</span>
-                </div>
-              )}
+              <div className="flex justify-between text-xs font-semibold">
+                {Number(receivedCash) >= total ? (
+                  <>
+                    <span className="text-emerald-600">Change</span>
+                    <span className="text-emerald-600 font-bold">{changeDue.toLocaleString("vi-VN")}₫</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-destructive">Remaining</span>
+                    <span className="text-destructive font-bold">{(total - Number(receivedCash)).toLocaleString("vi-VN")}₫</span>
+                  </>
+                )}
+              </div>
             </div>
           )}
 
@@ -622,14 +693,27 @@ export function POSPage() {
         </DialogContent>
       </Dialog>
 
+
+
       {/* Hidden printable receipt */}
       {lastOrder && (
         <div
           id="pos-receipt-print"
-          className="hidden print:block font-mono text-xs w-[80mm] mx-auto p-4 bg-surface text-black leading-relaxed"
+          className="hidden print:block font-sans text-xs w-[80mm] mx-auto p-4 bg-white text-black leading-relaxed"
         >
           <style>{`
             @media print {
+              @page {
+                size: 80mm auto;
+                margin: 0;
+              }
+              html, body {
+                background: #fff !important;
+                color: #000 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 80mm !important;
+              }
               body * {
                 visibility: hidden !important;
               }
@@ -642,147 +726,176 @@ export function POSPage() {
                 top: 0 !important;
                 width: 80mm !important;
                 margin: 0 !important;
-                padding: 10px !important;
+                padding: 6mm 4mm !important;
                 box-shadow: none !important;
+                font-family: system-ui, -apple-system, sans-serif !important;
+                font-size: 11px !important;
+                line-height: 1.4 !important;
               }
             }
           `}</style>
 
+          {/* Store Info */}
           <div className="text-center space-y-1 mb-4">
             <h2 className="text-sm font-bold uppercase tracking-wider">
-              GLOWUP COSMETICS
+              {settings.storeName || "GLOWUP COSMETICS"}
             </h2>
-            <p className="text-[10px] text-ink-muted">{"ĐC: 123 Đường 3 Tháng 2, Quận 10, TP.HCM"}</p>
-            <p className="text-[10px] text-ink-muted">Hotline: 0901 234 567</p>
-            <p className="text-[10px] text-ink-muted">
-              ----------------------------------------
+            <p className="text-[10px] text-zinc-600">
+              {settings.storeAddress || "Add: 123 3/2 Street, District 10, HCMC"}
             </p>
-            <h3 className="text-xs font-bold mt-1">{"HÓA ĐƠN BÁN LẺ"}</h3>
-            <p className="text-[10px] font-semibold">{lastOrder.code}</p>
+            <p className="text-[10px] text-zinc-600">
+              Hotline: {settings.phone || "0901 234 567"}
+            </p>
+            <div className="border-t border-dashed border-zinc-300 my-2" />
+            <h3 className="text-xs font-bold uppercase tracking-wide mt-1">RETAIL RECEIPT</h3>
+            <p className="text-[10px] font-semibold text-zinc-800">{lastOrder.code}</p>
           </div>
 
+          {/* Transaction Metadata */}
           <div className="space-y-1 text-[10px] mb-3">
             <div className="flex justify-between">
-              <span>{"Thời gian:"}</span>
-              <span>
+              <span className="text-zinc-600">Time:</span>
+              <span className="font-medium">
                 {lastOrder.createdAt
-                  ? new Date(lastOrder.createdAt).toLocaleString("vi-VN")
-                  : new Date().toLocaleString("vi-VN")}
+                  ? new Date(lastOrder.createdAt).toLocaleString("en-US")
+                  : new Date().toLocaleString("en-US")}
               </span>
             </div>
             <div className="flex justify-between">
-              <span>{"Thu ngân:"}</span>
-              <span>{"Quản trị viên (GlowUp)"}</span>
+              <span className="text-zinc-600">Cashier:</span>
+              <span className="font-medium">Administrator ({settings.storeName || "GlowUp"})</span>
             </div>
             <div className="flex justify-between">
-              <span>{"Khách hàng:"}</span>
-              <span>{lastOrder.receiverName || "Khách lẻ tại quầy"}</span>
+              <span className="text-zinc-600">Customer:</span>
+              <span className="font-medium truncate max-w-[150px]">{lastOrder.receiverName || "Walk-in Customer"}</span>
             </div>
             {lastOrder.phone && lastOrder.phone !== "0000000000" && (
               <div className="flex justify-between">
-                <span>{"Số điện thoại:"}</span>
-                <span>{lastOrder.phone}</span>
+                <span className="text-zinc-600">Phone Number:</span>
+                <span className="font-medium">{lastOrder.phone}</span>
               </div>
             )}
           </div>
 
-          <p className="text-[10px] text-center">
-            ========================================
-          </p>
+          <div className="border-t border-dashed border-zinc-300 my-2" />
 
-          {/* Table items */}
-          <table className="w-full text-left text-[10px] my-2 border-collapse">
-            <thead>
-              <tr className="bg-surface-muted text-ink-muted border-b border-border text-left">
-                <th className="pb-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{"Tên sản phẩm"}</th>
-                <th className="pb-1 text-center w-8 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
-                  SL
-                </th>
-                <th className="pb-1 text-right w-20 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{"Đơn giá"}</th>
-                <th className="pb-1 text-right w-20 text-xs font-semibold uppercase tracking-wide whitespace-nowrap">{"T.Tiền"}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lastOrder.items?.map((item) => (
-                <tr key={item.productId} className="border-b border-border/50">
-                  <td className="py-1">
-                    <p className="font-medium text-ink">{item.productName}</p>
-                    {item.variantName && (
-                      <p className="text-xs text-ink-muted">
-                        Loại: {item.variantName}
-                      </p>
-                    )}
-                  </td>
-                  <td className="py-1 text-center">{item.quantity}</td>
-                  <td className="py-1 text-right">
-                    {item.price.toLocaleString("vi-VN")}
-                  </td>
-                  <td className="py-1 text-right">
-                    {(item.price * item.quantity).toLocaleString("vi-VN")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {/* Items List */}
+          <div className="my-3 space-y-2">
+            <div className="flex text-[10px] font-bold text-zinc-800 border-b border-zinc-200 pb-1">
+              <span className="flex-1">PRODUCT</span>
+              <span className="w-16 text-right">AMOUNT</span>
+            </div>
 
-          <p className="text-[10px] text-center">
-            ========================================
-          </p>
+            {lastOrder.items?.map((item) => (
+              <div key={item.productId || item.variantId} className="text-[10px] border-b border-zinc-100/50 pb-1">
+                {/* Row 1: Product Name & Variant Name */}
+                <div className="font-medium text-zinc-900 leading-tight">
+                  {item.productName}
+                </div>
+                {item.variantName && (
+                  <div className="text-[9px] text-zinc-500 italic mt-0.5">
+                    Type: {item.variantName}
+                  </div>
+                )}
+                {/* Row 2: Qty x Price and Subtotal */}
+                <div className="flex justify-between items-center mt-1 text-zinc-600">
+                  <span>
+                    {item.quantity} x {item.price.toLocaleString("vi-VN")}₫
+                  </span>
+                  <span className="font-semibold text-zinc-900">
+                    {(item.price * item.quantity).toLocaleString("vi-VN")}₫
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
 
+          <div className="border-t border-dashed border-zinc-300 my-2" />
+
+          {/* Totals Summary */}
           <div className="space-y-1 text-[10px] text-right mt-2">
             <div className="flex justify-between">
-              <span>{"Tạm tính:"}</span>
-              <span>{lastOrder.subtotal.toLocaleString("vi-VN")}₫</span>
+              <span className="text-zinc-600">Subtotal:</span>
+              <span className="font-medium">{lastOrder.subtotal.toLocaleString("vi-VN")}₫</span>
             </div>
-            {lastOrder.note && lastOrder.note.includes("Giảm giá:") && (
-              <div className="flex justify-between">
-                <span>{"Giảm giá:"}</span>
-                <span>
-                  {lastOrder.note
-                    .substring(lastOrder.note.indexOf("Giảm giá:") + 9)
-                    .trim()}
-                </span>
+            {lastOrder.discountAmount ? (
+              <div className="flex justify-between text-zinc-700">
+                <span className="text-zinc-600">Discount:</span>
+                <span>-{lastOrder.discountAmount.toLocaleString("vi-VN")}₫</span>
               </div>
-            )}
-            <div className="flex justify-between text-xs font-bold">
-              <span>{"Tổng tiền:"}</span>
-              <span>{lastOrder.totalAmount.toLocaleString("vi-VN")}₫</span>
+            ) : null}
+            {lastOrder.phone && lastOrder.phone !== "0000000000" && lastOrder.usedPoints ? (
+              <div className="flex justify-between text-zinc-700">
+                <span className="text-zinc-600">Points Used:</span>
+                <span>-{lastOrder.usedPoints.toLocaleString("vi-VN")}₫</span>
+              </div>
+            ) : null}
+            <div className="flex justify-between text-xs font-bold text-zinc-900 border-t border-zinc-100 pt-1 mt-1 font-sans">
+              <span>TOTAL:</span>
+              <span className="text-sm">{lastOrder.totalAmount.toLocaleString("vi-VN")}₫</span>
             </div>
-            {(lastOrder?.earnedPoints || 0) > 0 && (
-              <div className="flex justify-between text-[10px] font-medium mt-1">
-                <span>{"Điểm tích lũy:"}</span>
-                <span>+{lastOrder.earnedPoints} điểm</span>
-              </div>
-            )}
+
+            <div className="border-t border-zinc-100 my-1" />
+
+            {/* Payment & Cash details */}
             {lastOrder.paymentMethod === "transfer" && (
               <div className="flex justify-between">
-                <span>{"Thanh toán:"}</span>
-                <span className="font-semibold">{"Chuyển khoản QR"}</span>
+                <span className="text-zinc-600">Payment:</span>
+                <span className="font-semibold text-zinc-900">QR Bank Transfer</span>
               </div>
             )}
             {lastOrder.paymentMethod === "pos_card" && (
               <div className="flex justify-between">
-                <span>{"Thanh toán:"}</span>
-                <span className="font-semibold">{"Quẹt thẻ"}</span>
+                <span className="text-zinc-600">Payment:</span>
+                <span className="font-semibold text-zinc-900">POS Card Swipe</span>
               </div>
             )}
-            {lastOrder.paymentMethod === "cash" && (
-              <>
-                <div className="flex justify-between">
-                  <span>{"Khách đưa:"}</span>
-                  <span>{Number(receivedCash).toLocaleString("vi-VN")}₫</span>
-                </div>
-                <div className="flex justify-between font-semibold">
-                  <span>{"Tiền thừa trả khách:"}</span>
-                  <span>{changeDue.toLocaleString("vi-VN")}₫</span>
-                </div>
-              </>
-            )}
+            {lastOrder.paymentMethod === "cash" && (() => {
+              const getNoteValue = (noteStr: string | undefined, key: string): number | null => {
+                if (!noteStr) return null;
+                const parts = noteStr.split(" | ");
+                const part = parts.find(p => p.startsWith(key + ":"));
+                if (!part) return null;
+                const val = part.split(":")[1];
+                return Number(val) || 0;
+              };
+              const cashRec = getNoteValue(lastOrder.note, "CashReceived") ?? Number(receivedCash);
+              const change = getNoteValue(lastOrder.note, "ChangeDue") ?? changeDue;
+              return (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-600">Cash Tendered:</span>
+                    <span className="font-medium text-zinc-900">{cashRec.toLocaleString("vi-VN")}₫</span>
+                  </div>
+                  <div className="flex justify-between font-semibold text-zinc-900">
+                    <span className="text-zinc-600">Change Due:</span>
+                    <span>{change.toLocaleString("vi-VN")}₫</span>
+                  </div>
+                </>
+              );
+            })()}
+            {lastOrder.phone && lastOrder.phone !== "0000000000" && lastOrder.earnedPoints ? (
+              <div className="flex justify-between text-zinc-700 font-medium">
+                <span className="text-zinc-600">Points Earned:</span>
+                <span className="text-emerald-700">+{lastOrder.earnedPoints} pts</span>
+              </div>
+            ) : null}
           </div>
 
-          <div className="text-center space-y-1 mt-6 text-[10px]">
-            <p className="italic">{"Cảm ơn quý khách đã mua sắm tại GlowUp!"}</p>
-            <p className="text-[8px] text-ink-muted">{"Hẹn gặp lại quý khách lần sau"}</p>
+          <div className="border-t border-dashed border-zinc-300 my-2" />
+
+          {/* Receipt Footer */}
+          <div className="text-center space-y-2 mt-4 text-[9px] text-zinc-700 leading-normal">
+            <p className="italic font-medium text-[10px] text-zinc-900">
+              Cảm ơn quý khách đã mua sắm tại {settings.storeName || "GlowUp"}!
+            </p>
+            <p className="text-zinc-500 font-medium">
+              Quý khách vui lòng kiểm tra hàng trước khi thanh toán.<br />
+              Chỉ nhận đổi trả trong vòng 3 ngày kể từ ngày mua kèm theo hóa đơn này.
+            </p>
+            <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-wider mt-1">
+              www.glowup.aisq.site
+            </p>
           </div>
         </div>
       )}

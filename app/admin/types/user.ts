@@ -22,4 +22,26 @@ export interface User {
   internalNotes?: string;
   favorites?: any[];
   recentlyViewed?: any[];
+  citizenId?: string;
+  startDate?: string | Date;
+  bankInfo?: {
+    bankName?: string;
+    accountNumber?: string;
+    accountName?: string;
+  };
+  emergencyContact?: {
+    name?: string;
+    phone?: string;
+    relationship?: string;
+  };
+  homeAddress?: string;
+  employeeId?: string;
+  status?: "working" | "probation" | "suspended" | "resigned";
+  contractType?: "fulltime" | "parttime" | "probationary" | "internship";
+  workingShift?: "morning" | "afternoon" | "night" | "full";
+  salaryInfo?: {
+    baseSalary: number;
+    allowance: number;
+    commissionRate: number;
+  };
 }

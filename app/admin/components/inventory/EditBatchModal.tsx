@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BatchItem } from "../../../admin/services/inventory.service";
@@ -30,9 +29,6 @@ export default function EditBatchModal({
 
   useEffect(() => {
     if (batch && open) {
-      {
-        /* eslint-disable-next-line  */
-      }
       setFormData({
         batchCode: batch.batchCode || "",
         manufactureDate: batch.manufactureDate
@@ -60,11 +56,11 @@ export default function EditBatchModal({
           importPrice: Number(formData.importPrice) || 0,
         },
       });
-      toast.success("Cập nhật lô hàng thành công!");
+      toast.success("Batch updated successfully!");
       onSuccess();
       onOpenChange(false);
     } catch (error: any) {
-      toast.error(error.message || "Có lỗi xảy ra khi cập nhật lô hàng");
+      toast.error(error.message || "An error occurred while updating the batch");
     }
   };
 
@@ -74,10 +70,10 @@ export default function EditBatchModal({
     <BaseCrudModal
       open={open}
       onOpenChange={onOpenChange}
-      title="Chỉnh sửa lô hàng"
+      title="Edit Batch"
       size="sm"
-      primaryActionText="Lưu thay đổi"
-      secondaryActionText="Huỷ"
+      primaryActionText="Save changes"
+      secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit as any}
       isLoading={updateBatchMutation.isPending}
     >
@@ -87,7 +83,7 @@ export default function EditBatchModal({
         id="edit-batch-form"
       >
         <div className="space-y-2">
-          <Label htmlFor="batchCode">{"Mã lô"}</Label>
+          <Label htmlFor="batchCode">{"Batch Code"}</Label>
           <Input
             id="batchCode"
             value={formData.batchCode}
@@ -97,7 +93,7 @@ export default function EditBatchModal({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="importPrice">{"Giá nhập (đ)"}</Label>
+          <Label htmlFor="importPrice">{"Import Price in VND"}</Label>
           <Input
             id="importPrice"
             type="number"
@@ -113,7 +109,7 @@ export default function EditBatchModal({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="manufactureDate">{"Ngày sản xuất"}</Label>
+            <Label htmlFor="manufactureDate">{"Manufacture Date"}</Label>
             <Input
               id="manufactureDate"
               type="date"
@@ -124,7 +120,7 @@ export default function EditBatchModal({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="expiryDate">{"Hạn sử dụng"}</Label>
+            <Label htmlFor="expiryDate">{"Expiry Date"}</Label>
             <Input
               id="expiryDate"
               type="date"

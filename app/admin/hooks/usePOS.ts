@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createPOSOrder } from "@/admin/services/order.service";
+import {
+  createPOSOrder,
+  processPOSReturn,
+} from "@/admin/services/order.service";
 import { getAdminProducts } from "@/admin/services/product.service";
 
 export function usePOSProducts(search?: string) {
@@ -18,6 +21,22 @@ export function usePOSCheckout() {
       queryClient.invalidateQueries({ queryKey: ["stock"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
+    },
+  });
+}
+
+export function usePOSReturn() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      orderId: string;
+      returnItems?: any[];
+      returnReason?: string;
+    }) =>
+      processPOSReturn(data.orderId, data.returnItems, data.returnReason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
     },
   });
 }

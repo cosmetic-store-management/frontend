@@ -140,14 +140,14 @@ export function PersonalInfoPage() {
       const file = e.target.files?.[0];
       if (!file) return;
       if (file.size > MAX_AVATAR_SIZE) {
-        toast.error("Ảnh quá lớn. Tối đa 1.5 MB.");
+        toast.error("Avatar size too large. Maximum 1.5 MB.");
         return;
       }
       const reader = new FileReader();
       reader.onload = (ev) => {
         updateAvatar.mutate(ev.target?.result as string, {
-          onSuccess: () => toast.success("Cập nhật ảnh đại diện thành công!"),
-          onError: () => toast.error("Có lỗi khi cập nhật ảnh."),
+          onSuccess: () => toast.success("Avatar updated successfully!"),
+          onError: () => toast.error("Error updating avatar."),
         });
       };
       reader.readAsDataURL(file);
@@ -161,13 +161,13 @@ export function PersonalInfoPage() {
         ...data,
         dob: data.dob ? new Date(data.dob).toISOString() : undefined,
       });
-      toast.success("Cập nhật thông tin thành công!");
+      toast.success("Profile updated successfully!");
       setOtpModalData(null);
       setOtpArray(Array(6).fill(""));
       setOtpTimer(0);
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || err.message || "Cập nhật thất bại",
+        err.response?.data?.message || err.message || "Update failed",
       );
     }
   };
@@ -180,9 +180,9 @@ export function PersonalInfoPage() {
         setOtpModalData({ email: data.email, accountData: data });
         setOtpTimer(300); // 5 phút = 300 giây
         setOtpArray(Array(6).fill(""));
-        toast.success("Mã OTP đã được gửi đến email mới. Vui lòng kiểm tra.");
+        toast.success("OTP has been sent to your new email. Please check.");
       } catch (err: any) {
-        toast.error(err.response?.data?.message || "Lỗi khi gửi OTP");
+        toast.error(err.response?.data?.message || "Error sending OTP");
       }
       return;
     }
@@ -200,7 +200,7 @@ export function PersonalInfoPage() {
       });
     } catch (err: any) {
       toast.error(
-        err.response?.data?.message || "Mã OTP không đúng hoặc đã hết hạn",
+        err.response?.data?.message || "Invalid or expired OTP code",
       );
       return;
     }
@@ -215,10 +215,10 @@ export function PersonalInfoPage() {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      toast.success("Đổi mật khẩu thành công!");
+      toast.success("Password changed successfully!");
       resetPwd();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Đổi mật khẩu thất bại");
+      toast.error(err.response?.data?.message || "Failed to change password");
     }
   };
 
@@ -538,7 +538,7 @@ export function PersonalInfoPage() {
       {otpModalData &&
         createPortal(
           <div className="fixed inset-0 z-9999 flex items-center justify-center bg-black/40 px-4">
-            <div className="bg-surface w-full max-w-105 rounded-lg p-6 shadow-xl border border-border/50 animate-scale-up">
+            <div className="bg-surface w-full max-w-105 rounded-sm p-6 shadow-xl border border-border/50 animate-scale-up">
               <h2 className="text-lg font-bold text-ink mb-1">
                 Email Verification
               </h2>

@@ -40,6 +40,8 @@
   --color-brand: var(--primary);
   --color-brand-dark: var(--red-700);
   --color-brand-light: var(--red-50);
+  --color-accent-peach-500: var(--accent-peach-500);
+  --color-accent-peach-100: var(--accent-peach-100);
   --color-surface: var(--card);
   --color-surface-soft: var(--muted);
   --color-surface-muted: var(--border);
@@ -73,6 +75,10 @@
   --red-100: hsl(356, 90%, 92%);
   --red-50: hsl(357, 95%, 97%);
 
+  /* ── Accent Peach Palette (complementary) ── */
+  --accent-peach-500: hsl(20, 85%, 58%);
+  --accent-peach-100: hsl(20, 90%, 94%);
+
   /* ── Warm Neutrals (tinted with brand hue — never pure gray) ── */
   --neutral-950: hsl(345, 8%, 10%);
   --neutral-900: hsl(345, 7%, 14%);
@@ -99,8 +105,8 @@
   --secondary-foreground: var(--neutral-950);
   --muted: var(--neutral-100);
   --muted-foreground: var(--neutral-600);
-  --accent: var(--neutral-100);
-  --accent-foreground: var(--neutral-950);
+  --accent: var(--accent-peach-500);
+  --accent-foreground: #ffffff;
   --destructive: hsl(4, 80%, 52%);
   --destructive-foreground: #ffffff;
   --border: var(--neutral-200);
@@ -193,6 +199,7 @@
   }
   input[type="number"] {
     -moz-appearance: textfield;
+    appearance: textfield;
   }
   button {
     cursor: pointer;
@@ -206,13 +213,13 @@
 @layer components {
   /* Typography */
   .text-heading-1 {
-    @apply text-[24px] sm:text-[28px] font-bold text-foreground uppercase tracking-tight leading-tight;
+    @apply font-display text-[24px] sm:text-[28px] font-bold text-foreground uppercase tracking-tight leading-tight;
   }
   .text-heading-2 {
-    @apply text-[18px] sm:text-[20px] font-bold text-foreground uppercase tracking-tight leading-snug;
+    @apply font-display text-[18px] sm:text-[20px] font-bold text-foreground uppercase tracking-tight leading-snug;
   }
   .text-heading-3 {
-    @apply text-[15px] sm:text-[16px] font-bold text-foreground uppercase tracking-wide leading-snug;
+    @apply font-display text-[15px] sm:text-[16px] font-bold text-foreground uppercase tracking-wide leading-snug;
   }
 
   .text-body {
@@ -235,21 +242,21 @@
     @apply text-[13px] sm:text-[14px] font-normal text-muted-foreground line-through;
   }
 
-  /* Buttons — pill shape (youthful brand), generous padding */
+  /* Buttons — rounded-sm border-radius (brand standard), generous padding */
   .btn-base {
-    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-full disabled:opacity-50 disabled:cursor-not-allowed select-none;
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed select-none;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-full disabled:opacity-50 disabled:cursor-not-allowed select-none bg-brand text-white hover:bg-brand-dark active:scale-[0.97] px-7 py-3 tracking-wide shadow-sm hover:shadow-md;
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed select-none bg-brand text-white hover:bg-brand-dark active:scale-[0.97] px-7 py-3 tracking-wide shadow-sm hover:shadow-md;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-full disabled:opacity-50 disabled:cursor-not-allowed select-none bg-secondary text-secondary-foreground hover:bg-border active:scale-[0.97] px-7 py-3 tracking-wide;
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed select-none bg-secondary text-secondary-foreground hover:bg-border active:scale-[0.97] px-7 py-3 tracking-wide;
   }
   .btn-outline {
-    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-full disabled:opacity-50 disabled:cursor-not-allowed select-none border-2 border-brand text-brand hover:bg-brand-light active:scale-[0.97] px-7 py-3 bg-transparent tracking-wide;
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed select-none border-2 border-brand text-brand hover:bg-brand-light active:scale-[0.97] px-7 py-3 bg-transparent tracking-wide;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-full disabled:opacity-50 disabled:cursor-not-allowed select-none text-foreground hover:bg-muted hover:text-brand active:scale-[0.97] px-7 py-3 bg-transparent tracking-wide;
+    @apply inline-flex items-center justify-center font-semibold transition-all duration-200 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed select-none text-foreground hover:bg-muted hover:text-brand active:scale-[0.97] px-7 py-3 bg-transparent tracking-wide;
   }
 
   /* Badges */
@@ -257,7 +264,7 @@
     @apply inline-flex items-center justify-center font-bold rounded-sm px-2 py-0.5 text-[10px] tracking-wider uppercase bg-brand text-white;
   }
   .badge-new {
-    @apply inline-flex items-center justify-center font-bold rounded-sm px-2 py-0.5 text-[10px] tracking-wider uppercase bg-[#059669] text-white;
+    @apply inline-flex items-center justify-center font-bold rounded-sm px-2 py-0.5 text-[10px] tracking-wider uppercase bg-accent-peach-500 text-white;
   }
   .badge-premium {
     @apply inline-flex items-center justify-center font-bold rounded-sm px-2 py-0.5 text-[10px] tracking-wider uppercase bg-[#d97706] text-white;
@@ -582,6 +589,23 @@
     scrollbar-width: none;
   }
 }
-body { top: 0 !important; }
-.goog-te-banner-frame { display: none !important; }
-#google_translate_element { display: none !important; }
+/* Hide Google Translate top banner completely */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.skiptranslate,
+.goog-te-banner,
+#goog-te-banner-frame,
+.skiptranslate {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Hide default date picker calendar icon in webkit browsers */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none;
+}

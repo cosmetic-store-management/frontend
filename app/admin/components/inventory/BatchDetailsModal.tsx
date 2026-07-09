@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
-import { PackageSearch, History, MoreVertical, Edit } from "lucide-react";
+import { PackageSearch, MoreVertical, Edit } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,9 +46,6 @@ export default function BatchDetailsModal({
 
   useEffect(() => {
     if (open && item) {
-      {
-        /* eslint-disable-next-line  */
-      }
       fetchBatches();
     } else {
       setBatches([]);
@@ -62,8 +59,8 @@ export default function BatchDetailsModal({
       <BaseCrudModal
         open={open}
         onOpenChange={onOpenChange}
-        title="Chi tiết các lô hàng"
-        description={`${item.name} (${item.sku})`}
+        title="Batch Details"
+        description={`${item.name} ${item.sku}`}
         size="xl"
         hideFooter={true}
       >
@@ -72,15 +69,15 @@ export default function BatchDetailsModal({
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="bg-surface-soft/50 border-b border-border text-ink-muted">
-                  <th className="py-2.5 px-4 font-semibold text-center">{"Mã lô"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Batch Code"}</th>
                   <th className="py-2.5 px-4 font-semibold text-center">
-                    NSX - HSD
+                    MFG - EXP
                   </th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{"Ngày nhập"}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{"Giá nhập"}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{"SL Ban đầu"}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center">{"SL Còn lại"}</th>
-                  <th className="py-2.5 px-4 font-semibold text-center w-20">{"Thao tác"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Import Date"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Import Price"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Initial Qty"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center">{"Remaining Qty"}</th>
+                  <th className="py-2.5 px-4 font-semibold text-center w-20">{"Actions"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -95,8 +92,8 @@ export default function BatchDetailsModal({
                     <td colSpan={7} className="p-0">
                       <EmptyState
                         icon={PackageSearch}
-                        title="Không có lô hàng"
-                        description="Sản phẩm này hiện chưa có lô hàng nào còn tồn."
+                        title="No Batches Found"
+                        description="No active batches found for this product."
                       />
                     </td>
                   </tr>
@@ -131,7 +128,7 @@ export default function BatchDetailsModal({
                         </div>
                       </td>
                       <td className="py-3 px-4 text-center text-ink">
-                        {batch.importPrice.toLocaleString("vi-VN")}₫
+                        {batch.importPrice.toLocaleString("en-US")} VND
                       </td>
                       <td className="py-3 px-4 text-center text-ink">
                         {batch.originalQty}
@@ -157,7 +154,7 @@ export default function BatchDetailsModal({
                                 setIsEditModalOpen(true);
                               }}
                             >
-                              <Edit className="w-4 h-4 mr-2" />{"Chỉnh sửa"}</DropdownMenuItem>
+                              <Edit className="w-4 h-4 mr-2" />{"Edit"}</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </td>

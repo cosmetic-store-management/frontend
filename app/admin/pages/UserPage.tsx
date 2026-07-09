@@ -234,8 +234,8 @@ export function UserPage() {
           </Button>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
-            <div className="group relative w-full sm:max-w-xs">
+          <div className="flex flex-wrap items-center gap-3 w-full">
+            <div className="group relative w-full sm:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted group-focus-within:text-brand" />
               <Input
                 placeholder="Search by name, email, phone..."
@@ -254,47 +254,44 @@ export function UserPage() {
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <Select value={roleFilter} onValueChange={handleRoleChange}>
-                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
-                  <SelectValue placeholder="Role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="owner">Store Owner</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
-                  <SelectItem value="staff">Staff</SelectItem>
-                </SelectContent>
-              </Select>
+            <Select value={roleFilter} onValueChange={handleRoleChange}>
+              <SelectTrigger className="w-[160px] h-10 rounded-sm border-border bg-surface text-sm text-ink-muted px-3 focus-visible:ring-brand/20">
+                <SelectValue placeholder="Role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="owner">Store Owner</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+                <SelectItem value="staff">Staff</SelectItem>
+              </SelectContent>
+            </Select>
 
-              <Select value={statusFilter} onValueChange={handleStatusChange}>
-                <SelectTrigger className="w-fit h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Locked</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            <Select value={statusFilter} onValueChange={handleStatusChange}>
+              <SelectTrigger className="w-[160px] h-10 border-border bg-surface text-sm text-ink-muted rounded-sm px-3 focus-visible:ring-brand/20">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Locked</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         }
       />
 
       {/* Staff List Table */}
       <div className="premium-card rounded-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table className="min-w-200 table-fixed">
-            <TableHeader>
-              <TableRow className="bg-surface-muted border-b border-border">
-                <TableHead className="w-[25%] text-center">Staff</TableHead>
-                <TableHead className="w-[25%] text-center">Contact</TableHead>
-                <TableHead className="text-center w-[20%]">Role</TableHead>
-                <TableHead className="text-center w-[20%]">Status</TableHead>
-                <TableHead className="text-center w-[10%]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+        <Table className="min-w-[1000px] table-fixed">
+          <TableHeader>
+            <TableRow className="bg-surface-muted border-b border-border">
+              <TableHead className="w-64 text-center">Staff</TableHead>
+              <TableHead className="w-72 text-center">Contact</TableHead>
+              <TableHead className="w-44 text-center">Role</TableHead>
+              <TableHead className="w-44 text-center">Status</TableHead>
+              <TableHead className="w-28 pl-4 pr-8 text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
             <TableBody>
               {isLoading ? (
                 <TableRow>
@@ -324,7 +321,7 @@ export function UserPage() {
                     className={`hover:bg-bg/40 ${user.isActive === false ? "opacity-60 bg-surface-muted/30" : ""}`}
                     style={{ "--i": i } as React.CSSProperties}
                   >
-                    <TableCell className="align-middle pl-4">
+                    <TableCell className="align-middle text-center">
                       <span className="font-medium text-ink-muted text-base leading-tight">
                         {user.name}
                       </span>
@@ -357,7 +354,7 @@ export function UserPage() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="align-middle text-center">
+                    <TableCell className="align-middle text-center pl-4 pr-8">
                       <div className="flex items-center justify-center">
                         {(isOwner || (isManager && user.role === "staff")) && (
                           <DropdownMenu>
@@ -440,7 +437,6 @@ export function UserPage() {
               )}
             </TableBody>
           </Table>
-        </div>
 
         {/* Pagination UI */}
         {data && data.totalPages > 1 && (
@@ -523,12 +519,12 @@ export function UserPage() {
 
       <DeleteModal
         open={!!deleteTarget}
-        title="Xóa tài khoản"
+        title="Delete Account"
         description={
           <>
-            Bạn có chắc chắn muốn xóa tài khoản của nhân viên{" "}
-            <span className="font-bold text-ink">{deleteTarget?.name}</span>{" "}
-            không? Hành động này không thể hoàn tác.
+            Are you sure you want to delete the account for staff member{" "}
+            <span className="font-bold text-ink">{deleteTarget?.name}</span>?
+            This action cannot be undone.
           </>
         }
         onClose={() => setDeleteTarget(null)}
@@ -536,16 +532,16 @@ export function UserPage() {
           if (!deleteTarget) return;
           deleteStaffMutation.mutate(deleteTarget.id, {
             onSuccess: () => {
-              toast.success("Đã xóa tài khoản thành công");
+              toast.success("Account deleted successfully");
               setDeleteTarget(null);
             },
             onError: (err: any) => {
-              toast.error(err.message || "Xóa tài khoản thất bại");
+              toast.error(err.message || "Delete account failed");
             },
           });
         }}
         loading={deleteStaffMutation.isPending}
-        confirmText="Xóa ngay"
+        confirmText="Delete Now"
       />
     </div>
   );

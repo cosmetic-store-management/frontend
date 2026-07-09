@@ -122,7 +122,7 @@ export function BaseCrudModal({
               className={cn(
                 "flex-1 sm:flex-none rounded-sm font-medium px-6 shadow-sm transition-all",
                 !isDanger &&
-                  "bg-brand hover:bg-brand-hover text-brand-foreground",
+                  "bg-brand hover:bg-brand-dark text-white",
               )}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

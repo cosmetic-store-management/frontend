@@ -91,11 +91,11 @@ export default function ProductEditPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <PageHeader
-          title="Chỉnh sửa sản phẩm"
+          title="Edit Product"
           description={
             product
-              ? `Cập nhật thông tin cho sản phẩm ${product.name}`
-              : "Đang tải dữ liệu..."
+              ? `Update details for product ${product.name}`
+              : "Loading data..."
           }
           error={error || (fetchError as Error)?.message}
           onClearError={clearError}
@@ -120,8 +120,8 @@ export default function ProductEditPage() {
           />
         ) : (
           <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-ink-muted">
-            <p>{"Không tìm thấy thông tin sản phẩm."}</p>
-            <Button variant="outline" onClick={handleCancel} className="mt-4">{"Quay lại"}</Button>
+            <p>{"Product details not found."}</p>
+            <Button variant="outline" onClick={handleCancel} className="mt-4">{"Back"}</Button>
           </div>
         )}
       </div>

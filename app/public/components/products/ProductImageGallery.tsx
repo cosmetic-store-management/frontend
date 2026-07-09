@@ -78,7 +78,7 @@ export function ProductImageGallery({
   return (
     <div className="space-y-3 w-full">
       {/* Main image — crossfade */}
-      <div className="relative aspect-square rounded-sm overflow-hidden border border-border bg-surface-soft">
+      <div className="relative aspect-[3/4] rounded-sm overflow-hidden border border-border bg-surface-soft">
         {/* Layer 1: background (luôn hiển thị) */}
         <img
           src={bgSrc}
@@ -101,7 +101,7 @@ export function ProductImageGallery({
         )}
 
         {!isActive && (
-          <div className="absolute top-3 left-3 bg-ink text-white text-xs font-bold px-3 py-1.5 rounded-sm uppercase tracking-wider z-10">{"Ngừng kinh doanh"}</div>
+          <div className="absolute top-3 left-3 bg-ink text-white text-xs font-bold px-3 py-1.5 rounded-sm uppercase tracking-wider z-10">{"Discontinued"}</div>
         )}
       </div>
 

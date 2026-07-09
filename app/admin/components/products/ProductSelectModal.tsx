@@ -1,28 +1,9 @@
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useAdminProductsSelector } from "@/admin/hooks/useProducts";
-import { useBrands } from "@/admin/hooks/useBrand";
-import { useCategories } from "@/admin/hooks/useCategory";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Search, Loader2, X } from "lucide-react";
-import { useDebounce } from "@/hooks/useDebounce";
-import { Pagination } from "@/components/ui/pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -31,50 +12,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { getAdminProducts } from "@/admin/services/product.service";
+import { useCategories } from "@/admin/hooks/useCategory";
+import { useBrands } from "@/admin/hooks/useBrand";
+import { useQuery } from "@tanstack/react-query";
+import { Pagination } from "@/components/ui/pagination";
+import { useDebounce } from "@/hooks/useDebounce";
 import { formatCurrency } from "@/lib/utils";
+
+interface SelectedProduct {
+  productId: string;
+  productName: string | undefined;
+  productImage: string | undefined;
+  variantId: string;
+  variantName: string | undefined;
+  sku: string | undefined;
+  originalPrice: number;
+  stock: number;
+}
 
 interface ProductSelectModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialSelectedVariants: any[];
-  onConfirm: (variants: any[]) => void;
+  initialSelectedVariants?: SelectedProduct[];
+  onConfirm: (selected: SelectedProduct[]) => void;
 }
 
 export function ProductSelectModal({
   open,
   onOpenChange,
-  initialSelectedVariants,
+  initialSelectedVariants = [],
   onConfirm,
 }: ProductSelectModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const [page, setPage] = useState(1);
-  const [categoryId, setCategoryId] = useState<string>("all");
-  const [brandId, setBrandId] = useState<string>("all");
-  const [minStock, setMinStock] = useState<string>("");
+
+  const [categoryId, setCategoryId] = useState("all");
+  const [brandId, setBrandId] = useState("all");
+  const [minStock, setMinStock] = useState("");
   const debouncedMinStock = useDebounce(minStock, 500);
-  const [localSelected, setLocalSelected] = useState<any[]>([]);
-  const [pinnedVariants, setPinnedVariants] = useState<any[]>([]);
 
+  const [page, setPage] = useState(1);
+  const [localSelected, setLocalSelected] = useState<SelectedProduct[]>([]);
+
+  // Filter pinned variants locally if they match search criteria
   const filteredPinnedVariants = React.useMemo(() => {
-    if (!debouncedSearch) return pinnedVariants;
+    if (!debouncedSearch) return initialSelectedVariants;
     const lower = debouncedSearch.toLowerCase();
-    return pinnedVariants.filter(
-      (v) =>
-        v.productName?.toLowerCase().includes(lower) ||
-        v.sku?.toLowerCase().includes(lower),
+    return initialSelectedVariants.filter(
+      (pv) =>
+        pv.productName?.toLowerCase().includes(lower) ||
+        pv.sku?.toLowerCase().includes(lower),
     );
-  }, [pinnedVariants, debouncedSearch]);
+  }, [initialSelectedVariants, debouncedSearch]);
 
-  // When modal opens, we initialize localSelected with the already selected variants.
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
-      {
-        /* eslint-disable-next-line  */
-      }
-      setLocalSelected([...initialSelectedVariants]);
-      setPinnedVariants([...initialSelectedVariants]);
+      setLocalSelected(initialSelectedVariants);
       setSearchTerm("");
       setCategoryId("all");
       setBrandId("all");
@@ -83,31 +84,24 @@ export function ProductSelectModal({
     }
   }, [open, initialSelectedVariants]);
 
-  React.useEffect(() => {
-    {
-      /* eslint-disable-next-line  */
-    }
-    setPage(1);
-  }, [debouncedSearch, categoryId, brandId, debouncedMinStock]);
-
-  const { data: productsData, isLoading } = useAdminProductsSelector(
-    {
-      search: debouncedSearch,
-      limit: 10,
-      page: page,
-      category: categoryId === "all" ? undefined : categoryId,
-      brandId: brandId === "all" ? undefined : brandId,
-      minStock: debouncedMinStock ? Number(debouncedMinStock) : undefined,
-    },
-    { enabled: open },
-  );
+  const { data: productsData, isLoading } = useQuery({
+    queryKey: ["admin", "products-select", page, debouncedSearch, categoryId, brandId, debouncedMinStock],
+    queryFn: () =>
+      getAdminProducts({
+        page,
+        limit: 10,
+        search: debouncedSearch || undefined,
+        category: categoryId !== "all" ? categoryId : undefined,
+        brandId: brandId !== "all" ? brandId : undefined,
+        minStock: debouncedMinStock ? Number(debouncedMinStock) : undefined,
+      }),
+    enabled: open,
+  });
 
   const { data: categories } = useCategories();
   const { data: brands } = useBrands();
 
-  const data = productsData;
-
-  const products = data?.products || [];
+  const products = productsData?.products || [];
 
   const handleToggle = (variant: any, product: any, checked: boolean) => {
     if (checked) {
@@ -140,8 +134,8 @@ export function ProductSelectModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl w-[95vw] h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
         <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
-          <DialogTitle className="text-xl font-bold text-ink">{"Chọn sản phẩm"}</DialogTitle>
-          <DialogDescription className="text-sm text-ink-muted">{"Tìm kiếm và chọn sản phẩm/biến thể cần thiết."}</DialogDescription>
+          <DialogTitle className="text-xl font-bold text-ink">{"Select Product"}</DialogTitle>
+          <DialogDescription className="text-sm text-ink-muted">{"Search and select the required products or variants."}</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col flex-1 overflow-hidden">
@@ -150,7 +144,7 @@ export function ProductSelectModal({
             <div className="group relative w-full sm:w-70">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
               <Input
-                placeholder="Tìm tên sản phẩm hoặc SKU..."
+                placeholder="Search product name or SKU..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="h-10 border-border bg-background pl-9 pr-9 text-sm focus-visible:border-brand focus-visible:ring-brand/20"
@@ -168,10 +162,10 @@ export function ProductSelectModal({
             <div className="w-full sm:w-auto">
               <Select value={categoryId} onValueChange={setCategoryId}>
                 <SelectTrigger className="w-full sm:w-40 h-10 bg-background border-border">
-                  <SelectValue placeholder="Danh mục" />
+                  <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  <SelectItem value="all">{"Tất cả danh mục"}</SelectItem>
+                  <SelectItem value="all">{"All Categories"}</SelectItem>
                   {categories?.categories?.map((cat: any) => (
                     <SelectItem key={cat.id} value={cat.slug || cat.id}>
                       {cat.name}
@@ -183,10 +177,10 @@ export function ProductSelectModal({
             <div className="w-full sm:w-auto">
               <Select value={brandId} onValueChange={setBrandId}>
                 <SelectTrigger className="w-full sm:w-40 h-10 bg-background border-border">
-                  <SelectValue placeholder="Thương hiệu" />
+                  <SelectValue placeholder="Brand" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
-                  <SelectItem value="all">{"Tất cả thương hiệu"}</SelectItem>
+                  <SelectItem value="all">{"All Brands"}</SelectItem>
                   {brands?.brands?.map((brand: any) => (
                     <SelectItem key={brand.id} value={brand.id}>
                       {brand.name}
@@ -198,7 +192,7 @@ export function ProductSelectModal({
             <div className="w-full sm:w-25">
               <Input
                 type="number"
-                placeholder="Tồn kho..."
+                placeholder="Stock..."
                 value={minStock}
                 onChange={(e) => setMinStock(e.target.value)}
                 className="w-full h-10 border-border bg-background focus-visible:border-brand focus-visible:ring-brand/20"
@@ -214,9 +208,9 @@ export function ProductSelectModal({
               <TableHeader className="bg-muted/30 sticky top-0 z-10 shadow-sm">
                 <TableRow>
                   <TableHead className="w-12 text-center bg-muted/30"></TableHead>
-                  <TableHead className="bg-muted/30">{"Sản phẩm"}</TableHead>
-                  <TableHead className="text-center w-25 bg-muted/30">{"Tồn Kho"}</TableHead>
-                  <TableHead className="text-center w-37.5 bg-muted/30">{"Giá gốc"}</TableHead>
+                  <TableHead className="bg-muted/30">{"Product"}</TableHead>
+                  <TableHead className="text-center w-25 bg-muted/30">{"Stock"}</TableHead>
+                  <TableHead className="text-center w-37.5 bg-muted/30">{"Original Price"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -232,7 +226,7 @@ export function ProductSelectModal({
                     <TableCell
                       colSpan={4}
                       className="h-32 text-center text-muted-foreground"
-                    >{"Không tìm thấy sản phẩm"}</TableCell>
+                    >{"Product not found"}</TableCell>
                   </TableRow>
                 ) : (
                   <>
@@ -307,7 +301,7 @@ export function ProductSelectModal({
                         const variant = product.variants[0];
                         return (
                           variant &&
-                          !pinnedVariants.some(
+                          !initialSelectedVariants.some(
                             (pv) => pv.variantId === variant.id,
                           )
                         );
@@ -387,9 +381,9 @@ export function ProductSelectModal({
         {/* Custom Footer */}
         <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 flex flex-col sm:flex-row items-center sm:justify-between justify-between gap-4">
           <span className="text-sm text-ink-muted">
-            Đã chọn:{" "}
+            Selected:{" "}
             <strong className="text-ink font-semibold">{localSelected.length}</strong>{" "}
-            sản phẩm
+            products
           </span>
           <div className="flex gap-3">
             <Button
@@ -398,14 +392,14 @@ export function ProductSelectModal({
               onClick={() => onOpenChange(false)}
               className="rounded-sm font-medium px-5"
             >
-              Huỷ
+              Cancel
             </Button>
             <Button
               type="button"
               onClick={handleConfirm}
               disabled={localSelected.length === 0}
               className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-hover text-white shadow-ui-soft"
-            >{"Xác nhận"}</Button>
+            >{"Confirm"}</Button>
           </div>
         </DialogFooter>
       </DialogContent>

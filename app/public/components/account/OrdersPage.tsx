@@ -220,14 +220,14 @@ export function OrdersPage() {
                         #{order.code}
                       </span>
                       {order.channel === "pos" && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-sm bg-brand/10 text-brand font-medium">
+                        <span className="text-[10px] px-2 py-0.5 rounded-[3px] bg-brand/10 text-brand font-medium">
                           In-store
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       <span
-                        className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-sm ${meta.className}`}
+                        className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-[3px] ${meta.className}`}
                       >
                         <StatusIcon className="w-3 h-3" />
                         {meta.label}
@@ -341,7 +341,7 @@ export function OrdersPage() {
                         <div className="flex justify-between items-center">
                           <span className="text-xs text-ink-muted">Status</span>
                           <span
-                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-sm ${order.paymentStatus === "paid"
+                            className={`text-[11px] font-semibold px-2.5 py-1 rounded-[3px] ${order.paymentStatus === "paid"
                                 ? "bg-success/10 text-success"
                                 : order.paymentStatus === "failed"
                                   ? "bg-danger/10 text-danger"

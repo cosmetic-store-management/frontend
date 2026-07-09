@@ -182,7 +182,7 @@ export function ProductCatalogPage() {
                                 className="w-4 h-4 text-brand bg-surface border-border focus:ring-brand accent-brand rounded-sm cursor-pointer"
                               />
                               <span
-                                className={`text-sm transition-colors leading-tight ${selectedBrands.includes(brand.id) ? "font-semibold text-ink" : "text-ink-muted group-hover:text-brand"}`}
+                                className={`text-sm transition-colors leading-tight notranslate ${selectedBrands.includes(brand.id) ? "font-semibold text-ink" : "text-ink-muted group-hover:text-brand"}`}
                               >
                                 {brand.name}
                               </span>
@@ -307,7 +307,7 @@ export function ProductCatalogPage() {
                 </span>
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-1.5 rounded-lg hover:bg-muted transition-colors"
+                  className="p-1.5 rounded-sm hover:bg-muted transition-colors"
                 >
                   <X className="w-5 h-5 text-muted-foreground" />
                 </button>
@@ -350,7 +350,7 @@ export function ProductCatalogPage() {
               <div className="p-4 border-t border-border">
                 <button
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="btn-hover w-full text-white font-bold py-3 rounded-xl transition-all shadow-sm"
+                  className="btn-hover w-full text-white font-bold py-3 rounded-sm transition-all shadow-sm"
                   style={{ background: "hsl(352, 72%, 52%)" }}
                 >
                   Show results

@@ -48,6 +48,7 @@ export default [
       route("products/:id/edit", "./routes/admin/product-edit.tsx"),
       route("categories", "./routes/admin/category.tsx"),
       route("brands", "./routes/admin/brand.tsx"),
+      route("suppliers", "./routes/admin/supplier.tsx"),
       route("customers", "./routes/admin/customer.tsx"),
       route("staff", "./routes/admin/staff.tsx"),
       route("reports", "./routes/admin/report.tsx"),

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -37,6 +37,13 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -46,6 +53,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
+import { formatCurrency } from "@/lib/utils";
+import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { PageHeader } from "../components/common/PageHeader";
 import {
   useBrands,
@@ -54,6 +63,7 @@ import {
   useToggleBrandStatus,
   useDeleteBrand,
 } from "../hooks/useBrand";
+import { useSuppliers, useCreateSupplier } from "../hooks/useInventory";
 import type { Brand } from "@/admin/services/brand.service";
 import { brandSchema, type BrandFormData } from "../schemas/brand.schema";
 
@@ -63,22 +73,48 @@ const EMPTY_FORM: BrandFormData = {
   imageUrl: "",
   country: "",
   isActive: true,
+  website: "",
+  contactPhone: "",
+  contactEmail: "",
+  supplierName: "",
+  minimumOrderValue: 0,
+  leadTimeDays: 7,
+  supplierId: "",
 };
 
 export function BrandPage() {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [countryFilter, setCountryFilter] = useState<string>("");
   const [page, setPage] = useState(1);
 
   const [editing, setEditing] = useState<Brand | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Brand | null>(null);
+  const [viewingDetails, setViewingDetails] = useState<Brand | null>(null);
+
+  // New Supplier Local States
+  const [isNewSupplier, setIsNewSupplier] = useState(false);
+  const [newSupName, setNewSupName] = useState("");
+  const [newSupPhone, setNewSupPhone] = useState("");
+  const [newSupEmail, setNewSupEmail] = useState("");
+  const [newSupAddress, setNewSupAddress] = useState("");
+  const [newSupError, setNewSupError] = useState("");
+
+  const clearNewSupplierForm = () => {
+    setNewSupName("");
+    setNewSupPhone("");
+    setNewSupEmail("");
+    setNewSupAddress("");
+    setNewSupError("");
+  };
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<BrandFormData>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,12 +124,13 @@ export function BrandPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, statusFilter]);
+  }, [debouncedSearch, statusFilter, countryFilter]);
 
   // Paginated list (current filter)
   const { data, isLoading } = useBrands({
     search: debouncedSearch || undefined,
     status: statusFilter || undefined,
+    country: (countryFilter && countryFilter !== "all_countries") ? countryFilter : undefined,
     page: page,
     limit: 10,
   });
@@ -106,6 +143,16 @@ export function BrandPage() {
   const activeCount = allBrands.filter((b) => b.isActive).length;
   const inactiveCount = allBrands.filter((b) => !b.isActive).length;
 
+  const countriesList = useMemo(() => {
+    const countries = allBrands
+      .map((b) => b.country?.trim())
+      .filter((c): c is string => !!c);
+    return Array.from(new Set(countries)).sort();
+  }, [allBrands]);
+
+  const { data: suppliers = [] } = useSuppliers();
+  const createSupplierMutation = useCreateSupplier();
+
   const createMutation = useCreateBrand();
   const updateMutation = useUpdateBrand();
   const toggleMutation = useToggleBrandStatus();
@@ -113,17 +160,28 @@ export function BrandPage() {
 
   const openCreate = () => {
     setEditing(null);
+    setIsNewSupplier(false);
+    clearNewSupplierForm();
     reset(EMPTY_FORM);
     setIsFormOpen(true);
   };
   const openEdit = (brand: Brand) => {
     setEditing(brand);
+    setIsNewSupplier(false);
+    clearNewSupplierForm();
     reset({
       name: brand.name,
       description: brand.description || "",
       imageUrl: brand.imageUrl || "",
       country: brand.country || "",
       isActive: brand.isActive,
+      website: brand.website || "",
+      contactPhone: brand.contactPhone || "",
+      contactEmail: brand.contactEmail || "",
+      supplierName: brand.supplierName || "",
+      minimumOrderValue: brand.minimumOrderValue || 0,
+      leadTimeDays: brand.leadTimeDays || 7,
+      supplierId: brand.supplierId || "",
     });
     setIsFormOpen(true);
   };
@@ -140,12 +198,44 @@ export function BrandPage() {
     });
   };
 
-  const onSubmitForm = (formData: BrandFormData) => {
+  const onSubmitForm = async (formData: BrandFormData) => {
+    let finalSupplierId = formData.supplierId || null;
+
+    if (isNewSupplier) {
+      if (!newSupName.trim() || !newSupPhone.trim()) {
+        setNewSupError("Supplier Name and Phone are required");
+        return;
+      }
+      setNewSupError("");
+
+      try {
+        const newSup = await createSupplierMutation.mutateAsync({
+          name: newSupName.trim(),
+          phone: newSupPhone.trim(),
+          email: newSupEmail.trim(),
+          address: newSupAddress.trim(),
+        });
+        finalSupplierId = newSup.id;
+      } catch (err) {
+        toast.error("Failed to create supplier");
+        return;
+      }
+    }
+
+    const payload = {
+      ...formData,
+      supplierId: finalSupplierId,
+    };
+
     if (editing) {
       toast.promise(
         updateMutation
-          .mutateAsync({ id: editing.id, data: formData as any })
-          .then(() => setIsFormOpen(false)),
+          .mutateAsync({ id: editing.id, data: payload as any })
+          .then(() => {
+            setIsFormOpen(false);
+            setIsNewSupplier(false);
+            clearNewSupplierForm();
+          }),
         {
           loading: "Saving...",
           success: "Brand updated successfully!",
@@ -155,8 +245,12 @@ export function BrandPage() {
     } else {
       toast.promise(
         createMutation
-          .mutateAsync(formData as any)
-          .then(() => setIsFormOpen(false)),
+          .mutateAsync(payload as any)
+          .then(() => {
+            setIsFormOpen(false);
+            setIsNewSupplier(false);
+            clearNewSupplierForm();
+          }),
         {
           loading: "Creating...",
           success: "Brand created successfully!",
@@ -196,7 +290,7 @@ export function BrandPage() {
           </Button>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-wrap items-center gap-3 w-full">
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
@@ -206,27 +300,36 @@ export function BrandPage() {
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
-            <div className="inline-flex self-start items-center p-1 bg-muted/60 rounded-md">
-              {(
-                [
-                  ["", "All"],
-                  ["active", "Active"],
-                  ["inactive", "Inactive"],
-                ] as const
-              ).map(([val, label]) => (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={() => setStatusFilter(val)}
-                  className={`inline-flex h-8 items-center justify-center px-4 text-sm transition-all rounded-sm ${
-                    statusFilter === val
-                      ? "bg-surface text-brand shadow-sm font-medium"
-                      : "text-ink-muted hover:text-ink font-normal"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+
+            {/* Country Origin Filter */}
+            <div className="w-full sm:w-48 text-left">
+              <Select value={countryFilter || "all_countries"} onValueChange={setCountryFilter}>
+                <SelectTrigger className="h-10 border-border bg-surface text-sm text-ink-muted focus-visible:ring-brand/20">
+                  <SelectValue placeholder="All Countries" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all_countries">All Countries</SelectItem>
+                  {countriesList.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {c}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Status Dropdown */}
+            <div className="w-full sm:w-40 text-left">
+              <Select value={statusFilter || "all"} onValueChange={(val) => setStatusFilter(val === "all" ? "" : val)}>
+                <SelectTrigger className="h-10 border-border bg-surface text-sm text-ink-muted focus-visible:ring-brand/20">
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         }
@@ -283,156 +386,207 @@ export function BrandPage() {
             ))}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table className="min-w-200 table-fixed">
-              <TableHeader>
-                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="py-4 px-5 w-[25%] text-center">
-                    Brand
-                  </TableHead>
-                  <TableHead className="py-4 px-5 w-[15%] text-center">
-                    Origin
-                  </TableHead>
-                  <TableHead className="py-4 px-5 w-[30%] text-center">
-                    Description
-                  </TableHead>
-                  <TableHead className="py-4 px-5 text-center w-[12%]">
-                    Products
-                  </TableHead>
-                  <TableHead className="py-4 px-5 text-center w-[10%]">
-                    Visibility
-                  </TableHead>
-                  <TableHead className="py-4 px-5 text-center w-[8%]">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {brands.map((brand, i) => (
-                  <TableRow
-                    key={brand.id}
-                    className="animate-stagger group"
-                    style={{ "--i": i } as React.CSSProperties}
-                  >
-                    {/* Logo + Name + Slug */}
-                    <TableCell className="py-3.5 px-5 overflow-hidden max-w-0">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
-                          <img
-                            src={
-                              brand.imageUrl ||
-                              "https://placehold.co/80x80?text=Logo"
-                            }
-                            alt={brand.name}
-                            className="w-full h-full object-contain p-0.5"
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="block truncate font-semibold text-ink text-sm">
-                            {brand.name}
-                          </span>
-                          <span className="block truncate text-[11px] font-mono text-ink-muted/70">
-                            {brand.slug}
-                          </span>
-                        </div>
-                      </div>
-                    </TableCell>
-
-                    {/* Country (badge — single column, per user request) */}
-                    <TableCell className="py-3.5 px-5 text-center overflow-hidden max-w-0">
-                      {brand.country ? (
-                        <span className="inline-flex px-2 py-0.5 rounded-sm bg-bg text-xs font-medium text-ink-muted border border-border truncate max-w-full">
-                          {brand.country}
+          <Table className="min-w-[900px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="py-4 px-5 w-52 text-center">
+                  Brand
+                </TableHead>
+                <TableHead className="py-4 px-3 w-32 text-center">
+                  Origin
+                </TableHead>
+                <TableHead className="py-4 px-5 w-52 text-center">
+                  Supplier Info
+                </TableHead>
+                <TableHead className="py-4 px-5 w-48 text-center">
+                  Description
+                </TableHead>
+                <TableHead className="py-4 px-5 w-28 text-center">
+                  Products
+                </TableHead>
+                <TableHead className="py-4 px-5 w-28 text-center">
+                  Visibility
+                </TableHead>
+                <TableHead className="py-4 pl-5 pr-8 text-center w-24">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {brands.map((brand, i) => (
+                <TableRow
+                  key={brand.id}
+                  className="animate-stagger group"
+                >
+                  {/* Logo + Name + Slug + Website */}
+                  <TableCell className="py-3.5 px-5 text-center">
+                    <div className="flex items-center justify-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setViewingDetails(brand)}
+                        className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden hover:border-brand transition-colors focus:outline-none"
+                        title="Click to view details"
+                      >
+                        <img
+                          src={
+                            brand.imageUrl ||
+                            "https://placehold.co/80x80?text=Logo"
+                          }
+                          alt={brand.name}
+                          className="w-full h-full object-contain p-0.5"
+                          loading="lazy"
+                        />
+                      </button>
+                      <div className="min-w-0 text-left">
+                        <button
+                          type="button"
+                          onClick={() => setViewingDetails(brand)}
+                          className="block truncate font-semibold text-ink text-sm hover:text-brand hover:underline transition-colors text-left focus:outline-none"
+                          title="Click to view details"
+                        >
+                          {brand.name}
+                        </button>
+                        <span className="block truncate text-[11px] font-mono text-ink-muted/70">
+                          {brand.slug}
                         </span>
-                      ) : (
-                        <span className="text-ink-muted/40 text-sm">—</span>
-                      )}
-                    </TableCell>
-
-                    {/* Description */}
-                    <TableCell className="py-3.5 px-5 text-ink-muted overflow-hidden max-w-0">
-                      <span
-                        className="block truncate text-sm"
-                        title={brand.description || undefined}
-                      >
-                        {brand.description || (
-                          <span className="italic text-ink-muted/40">
-                            No description
-                          </span>
-                        )}
-                      </span>
-                    </TableCell>
-
-                    {/* Product count — industry standard (dynamic, per-brand) */}
-                    <TableCell className="py-3.5 px-5 text-center">
-                      <span
-                        className={`inline-flex items-center gap-1 text-sm font-semibold tabular-nums ${
-                          (brand.productCount ?? 0) > 0
-                            ? "text-ink"
-                            : "text-ink-muted/40"
-                        }`}
-                      >
-                        <Package className="w-3.5 h-3.5 opacity-60" />
-                        {brand.productCount ?? 0}
-                      </span>
-                    </TableCell>
-
-                    {/* Status toggle (Switch only — per user request) */}
-                    <TableCell className="py-3.5 px-5 text-center">
-                      <Switch
-                        checked={brand.isActive}
-                        onCheckedChange={() =>
-                          handleToggleStatus(brand.id, brand.isActive)
-                        }
-                        title={
-                          brand.isActive
-                            ? "Visible — click to hide"
-                            : "Hidden — click to show"
-                        }
-                      />
-                    </TableCell>
-
-                    {/* Actions */}
-                    <TableCell className="py-3.5 px-5 text-center">
-                      <div className="flex items-center justify-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              className="h-8 w-8 text-ink-muted hover:text-ink hover:bg-surface-muted data-[state=open]:bg-surface-muted data-[state=open]:text-ink"
-                            >
-                              <MoreVertical className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            className="w-36 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
+                        {brand.website && (
+                          <a
+                            href={brand.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-[11px] text-brand hover:underline truncate"
                           >
-                            <DropdownMenuItem
-                              className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                              onClick={() => openEdit(brand)}
-                            >
-                              <Edit className="w-4 h-4 mr-2.5" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
-                              onClick={() => setDeleteTarget(brand)}
-                            >
-                              <Trash2 className="w-4 h-4 mr-2.5" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                            {brand.website.replace(/^https?:\/\/(www\.)?/, "")}
+                          </a>
+                        )}
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                    </div>
+                  </TableCell>
+
+                  {/* Country (badge) */}
+                  <TableCell className="py-3.5 px-3 text-center">
+                    {brand.country ? (
+                      <span className="inline-flex px-2 py-0.5 rounded-[4px] bg-bg text-xs font-medium text-ink-muted border border-border truncate max-w-full">
+                        {brand.country}
+                      </span>
+                    ) : (
+                      <span className="text-ink-muted/40 text-sm">—</span>
+                    )}
+                  </TableCell>
+
+                  {/* Supplier Info */}
+                  <TableCell className="py-3.5 px-5 text-center">
+                    <div className="text-xs text-ink-muted leading-tight flex flex-col items-center">
+                      <span className="block font-semibold text-ink truncate w-full text-center">
+                        {brand.supplier?.name || brand.supplierName || "—"}
+                      </span>
+                      {brand.supplier?.contactPerson && (
+                        <span className="block text-[11px] font-medium text-ink-muted truncate w-full text-center mt-0.5" title={brand.supplier.contactPerson}>
+                          {brand.supplier.contactPerson} {brand.supplier.contactPosition && `(${brand.supplier.contactPosition})`}
+                        </span>
+                      )}
+                      {(brand.contactPhone || brand.supplier?.phone) && (
+                        <span className="block truncate text-ink-muted text-center w-full mt-0.5">
+                          📞 {brand.contactPhone || brand.supplier?.phone}
+                        </span>
+                      )}
+                      {(brand.contactEmail || brand.supplier?.email) && (
+                        <span className="block truncate text-[11px] text-ink-muted text-center w-full">
+                          ✉️ {brand.contactEmail || brand.supplier?.email}
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  {/* Description */}
+                  <TableCell className="py-3.5 px-5 text-ink-muted text-center">
+                    <span
+                      className="block truncate text-sm"
+                      title={brand.description || undefined}
+                    >
+                      {brand.description || (
+                        <span className="italic text-ink-muted/40">
+                          No description
+                        </span>
+                      )}
+                    </span>
+                  </TableCell>
+
+                  {/* Product count */}
+                  <TableCell className="py-3.5 px-5 text-center">
+                    <span
+                      className={`inline-flex items-center gap-1 text-sm font-semibold tabular-nums ${(brand.productCount ?? 0) > 0
+                          ? "text-ink"
+                          : "text-ink-muted/40"
+                        }`}
+                    >
+                      <Package className="w-3.5 h-3.5 opacity-60" />
+                      {brand.productCount ?? 0}
+                    </span>
+                  </TableCell>
+
+                  {/* Status toggle */}
+                  <TableCell className="py-3.5 px-5 text-center">
+                    <Switch
+                      checked={brand.isActive}
+                      onCheckedChange={() =>
+                        handleToggleStatus(brand.id, brand.isActive)
+                      }
+                      title={
+                        brand.isActive
+                          ? "Visible — click to hide"
+                          : "Hidden — click to show"
+                      }
+                    />
+                  </TableCell>
+
+                  {/* Actions */}
+                  <TableCell className="py-3.5 pl-5 pr-8 text-center">
+                    <div className="flex items-center justify-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            className="h-8 w-8 text-ink-muted hover:text-ink hover:bg-surface-muted data-[state=open]:bg-surface-muted data-[state=open]:text-ink"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-36 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
+                        >
+                          <DropdownMenuItem
+                            className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                            onClick={() => setViewingDetails(brand)}
+                          >
+                            <Store className="w-4 h-4 mr-2.5" />
+                            Details
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className="bg-border/60 my-1" />
+                          <DropdownMenuItem
+                            className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                            onClick={() => openEdit(brand)}
+                          >
+                            <Edit className="w-4 h-4 mr-2.5" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
+                            onClick={() => setDeleteTarget(brand)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2.5" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         )}
 
         {/* Empty state */}
@@ -518,7 +672,7 @@ export function BrandPage() {
                           <Input
                             {...field}
                             id="bName"
-                            placeholder="E.g., La Roche-Posay"
+                            placeholder="La Roche-Posay"
                             className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                           />
                         )}
@@ -544,7 +698,7 @@ export function BrandPage() {
                           <Input
                             {...field}
                             id="bCountry"
-                            placeholder="E.g., France"
+                            placeholder="France"
                             className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
                           />
                         )}
@@ -571,7 +725,7 @@ export function BrandPage() {
                         <Textarea
                           {...field}
                           id="bDesc"
-                          rows={5}
+                          rows={3}
                           placeholder="Short description for the brand..."
                           className="bg-surface border-border focus-visible:ring-brand focus-visible:border-brand resize-none"
                         />
@@ -583,6 +737,122 @@ export function BrandPage() {
                       </p>
                     )}
                   </div>
+
+                  {/* Supplier & Contact Information */}
+                  <div className="border-t border-border pt-4 mt-4 space-y-4 text-left">
+                    <h3 className="text-sm font-bold text-ink">Supplier & Brand Info</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Brand Website */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="bWebsite" className="text-xs font-semibold text-ink">Brand Website</Label>
+                        <Controller
+                          control={control}
+                          name="website"
+                          render={({ field }) => (
+                            <Input {...field} id="bWebsite" placeholder="https://example.com" className="h-9 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
+                          )}
+                        />
+                        {errors.website && <p className="text-[11px] text-danger">{errors.website.message}</p>}
+                      </div>
+
+                      {/* Supplier Selection using Shadcn Select */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="bSupplierSelect" className="text-xs font-semibold text-ink">Linked Supplier <span className="text-danger">*</span></Label>
+                        <Controller
+                          control={control}
+                          name="supplierId"
+                          render={({ field }) => (
+                            <Select
+                              value={isNewSupplier ? "new" : (field.value || "none")}
+                              onValueChange={(val) => {
+                                if (val === "new") {
+                                  setIsNewSupplier(true);
+                                  field.onChange("");
+                                } else {
+                                  setIsNewSupplier(false);
+                                  field.onChange(val === "none" ? "" : val);
+                                }
+                              }}
+                            >
+                              <SelectTrigger id="bSupplierSelect" className="w-full h-9 bg-surface border-border text-sm focus:ring-brand focus:border-brand cursor-pointer">
+                                <SelectValue placeholder="-- Select Supplier --" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">-- Select Supplier --</SelectItem>
+                                {suppliers
+                                  .filter((s: any) => s.isActive !== false || s.id === field.value)
+                                  .map((s: any) => (
+                                    <SelectItem key={s.id} value={s.id}>
+                                      {s.name}
+                                    </SelectItem>
+                                  ))}
+                                <SelectItem value="new" className="text-brand font-semibold hover:text-brand focus:text-brand">
+                                  + Add New Supplier...
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Inline Add Supplier Form */}
+                    {isNewSupplier && (
+                      <div className="border border-border bg-bg/50 rounded-sm p-3.5 space-y-3.5 animate-scale-in">
+                        <p className="text-xs font-bold text-ink">New Supplier Details</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="sNewName" className="text-[11px] font-semibold text-ink-muted">Supplier Name <span className="text-danger">*</span></Label>
+                            <Input
+                              id="sNewName"
+                              placeholder="Abbott Laboratories"
+                              value={newSupName}
+                              onChange={(e) => setNewSupName(e.target.value)}
+                              className="h-8.5 text-xs bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor="sNewPhone" className="text-[11px] font-semibold text-ink-muted">Phone Number <span className="text-danger">*</span></Label>
+                            <Input
+                              id="sNewPhone"
+                              placeholder="09xxxxxxxx"
+                              value={newSupPhone}
+                              onChange={(e) => setNewSupPhone(e.target.value)}
+                              className="h-8.5 text-xs bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="space-y-1.5">
+                            <Label htmlFor="sNewEmail" className="text-[11px] font-semibold text-ink-muted">Contact Email</Label>
+                            <Input
+                              id="sNewEmail"
+                              type="email"
+                              placeholder="supplier@domain.com"
+                              value={newSupEmail}
+                              onChange={(e) => setNewSupEmail(e.target.value)}
+                              className="h-8.5 text-xs bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                            />
+                          </div>
+                          <div className="space-y-1.5">
+                            <Label htmlFor="sNewAddress" className="text-[11px] font-semibold text-ink-muted">Warehouse Address</Label>
+                            <Input
+                              id="sNewAddress"
+                              placeholder="456 Industrial Zone, HCMC"
+                              value={newSupAddress}
+                              onChange={(e) => setNewSupAddress(e.target.value)}
+                              className="h-8.5 text-xs bg-surface border-border focus-visible:ring-brand focus-visible:border-brand"
+                            />
+                          </div>
+                        </div>
+                        {newSupError && (
+                          <p className="text-xs text-danger font-medium mt-1">{newSupError}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+
                 </div>
 
                 {/* Right: logo + status */}
@@ -700,6 +970,136 @@ export function BrandPage() {
               Confirm
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Brand Details Dialog */}
+      <Dialog open={!!viewingDetails} onOpenChange={(open) => !open && setViewingDetails(null)}>
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
+          <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
+            <DialogTitle className="text-xl font-bold text-ink pr-6">
+              Brand Details
+            </DialogTitle>
+          </DialogHeader>
+
+          {viewingDetails && (
+            <>
+              <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+                {/* Left Column: Logo Image */}
+                {viewingDetails.imageUrl ? (
+                  <div className="md:w-1/3 flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0">
+                    <div className="w-32 h-32 rounded-md border border-border overflow-hidden bg-white flex items-center justify-center shadow-sm">
+                      <img src={viewingDetails.imageUrl} alt={viewingDetails.name} className="max-w-full max-h-full object-contain p-2" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="md:w-1/3 flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0 text-ink-muted text-sm">
+                    No image available
+                  </div>
+                )}
+
+                {/* Right Column: Details Grid */}
+                <div className="flex-1 p-6 overflow-y-auto">
+                  <h2 className="text-xl font-bold text-ink mb-1">{viewingDetails.name}</h2>
+                  <p className="font-mono text-xs text-ink-muted mb-4">{viewingDetails.slug}</p>
+
+                  <div className="grid grid-cols-2 gap-3 text-left">
+                    <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Country</p>
+                      <p className="mt-1.5 text-sm font-medium text-ink">{viewingDetails.country || "—"}</p>
+                    </div>
+
+                    <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Website</p>
+                      <p className="mt-1.5 text-sm font-medium text-ink truncate">
+                        {viewingDetails.website ? (
+                          <a href={viewingDetails.website} target="_blank" rel="noreferrer" className="text-brand hover:underline">
+                            {viewingDetails.website.replace(/^https?:\/\/(www\.)?/, "")}
+                          </a>
+                        ) : (
+                          "—"
+                        )}
+                      </p>
+                    </div>
+
+                    {viewingDetails.supplierId && (
+                      <>
+                        <div className="col-span-2 border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Supplier</p>
+                          <p className="mt-1.5 text-sm font-semibold text-ink">
+                            {viewingDetails.supplier?.name || viewingDetails.supplierName || "—"}
+                          </p>
+                        </div>
+
+                        <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Phone</p>
+                          <p className="mt-1.5 text-sm font-medium text-ink font-mono">
+                            {viewingDetails.supplier?.phone || "—"}
+                          </p>
+                        </div>
+
+                        <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Email</p>
+                          <p className="mt-1.5 text-sm font-medium text-ink truncate" title={viewingDetails.supplier?.email}>
+                            {viewingDetails.supplier?.email || "—"}
+                          </p>
+                        </div>
+
+                        {viewingDetails.supplier?.contactPerson && (
+                          <>
+                            <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Name</p>
+                              <p className="mt-1.5 text-sm font-medium text-ink">
+                                {viewingDetails.supplier.contactPerson}
+                                {viewingDetails.supplier.contactPosition && (
+                                  <span className="block text-[11px] text-ink-muted/80 font-normal mt-0.5">
+                                    {viewingDetails.supplier.contactPosition}
+                                  </span>
+                                )}
+                              </p>
+                            </div>
+
+                            <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Contact</p>
+                              <div className="mt-1.5 text-sm font-medium text-ink space-y-0.5">
+                                <span className="block font-mono">
+                                  {viewingDetails.contactPhone || viewingDetails.supplier.contactPhone || "—"}
+                                </span>
+                                {(viewingDetails.contactEmail || viewingDetails.supplier.contactEmail) && (
+                                  <span className="block text-xs text-ink-muted break-all">
+                                    {viewingDetails.contactEmail || viewingDetails.supplier.contactEmail}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </>
+                    )}
+
+                    <div className="col-span-2 border border-border bg-surface-soft/50 p-3.5 rounded-sm">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-1.5">Description</p>
+                      <div className="text-sm leading-relaxed text-ink-muted whitespace-pre-wrap">
+                        {viewingDetails.description || "No description provided."}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fixed Footer */}
+              <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end">
+                <Button
+                  type="button"
+                  onClick={() => setViewingDetails(null)}
+                  className="rounded-sm shadow-none px-6 h-10 font-medium"
+                  variant="outline"
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

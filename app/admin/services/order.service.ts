@@ -140,3 +140,15 @@ export interface CreatePOSOrderPayload {
   note?: string;
   customerPhone?: string;
 }
+export const processPOSReturn = async (
+  orderId: string,
+  returnItems?: any[],
+  returnReason?: string,
+): Promise<Order> => {
+  return apiClient
+    .post<{ order: Order }>(`/orders/${orderId}/pos-return`, {
+      returnItems,
+      returnReason,
+    })
+    .then((res) => res.order);
+};

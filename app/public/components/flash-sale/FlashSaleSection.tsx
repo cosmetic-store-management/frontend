@@ -158,7 +158,7 @@ export function FlashSaleSection() {
         {canScrollLeft && (
           <button
             onClick={() => scroll("left")}
-            className="absolute left-1 md:-left-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute left-1 md:-left-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-sm shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
             aria-label="Previous flash sale items"
           >
             <ChevronLeft className="w-6 h-6 ml-[-2px]" strokeWidth={2} />
@@ -169,7 +169,7 @@ export function FlashSaleSection() {
         {canScrollRight && (
           <button
             onClick={() => scroll("right")}
-            className="absolute right-1 md:-right-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute right-1 md:-right-4 top-[40%] -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 bg-white rounded-sm shadow-md border border-border/50 text-ink hover:text-brand hover:border-brand hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
             aria-label="Next flash sale items"
           >
             <ChevronRight className="w-6 h-6 mr-[-2px]" strokeWidth={2} />
@@ -193,7 +193,7 @@ export function FlashSaleSection() {
                     className="group flex flex-col h-full bg-surface border border-border/40 hover:border-brand hover:-translate-y-1 transition-all duration-300 rounded-sm overflow-hidden"
                   >
                     {/* Phần Hình Ảnh */}
-                    <div className="relative aspect-square w-full overflow-hidden bg-surface-soft">
+                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface-soft">
                       <img
                         src={item.productImage || "/placeholder.jpg"}
                         alt=""

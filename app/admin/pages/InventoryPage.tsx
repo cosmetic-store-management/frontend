@@ -12,7 +12,11 @@ import {
   MoreVertical,
   FilePlus,
   History,
+  Phone,
+  Mail,
+  MapPin,
 } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -257,8 +261,8 @@ export function InventoryPage() {
           </Button>
         }
         filters={
-          <div className="flex flex-col gap-3 w-full">
-            <div className="group relative w-full sm:w-80">
+          <div className="flex flex-wrap items-center gap-3 w-full">
+            <div className="group relative w-72 sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 placeholder="Search product name, SKU..."
@@ -267,8 +271,6 @@ export function InventoryPage() {
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
             </div>
-
-            <div className="flex flex-wrap items-center gap-2.5">
               <button
                 onClick={() => setActiveTab("stock")}
                 className={`inline-flex h-9 items-center gap-2 border px-3.5 text-sm font-semibold transition-all rounded-sm sm:px-4 ${
@@ -299,7 +301,6 @@ export function InventoryPage() {
               >
                 Transaction history
               </button>
-            </div>
           </div>
         }
       />
@@ -308,25 +309,24 @@ export function InventoryPage() {
         <div className="space-y-4">
           {/* Stock Table */}
           <div className="premium-card rounded-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table className="min-w-205 table-fixed">
-                <TableHeader>
-                  <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                    <TableHead className="w-[30%] text-center">Product</TableHead>
-                    <TableHead className="text-center w-[11%]">Stock</TableHead>
-                    <TableHead className="text-center w-[13%]">
-                      Min Stock
-                    </TableHead>
-                    <TableHead className="w-[16%] text-center">Brand</TableHead>
-                    <TableHead className="w-[14%] text-center">
-                      Import Price
-                    </TableHead>
-                    <TableHead className="w-[16%] text-center">
-                      MFG - EXP
-                    </TableHead>
-                    <TableHead className="text-center w-24">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
+            <Table className="min-w-[1150px] table-fixed">
+              <TableHeader>
+                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                  <TableHead className="w-72 text-center">Product</TableHead>
+                  <TableHead className="w-28 text-center">Stock</TableHead>
+                  <TableHead className="w-32 text-center">
+                    Min Stock
+                  </TableHead>
+                  <TableHead className="w-44 text-center">Brand</TableHead>
+                  <TableHead className="w-40 text-center">
+                    Import Price
+                  </TableHead>
+                  <TableHead className="w-44 text-center">
+                    MFG - EXP
+                  </TableHead>
+                  <TableHead className="w-28 pl-4 pr-8 text-center">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
                 <TableBody>
                   {isStockLoading ? (
                     <TableRow>
@@ -356,7 +356,7 @@ export function InventoryPage() {
 
                       return (
                         <TableRow key={item.id}>
-                          <TableCell className="py-3.5 px-5 overflow-hidden max-w-0">
+                          <TableCell className="py-3.5 px-5 text-center">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
                                 <img
@@ -405,19 +405,74 @@ export function InventoryPage() {
                           <TableCell className="py-3.5 px-5 text-center text-ink font-medium">
                             {item.minStock}
                           </TableCell>
-                          <TableCell className="py-3.5 px-5 overflow-hidden max-w-0">
-                            <div className="flex items-center justify-center gap-2">
-                              {item.brandImage ? (
-                                <img
-                                  src={item.brandImage}
-                                  alt={item.brandName}
-                                  className="h-6 w-6 rounded-sm object-contain border border-border shrink-0 bg-white p-0.5"
-                                />
-                              ) : null}
-                              <span className="block truncate text-sm font-medium text-ink">
-                                {item.brandName || item.supplier || "-"}
-                              </span>
-                            </div>
+                          <TableCell className="py-3.5 px-5 text-center">
+                            {item.supplierInfo ? (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className="flex items-center justify-center gap-2 mx-auto hover:text-brand transition-colors focus:outline-none"
+                                  >
+                                    {item.brandImage ? (
+                                      <img
+                                        src={item.brandImage}
+                                        alt={item.brandName}
+                                        className="h-6 w-6 rounded-sm object-contain border border-border shrink-0 bg-white p-0.5"
+                                      />
+                                    ) : null}
+                                    <span className="block truncate text-sm font-medium underline decoration-dotted decoration-ink-muted/40 hover:decoration-brand">
+                                      {item.brandName || item.supplier || "-"}
+                                    </span>
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80 p-4 border border-border bg-surface shadow-ui-soft text-left rounded-sm" align="center">
+                                  <div className="space-y-3">
+                                    <div>
+                                      <p className="text-[10px] uppercase font-bold tracking-wider text-ink-muted">Supplier Details</p>
+                                      <h4 className="text-sm font-bold text-ink mt-0.5">{item.supplierInfo.name}</h4>
+                                    </div>
+                                    <div className="space-y-2 text-xs text-ink-muted">
+                                      <div className="flex items-center gap-2">
+                                        <Phone className="w-3.5 h-3.5 text-brand shrink-0" />
+                                        <a href={`tel:${item.supplierInfo.phone}`} className="hover:underline hover:text-brand font-medium">
+                                          {item.supplierInfo.phone}
+                                        </a>
+                                      </div>
+                                      {item.supplierInfo.email && (
+                                        <div className="flex items-center gap-2">
+                                          <Mail className="w-3.5 h-3.5 text-brand shrink-0" />
+                                          <a href={`mailto:${item.supplierInfo.email}`} className="hover:underline hover:text-brand">
+                                            {item.supplierInfo.email}
+                                          </a>
+                                        </div>
+                                      )}
+                                      {item.supplierInfo.address && (
+                                        <div className="flex items-start gap-2">
+                                          <MapPin className="w-3.5 h-3.5 text-brand shrink-0 mt-0.5" />
+                                          <span>{item.supplierInfo.address}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    <div className="border-t border-border pt-2 text-[10px] text-ink-muted">
+                                      Brand: <span className="font-semibold text-ink">{item.brandName || "—"}</span>
+                                    </div>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            ) : (
+                              <div className="flex items-center justify-center gap-2">
+                                {item.brandImage ? (
+                                  <img
+                                    src={item.brandImage}
+                                    alt={item.brandName}
+                                    className="h-6 w-6 rounded-sm object-contain border border-border shrink-0 bg-white p-0.5"
+                                  />
+                                ) : null}
+                                <span className="block truncate text-sm font-medium text-ink">
+                                  {item.brandName || item.supplier || "-"}
+                                </span>
+                              </div>
+                            )}
                           </TableCell>
                           <TableCell className="py-3.5 px-5 text-center font-medium text-ink">
                             {item.mac
@@ -439,7 +494,7 @@ export function InventoryPage() {
                                 )
                               : "N/A"}
                           </TableCell>
-                          <TableCell className="py-3.5 px-5 text-center">
+                          <TableCell className="py-3.5 pl-5 pr-8 text-center">
                             <div className="flex items-center justify-center">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -486,7 +541,6 @@ export function InventoryPage() {
                   )}
                 </TableBody>
               </Table>
-            </div>
             {stockPagination?.totalPages > 1 && (
               <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
                 <Pagination
@@ -501,18 +555,17 @@ export function InventoryPage() {
       ) : (
         /* Transactions List */
         <div className="premium-card rounded-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table className="min-w-200 table-fixed">
-              <TableHeader>
-                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[20%]">TX ID</TableHead>
-                  <TableHead className="w-[15%]">SKU</TableHead>
-                  <TableHead className="text-center w-[18%]">Type</TableHead>
-                  <TableHead className="text-right w-[12%]">Quantity</TableHead>
-                  <TableHead className="w-[20%]">Performer</TableHead>
-                  <TableHead className="w-[15%] text-center">Date</TableHead>
-                </TableRow>
-              </TableHeader>
+          <Table className="min-w-[950px] table-fixed">
+            <TableHeader>
+              <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-48 text-center">TX ID</TableHead>
+                <TableHead className="w-36 text-center">SKU</TableHead>
+                <TableHead className="w-40 text-center">Type</TableHead>
+                <TableHead className="w-32 text-center">Quantity</TableHead>
+                <TableHead className="w-48 text-center">Performer</TableHead>
+                <TableHead className="w-36 pl-4 pr-8 text-center">Date</TableHead>
+              </TableRow>
+            </TableHeader>
               <TableBody>
                 {isTxLoading ? (
                   <TableRow>
@@ -538,10 +591,10 @@ export function InventoryPage() {
                 ) : (
                   transactions.map((tx: any) => (
                     <TableRow key={tx.id}>
-                      <TableCell className="py-3.5 px-5 font-mono text-xs text-ink-muted overflow-hidden max-w-0">
+                      <TableCell className="py-3.5 px-5 font-mono text-xs text-ink-muted text-center">
                         <span className="block truncate">{tx.id}</span>
                       </TableCell>
-                      <TableCell className="py-3.5 px-5 font-mono text-xs text-ink font-medium truncate overflow-hidden max-w-0">
+                      <TableCell className="py-3.5 px-5 font-mono text-xs text-ink font-medium text-center truncate">
                         {tx.sku}
                       </TableCell>
                       <TableCell className="py-3.5 px-5 text-center">
@@ -592,7 +645,7 @@ export function InventoryPage() {
                       <TableCell className="py-3.5 px-5 text-ink-muted font-medium">
                         {tx.user}
                       </TableCell>
-                      <TableCell className="py-3.5 px-5 text-ink-muted text-xs">
+                      <TableCell className="py-3.5 pl-5 pr-8 text-center text-ink-muted text-xs">
                         {tx.date}
                       </TableCell>
                     </TableRow>
@@ -600,7 +653,6 @@ export function InventoryPage() {
                 )}
               </TableBody>
             </Table>
-          </div>
           {txPagination?.totalPages > 1 && (
             <div className="flex items-center justify-center p-5 bg-surface border-t border-border">
               <Pagination
@@ -675,11 +727,13 @@ export function InventoryPage() {
                     value={isNewSupplier ? "new" : field.value}
                   >
                     <option value="">-- Select Supplier --</option>
-                    {suppliers.map((sup: any) => (
-                      <option key={sup.id} value={sup.id}>
-                        {sup.name} ({sup.phone})
-                      </option>
-                    ))}
+                    {suppliers
+                      .filter((sup: any) => sup.isActive !== false || sup.id === field.value)
+                      .map((sup: any) => (
+                        <option key={sup.id} value={sup.id}>
+                          {sup.name}
+                        </option>
+                      ))}
                     <option value="new" className="text-brand font-semibold">
                       + Add New Supplier...
                     </option>

@@ -227,9 +227,9 @@ export function FlashSalePage() {
               </Button>
             }
             filters={
-              <div className="flex flex-col gap-3 w-full">
-                {/* Hàng 1: Search */}
-                <div className="group relative w-full sm:w-80">
+              <div className="flex flex-wrap items-center gap-3 w-full">
+                {/* Search */}
+                <div className="group relative w-72 sm:w-80">
                   <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
                   <Input
                     value={localSearch}
@@ -239,37 +239,35 @@ export function FlashSalePage() {
                   />
                 </div>
                 
-                {/* Hàng 2: Filters */}
-                <div className="flex flex-wrap items-center gap-3">
-                  <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
-                    <SelectTrigger className="w-[160px] h-9 bg-surface text-sm border-border">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="upcoming">Upcoming</SelectItem>
-                      <SelectItem value="ended">Ended</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Status Dropdown */}
+                <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
+                  <SelectTrigger className="w-[160px] h-10 bg-surface text-sm border-border focus-visible:ring-brand/20">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="ended">Ended</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             }
           />
 
           <div className="premium-card rounded-sm overflow-hidden">
-            <Table className="table-fixed">
+            <Table className="min-w-[900px] table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-[20%] text-left pl-4">
+                  <TableHead className="w-64 text-center">
                     Program Name
                   </TableHead>
-                  <TableHead className="w-[35%] text-center">Time</TableHead>
-                  <TableHead className="w-[15%] text-center">Status</TableHead>
-                  <TableHead className="w-[20%] text-center">
+                  <TableHead className="w-80 text-center">Time</TableHead>
+                  <TableHead className="w-36 text-center">Status</TableHead>
+                  <TableHead className="w-44 text-center">
                     Products
                   </TableHead>
-                  <TableHead className="w-[10%] text-center">Actions</TableHead>
+                  <TableHead className="w-28 pl-4 pr-8 text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -293,7 +291,7 @@ export function FlashSalePage() {
                 ) : (
                   flashSales.map((fs) => (
                     <TableRow key={fs.id}>
-                      <TableCell className="font-medium pl-4">
+                      <TableCell className="font-medium text-center">
                         {fs.name}
                       </TableCell>
                       <TableCell className="text-center whitespace-nowrap">
@@ -311,7 +309,7 @@ export function FlashSalePage() {
                       <TableCell className="text-center font-medium">
                         {(fs.items || []).length} items
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center pl-4 pr-8">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button

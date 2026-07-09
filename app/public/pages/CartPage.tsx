@@ -141,7 +141,7 @@ export function CartPage() {
                   )}
                   {item.isActive === false && (
                     <div className="mt-1 text-xs font-semibold text-destructive">
-                      Sản phẩm đã ngừng kinh doanh
+                      Discontinued Product
                     </div>
                   )}
                   {/* Mobile */}
@@ -237,7 +237,7 @@ export function CartPage() {
                 <button
                   onClick={() => removeItem(item.productId, item.variantId)}
                   className="shrink-0 p-1.5 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/5 rounded-sm transition-colors"
-                  title="Remove"
+                  title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -314,7 +314,7 @@ export function CartPage() {
                     onClick={removeVoucher}
                     className="text-xs text-destructive hover:underline font-medium"
                   >
-                    Remove
+                    Delete
                   </button>
                 </div>
               ) : (
