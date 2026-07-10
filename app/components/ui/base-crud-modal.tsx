@@ -21,7 +21,7 @@ export interface BaseCrudModalProps {
   /** Callback for when the modal open state changes */
   onOpenChange: (open: boolean) => void;
   /** Modal width preset */
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "sm-md";
   /** Content of the form */
   children: React.ReactNode;
   /** Text for the primary action button */
@@ -46,6 +46,7 @@ export interface BaseCrudModalProps {
 
 const sizeClasses = {
   sm: "sm:max-w-[400px]",
+  "sm-md": "sm:max-w-[480px]",
   md: "sm:max-w-[600px]",
   lg: "sm:max-w-[800px]",
   xl: "sm:max-w-[1000px]",

@@ -396,18 +396,18 @@ export function CustomerPage() {
           <Table className="min-w-[1100px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-64 text-center">Customer</TableHead>
-                <TableHead className="w-72 text-center">Contact</TableHead>
+                <TableHead className="w-60 text-center">Customer</TableHead>
+                <TableHead className="w-60 text-center">Contact</TableHead>
                 <TableHead className="w-36 text-center">
                   Tier
                 </TableHead>
-                <TableHead className="w-40 text-center">
+                <TableHead className="w-36 text-center">
                   Spent
                 </TableHead>
-                <TableHead className="w-32 text-center whitespace-nowrap">
+                <TableHead className="w-24 text-center whitespace-nowrap">
                   Status
                 </TableHead>
-                <TableHead className="w-28 pl-4 pr-8 text-center">
+                <TableHead className="w-20 text-center">
                   Actions
                 </TableHead>
               </TableRow>
@@ -443,22 +443,22 @@ export function CustomerPage() {
                         className="transition-colors hover:bg-bg/40"
                         style={{ "--i": i } as React.CSSProperties}
                       >
-                        <TableCell className="px-5 py-4 align-middle">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm">
+                        <TableCell className="px-5 py-4 align-middle text-center">
+                          <div className="flex items-center justify-center gap-4 text-center mx-auto max-w-[200px]">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm bg-white">
                               <span className="text-brand font-bold">
                                 {cust.name
                                   ? cust.name.charAt(0).toUpperCase()
                                   : "K"}
                               </span>
                             </div>
-                            <div className="flex flex-col items-start gap-1">
-                              <span className="font-semibold text-ink text-base leading-tight">
+                            <div className="flex flex-col items-center gap-1">
+                              <span className="font-semibold text-ink text-base leading-tight text-center">
                                 {cust.name}
                               </span>
                               <Badge
                                 variant="outline"
-                                className={`mt-1 text-xs px-2 py-0.5 font-medium ${cust.hasOnlineAccount ? "bg-brand/5 text-brand border-brand/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20"}`}
+                                className={`mt-1 text-xs px-2 py-0.5 font-medium text-center ${cust.hasOnlineAccount ? "bg-brand/5 text-brand border-brand/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20"}`}
                               >
                                 {cust.hasOnlineAccount ? "Online" : "Offline"}
                               </Badge>
@@ -466,16 +466,16 @@ export function CustomerPage() {
                           </div>
                         </TableCell>
                         <TableCell className="px-5 py-4 align-middle text-center">
-                          <div className="flex flex-col w-fit mx-auto gap-2 text-sm">
-                            <div className="flex items-center gap-2.5 text-ink-muted">
+                          <div className="flex flex-col w-fit mx-auto gap-2 text-sm items-center text-center">
+                            <div className="flex items-center justify-center gap-2.5 text-ink-muted text-center">
                               <Mail className="w-4 h-4 opacity-70" />
-                              <span className="truncate max-w-45 font-medium">
+                              <span className="truncate max-w-45 font-medium text-center">
                                 {cust.email || "—"}
                               </span>
                             </div>
-                            <div className="flex items-center gap-2.5 text-ink-muted">
+                            <div className="flex items-center justify-center gap-2.5 text-ink-muted text-center">
                               <Phone className="w-4 h-4 opacity-70" />
-                              <span className="font-medium">
+                              <span className="font-medium text-center">
                                 {cust.phone || "—"}
                               </span>
                             </div>
@@ -520,7 +520,7 @@ export function CustomerPage() {
                             </Badge>
                           </div>
                         </TableCell>
-                        <TableCell className="pl-4 pr-8 py-4 align-middle text-center">
+                        <TableCell className="py-4 align-middle text-center">
                           <div className="flex items-center justify-center">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>

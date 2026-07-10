@@ -226,7 +226,7 @@ export function UserPage() {
         description="Manage staff accounts, control access levels, and assign administrative roles."
         actions={
           <Button
-            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
             size="sm"
             onClick={openCreate}
           >
@@ -285,11 +285,11 @@ export function UserPage() {
         <Table className="min-w-[1000px] table-fixed">
           <TableHeader>
             <TableRow className="bg-surface-muted border-b border-border">
-              <TableHead className="w-64 text-center">Staff</TableHead>
-              <TableHead className="w-72 text-center">Contact</TableHead>
-              <TableHead className="w-44 text-center">Role</TableHead>
-              <TableHead className="w-44 text-center">Status</TableHead>
-              <TableHead className="w-28 pl-4 pr-8 text-center">Actions</TableHead>
+              <TableHead className="w-60 text-center">Staff</TableHead>
+              <TableHead className="w-60 text-center">Contact</TableHead>
+              <TableHead className="w-36 text-center">Role</TableHead>
+              <TableHead className="w-36 text-center">Status</TableHead>
+              <TableHead className="w-20 text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
             <TableBody>
@@ -327,11 +327,11 @@ export function UserPage() {
                       </span>
                     </TableCell>
                     <TableCell className="align-middle text-center">
-                      <div className="flex flex-col w-fit mx-auto text-left">
-                        <span className="text-sm font-medium text-ink-muted">
+                      <div className="flex flex-col w-fit mx-auto text-center">
+                        <span className="text-sm font-medium text-ink-muted text-center">
                           {user.email}
                         </span>
-                        <span className="text-xs font-mono text-ink-muted/80 mt-1">
+                        <span className="text-xs font-mono text-ink-muted/80 mt-1 text-center">
                           {user.phone}
                         </span>
                       </div>
@@ -354,7 +354,7 @@ export function UserPage() {
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="align-middle text-center pl-4 pr-8">
+                    <TableCell className="align-middle text-center">
                       <div className="flex items-center justify-center">
                         {(isOwner || (isManager && user.role === "staff")) && (
                           <DropdownMenu>

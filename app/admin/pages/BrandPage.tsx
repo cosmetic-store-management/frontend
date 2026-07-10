@@ -282,7 +282,7 @@ export function BrandPage() {
         description="Manage your brand portfolio. Active brands will be featured in customer search filters."
         actions={
           <Button
-            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
             size="sm"
             onClick={openCreate}
           >
@@ -389,25 +389,25 @@ export function BrandPage() {
           <Table className="min-w-[900px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="py-4 px-5 w-52 text-center">
+                <TableHead className="py-4 px-5 w-60 text-center">
                   Brand
                 </TableHead>
-                <TableHead className="py-4 px-3 w-32 text-center">
+                <TableHead className="py-4 px-3 w-28 text-center">
                   Origin
                 </TableHead>
-                <TableHead className="py-4 px-5 w-52 text-center">
+                <TableHead className="py-4 px-5 w-60 text-center">
                   Supplier Info
                 </TableHead>
                 <TableHead className="py-4 px-5 w-48 text-center">
                   Description
                 </TableHead>
-                <TableHead className="py-4 px-5 w-28 text-center">
+                <TableHead className="py-4 px-5 w-24 text-center">
                   Products
                 </TableHead>
-                <TableHead className="py-4 px-5 w-28 text-center">
+                <TableHead className="py-4 px-5 w-24 text-center">
                   Visibility
                 </TableHead>
-                <TableHead className="py-4 pl-5 pr-8 text-center w-24">
+                <TableHead className="py-4 text-center w-20">
                   Actions
                 </TableHead>
               </TableRow>
@@ -437,11 +437,11 @@ export function BrandPage() {
                           loading="lazy"
                         />
                       </button>
-                      <div className="min-w-0 text-left">
+                      <div className="min-w-0 text-center flex-1">
                         <button
                           type="button"
                           onClick={() => setViewingDetails(brand)}
-                          className="block truncate font-semibold text-ink text-sm hover:text-brand hover:underline transition-colors text-left focus:outline-none"
+                          className="block truncate font-semibold text-ink text-sm hover:text-brand hover:underline transition-colors text-center w-full focus:outline-none"
                           title="Click to view details"
                         >
                           {brand.name}
@@ -541,7 +541,7 @@ export function BrandPage() {
                   </TableCell>
 
                   {/* Actions */}
-                  <TableCell className="py-3.5 pl-5 pr-8 text-center">
+                  <TableCell className="py-3.5 text-center">
                     <div className="flex items-center justify-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -914,7 +914,7 @@ export function BrandPage() {
               </Button>
               <Button
                 type="submit"
-                className="h-10 bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
+                className="h-10 bg-brand text-white hover:bg-brand-dark transition-all shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Confirm
@@ -987,13 +987,13 @@ export function BrandPage() {
               <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
                 {/* Left Column: Logo Image */}
                 {viewingDetails.imageUrl ? (
-                  <div className="md:w-1/3 flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0">
+                  <div className="md:w-[38%] flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0">
                     <div className="w-32 h-32 rounded-md border border-border overflow-hidden bg-white flex items-center justify-center shadow-sm">
                       <img src={viewingDetails.imageUrl} alt={viewingDetails.name} className="max-w-full max-h-full object-contain p-2" />
                     </div>
                   </div>
                 ) : (
-                  <div className="md:w-1/3 flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0 text-ink-muted text-sm">
+                  <div className="md:w-[38%] flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0 text-ink-muted text-sm">
                     No image available
                   </div>
                 )}

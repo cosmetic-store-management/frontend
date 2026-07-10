@@ -259,15 +259,15 @@ export function FlashSalePage() {
             <Table className="min-w-[900px] table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-64 text-center">
+                  <TableHead className="w-60 text-center">
                     Program Name
                   </TableHead>
-                  <TableHead className="w-80 text-center">Time</TableHead>
+                  <TableHead className="w-96 text-center">Time</TableHead>
                   <TableHead className="w-36 text-center">Status</TableHead>
-                  <TableHead className="w-44 text-center">
+                  <TableHead className="w-36 text-center">
                     Products
                   </TableHead>
-                  <TableHead className="w-28 pl-4 pr-8 text-center">Actions</TableHead>
+                  <TableHead className="w-20 text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -309,7 +309,7 @@ export function FlashSalePage() {
                       <TableCell className="text-center font-medium">
                         {(fs.items || []).length} items
                       </TableCell>
-                      <TableCell className="text-center pl-4 pr-8">
+                      <TableCell className="text-center">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button

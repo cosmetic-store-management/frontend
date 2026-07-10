@@ -463,11 +463,11 @@ export function BulkRestockModal({
                   <tr>
                     <th className="py-2.5 px-3">{"Product / Variant"}</th>
                     <th className="py-2.5 px-3 w-24 text-center">{"Quantity"}</th>
-                    <th className="py-2.5 px-3 w-32 text-right">{"Unit Price in VND"}</th>
-                    <th className="py-2.5 px-3 w-32 text-center">{"Batch Code"}</th>
-                    <th className="py-2.5 px-3 w-35 text-center">MFG and EXP</th>
-                    <th className="py-2.5 px-3 w-32 text-right">{"Total Price in VND"}</th>
-                    <th className="py-2.5 px-3 w-10 text-center"></th>
+                    <th className="py-2.5 px-3 w-36 text-right">{"Unit Price in VND"}</th>
+                    <th className="py-2.5 px-3 w-36 text-center">{"Batch Code"}</th>
+                    <th className="py-2.5 px-3 w-36 text-center">MFG and EXP</th>
+                    <th className="py-2.5 px-3 w-36 text-right">{"Total Price in VND"}</th>
+                    <th className="py-2.5 px-3 w-12 text-center"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

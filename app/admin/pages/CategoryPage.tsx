@@ -338,7 +338,7 @@ export function CategoryPage() {
         description="Organize your products into categories and subcategories to help customers navigate your store."
         actions={
           <Button
-            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
             size="sm"
             onClick={openCreate}
           >
@@ -372,21 +372,21 @@ export function CategoryPage() {
           <Table className="min-w-[1000px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-52 text-center">
+                <TableHead className="w-60 text-center">
                   Category
                 </TableHead>
-                <TableHead className="w-48 text-center">
+                <TableHead className="w-60 text-center">
                   Description
                 </TableHead>
-                <TableHead className="w-40 text-center">
+                <TableHead className="w-36 text-center">
                   Parent Category
                 </TableHead>
-                <TableHead className="w-28 text-center">Order</TableHead>
-                <TableHead className="w-28 text-center">
+                <TableHead className="w-24 text-center">Order</TableHead>
+                <TableHead className="w-24 text-center">
                   Products
                 </TableHead>
-                <TableHead className="w-28 text-center">Status</TableHead>
-                <TableHead className="w-24 pl-4 pr-8 text-center">Actions</TableHead>
+                <TableHead className="w-24 text-center">Status</TableHead>
+                <TableHead className="w-20 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
               <TableBody>
@@ -478,7 +478,7 @@ export function CategoryPage() {
                           />
                         </div>
                       </TableCell>
-                      <TableCell className="pl-4 pr-8 text-center">
+                      <TableCell className="py-3.5 text-center">
                         <div className="flex items-center justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -797,7 +797,7 @@ export function CategoryPage() {
               </Button>
               <Button
                 type="submit"
-                className="h-11 rounded-sm bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
+                className="h-11 rounded-sm bg-brand text-white hover:bg-brand-dark transition-all shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Confirm

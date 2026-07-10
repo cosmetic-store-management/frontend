@@ -10,13 +10,15 @@ export const restockSchema = z
     newSupplierAddress: z.string().optional(),
     importPrice: z.coerce.number().min(1, "Import price must be greater than 0"),
     restockQty: z.coerce.number().min(1, "Quantity must be greater than 0"),
-    batchCode: z.string().min(1, "Batch code is required"),
-    manufactureDate: z.coerce.date({
-      message: "Please select a manufacture date",
-    }),
-    expiryDate: z.coerce.date({
-      message: "Please select an expiry date",
-    }),
+    batchCode: z.string().trim().optional(),
+    manufactureDate: z.preprocess((val) => {
+      if (!val || val === "" || val === null) return undefined;
+      return new Date(val as string);
+    }, z.date().optional()),
+    expiryDate: z.preprocess((val) => {
+      if (!val || val === "" || val === null) return undefined;
+      return new Date(val as string);
+    }, z.date().optional()),
   })
   .superRefine((data, ctx) => {
     if (data.isNewSupplier) {
@@ -40,6 +42,16 @@ export const restockSchema = z
           code: z.ZodIssueCode.custom,
           message: "Please select a supplier",
           path: ["supplierId"],
+        });
+      }
+    }
+
+    if (data.manufactureDate && data.expiryDate) {
+      if (data.expiryDate <= data.manufactureDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Expiry date must be after manufacture date",
+          path: ["expiryDate"],
         });
       }
     }

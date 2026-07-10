@@ -337,7 +337,7 @@ export function FlashSaleEditor({
                     <Button
                       type="button"
                       onClick={handleBulkApply}
-                      className="gap-2 w-full sm:w-auto bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-sm font-bold px-6 shadow-sm"
+                      className="gap-2 w-full sm:w-auto bg-brand hover:bg-brand-dark transition-all text-white rounded-sm font-bold px-6 shadow-sm"
                     >
                       <CheckSquare className="w-4 h-4" />{"Apply to All"}</Button>
                   </div>
@@ -347,10 +347,10 @@ export function FlashSaleEditor({
                       <TableHeader className="bg-muted/30">
                         <TableRow>
                           <TableHead>{"Product"}</TableHead>
-                          <TableHead className="whitespace-nowrap text-center">{"Original Price"}</TableHead>
-                          <TableHead className="whitespace-nowrap text-center">{"Stock"}</TableHead>
-                          <TableHead className="w-45 whitespace-nowrap text-center">{"Flash Price"}</TableHead>
-                          <TableHead className="w-37.5 whitespace-nowrap text-center">
+                          <TableHead className="w-36 whitespace-nowrap text-center">{"Original Price"}</TableHead>
+                          <TableHead className="w-24 whitespace-nowrap text-center">{"Stock"}</TableHead>
+                          <TableHead className="w-36 whitespace-nowrap text-center">{"Flash Price"}</TableHead>
+                          <TableHead className="w-36 whitespace-nowrap text-center">
                             Flash Qty
                           </TableHead>
                           <TableHead className="w-12 text-center"></TableHead>
@@ -450,7 +450,7 @@ export function FlashSaleEditor({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="min-w-37.5 shadow-sm bg-[#b91c1c] hover:bg-[#991b1b] text-white rounded-sm font-bold"
+              className="min-w-37.5 shadow-sm bg-brand hover:bg-brand-dark transition-all text-white rounded-sm font-bold"
             >
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

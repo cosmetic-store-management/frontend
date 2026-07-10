@@ -198,19 +198,19 @@ export function ReviewPage() {
           <Table className="min-w-[1000px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-52 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                <TableHead className="w-60 py-3 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                   Reviewer
                 </TableHead>
-                <TableHead className="w-56 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                <TableHead className="w-60 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                   Product
                 </TableHead>
-                <TableHead className="w-32 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                <TableHead className="w-28 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                   Rating
                 </TableHead>
-                <TableHead className="w-80 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
+                <TableHead className="w-96 px-3.5 text-xs font-semibold uppercase tracking-wide whitespace-nowrap text-center">
                   Content
                 </TableHead>
-                <TableHead className="w-24 pl-4 pr-8 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
+                <TableHead className="w-20 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
                   Actions
                 </TableHead>
               </TableRow>
@@ -244,14 +244,14 @@ export function ReviewPage() {
                               </span>
                             )}
                           </div>
-                          <div className="min-w-0">
+                          <div className="min-w-0 text-center">
                             <p
-                              className="font-medium text-ink truncate"
+                              className="font-medium text-ink truncate text-center"
                               title={item.userName}
                             >
                               {item.userName}
                             </p>
-                            <p className="text-[10px] text-ink-muted">
+                            <p className="text-[10px] text-ink-muted text-center">
                               {new Date(item.createdAt).toLocaleDateString(
                                 "vi-VN",
                               )}
@@ -317,7 +317,7 @@ export function ReviewPage() {
                           </div>
                         )}
                       </TableCell>
-                      <TableCell className="pl-4 pr-8 py-3.5 text-center align-middle">
+                      <TableCell className="py-3.5 text-center align-middle">
                         <div className="flex justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>

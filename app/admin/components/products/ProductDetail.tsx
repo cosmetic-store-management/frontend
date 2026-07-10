@@ -33,7 +33,7 @@ export default function ProductDetail({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
+      <DialogContent className="max-w-5xl w-[95vw] max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
         <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
           <DialogTitle className="text-xl font-bold text-ink pr-6">
             Product Details
@@ -42,7 +42,7 @@ export default function ProductDetail({
 
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* Cột trái – ảnh */}
-          <div className="md:w-[35%] flex flex-col border-r border-border bg-surface-soft/30 overflow-y-auto shrink-0">
+          <div className="md:w-[38%] flex flex-col border-r border-border bg-surface-soft/30 overflow-y-auto shrink-0">
              <ProductDetailImage imageUrl={product.imageUrl} name={product.name} />
           </div>
 
@@ -52,17 +52,17 @@ export default function ProductDetail({
               <h2 className="text-xl font-bold text-ink mb-3">{product.name}</h2>
               {/* Badges */}
               <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-[4px] font-semibold text-[11px] uppercase tracking-[0.14em]">
+                <span className="bg-surface-soft text-ink-muted px-2 py-0.5 rounded-[4px] font-semibold text-[11px] uppercase tracking-[0.14em]">
                   {resolvedCategoryName}
                 </span>
-                <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-[4px] font-semibold text-[11px] uppercase tracking-[0.14em]">
+                <span className="bg-surface-soft text-ink-muted px-2 py-0.5 rounded-[4px] font-semibold text-[11px] uppercase tracking-[0.14em]">
                   {product.brandName || "-"}
                 </span>
                 <span
                   className={`px-2 py-0.5 rounded-[4px] font-semibold text-[11px] uppercase tracking-[0.14em] ${
                     product.isActive
                       ? "bg-success/10 text-success"
-                      : "bg-slate-100 text-slate-400"
+                      : "bg-surface-soft text-ink-muted"
                   }`}
                 >
                   {product.isActive ? "Active" : "Inactive"}

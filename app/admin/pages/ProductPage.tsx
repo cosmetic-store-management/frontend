@@ -182,7 +182,7 @@ export function ProductPage() {
               <Upload className="size-4 mr-1.5" /> Import
             </Button>
             <Button
-              className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+              className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
               size="sm"
               onClick={() => {
                 navigate("/admin/products/new");
@@ -196,7 +196,7 @@ export function ProductPage() {
           <div className="flex flex-wrap items-center gap-3 w-full">
             {/* Search */}
             <div className="group relative w-full sm:w-80">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
@@ -207,7 +207,7 @@ export function ProductPage() {
                 <button
                   type="button"
                   onClick={() => setInputValue("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink transition-colors"
                 >
                   <X className="size-4" />
                 </button>
@@ -277,35 +277,35 @@ export function ProductPage() {
 
 
       <div className="premium-card overflow-hidden">
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto w-full">
           <Table className="min-w-[1500px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                 <TableHead className="w-16 text-center">
                   No.
                 </TableHead>
-                <TableHead className="w-80 text-center">
+                <TableHead className="w-96 text-center">
                   Product
                 </TableHead>
-                <TableHead className="w-56 text-center">
+                <TableHead className="w-60 text-center">
                   Barcode
                 </TableHead>
-                <TableHead className="w-40 text-center">
+                <TableHead className="w-36 text-center">
                   Brand
                 </TableHead>
-                <TableHead className="w-40 text-center">
+                <TableHead className="w-36 text-center">
                   Category
                 </TableHead>
-                <TableHead className="w-32 text-center">
+                <TableHead className="w-24 text-center">
                   Status
                 </TableHead>
-                <TableHead className="w-48 text-center">
+                <TableHead className="w-60 text-center">
                   Price Range
                 </TableHead>
-                <TableHead className="w-32 text-center">
+                <TableHead className="w-28 text-center">
                   Stock
                 </TableHead>
-                <TableHead className="w-28 pl-4 pr-8 text-center">
+                <TableHead className="w-20 text-center">
                   Actions
                 </TableHead>
               </TableRow>
@@ -336,11 +336,11 @@ export function ProductPage() {
 
                         {/* Product name */}
                         <TableCell className="px-5 py-4 align-middle text-center">
-                          <div className="flex w-full items-center justify-center gap-3 text-left">
+                          <div className="flex w-full items-center justify-center gap-3 text-center">
                             <img
                               src={item.imageUrl}
                               alt={item.name}
-                              className="h-10 w-10 shrink-0 object-cover rounded-sm border border-border"
+                              className="h-10 w-10 shrink-0 object-cover rounded-sm border border-border bg-white"
                             />
                             <div className="min-w-0 flex-1">
                               <button
@@ -348,7 +348,7 @@ export function ProductPage() {
                                 onClick={() =>
                                   setModal({ type: "detail", product: item })
                                 }
-                                className="w-full truncate font-semibold text-ink transition-colors hover:text-brand block text-left"
+                                className="w-full truncate font-semibold text-ink transition-colors hover:text-brand block text-center"
                               >
                                 {item.name}
                               </button>
@@ -467,7 +467,7 @@ export function ProductPage() {
                       </TableCell>
 
                       {/* Actions */}
-                      <TableCell className="pl-4 pr-8 py-4 text-center align-middle">
+                      <TableCell className="py-4 text-center align-middle">
                         <div className="flex items-center justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>

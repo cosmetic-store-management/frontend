@@ -23,9 +23,14 @@ export interface InventoryTransaction {
   id: string;
   sku: string;
   type: "in" | "out" | "adjustment";
+  businessType: "Item Receipt" | "Item Fulfillment" | "Inventory Adjustment" | "Customer Return";
   qty: number;
   user: string;
   date: string;
+  productName?: string;
+  productImage?: string;
+  barcode?: string;
+  price?: number;
 }
 
 export interface Supplier {
@@ -127,13 +132,112 @@ export function getTransactions(params: {
   page?: number;
   limit?: number;
   type?: string;
+  variantId?: string;
 }): Promise<{ transactions: InventoryTransaction[]; pagination: any }> {
   return apiClient
     .get<{
-      transactions: InventoryTransaction[];
+      transactions: any[];
       pagination: any;
     }>("/inventory/transactions", params)
-    .then((res) => res);
+    .then((res) => ({
+      transactions: res.transactions.map((tx) => ({
+        id: tx.id,
+        sku: tx.sku,
+        type: tx.type,
+        businessType:
+          tx.id.startsWith("TXRET")
+            ? "Customer Return"
+            : tx.type === "in"
+              ? "Item Receipt"
+              : tx.type === "out"
+                ? "Item Fulfillment"
+                : "Inventory Adjustment",
+        productName: tx.productName,
+        productImage: tx.productImage,
+        barcode: tx.barcode,
+        price: tx.price,
+        qty: tx.qty,
+        user: tx.user,
+        date: tx.date,
+      })),
+      pagination: res.pagination,
+    }));
+}
+
+export interface GoodsReceiptItem {
+  productId: string;
+  variantId: string;
+  productName: string;
+  variantName: string;
+  quantity: number;
+  importPrice: number;
+  barcode?: string;
+  productImage?: string;
+}
+
+export interface GoodsReceipt {
+  id: string;
+  code: string;
+  supplierId: string;
+  supplierName?: string;
+  items: GoodsReceiptItem[];
+  totalAmount: number;
+  creatorId: string;
+  creatorName?: string;
+  createdAt: string;
+}
+
+export interface StocktakeItem {
+  productId: string;
+  variantId: string;
+  productName: string;
+  variantName: string;
+  systemQty: number;
+  actualQty: number;
+  variance: number;
+}
+
+export interface Stocktake {
+  id: string;
+  code: string;
+  items: StocktakeItem[];
+  totalVarianceQty: number;
+  totalAdjustmentValue: number;
+  creatorId: string;
+  creatorName?: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export function getGoodsReceipts(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}): Promise<{ receipts: GoodsReceipt[]; pagination: any }> {
+  return apiClient.get("/inventory/goods-receipts", params);
+}
+
+export function getGoodsReceiptDetail(id: string): Promise<GoodsReceipt> {
+  return apiClient.get(`/inventory/goods-receipts/${id}`);
+}
+
+export function getStocktakes(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}): Promise<{ stocktakes: Stocktake[]; pagination: any }> {
+  return apiClient.get("/inventory/stocktakes", params);
+}
+
+export function getStocktakeDetail(id: string): Promise<Stocktake> {
+  return apiClient.get(`/inventory/stocktakes/${id}`);
+}
+
+export function createStocktake(data: {
+  items: { variantId: string; actualQty: number }[];
+  notes?: string;
+}): Promise<Stocktake> {
+  return apiClient.post("/inventory/stocktakes", data);
 }
 
 export function createGoodsReceipt(data: {
@@ -191,4 +295,13 @@ export function updateBatch(
   return apiClient
     .put<{ batch: BatchItem }>(`/inventory/stock/batches/${batchId}`, data)
     .then((res) => res.batch);
+}
+
+export function getInventoryStats(): Promise<{
+  totalSKUs: number;
+  totalValue: number;
+  outOfStock: number;
+  lowStock: number;
+}> {
+  return apiClient.get("/inventory/stats");
 }

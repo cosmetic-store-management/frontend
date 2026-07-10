@@ -161,10 +161,10 @@ export function AuditLogPage() {
         <Table className="min-w-[1050px] table-fixed">
           <TableHeader>
             <TableRow className="bg-surface-muted border-b border-border">
-              <TableHead className="w-56 text-center text-ink-muted font-medium">
+              <TableHead className="w-60 text-center text-ink-muted font-medium">
                 Account
               </TableHead>
-              <TableHead className="w-32 text-center text-ink-muted font-medium">
+              <TableHead className="w-36 text-center text-ink-muted font-medium">
                 Action
               </TableHead>
               <TableHead className="w-36 text-center text-ink-muted font-medium">
@@ -173,7 +173,7 @@ export function AuditLogPage() {
               <TableHead className="w-96 text-center text-ink-muted font-medium">
                 Details
               </TableHead>
-              <TableHead className="w-44 pl-4 pr-8 text-center text-ink-muted font-medium">
+              <TableHead className="w-36 text-center text-ink-muted font-medium">
                 Timestamp
               </TableHead>
             </TableRow>
@@ -240,7 +240,7 @@ export function AuditLogPage() {
                   <TableCell className="font-medium text-ink-muted break-words max-w-xs text-center">
                     {log.description}
                   </TableCell>
-                  <TableCell className="pl-4 pr-8 text-ink-muted text-xs font-medium text-center">
+                  <TableCell className="text-ink-muted text-xs font-medium text-center">
                     {log.timestamp}
                   </TableCell>
                 </TableRow>

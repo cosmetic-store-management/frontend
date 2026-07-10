@@ -145,18 +145,18 @@ export function ProductSelectModal({
           <div className="pl-4 pr-6 py-4 border-b bg-muted/10 shrink-0">
           <div className="flex flex-col sm:flex-row flex-wrap gap-3">
             <div className="group relative w-full sm:w-70">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
                 placeholder="Search product name or Barcode..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-10 border-border bg-background pl-9 pr-9 text-sm focus-visible:border-brand focus-visible:ring-brand/20"
+                className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
               {searchTerm && (
                 <button
                   type="button"
                   onClick={() => setSearchTerm("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink"
                 >
                   <X className="size-4" />
                 </button>
@@ -164,7 +164,7 @@ export function ProductSelectModal({
             </div>
             <div className="w-full sm:w-auto">
               <Select value={categoryId} onValueChange={setCategoryId}>
-                <SelectTrigger className="w-full sm:w-40 h-10 bg-background border-border">
+                <SelectTrigger className="w-full sm:w-40 h-10 bg-surface border-border text-sm text-ink-muted focus-visible:ring-brand/20">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
@@ -179,7 +179,7 @@ export function ProductSelectModal({
             </div>
             <div className="w-full sm:w-auto">
               <Select value={brandId} onValueChange={setBrandId}>
-                <SelectTrigger className="w-full sm:w-40 h-10 bg-background border-border">
+                <SelectTrigger className="w-full sm:w-40 h-10 bg-surface border-border text-sm text-ink-muted focus-visible:ring-brand/20">
                   <SelectValue placeholder="Brand" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60">
@@ -198,7 +198,7 @@ export function ProductSelectModal({
                 placeholder="Stock..."
                 value={minStock}
                 onChange={(e) => setMinStock(e.target.value)}
-                className="w-full h-10 border-border bg-background focus-visible:border-brand focus-visible:ring-brand/20"
+                className="w-full h-10 border-border bg-surface text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20 font-mono"
                 min="0"
               />
             </div>
@@ -208,12 +208,12 @@ export function ProductSelectModal({
         <div className="flex-1 overflow-y-auto min-h-0">
           <div className="w-full">
             <Table>
-              <TableHeader className="bg-muted/30 sticky top-0 z-10 shadow-sm">
-                <TableRow>
-                  <TableHead className="w-12 text-center bg-muted/30"></TableHead>
-                  <TableHead className="bg-muted/30">{"Product"}</TableHead>
-                  <TableHead className="text-center w-25 bg-muted/30">{"Stock"}</TableHead>
-                  <TableHead className="text-center w-37.5 bg-muted/30">{"Original Price"}</TableHead>
+              <TableHeader className="sticky top-0 z-10 shadow-sm">
+                <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                  <TableHead className="w-12 text-center bg-surface-muted"></TableHead>
+                  <TableHead className="bg-surface-muted text-center">{"Product"}</TableHead>
+                  <TableHead className="text-center w-36 bg-surface-muted">{"Stock"}</TableHead>
+                  <TableHead className="text-center w-60 bg-surface-muted">{"Original Price"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -228,7 +228,7 @@ export function ProductSelectModal({
                   <TableRow>
                     <TableCell
                       colSpan={4}
-                      className="h-32 text-center text-muted-foreground"
+                      className="h-32 text-center text-ink-muted"
                     >{"Product not found"}</TableCell>
                   </TableRow>
                 ) : (
@@ -268,25 +268,25 @@ export function ProductSelectModal({
                                 }}
                               />
                             </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-3">
+                            <TableCell className="px-4 py-3 align-middle text-center">
+                              <div className="flex items-center justify-center gap-3 text-center">
                                 <img
                                   src={
                                     pinnedVariant.productImage ||
                                     "/placeholder.jpg"
                                   }
                                   alt={pinnedVariant.productName}
-                                  className="w-10 h-10 rounded-sm object-cover border shrink-0"
+                                  className="w-10 h-10 rounded-sm object-cover border shrink-0 bg-white"
                                 />
-                                <div className="min-w-0 flex-1">
+                                <div className="min-w-0 flex-1 text-center">
                                   <div
-                                    className="font-medium text-sm line-clamp-1"
+                                    className="font-medium text-sm text-ink line-clamp-1 text-center"
                                     title={pinnedVariant.productName}
                                   >
                                     {pinnedVariant.productName}
                                   </div>
                                   {pinnedVariant.variantName && pinnedVariant.variantName !== "Default" && (
-                                    <div className="text-xs text-ink-muted mt-0.5">
+                                    <div className="text-xs text-ink-muted mt-0.5 text-center">
                                       Type: {pinnedVariant.variantName}
                                     </div>
                                   )}
@@ -294,7 +294,7 @@ export function ProductSelectModal({
                                     const barcodeVal = pinnedVariant.barcode || pinnedVariant.sku;
                                     if (!barcodeVal) return null;
                                     return (
-                                      <div className="text-[11px] text-ink-muted font-mono mt-0.5">
+                                      <div className="text-[11px] text-ink-muted font-mono mt-0.5 text-center">
                                         Barcode: {barcodeVal}
                                       </div>
                                     );
@@ -302,10 +302,10 @@ export function ProductSelectModal({
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center text-ink">
                               {pinnedVariant.stock}
                             </TableCell>
-                            <TableCell className="text-center whitespace-nowrap">
+                            <TableCell className="text-center text-ink font-medium tabular-nums whitespace-nowrap">
                               {formatCurrency(pinnedVariant.originalPrice)}
                             </TableCell>
                           </TableRow>
@@ -345,8 +345,8 @@ export function ProductSelectModal({
                                 }
                               />
                             </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-3">
+                            <TableCell className="px-4 py-3 align-middle text-center">
+                              <div className="flex items-center justify-center gap-3 text-center">
                                 <img
                                   src={
                                     product.imageUrl ||
@@ -354,17 +354,17 @@ export function ProductSelectModal({
                                     "/placeholder.jpg"
                                   }
                                   alt={product.name}
-                                  className="w-10 h-10 rounded-sm object-cover border shrink-0"
+                                  className="w-10 h-10 rounded-sm object-cover border shrink-0 bg-white"
                                 />
-                                <div className="min-w-0 flex-1">
+                                <div className="min-w-0 flex-1 text-center">
                                   <div
-                                    className="font-medium text-sm line-clamp-1"
+                                    className="font-medium text-sm text-ink line-clamp-1 text-center"
                                     title={product.name}
                                   >
                                     {product.name}
                                   </div>
                                   {variant?.name && variant?.name !== "Default" && (
-                                    <div className="text-xs text-ink-muted mt-0.5">
+                                    <div className="text-xs text-ink-muted mt-0.5 text-center">
                                       Type: {variant.name}
                                     </div>
                                   )}
@@ -372,7 +372,7 @@ export function ProductSelectModal({
                                     const barcodeVal = variant?.barcode || variant?.sku;
                                     if (!barcodeVal) return null;
                                     return (
-                                      <div className="text-[11px] text-ink-muted font-mono mt-0.5">
+                                      <div className="text-[11px] text-ink-muted font-mono mt-0.5 text-center">
                                         Barcode: {barcodeVal}
                                       </div>
                                     );
@@ -380,10 +380,10 @@ export function ProductSelectModal({
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center text-ink">
                               {variant.stock}
                             </TableCell>
-                            <TableCell className="text-center whitespace-nowrap">
+                            <TableCell className="text-center text-ink font-medium tabular-nums whitespace-nowrap">
                               {formatCurrency(
                                 variant.price || (product as any).price,
                               )}

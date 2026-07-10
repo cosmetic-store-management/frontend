@@ -10,6 +10,10 @@ import {
   adjustStock,
   updateMinStock,
   updateBatch,
+  getGoodsReceipts,
+  getStocktakes,
+  createStocktake,
+  getInventoryStats,
 } from "@/admin/services/inventory.service";
 import { handleMutationError } from "@/lib/api-helper";
 
@@ -82,6 +86,7 @@ export function useRestock() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["stock"] });
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["goods-receipts"] });
       queryClient.invalidateQueries({ queryKey: ["pos-products"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
     },
@@ -124,5 +129,41 @@ export function useUpdateBatch() {
       queryClient.invalidateQueries({ queryKey: ["stock"] });
     },
     onError: (err) => handleMutationError(err, "Failed to update batch"),
+  });
+}
+
+export function useGoodsReceipts(params: { page?: number; limit?: number; search?: string } = {}) {
+  return useQuery({
+    queryKey: ["goods-receipts", params],
+    queryFn: () => getGoodsReceipts(params),
+  });
+}
+
+export function useStocktakes(params: { page?: number; limit?: number; search?: string } = {}) {
+  return useQuery({
+    queryKey: ["stocktakes", params],
+    queryFn: () => getStocktakes(params),
+  });
+}
+
+export function useCreateStocktake() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createStocktake,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stock"] });
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["stocktakes"] });
+      queryClient.invalidateQueries({ queryKey: ["pos-products"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
+    },
+    onError: (err) => handleMutationError(err, "Failed to submit stocktake"),
+  });
+}
+
+export function useInventoryStats() {
+  return useQuery({
+    queryKey: ["inventory-stats"],
+    queryFn: getInventoryStats,
   });
 }

@@ -74,52 +74,56 @@ export function CustomerOrderHistoryModal({
             <Table>
               <TableHeader>
                 <TableRow className="bg-bg/50 border-b border-border">
-                  <TableHead className="px-4 w-[25%]">Order ID</TableHead>
-                  <TableHead className="px-4 w-[15%]">Channel</TableHead>
-                  <TableHead className="px-4 text-center w-[20%]">
+                  <TableHead className="px-4 w-48 text-center">Order ID</TableHead>
+                  <TableHead className="px-4 w-24 text-center">Channel</TableHead>
+                  <TableHead className="px-4 w-36 text-center">
                     Total Amount
                   </TableHead>
-                  <TableHead className="px-4 text-center w-[20%]">
+                  <TableHead className="px-4 w-28 text-center">
                     Status
                   </TableHead>
-                  <TableHead className="px-4 w-[20%]">Date</TableHead>
+                  <TableHead className="px-4 w-36 text-center">Date</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {customerOrders.map((o: Order) => (
                   <TableRow key={o.id} className="hover:bg-bg/40">
-                    <TableCell className="py-3 px-4 font-mono text-ink font-semibold">
+                    <TableCell className="py-3 px-4 font-mono text-ink font-semibold text-center">
                       {o.code}
                     </TableCell>
-                    <TableCell className="py-3 px-4">
-                      {o.channel === "pos" ? (
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] bg-brand/10 text-brand px-2 py-0 hover:bg-brand/20"
-                        >
-                          POS
-                        </Badge>
-                      ) : (
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] text-warning border-warning/50 px-2 py-0 bg-warning/5"
-                        >
-                          Online
-                        </Badge>
-                      )}
+                    <TableCell className="py-3 px-4 text-center">
+                      <div className="flex justify-center">
+                        {o.channel === "pos" ? (
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] bg-brand/10 text-brand px-2 py-0 hover:bg-brand/20"
+                          >
+                            POS
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] text-warning border-warning/50 px-2 py-0 bg-warning/5"
+                          >
+                            Online
+                          </Badge>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell className="py-3 px-4 text-center font-bold text-brand">
                       {o.totalAmount.toLocaleString("en-US")} VND
                     </TableCell>
                     <TableCell className="py-3 px-4 text-center">
-                      <Badge
-                        variant={STATUS_VARIANTS[o.orderStatus] ?? "outline"}
-                        className="text-[10px] px-2 py-0"
-                      >
-                        {STATUS_LABELS[o.orderStatus]}
-                      </Badge>
+                      <div className="flex justify-center">
+                        <Badge
+                          variant={STATUS_VARIANTS[o.orderStatus] ?? "outline"}
+                          className="text-[10px] px-2 py-0"
+                        >
+                          {STATUS_LABELS[o.orderStatus]}
+                        </Badge>
+                      </div>
                     </TableCell>
-                    <TableCell className="py-3 px-4 text-ink-muted text-xs">
+                    <TableCell className="py-3 px-4 text-ink-muted text-xs text-center">
                       {o.createdAt
                         ? new Date(o.createdAt).toLocaleDateString("en-US")
                         : "N/A"}

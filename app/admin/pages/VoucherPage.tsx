@@ -214,7 +214,7 @@ export function VoucherPage() {
         description="Create and manage discount codes, promotional campaigns, and special offers to drive sales."
         actions={
           <Button
-            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
             size="sm"
             onClick={() => {
               setEditing(null);
@@ -276,24 +276,24 @@ export function VoucherPage() {
           <Table className="min-w-[1100px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-40 text-center">
+                <TableHead className="w-36 text-center">
                   Voucher Code
                 </TableHead>
-                <TableHead className="w-32 text-center">
+                <TableHead className="w-36 text-center">
                   Discount Type
                 </TableHead>
-                <TableHead className="w-32 text-center">
+                <TableHead className="w-36 text-center">
                   Discount Value
                 </TableHead>
-                <TableHead className="w-32 text-center">Min Order</TableHead>
+                <TableHead className="w-36 text-center">Min Order</TableHead>
                 <TableHead className="w-36 text-center">
                   Usage Limit / Used
                 </TableHead>
                 <TableHead className="w-48 text-center">
                   Validity Period
                 </TableHead>
-                <TableHead className="w-28 text-center">Status</TableHead>
-                <TableHead className="w-24 pl-4 pr-8 text-center">Actions</TableHead>
+                <TableHead className="w-24 text-center">Status</TableHead>
+                <TableHead className="w-20 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -370,7 +370,7 @@ export function VoucherPage() {
                       );
                     })()}
                   </TableCell>
-                  <TableCell className="text-center pl-4 pr-8">
+                  <TableCell className="text-center">
                     <div className="flex items-center justify-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -729,7 +729,7 @@ export function VoucherPage() {
               </Button>
               <Button
                 type="submit"
-                className="h-11 bg-brand text-white hover:bg-brand-hover shadow-ui-soft px-8"
+                className="h-11 rounded-sm bg-brand text-white hover:bg-brand-dark transition-all shadow-ui-soft px-8"
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 Confirm

@@ -199,7 +199,7 @@ export function SupplierPage() {
         description="Manage warehouse product distributors and manufacturers"
         actions={
           <Button
-            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
             size="sm"
             onClick={openCreate}
           >
@@ -226,13 +226,13 @@ export function SupplierPage() {
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
                 <TableHead className="w-16 text-center">No.</TableHead>
-                <TableHead className="w-56 text-center">Supplier Name</TableHead>
-                <TableHead className="w-36 text-center">Tax Code</TableHead>
-                <TableHead className="w-44 text-center">Contact Person</TableHead>
-                <TableHead className="w-60 text-left pl-4">Contact Details</TableHead>
-                <TableHead className="w-64 text-center">Address</TableHead>
-                <TableHead className="w-28 text-center">Status</TableHead>
-                <TableHead className="w-32 text-center pr-8">Actions</TableHead>
+                <TableHead className="w-60 text-center">Supplier Name</TableHead>
+                <TableHead className="w-28 text-center">Tax Code</TableHead>
+                <TableHead className="w-36 text-center">Contact Person</TableHead>
+                <TableHead className="w-60 text-center">Contact Details</TableHead>
+                <TableHead className="w-60 text-center">Address</TableHead>
+                <TableHead className="w-24 text-center">Status</TableHead>
+                <TableHead className="w-20 text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -270,17 +270,17 @@ export function SupplierPage() {
                         <span className="text-ink-muted">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-left pl-4 py-3">
-                      <div className="space-y-2 text-xs">
-                        <div className="flex flex-col">
-                          <span className="font-mono text-ink text-sm">{sup.phone}</span>
-                          {sup.email && <span className="text-ink-muted/70 truncate max-w-[200px]" title={sup.email}>{sup.email}</span>}
+                    <TableCell className="text-center py-3">
+                      <div className="space-y-2 text-xs flex flex-col items-center">
+                        <div className="flex flex-col items-center">
+                          <span className="font-mono text-ink text-sm text-center">{sup.phone}</span>
+                          {sup.email && <span className="text-ink-muted/70 truncate max-w-[200px] text-center" title={sup.email}>{sup.email}</span>}
                         </div>
                         
                         {(sup.contactPhone || sup.contactEmail) && (
-                          <div className="flex flex-col pt-1">
-                            {sup.contactPhone && <span className="font-mono text-ink text-sm">{sup.contactPhone}</span>}
-                            {sup.contactEmail && <span className="text-ink-muted/70 truncate max-w-[200px] mt-0.5" title={sup.contactEmail}>{sup.contactEmail}</span>}
+                          <div className="flex flex-col items-center pt-1 border-t border-border/20 w-full">
+                            {sup.contactPhone && <span className="font-mono text-ink text-sm text-center">{sup.contactPhone}</span>}
+                            {sup.contactEmail && <span className="text-ink-muted/70 truncate max-w-[200px] mt-0.5 text-center" title={sup.contactEmail}>{sup.contactEmail}</span>}
                           </div>
                         )}
                       </div>
@@ -295,7 +295,7 @@ export function SupplierPage() {
                         />
                       </div>
                     </TableCell>
-                    <TableCell className="text-center pr-8">
+                    <TableCell className="text-center">
                       <div className="flex items-center justify-center">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
