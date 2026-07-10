@@ -72,11 +72,11 @@ export function BulkRestockModal({
         let notFoundCount = 0;
 
         data.forEach((row) => {
-          const sku = row["SKU"] || row["Mã SKU"] || row["sku"];
+          const codeVal = row["Barcode"] || row["Mã vạch"] || row["barcode"] || row["SKU"] || row["Mã SKU"] || row["sku"];
           const rawQty = row["Số lượng"] || row["Quantity"] || row["qty"];
           const rawPrice = row["Giá nhập"] || row["Price"] || row["price"];
 
-          if (!sku) return;
+          if (!codeVal) return;
 
           const quantity = Number(rawQty) || 1;
           const importPrice = Number(rawPrice) || 0;
@@ -96,7 +96,9 @@ export function BulkRestockModal({
             "";
 
           const matchedItem = stockItems.find(
-            (s) => s.sku.toLowerCase() === String(sku).toLowerCase().trim(),
+            (s) =>
+              (s.barcode && s.barcode.toLowerCase() === String(codeVal).toLowerCase().trim()) ||
+              (s.sku && s.sku.toLowerCase() === String(codeVal).toLowerCase().trim())
           );
 
           if (matchedItem) {
@@ -293,7 +295,6 @@ export function BulkRestockModal({
         onOpenChange(o);
       }}
       title="Bulk Restock"
-      description="Upload an Excel file to bulk import inventory restocks for existing variants."
       size="xl"
       hideFooter={true}
     >

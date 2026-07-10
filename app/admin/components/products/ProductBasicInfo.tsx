@@ -74,6 +74,16 @@ function buildFlatOptions(
   return result;
 }
 
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, false] }],
+    ["bold", "italic", "underline", "strike"],
+    ["link", "image"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["clean"],
+  ],
+};
+
 export function ProductBasicInfo({
   control,
   errors,
@@ -239,6 +249,7 @@ export function ProductBasicInfo({
                   onChange={field.onChange}
                   placeholder="Enter product description"
                   className="bg-surface"
+                  modules={quillModules}
                 />
               </Suspense>
             )}

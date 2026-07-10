@@ -609,3 +609,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: none !important;
   -webkit-appearance: none;
 }
+
+/* Prevent double dimming/nested overlay backdrops from piling up and turning pitch black */
+div[data-radix-portal] ~ div[data-radix-portal] [class*="bg-black"] {
+  background-color: transparent !important;
+}

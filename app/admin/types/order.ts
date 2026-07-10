@@ -22,6 +22,7 @@ export interface OrderItem {
   variantId?: string;
   productName: string;
   variantName?: string;
+  barcode?: string;
   imageUrl: string;
   price: number;
   quantity: number;
@@ -51,7 +52,7 @@ export interface Order {
   userId: string | null;
   channel: "pos" | "online";
   creatorId: string | null;
-  paymentStatus: "pending" | "paid" | "failed" | "refund_pending";
+  paymentStatus: "pending" | "paid" | "failed" | "refund_pending" | "refunded";
   idempotencyKey?: string;
   transactionId?: string;
   earnedPoints?: number;
@@ -59,4 +60,10 @@ export interface Order {
   completedAt?: string;
   returnReason?: string;
   trackingCode?: string;
+  cancelledAt?: string;
+  returnRequestedAt?: string;
+  cancellationReason?: string;
+  returnRejectReason?: string;
+  receiptNumber?: string;
+  updatedAt: string;
 }

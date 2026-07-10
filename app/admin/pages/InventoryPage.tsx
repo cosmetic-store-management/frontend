@@ -37,6 +37,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   DropdownMenu,
@@ -265,7 +272,7 @@ export function InventoryPage() {
             <div className="group relative w-72 sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted transition-colors group-focus-within:text-brand" />
               <Input
-                placeholder="Search product name, SKU..."
+                placeholder="Search product name, Barcode..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
@@ -309,11 +316,13 @@ export function InventoryPage() {
         <div className="space-y-4">
           {/* Stock Table */}
           <div className="premium-card rounded-sm overflow-hidden">
-            <Table className="min-w-[1150px] table-fixed">
+            <Table className="min-w-[1550px] table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                  <TableHead className="w-72 text-center">Product</TableHead>
-                  <TableHead className="w-28 text-center">Stock</TableHead>
+                  <TableHead className="w-20 text-center">No.</TableHead>
+                  <TableHead className="w-80 text-center">Product</TableHead>
+                  <TableHead className="w-56 text-center">Barcode</TableHead>
+                  <TableHead className="w-32 text-center">Stock</TableHead>
                   <TableHead className="w-32 text-center">
                     Min Stock
                   </TableHead>
@@ -321,17 +330,17 @@ export function InventoryPage() {
                   <TableHead className="w-40 text-center">
                     Import Price
                   </TableHead>
-                  <TableHead className="w-44 text-center">
+                  <TableHead className="w-48 text-center">
                     MFG - EXP
                   </TableHead>
-                  <TableHead className="w-28 pl-4 pr-8 text-center">Actions</TableHead>
+                  <TableHead className="w-28 text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
                 <TableBody>
                   {isStockLoading ? (
                     <TableRow>
                       <TableCell
-                        colSpan={7}
+                        colSpan={9}
                         className="py-8 text-center text-ink-muted"
                       >
                         <div className="flex items-center justify-center gap-2">
@@ -343,21 +352,25 @@ export function InventoryPage() {
                   ) : stockItems.length === 0 ? (
                     <TableRow>
                       <TableCell
-                        colSpan={7}
+                        colSpan={9}
                         className="py-8 text-center text-ink-muted"
                       >
                         No products found
                       </TableCell>
                     </TableRow>
                   ) : (
-                    stockItems.map((item: any) => {
+                    stockItems.map((item: any, i: number) => {
                       const isLow = item.stock <= item.minStock;
                       const isOut = item.stock === 0;
+                      const itemNo = (stockPage - 1) * 10 + i + 1;
 
                       return (
                         <TableRow key={item.id}>
-                          <TableCell className="py-3.5 px-5 text-center">
-                            <div className="flex items-center gap-3">
+                          <TableCell className="py-3.5 px-3 text-center text-ink-muted font-medium">
+                            {itemNo}
+                          </TableCell>
+                          <TableCell className="py-3.5 px-4">
+                            <div className="flex items-center gap-3 justify-start max-w-[320px] mx-auto">
                               <div className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
                                 <img
                                   src={
@@ -368,9 +381,9 @@ export function InventoryPage() {
                                   className="w-full h-full object-contain p-0.5"
                                 />
                               </div>
-                              <div className="flex flex-col min-w-0">
+                              <div className="text-left min-w-0 flex-1">
                                 <div className="flex items-center gap-2">
-                                  <span className="block truncate font-semibold text-ink">
+                                  <span className="block truncate font-semibold text-ink max-w-[180px]" title={item.name}>
                                     {item.name}
                                   </span>
                                   {item.expiringBatchesCount &&
@@ -382,11 +395,27 @@ export function InventoryPage() {
                                     </span>
                                   ) : null}
                                 </div>
-                                <span className="truncate font-mono text-xs text-ink-muted">
-                                  {item.sku}
-                                </span>
                               </div>
                             </div>
+                          </TableCell>
+                          <TableCell className="py-3.5 px-4 text-center">
+                            {(() => {
+                              const barcode = item.barcode || item.sku;
+                              if (!barcode) return <span className="text-ink-muted">—</span>;
+                              return (
+                                <div className="flex flex-col items-center gap-1">
+                                  <img
+                                    src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${barcode}&scale=2&rotate=N`}
+                                    alt={`Barcode ${barcode}`}
+                                    className="h-8 max-w-[160px] object-contain mx-auto"
+                                    loading="lazy"
+                                  />
+                                  <span className="text-[10px] font-mono text-ink-muted block text-center mt-0.5">
+                                    {barcode}
+                                  </span>
+                                </div>
+                              );
+                            })()}
                           </TableCell>
                           <TableCell className="py-3.5 px-5 text-center">
                             <span
@@ -476,25 +505,17 @@ export function InventoryPage() {
                           </TableCell>
                           <TableCell className="py-3.5 px-5 text-center font-medium text-ink">
                             {item.mac
-                              ? `${item.mac.toLocaleString("vi-VN")}đ`
-                              : "-"}
+                              ? `${item.mac.toLocaleString("en-US")} VND`
+                              : "—"}
                           </TableCell>
                           <TableCell className="py-3.5 px-5 text-center text-ink-muted text-xs whitespace-nowrap">
                             {item.manufactureDate
-                              ? new Date(
-                                  item.manufactureDate,
-                                ).toLocaleDateString("vi-VN")
-                              : "N/A"}
-                            <br />
-                            <span className="text-ink-muted mx-1">-</span>
-                            <br />
-                            {item.expiryDate
-                              ? new Date(item.expiryDate).toLocaleDateString(
-                                  "vi-VN",
-                                )
+                              ? new Date(item.manufactureDate).toLocaleDateString("vi-VN")
+                              : "N/A"}{" - "}{item.expiryDate
+                              ? new Date(item.expiryDate).toLocaleDateString("vi-VN")
                               : "N/A"}
                           </TableCell>
-                          <TableCell className="py-3.5 pl-5 pr-8 text-center">
+                          <TableCell className="py-3.5 px-4 text-center">
                             <div className="flex items-center justify-center">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -555,22 +576,23 @@ export function InventoryPage() {
       ) : (
         /* Transactions List */
         <div className="premium-card rounded-sm overflow-hidden">
-          <Table className="min-w-[950px] table-fixed">
+          <Table className="min-w-[1250px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-48 text-center">TX ID</TableHead>
-                <TableHead className="w-36 text-center">SKU</TableHead>
-                <TableHead className="w-40 text-center">Type</TableHead>
-                <TableHead className="w-32 text-center">Quantity</TableHead>
-                <TableHead className="w-48 text-center">Performer</TableHead>
-                <TableHead className="w-36 pl-4 pr-8 text-center">Date</TableHead>
+                <TableHead className="w-20 text-center">No.</TableHead>
+                <TableHead className="w-52 text-center">TX ID</TableHead>
+                <TableHead className="w-44 text-center">Barcode</TableHead>
+                <TableHead className="w-44 text-center">Type</TableHead>
+                <TableHead className="w-36 text-center">Quantity</TableHead>
+                <TableHead className="w-52 text-center">Performer</TableHead>
+                <TableHead className="w-44 text-center">Date</TableHead>
               </TableRow>
             </TableHeader>
               <TableBody>
                 {isTxLoading ? (
                   <TableRow>
                     <TableCell
-                      colSpan={6}
+                      colSpan={7}
                       className="py-8 text-center text-ink-muted"
                     >
                       <div className="flex items-center justify-center gap-2">
@@ -582,74 +604,80 @@ export function InventoryPage() {
                 ) : transactions.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={6}
+                      colSpan={7}
                       className="py-8 text-center text-ink-muted"
                     >
                       No transactions found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  transactions.map((tx: any) => (
-                    <TableRow key={tx.id}>
-                      <TableCell className="py-3.5 px-5 font-mono text-xs text-ink-muted text-center">
-                        <span className="block truncate">{tx.id}</span>
-                      </TableCell>
-                      <TableCell className="py-3.5 px-5 font-mono text-xs text-ink font-medium text-center truncate">
-                        {tx.sku}
-                      </TableCell>
-                      <TableCell className="py-3.5 px-5 text-center">
-                        <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-xs font-semibold ${
+                  transactions.map((tx: any, idx: number) => {
+                    const itemNo = (txPage - 1) * 10 + idx + 1;
+                    return (
+                      <TableRow key={tx.id}>
+                        <TableCell className="py-3.5 px-3 text-center text-ink-muted font-medium">
+                          {itemNo}
+                        </TableCell>
+                        <TableCell className="py-3.5 px-5 font-mono text-xs text-ink-muted text-center">
+                          <span className="block truncate">{tx.id}</span>
+                        </TableCell>
+                        <TableCell className="py-3.5 px-5 font-mono text-xs text-ink font-medium text-center truncate">
+                          {tx.barcode || tx.sku || "—"}
+                        </TableCell>
+                        <TableCell className="py-3.5 px-5 text-center">
+                          <span
+                            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-sm text-xs font-semibold ${
+                              tx.type === "in"
+                                ? "bg-success/10 text-success border border-success"
+                                : tx.type === "out"
+                                  ? "bg-warning/10 text-warning border border-warning"
+                                  : "bg-blue-500/10 text-blue-500 border border-blue-500"
+                            }`}
+                          >
+                            {tx.type === "in" ? (
+                              <>
+                                <ArrowDownRight className="w-3.5 h-3.5 text-success" />{" "}
+                                Stock In
+                              </>
+                            ) : tx.type === "out" ? (
+                              <>
+                                <ArrowUpRight className="w-3.5 h-3.5 text-warning" />{" "}
+                                Stock Out
+                              </>
+                            ) : (
+                              <>
+                                <AlertCircle className="w-3.5 h-3.5 text-blue-500" />{" "}
+                                Adjustment
+                              </>
+                            )}
+                          </span>
+                        </TableCell>
+                        <TableCell
+                          className={`py-3.5 px-5 text-center font-bold tabular-nums ${
                             tx.type === "in"
-                              ? "bg-success/10 text-success border border-success"
+                              ? "text-success"
                               : tx.type === "out"
-                                ? "bg-warning/10 text-warning border border-warning"
-                                : "bg-blue-500/10 text-blue-500 border border-blue-500"
+                                ? "text-warning"
+                                : "text-blue-500"
                           }`}
                         >
-                          {tx.type === "in" ? (
-                            <>
-                              <ArrowDownRight className="w-3.5 h-3.5 text-success" />{" "}
-                              Stock In
-                            </>
-                          ) : tx.type === "out" ? (
-                            <>
-                              <ArrowUpRight className="w-3.5 h-3.5 text-warning" />{" "}
-                              Stock Out
-                            </>
-                          ) : (
-                            <>
-                              <AlertCircle className="w-3.5 h-3.5 text-blue-500" />{" "}
-                              Adjustment
-                            </>
-                          )}
-                        </span>
-                      </TableCell>
-                      <TableCell
-                        className={`py-3.5 px-5 text-right font-bold tabular-nums ${
-                          tx.type === "in"
-                            ? "text-success"
+                          {tx.type === "in"
+                            ? `+${tx.qty}`
                             : tx.type === "out"
-                              ? "text-warning"
-                              : "text-blue-500"
-                        }`}
-                      >
-                        {tx.type === "in"
-                          ? `+${tx.qty}`
-                          : tx.type === "out"
-                            ? `-${tx.qty}`
-                            : tx.qty > 0
-                              ? `+${tx.qty}`
-                              : tx.qty}
-                      </TableCell>
-                      <TableCell className="py-3.5 px-5 text-ink-muted font-medium">
-                        {tx.user}
-                      </TableCell>
-                      <TableCell className="py-3.5 pl-5 pr-8 text-center text-ink-muted text-xs">
-                        {tx.date}
-                      </TableCell>
-                    </TableRow>
-                  ))
+                              ? `-${tx.qty}`
+                              : tx.qty > 0
+                                ? `+${tx.qty}`
+                                : tx.qty}
+                        </TableCell>
+                        <TableCell className="py-3.5 px-5 text-center text-ink-muted font-medium">
+                          {tx.user}
+                        </TableCell>
+                        <TableCell className="py-3.5 px-4 text-center text-ink-muted text-xs">
+                          {tx.date}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
@@ -675,9 +703,6 @@ export function InventoryPage() {
             <DialogTitle className="text-base font-bold text-ink">
               Restock Items
             </DialogTitle>
-            <DialogDescription className="text-xs text-ink-muted mt-1">
-              Add new stock to GlowUp inventory from a supplier.
-            </DialogDescription>
           </DialogHeader>
 
           <form
@@ -711,33 +736,35 @@ export function InventoryPage() {
                 control={restockControl}
                 name="supplierId"
                 render={({ field }) => (
-                  <select
-                    {...field}
-                    id="supplier"
-                    className="w-full h-10 px-3 border border-border rounded-sm bg-surface text-sm focus:outline-none focus:ring-1 focus:ring-brand"
-                    onChange={(e) => {
-                      if (e.target.value === "new") {
+                  <Select
+                    onValueChange={(val) => {
+                      if (val === "new") {
                         setRestockValue("isNewSupplier", true);
                         field.onChange("");
                       } else {
                         setRestockValue("isNewSupplier", false);
-                        field.onChange(e.target.value);
+                        field.onChange(val === "select" ? "" : val);
                       }
                     }}
-                    value={isNewSupplier ? "new" : field.value}
+                    value={isNewSupplier ? "new" : (field.value || "select")}
                   >
-                    <option value="">-- Select Supplier --</option>
-                    {suppliers
-                      .filter((sup: any) => sup.isActive !== false || sup.id === field.value)
-                      .map((sup: any) => (
-                        <option key={sup.id} value={sup.id}>
-                          {sup.name}
-                        </option>
-                      ))}
-                    <option value="new" className="text-brand font-semibold">
-                      + Add New Supplier...
-                    </option>
-                  </select>
+                    <SelectTrigger className="w-full h-10 border border-border rounded-sm bg-surface text-sm px-3 focus-visible:ring-brand/20">
+                      <SelectValue placeholder="-- Select Supplier --" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-surface border border-border shadow-ui-card rounded-sm">
+                      <SelectItem value="select">-- Select Supplier --</SelectItem>
+                      {suppliers
+                        .filter((sup: any) => sup.isActive !== false || sup.id === field.value)
+                        .map((sup: any) => (
+                          <SelectItem key={sup.id} value={sup.id}>
+                            {sup.name}
+                          </SelectItem>
+                        ))}
+                      <SelectItem value="new" className="text-brand font-semibold focus:bg-brand/5 focus:text-brand">
+                        + Add New Supplier...
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 )}
               />
               {restockErrors.supplierId && (
@@ -864,7 +891,7 @@ export function InventoryPage() {
                     <Input
                       {...field}
                       id="batchCode"
-                      placeholder="E.g. LOT-01"
+                      placeholder="LOT-01"
                       className="h-9 text-sm bg-surface"
                     />
                   )}
@@ -930,7 +957,7 @@ export function InventoryPage() {
                   htmlFor="importPrice"
                   className="text-xs font-semibold text-ink"
                 >
-                  Import Price ($) <span className="text-danger">*</span>
+                  Import Price (VND) <span className="text-danger">*</span>
                 </Label>
                 <Controller
                   control={restockControl}
@@ -948,7 +975,7 @@ export function InventoryPage() {
                         onBlur={onBlur}
                         id="importPrice"
                         type="text"
-                        placeholder="E.g. 150000"
+                        placeholder="150000"
                         value={displayValue}
                         onChange={(e) => {
                           const rawValue = e.target.value.replace(/\./g, "");
@@ -979,7 +1006,7 @@ export function InventoryPage() {
                       {...field}
                       id="qty"
                       type="number"
-                      placeholder="E.g. 50"
+                      placeholder="50"
                     />
                   )}
                 />
@@ -1027,9 +1054,6 @@ export function InventoryPage() {
             <DialogTitle className="text-base font-bold text-ink">
               Adjust Stock
             </DialogTitle>
-            <DialogDescription className="text-xs text-ink-muted mt-1">
-              Record actual physical stock if there's a discrepancy.
-            </DialogDescription>
           </DialogHeader>
 
           <form
@@ -1066,7 +1090,7 @@ export function InventoryPage() {
                     {...field}
                     id="actualStock"
                     type="number"
-                    placeholder="E.g. 45"
+                    placeholder="45"
                   />
                 )}
               />
@@ -1091,7 +1115,7 @@ export function InventoryPage() {
                   <Textarea
                     {...field}
                     id="reason"
-                    placeholder="E.g. Damaged, miscounted, lost..."
+                    placeholder="Damaged, miscounted, lost..."
                     className="min-h-25 resize-none"
                   />
                 )}

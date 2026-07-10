@@ -22,6 +22,7 @@ export interface OrderItem {
   variantId?: string;
   productName: string;
   variantName?: string;
+  barcode?: string;
   imageUrl: string;
   price: number;
   quantity: number;

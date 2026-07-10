@@ -120,14 +120,14 @@ export function ProductVariants({ control, errors }: ProductVariantsProps) {
                   )}
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs font-semibold text-ink">SKU<span className="text-danger">*</span></Label>
+                  <Label className="text-xs font-semibold text-ink">Barcode</Label>
                   <Controller
                     control={control}
-                    name={`variants.${idx}.sku`}
+                    name={`variants.${idx}.barcode`}
                     render={({ field: vf }) => (
                       <Input
                         {...vf}
-                        placeholder="SKU-001"
+                        placeholder="E.g. 893..."
                         className="h-9 text-sm bg-surface focus-visible:ring-brand focus-visible:border-brand font-mono"
                       />
                     )}

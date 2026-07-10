@@ -12,12 +12,12 @@ import {
   Package,
   CheckCircle2,
   XCircle,
+  Eye,
 } from "lucide-react";
 import { useProducts } from "../hooks/useProducts";
 import { useBrands } from "../hooks/useBrand";
 import { useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getAdminProducts } from "@/admin/services/product.service";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { Category } from "@/admin/types/category";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -85,7 +85,8 @@ export function ProductPage() {
   const navigate = useNavigate();
 
   // ── Filter state ───────────────────────────────────────────────────────────
-  const [keyword, setKeyword] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const debouncedSearch = useDebounce(inputValue, 500);
   const [brandId, setBrandId] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [status, setStatus] = useState<"active" | "inactive" | "">("");
@@ -109,7 +110,7 @@ export function ProductPage() {
     importFromExcel,
     refresh,
     clearError,
-  } = useProducts({ keyword, brandId, categoryId, status });
+  } = useProducts({ keyword: debouncedSearch, brandId, categoryId, status });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -129,18 +130,9 @@ export function ProductPage() {
   const brands = brandData?.brands ?? [];
   const brandsWithProducts = brands.filter((b) => (b.productCount ?? 0) > 0);
 
-  // Fetch all products for stats
-  const { data: allData } = useQuery({
-    queryKey: ["admin_products_stats"],
-    queryFn: () => getAdminProducts({ limit: 1000 }),
-  });
-  const allProducts = allData?.products ?? [];
-  const totalCount = allData?.pagination?.total ?? allProducts.length;
-  const activeCount = allProducts.filter((p) => p.isActive).length;
-  const inactiveCount = allProducts.filter((p) => !p.isActive).length;
 
   // ── Derived ────────────────────────────────────────────────────────────────
-  const hasActiveFilter = !!(keyword || brandId || categoryId || status);
+  const hasActiveFilter = !!(inputValue || brandId || categoryId || status);
 
   // ── Handlers ───────────────────────────────────────────────────────────────
   const closeModal = () => {
@@ -206,15 +198,15 @@ export function ProductPage() {
             <div className="group relative w-full sm:w-80">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
               <Input
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="Search by product name..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Search product name, Barcode..."
                 className="h-10 border-border bg-surface pl-9 pr-9 text-sm text-ink-muted placeholder:text-ink-muted focus-visible:border-brand focus-visible:ring-brand/20"
               />
-              {keyword && (
+              {inputValue && (
                 <button
                   type="button"
-                  onClick={() => setKeyword("")}
+                  onClick={() => setInputValue("")}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="size-4" />
@@ -283,55 +275,20 @@ export function ProductPage() {
         }
       />
 
-      {/* ── Stat Cards ─ */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        {[
-          {
-            icon: <Package className="w-5 h-5 text-brand" />,
-            bg: "bg-brand/10",
-            label: "Total Products",
-            val: totalCount,
-            cls: "text-ink",
-          },
-          {
-            icon: <CheckCircle2 className="w-5 h-5 text-success" />,
-            bg: "bg-success/10",
-            label: "Active",
-            val: activeCount,
-            cls: "text-success",
-          },
-          {
-            icon: <XCircle className="w-5 h-5 text-danger" />,
-            bg: "bg-danger/10",
-            label: "Inactive",
-            val: inactiveCount,
-            cls: "text-danger",
-          },
-        ].map(({ icon, bg, label, val, cls }) => (
-          <div
-            key={label}
-            className="border border-border rounded-sm bg-surface shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 p-4 flex items-center gap-4 group cursor-pointer"
-          >
-            <div
-              className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6`}
-            >
-              {icon}
-            </div>
-            <div>
-              <p className="text-xs text-ink-muted font-medium mb-0.5">{label}</p>
-              <p className={`text-2xl font-bold ${cls}`}>{val}</p>
-            </div>
-          </div>
-        ))}
-      </div>
 
       <div className="premium-card overflow-hidden">
         <CardContent className="p-0">
-          <Table className="min-w-[1150px] table-fixed">
+          <Table className="min-w-[1500px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-                <TableHead className="w-72 text-center">
+                <TableHead className="w-16 text-center">
+                  No.
+                </TableHead>
+                <TableHead className="w-80 text-center">
                   Product
+                </TableHead>
+                <TableHead className="w-56 text-center">
+                  Barcode
                 </TableHead>
                 <TableHead className="w-40 text-center">
                   Brand
@@ -348,7 +305,7 @@ export function ProductPage() {
                 <TableHead className="w-32 text-center">
                   Stock
                 </TableHead>
-                <TableHead className="w-24 pl-4 pr-8 text-center">
+                <TableHead className="w-28 pl-4 pr-8 text-center">
                   Actions
                 </TableHead>
               </TableRow>
@@ -358,7 +315,7 @@ export function ProductPage() {
                 {loading && (
                   <TableRow>
                     <TableCell
-                      colSpan={7}
+                      colSpan={9}
                       className="px-4 py-12 text-center text-sm text-ink-muted"
                     >
                       Loading products...
@@ -367,32 +324,58 @@ export function ProductPage() {
                 )}
 
                 {!loading &&
-                  products.map((item) => (
-                    <TableRow key={item.id}>
-                      {/* Product name */}
-                      <TableCell className="px-5 py-4 align-middle text-center">
-                        <div className="flex w-full items-center justify-center gap-3 text-left">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.name}
-                            className="h-10 w-10 shrink-0 object-cover rounded-sm border border-border"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setModal({ type: "detail", product: item })
-                              }
-                              className="w-full truncate font-semibold text-ink transition-colors hover:text-brand block text-left"
-                            >
-                              {item.name}
-                            </button>
-                            <span className="block truncate font-mono text-xs text-ink-muted mt-0.5 text-left">
-                              {item.variants?.[0]?.sku || "N/A"}
-                            </span>
+                  products.map((item, idx) => {
+                    const limit = pagination?.limit || 12;
+                    const stt = (page - 1) * limit + idx + 1;
+                    return (
+                      <TableRow key={item.id}>
+                        {/* Sequence Number */}
+                        <TableCell className="px-3 py-4 align-middle text-center text-xs font-semibold text-ink-muted font-mono">
+                          {stt}
+                        </TableCell>
+
+                        {/* Product name */}
+                        <TableCell className="px-5 py-4 align-middle text-center">
+                          <div className="flex w-full items-center justify-center gap-3 text-left">
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="h-10 w-10 shrink-0 object-cover rounded-sm border border-border"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setModal({ type: "detail", product: item })
+                                }
+                                className="w-full truncate font-semibold text-ink transition-colors hover:text-brand block text-left"
+                              >
+                                {item.name}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
+                        </TableCell>
+
+                        {/* Barcode */}
+                        <TableCell className="px-5 py-4 align-middle text-center">
+                          {(() => {
+                            const barcode = item.variants?.[0]?.barcode || item.variants?.[0]?.sku;
+                            if (!barcode) return <span className="text-ink-muted">—</span>;
+                            return (
+                              <div className="flex flex-col items-center gap-1">
+                                <img
+                                  src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${barcode}&scale=2&rotate=N`}
+                                  alt={`Barcode ${barcode}`}
+                                  className="h-8 max-w-[160px] object-contain mx-auto"
+                                  loading="lazy"
+                                />
+                                <span className="text-[10px] font-mono text-ink-muted block text-center mt-0.5">
+                                  {barcode}
+                                </span>
+                              </div>
+                            );
+                          })()}
+                        </TableCell>
 
                       {/* Brand */}
                       <TableCell className="px-5 py-4 align-middle text-center">
@@ -412,7 +395,7 @@ export function ProductPage() {
 
                       {/* Category */}
                       <TableCell className="px-5 py-4 align-middle text-center">
-                        <span className="block text-center text-sm text-ink-muted">
+                        <span className="block text-center text-sm text-ink-muted truncate">
                           {item.category?.name ??
                             categoryNameById[item.categoryId] ??
                             "—"}
@@ -503,6 +486,16 @@ export function ProductPage() {
                               <DropdownMenuItem
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => {
+                                  clearError();
+                                  setModal({ type: "detail", product: item });
+                                }}
+                              >
+                                <Eye className="w-4 h-4 mr-2.5" />
+                                Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => {
                                   navigate(`/admin/products/${item.id}/edit`);
                                 }}
                               >
@@ -524,12 +517,13 @@ export function ProductPage() {
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
+                    );
+                  })}
 
                 {!loading && products.length === 0 && (
                   <TableRow>
                     <TableCell
-                      colSpan={7}
+                      colSpan={9}
                       className="px-4 py-12 text-center text-sm text-ink-muted"
                     >
                       {hasActiveFilter

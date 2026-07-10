@@ -5,6 +5,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import {
   fetchOrders as getAdminOrders,
   updateOrderStatus,
+  updateOrderAdmin,
   cancelOrder,
   processRefund,
   approveReturn,
@@ -89,11 +90,35 @@ export function useOrders(
 
   // 2. Mutations
   const updateMut = useMutation({
-    mutationFn: ({ id, values }: { id: string; values: OrderFormValues }) =>
-      updateOrderStatus(id, { orderStatus: values.orderStatus }),
+    mutationFn: async ({ id, values }: { id: string; values: any }) => {
+      // 1. Details payload
+      const detailPayload = {
+        receiverName: values.receiverName,
+        phone: values.phone,
+        province: values.province,
+        district: values.district,
+        ward: values.ward,
+        street: values.street,
+        note: values.note,
+      };
+
+      // Check if any details are being updated
+      const hasDetailChanges = Object.values(detailPayload).some((v) => v !== undefined);
+      if (hasDetailChanges) {
+        await updateOrderAdmin(id, detailPayload);
+      }
+
+      // 2. Status payload
+      if (values.orderStatus || values.trackingCode !== undefined) {
+        await updateOrderStatus(id, {
+          orderStatus: values.orderStatus,
+          trackingCode: values.trackingCode,
+        });
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
-      toast.success("Order status updated");
+      toast.success("Order updated successfully");
     },
     onError: (err: any) => handleMutationError(err, "Failed to update order"),
   });

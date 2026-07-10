@@ -29,6 +29,7 @@ export type ProductEditorProps = {
 export const defaultVariant: VariantFormValues = {
   name: "Default",
   sku: "",
+  barcode: "",
   price: "0",
   discountPrice: "",
   stock: "0",
@@ -87,7 +88,12 @@ export default function ProductEditor({
   }, [mergedInitialValues, reset]);
 
   const onSubmitForm = async (data: ProductFormData) => {
-    await onSubmit(data as any);
+    const modifiedVariants = data.variants.map((v) => ({
+      ...v,
+      sku: v.barcode?.trim() || "",
+      barcode: v.barcode?.trim() || "",
+    }));
+    await onSubmit({ ...data, variants: modifiedVariants } as any);
   };
 
   return (

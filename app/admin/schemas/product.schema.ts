@@ -4,7 +4,8 @@ export const variantSchema = z
   .object({
     id: z.string().optional(),
     name: z.string().min(1, "Variant name is required"),
-    sku: z.string().min(1, "SKU is required"),
+    sku: z.string().optional(),
+    barcode: z.string().optional(),
     price: z
       .string()
       .min(1, "Price is required")

@@ -66,7 +66,7 @@ export const paymentMethodLabel: Record<
   Order["paymentMethod"] | "cash" | "card",
   string
 > = {
-  cod: "Cash on Delivery (COD)",
+  cod: "Cash on Delivery",
   bank: "Bank Transfer",
   ewallet: "E-Wallet",
   qr: "QR Code",
@@ -93,6 +93,10 @@ export const paymentStatusMeta: Record<
   refund_pending: {
     label: "Refund Pending",
     badgeClass: "bg-blue-500/10 text-blue-500",
+  },
+  refunded: {
+    label: "Refunded",
+    badgeClass: "bg-danger/10 text-danger",
   },
 };
 

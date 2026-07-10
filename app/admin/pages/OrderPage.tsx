@@ -1,4 +1,4 @@
-import { Search, Edit, Ban, X, MoreVertical, Eye, XCircle, RotateCcw } from "lucide-react";
+import { Search, Edit, Ban, X, MoreVertical, Eye, XCircle, RotateCcw, History } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import OrderDetail, { formatVnd } from "../components/orders/OrderDetail";
+import OrderHistoryDialog from "../components/orders/OrderHistoryDialog";
 import { orderStatusMeta } from "../types/order-meta";
 import OrderModal, {
   type OrderFormValues,
@@ -59,13 +60,15 @@ type ModalState =
   | { type: "edit"; order: Order }
   | { type: "cancel"; order: Order }
   | { type: "detail"; order: Order }
-  | { type: "pos_return"; order: Order };
+  | { type: "pos_return"; order: Order }
+  | { type: "history"; order: Order };
 
 export function OrderPage() {
   const posReturnMutation = usePOSReturn();
   const [keyword, setKeyword] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [paymentFilter, setPaymentFilter] = useState("");
+  const [channelFilter, setChannelFilter] = useState("");
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [modal, setModal] = useState<ModalState>({ type: "none" });
 
@@ -83,8 +86,11 @@ export function OrderPage() {
     submitting,
     submitEdit,
     submitCancel,
+    submitRefund,
+    submitApproveReturn,
+    submitRejectReturn,
     clearError,
-  } = useOrders(keyword, filter, paymentFilter, dateFrom, dateTo);
+  } = useOrders(keyword, filter, paymentFilter, dateFrom, dateTo, channelFilter);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -240,8 +246,22 @@ export function OrderPage() {
                   <SelectItem value="all">All payments</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="paid">Paid</SelectItem>
-                  <SelectItem value="refund_pending">Refund pending</SelectItem>
+                  <SelectItem value="refunded">Refunds</SelectItem>
                   <SelectItem value="failed">Failed</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={channelFilter || "all"}
+                onValueChange={(v) => setChannelFilter(v === "all" ? "" : v)}
+              >
+                <SelectTrigger className="h-9 rounded-sm w-fit text-xs border-border bg-surface text-ink-muted">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All channels</SelectItem>
+                  <SelectItem value="online">Online</SelectItem>
+                  <SelectItem value="pos">POS Counter</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -392,6 +412,16 @@ export function OrderPage() {
                                 className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                                 onClick={() => {
                                   clearError();
+                                  setModal({ type: "history", order: item });
+                                }}
+                              >
+                                <History className="w-4 h-4 mr-2.5" />
+                                History
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => {
+                                  clearError();
                                   setModal({ type: "edit", order: item });
                                 }}
                               >
@@ -504,6 +534,18 @@ export function OrderPage() {
         }
         initialOpenPOSReturn={modal.type === "pos_return"}
         onClose={closeModal}
+        onApproveReturn={async (orderId) => {
+          const success = await submitApproveReturn(orderId);
+          if (success) closeModal();
+        }}
+        onRejectReturn={async (orderId, reason) => {
+          const success = await submitRejectReturn(orderId, reason);
+          if (success) closeModal();
+        }}
+        onRefund={async (orderId) => {
+          const success = await submitRefund(orderId);
+          if (success) closeModal();
+        }}
         onPOSReturn={async (orderId, returnItems, returnReason) => {
           await toast.promise(
             posReturnMutation
@@ -524,28 +566,15 @@ export function OrderPage() {
         open={modal.type === "edit"}
         loading={submitting}
         submitError={error}
-        orderCode={modal.type === "edit" ? modal.order.code : undefined}
-        orderedAt={modal.type === "edit" ? modal.order.createdAt : undefined}
-        totalAmount={
-          modal.type === "edit" ? modal.order.totalAmount : undefined
-        }
-        receiverName={
-          modal.type === "edit" ? modal.order.receiverName : undefined
-        }
-        phone={modal.type === "edit" ? modal.order.phone : undefined}
-        address={modal.type === "edit" ? modal.order.address : undefined}
-        note={modal.type === "edit" ? modal.order.note : undefined}
-        paymentMethod={
-          modal.type === "edit" ? modal.order.paymentMethod : undefined
-        }
-        currentOrderStatus={
-          modal.type === "edit" ? modal.order.orderStatus : undefined
-        }
-        initialTrackingCode={
-          modal.type === "edit" ? modal.order.trackingCode : undefined
-        }
+        order={modal.type === "edit" ? modal.order : null}
         onClose={closeModal}
         onSubmit={handleEditSubmit}
+      />
+
+      <OrderHistoryDialog
+        open={modal.type === "history"}
+        order={modal.type === "history" ? modal.order : null}
+        onClose={closeModal}
       />
     </section>
   );

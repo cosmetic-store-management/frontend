@@ -200,7 +200,7 @@ export function POSPage() {
             addToCart(foundProduct);
             toast.success(`Scanned: ${foundProduct.name}`);
           } else {
-            toast.error(`No product found with Barcode/SKU: "${scannedCode}"`);
+            toast.error(`No product found with Barcode: "${scannedCode}"`);
           }
         } else {
           buffer = ""; // Reset buffer if too short
@@ -786,17 +786,25 @@ export function POSPage() {
               <span className="w-16 text-right">AMOUNT</span>
             </div>
 
-            {lastOrder.items?.map((item) => (
-              <div key={item.productId || item.variantId} className="text-[10px] border-b border-zinc-100/50 pb-1">
-                {/* Row 1: Product Name & Variant Name */}
-                <div className="font-medium text-zinc-900 leading-tight">
-                  {item.productName}
-                </div>
-                {item.variantName && (
-                  <div className="text-[9px] text-zinc-500 italic mt-0.5">
-                    Type: {item.variantName}
+            {lastOrder.items?.map((item) => {
+              const barcode = item.barcode || (item.variantName && /^\d+$/.test(item.variantName.trim()) ? item.variantName.trim() : "");
+              const showVariantName = item.variantName && item.variantName !== barcode;
+              return (
+                <div key={item.productId || item.variantId} className="text-[10px] border-b border-zinc-100/50 pb-1">
+                  {/* Row 1: Product Name & Variant Name */}
+                  <div className="font-medium text-zinc-900 leading-tight">
+                    {item.productName}
                   </div>
-                )}
+                  {showVariantName && (
+                    <div className="text-[9px] text-zinc-500 italic mt-0.5">
+                      Type: {item.variantName}
+                    </div>
+                  )}
+                  {barcode && (
+                    <div className="text-[9px] text-zinc-500 font-mono mt-0.5">
+                      Barcode: {barcode}
+                    </div>
+                  )}
                 {/* Row 2: Qty x Price and Subtotal */}
                 <div className="flex justify-between items-center mt-1 text-zinc-600">
                   <span>
@@ -807,7 +815,8 @@ export function POSPage() {
                   </span>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
 
           <div className="border-t border-dashed border-zinc-300 my-2" />

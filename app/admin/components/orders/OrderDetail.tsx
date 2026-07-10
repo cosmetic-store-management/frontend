@@ -7,6 +7,10 @@ import {
   MapPin,
   Package,
   AlertCircle,
+  Check,
+  X,
+  RotateCcw,
+  Truck,
 } from "lucide-react";
 import { Link } from "react-router";
 import type { Order } from "@/admin/types/order";
@@ -71,6 +75,7 @@ function buildSteps(orderStatus: Order["orderStatus"]) {
   }));
 }
 
+
 // ─── Component ────────────────────────────────────────────────────────────
 
 type OrderDetailProps = {
@@ -133,339 +138,360 @@ export default function OrderDetail({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden sm:rounded-sm flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
-          <DialogTitle className="text-xl font-bold text-ink pr-6">
-            Order Detail
-          </DialogTitle>
-        </DialogHeader>
+      {!initialOpenPOSReturn ? (
+        <DialogContent className="max-w-5xl p-0 gap-0 overflow-hidden sm:rounded-sm flex flex-col max-h-[90vh]">
+          {/* Header */}
+          <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
+            <DialogTitle className="text-xl font-bold text-ink pr-6">
+              Order Detail
+            </DialogTitle>
+          </DialogHeader>
 
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto max-h-[80vh]">
-          <div className="flex flex-col lg:flex-row gap-0">
-            {/* Left: items + summary */}
-            <div className="flex-1 p-4 sm:p-5">
-              <div className="mb-4 text-left border-b border-border pb-4">
-                <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
-                  <h2 className="text-xl font-bold text-ink">{order.code}</h2>
-                  <span
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-sm ${meta.badgeClass}`}
-                  >
-                    <StatusIcon className="h-3.5 w-3.5" />
-                    {meta.label}
-                  </span>
+          {/* Body */}
+          <div className="flex-1 overflow-y-auto max-h-[80vh]">
+            <div className="flex flex-col lg:flex-row gap-0">
+              {/* Left: items + summary */}
+              <div className="lg:w-[58%] flex flex-col p-4 sm:p-5">
+                <div className="mb-4 text-left border-b border-border pb-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
+                    <h2 className="text-xl font-bold text-ink">{order.code}</h2>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-sm ${meta.badgeClass}`}
+                    >
+                      <StatusIcon className="h-3.5 w-3.5" />
+                      {meta.label}
+                    </span>
+                  </div>
+                  <p className="text-xs text-ink-muted font-medium">
+                    Ordered at: {formatDate(order.createdAt)}
+                  </p>
                 </div>
-                <p className="text-xs text-ink-muted font-medium">
-                  Ordered at: {formatDate(order.createdAt)}
-                </p>
-              </div>
 
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
-                Products
-              </h4>
+                <h4 className="text-xs font-semibold uppercase tracking-widest text-ink-muted">
+                  Products
+                </h4>
 
-              <div className="mt-3 space-y-2.5">
-                {order.items.length === 0 && (
-                  <p className="text-sm text-ink-muted">No products.</p>
-                )}
-                {order.items.map((item, i) => (
-                  <div
-                    key={`${item.productId}-${i}`}
-                    className="flex flex-col gap-3 bg-surface-soft/50 border border-border rounded-sm px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="w-12 h-12 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
-                        <img
-                          src={item.imageUrl || "https://placehold.co/80x80?text=Product"}
-                          alt={item.productName}
-                          className="w-full h-full object-contain p-0.5"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <Link
-                          to={`/product/${item.productId}`}
-                          target="_blank"
-                          className="truncate text-sm font-semibold leading-5 text-ink hover:text-brand hover:underline block"
-                        >
-                          {item.productName}
-                        </Link>
-                        {item.variantName && (
-                          <p className="mt-0.5 text-xs text-ink-muted">
-                            {item.variantName}
-                          </p>
-                        )}
-                        <p className="mt-1 text-xs text-ink-muted">
-                          Qty: x{item.quantity}
+                <div className="mt-3 space-y-2.5">
+                  {order.items.length === 0 && (
+                    <p className="text-sm text-ink-muted">No products.</p>
+                  )}
+                  {order.items.map((item, i) => {
+                    const barcode = item.barcode || (item.variantName && /^\d+$/.test(item.variantName.trim()) ? item.variantName.trim() : "");
+                    const showVariantName = item.variantName && item.variantName !== barcode;
+                    return (
+                      <div
+                        key={`${item.productId}-${i}`}
+                        className="flex flex-col gap-3 bg-surface-soft/50 border border-border rounded-sm px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+                      >
+                        <div className="flex min-w-0 items-center gap-3">
+                          <div className="w-12 h-12 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
+                            <img
+                              src={item.imageUrl || "https://placehold.co/80x80?text=Product"}
+                              alt={item.productName}
+                              className="w-full h-full object-contain p-0.5"
+                              loading="lazy"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <Link
+                              to={`/product/${item.productId}`}
+                              target="_blank"
+                              className="truncate text-sm font-semibold leading-5 text-ink hover:text-brand hover:underline block"
+                            >
+                              {item.productName}
+                            </Link>
+                            {showVariantName && (
+                              <p className="mt-0.5 text-xs text-ink-muted">
+                                Type: {item.variantName}
+                              </p>
+                            )}
+                            {barcode && (
+                              <div className="mt-1.5 flex flex-col gap-1 text-[11px]">
+                                <span className="font-mono text-ink-muted">
+                                  Barcode: {barcode}
+                                </span>
+                                <img
+                                  src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${barcode}&scale=2&rotate=N`}
+                                  alt={`Barcode ${barcode}`}
+                                  className="h-8 max-w-[140px] object-contain"
+                                  loading="lazy"
+                                />
+                              </div>
+                            )}
+                            <p className="mt-1 text-xs text-ink-muted">
+                              Qty: x{item.quantity}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="shrink-0 text-right text-base font-semibold text-ink sm:text-left">
+                          {formatVnd(item.price * item.quantity)}
                         </p>
                       </div>
+                    );
+                  })}
+                </div>
+
+                {/* Summary */}
+                <div className="mt-4 bg-surface border border-border rounded-sm p-5">
+                  <div className="space-y-2 text-sm text-ink-muted">
+                    <div className="flex items-center justify-between gap-4">
+                      <span>Subtotal</span>
+                      <span className="text-ink">
+                        {formatVnd(order.subtotal)}
+                      </span>
                     </div>
-                    <p className="shrink-0 text-right text-base font-semibold text-ink sm:text-left">
-                      {formatVnd(item.price * item.quantity)}
+                    <div className="flex items-center justify-between gap-4">
+                      <span>Shipping Fee</span>
+                      <span className="text-ink">
+                        {formatVnd(order.shippingFee)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="my-4 h-px bg-border" />
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-base font-semibold text-ink sm:text-lg">
+                      Total Payment
+                    </p>
+                    <p className="text-xl font-bold leading-none text-brand sm:text-2xl">
+                      {formatVnd(order.totalAmount)}
                     </p>
                   </div>
-                ))}
-              </div>
-
-              {/* Summary */}
-              <div className="mt-4 bg-surface border border-border rounded-sm p-5">
-                <div className="space-y-2 text-sm text-ink-muted">
-                  <div className="flex items-center justify-between gap-4">
-                    <span>Subtotal</span>
-                    <span className="text-ink">
-                      {formatVnd(order.subtotal)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-4">
-                    <span>Shipping Fee</span>
-                    <span className="text-ink">
-                      {formatVnd(order.shippingFee)}
-                    </span>
-                  </div>
-                </div>
-                <div className="my-4 h-px bg-border" />
-                <div className="flex items-center justify-between gap-4">
-                  <p className="text-base font-semibold text-ink sm:text-lg">
-                    Total Payment
-                  </p>
-                  <p className="text-xl font-bold leading-none text-brand sm:text-2xl">
-                    {formatVnd(order.totalAmount)}
-                  </p>
-                </div>
-                {order.note && (
-                  <p className="mt-3 text-xs italic text-ink-muted bg-surface-soft p-2 rounded-sm">
-                    Note: {order.note}
-                  </p>
-                )}
-                {order.returnReason && (
-                  <div className="mt-3 bg-danger/5 border border-danger/20 p-3 rounded-sm">
-                    <p className="text-xs font-semibold text-danger uppercase tracking-widest mb-1">
-                      Return Reason
+                  {order.note && (
+                    <p className="mt-3 text-xs italic text-ink-muted bg-surface-soft p-2 rounded-sm">
+                      Note: {order.note}
                     </p>
-                    <p className="text-sm text-ink">{order.returnReason}</p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Vertical Divider (non-touching) */}
-            <div className="hidden lg:block w-px bg-border my-6 shrink-0" />
+              {/* Vertical Divider (non-touching) */}
+              <div className="hidden lg:block w-px bg-border my-6 shrink-0" />
 
-            {/* Right: info + journey */}
-            <div className="space-y-4 p-4 sm:p-5 lg:bg-transparent overflow-y-auto shrink-0 lg:w-[360px] text-left">
-
-              {/* Purchase & Payment */}
-              <div className="border border-border bg-surface p-4 rounded-sm text-left">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-3">
-                  Purchase & Payment
-                </h4>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted block">Channel</span>
-                    <span className="font-semibold text-ink mt-0.5 block">
-                      {order.channel === "pos" || order.address?.includes("Bán tại quầy") ? "In-Store Purchase" : "Online Purchase"}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted block">Payment Method</span>
-                    <span className="font-semibold text-ink mt-0.5 block">
+              {/* Right: info + journey */}
+              <div className="flex-1 p-4 sm:p-5 lg:bg-transparent overflow-y-auto text-left flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-3 shrink-0">
+                  
+                  {/* Payment Method */}
+                  <div className="border border-border bg-surface-soft/50 py-4 px-4 rounded-sm min-h-[76px] flex flex-col justify-start gap-1.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{"Payment Method"}</p>
+                    <p className="text-sm font-medium text-ink">
                       {paymentMethodLabel[order.paymentMethod] || "—"}
-                    </span>
+                    </p>
                   </div>
+
+                  {/* Purchase Channel */}
+                  <div className="border border-border bg-surface-soft/50 py-4 px-4 rounded-sm min-h-[76px] flex flex-col justify-start gap-1.5">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{"Channel"}</p>
+                    <p className="text-sm font-medium text-ink">
+                      {order.channel === "pos" || order.address?.includes("Bán tại quầy") ? "In-Store Purchase" : "Online Purchase"}
+                    </p>
+                  </div>
+
+                  {/* Tracking Code */}
                   {order.trackingCode && (
-                    <div>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted block">Tracking Code</span>
-                      <span className="font-mono text-ink mt-0.5 block">
+                    <div className="col-span-2 border border-border bg-surface-soft/50 py-4 px-4 rounded-sm min-h-[76px] flex flex-col justify-start gap-1.5">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{"Tracking Code"}</p>
+                      <p className="text-sm font-mono font-medium text-ink">
                         {order.trackingCode}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Shipping Information (Only for non-POS orders) */}
-              {!(order.channel === "pos" || order.address?.includes("Bán tại quầy")) && (
-                <div className="border border-border bg-surface p-4 rounded-sm text-left">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-3">
-                    Shipping Information
-                  </h4>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted block">Recipient</span>
-                      <span className="font-semibold text-ink mt-0.5 block">
-                        {order.receiverName}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted block">Phone</span>
-                      <span className="font-mono text-ink mt-0.5 block">
-                        {order.phone || "—"}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted block">Address</span>
-                      <span className="text-ink-muted mt-0.5 block leading-relaxed">
-                        {[
-                          order.street,
-                          order.ward,
-                          order.district,
-                          order.province,
-                        ]
-                          .filter(Boolean)
-                          .join(", ") ||
-                          order.address ||
-                          "—"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Lý do trả hàng nếu có */}
-              {order.returnReason && (
-                <div className="border border-warning/40 bg-warning/5 p-4 rounded-sm">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-warning mb-2">
-                    Return Request Reason
-                  </h4>
-                  <p className="text-sm text-ink font-medium leading-relaxed">
-                    {order.returnReason}
-                  </p>
-                  {(order as any).returnRejectReason && (
-                    <div className="mt-3 pt-3 border-t border-warning/20">
-                      <p className="text-xs font-bold text-danger mb-1">
-                        Reject Reason:
-                      </p>
-                      <p className="text-sm text-ink font-medium leading-relaxed">
-                        {(order as any).returnRejectReason}
                       </p>
                     </div>
                   )}
-                </div>
-              )}
 
-              {/* Order Journey */}
-              <div className="border border-border bg-surface p-4 rounded-sm">
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-3">
-                  Order Journey
-                </h4>
-                <div className="space-y-3 mt-2">
-                  {steps.map((step, index) => (
-                    <div key={step.id} className="relative flex gap-3">
-                      <div className="mt-1 shrink-0 text-border">
-                        {index < steps.length - 1 && (
-                          <span className="absolute left-[7px] top-[14px] h-[calc(100%-6px)] w-px bg-border" />
-                        )}
-                        {step.current ? (
-                          <Circle className="h-3.5 w-3.5 fill-brand text-brand" />
-                        ) : step.done ? (
-                          <Circle className="h-3.5 w-3.5 fill-ink text-ink" />
-                        ) : (
-                          <CircleDashed className="h-3.5 w-3.5 text-border" />
-                        )}
-                      </div>
-                      <div className="min-w-0 pb-1">
-                        <p
-                          className={`text-sm font-semibold ${step.current ? "text-brand" : "text-ink-muted"
-                            }`}
-                        >
-                          {step.title}
+                  {/* Shipping Information (Only for non-POS orders) */}
+                  {!(order.channel === "pos" || order.address?.includes("Bán tại quầy")) && (
+                    <div className="col-span-2 border border-border bg-surface-soft/50 py-4 px-4 rounded-sm min-h-[96px] flex flex-col justify-start gap-1.5">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{"Shipping Address"}</p>
+                      <div>
+                        <p className="text-sm font-semibold text-ink">
+                          {order.receiverName} • {order.phone}
+                        </p>
+                        <p className="text-sm text-ink-muted mt-1 leading-relaxed">
+                          {[
+                            order.street,
+                            order.ward,
+                            order.district,
+                            order.province,
+                          ]
+                            .filter(Boolean)
+                            .join(", ") ||
+                            order.address ||
+                            "—"}
                         </p>
                       </div>
                     </div>
-                  ))}
+                  )}
+
+                  {/* Return Request Reason */}
+                  {order.returnReason && (
+                    <div className="col-span-2 border border-border bg-warning/5 py-4 px-4 rounded-sm min-h-[96px] flex flex-col justify-start gap-1.5">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-warning">{"Return Request Reason"}</p>
+                      <div>
+                        <p className="text-sm text-ink font-medium leading-relaxed">
+                          {order.returnReason}
+                        </p>
+                        {(order as any).returnRejectReason && (
+                          <div className="mt-2 pt-2 border-t border-warning/20">
+                            <p className="text-[11px] font-bold text-danger mb-0.5">{"Reject Reason:"}</p>
+                            <p className="text-sm text-ink font-medium leading-relaxed">
+                              {(order as any).returnRejectReason}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Order Journey */}
+                <div className="border border-border bg-surface-soft/50 p-5 rounded-sm flex-1 flex flex-col">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-4">{"Order Journey"}</p>
+                  <div className="relative flex-1 flex flex-col justify-between min-h-[220px]">
+                    {/* Continuous Timeline Line */}
+                    <span className="absolute left-[9.5px] top-[10px] bottom-[10px] w-px bg-border" />
+
+                    {steps.map((step, index) => {
+                      const isCancelled = step.id === "cancelled";
+                      const isReturned = step.id === "returned";
+                      const isCurrent = step.current;
+                      const isDone = step.done;
+
+                      return (
+                        <div key={step.id} className="relative flex items-center gap-3.5 z-10">
+                          {/* Circle Node */}
+                          <div className="relative flex h-5 w-5 items-center justify-center shrink-0">
+                            {isCurrent ? (
+                              isCancelled ? (
+                                <div className="w-5 h-5 rounded-full bg-danger text-white flex items-center justify-center ring-4 ring-danger/10">
+                                  <X className="w-3 h-3 stroke-[3]" />
+                                </div>
+                              ) : isReturned ? (
+                                <div className="w-5 h-5 rounded-full bg-warning text-white flex items-center justify-center ring-4 ring-warning/10">
+                                  <AlertCircle className="w-3 h-3 stroke-[3]" />
+                                </div>
+                              ) : (
+                                <div className="w-5 h-5 rounded-full bg-brand text-white flex items-center justify-center ring-4 ring-brand/10">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                </div>
+                              )
+                            ) : isDone ? (
+                              <div className="w-5 h-5 rounded-full bg-white border border-brand/20 text-brand flex items-center justify-center">
+                                <Check className="w-3 h-3 stroke-[2.5]" />
+                              </div>
+                            ) : (
+                              <div className="w-5 h-5 rounded-full border border-border bg-white flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-border" />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Title */}
+                          <span
+                            className={`text-xs font-semibold select-none ${
+                              isCurrent
+                                ? isCancelled
+                                  ? "text-danger"
+                                  : isReturned
+                                  ? "text-warning"
+                                  : "text-brand"
+                                : isDone
+                                ? "text-ink"
+                                : "text-ink-muted/50"
+                            }`}
+                          >
+                            {step.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end gap-2 flex-wrap">
-          {order.orderStatus === "return_pending" &&
-            onApproveReturn &&
-            onRejectReturn && (
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
-                {isRejecting ? (
-                  <div className="flex gap-2 items-center w-full sm:w-auto">
-                    <input
-                      type="text"
-                      placeholder="Reject reason..."
-                      className="border border-border text-sm px-2 py-1.5 w-full sm:w-48 outline-none focus:border-brand"
-                      value={rejectReason}
-                      onChange={(e) => setRejectReason(e.target.value)}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="bg-danger text-white border-danger hover:bg-danger/90 hover:text-white"
-                      disabled={loading || !rejectReason.trim()}
-                      onClick={() => {
-                        onRejectReturn(order.id, rejectReason);
-                        setIsRejecting(false);
-                        setRejectReason("");
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setIsRejecting(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="text-danger hover:text-danger hover:bg-danger/10"
-                      disabled={loading}
-                      onClick={() => setIsRejecting(true)}
-                    >
-                      Reject Return
-                    </Button>
-                    <Button
-                      type="button"
-                      className="bg-warning text-white hover:bg-warning/90"
-                      disabled={loading}
-                      onClick={() => onApproveReturn(order.id)}
-                    >
-                      Approve Return
-                    </Button>
-                  </>
-                )}
-              </div>
+          <DialogFooter className="px-6 py-4 border-t border-border bg-surface shrink-0 sm:justify-end gap-2 flex-wrap">
+            {order.orderStatus === "return_pending" &&
+              onApproveReturn &&
+              onRejectReturn && (
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto items-center">
+                  {isRejecting ? (
+                    <div className="flex gap-2 items-center w-full sm:w-auto">
+                      <input
+                        type="text"
+                        placeholder="Reject reason..."
+                        className="border border-border text-sm px-2 py-1.5 w-full sm:w-48 outline-none focus:border-brand"
+                        value={rejectReason}
+                        onChange={(e) => setRejectReason(e.target.value)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="bg-danger text-white border-danger hover:bg-danger/90 hover:text-white"
+                        disabled={loading || !rejectReason.trim()}
+                        onClick={() => {
+                          onRejectReturn(order.id, rejectReason);
+                          setIsRejecting(false);
+                          setRejectReason("");
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setIsRejecting(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="text-danger hover:text-danger hover:bg-danger/10"
+                        disabled={loading}
+                        onClick={() => setIsRejecting(true)}
+                      >
+                        Reject Return
+                      </Button>
+                      <Button
+                        type="button"
+                        className="bg-warning text-white hover:bg-warning/90"
+                        disabled={loading}
+                        onClick={() => onApproveReturn(order.id)}
+                      >
+                        Approve Return
+                      </Button>
+                    </>
+                  )}
+                </div>
+              )}
+
+            {order.paymentStatus === "refund_pending" && onRefund && (
+              <Button
+                type="button"
+                className="bg-brand text-white"
+                disabled={loading}
+                onClick={() => onRefund(order.id)}
+              >
+                {loading ? "Processing..." : "Confirm"}
+              </Button>
             )}
 
-          {order.paymentStatus === "refund_pending" && onRefund && (
+
             <Button
               type="button"
-              className="bg-brand text-white"
-              disabled={loading}
-              onClick={() => onRefund(order.id)}
+              variant="outline"
+              onClick={onClose}
+              className="rounded-sm shadow-none font-medium px-6 h-10"
             >
-              {loading ? "Processing..." : "Confirm"}
+              Close
             </Button>
-          )}
-
-
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            className="rounded-sm shadow-none font-medium px-6 h-10"
-          >
-            Close
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-
-      {/* POS Return Selector Dialog */}
-      <Dialog open={isPOSReturnOpen} onOpenChange={setIsPOSReturnOpen}>
+          </DialogFooter>
+        </DialogContent>
+      ) : (
         <DialogContent
-          overlayClassName="bg-black/40"
           className="max-w-lg w-[95vw] rounded-sm bg-surface shadow-ui-card border-border p-6 text-left"
         >
           <DialogHeader>
@@ -480,6 +506,8 @@ export default function OrderDetail({
           <div className="space-y-4 my-4">
             <div className="max-h-60 overflow-y-auto space-y-2.5 pr-1 text-left custom-scrollbar">
               {order.items.map((item) => {
+                const barcode = item.barcode || (item.variantName && /^\d+$/.test(item.variantName.trim()) ? item.variantName.trim() : "");
+                const showVariantName = item.variantName && item.variantName !== barcode;
                 const isSelected = itemsToReturn.some(
                   (i) =>
                     i.productId === item.productId.toString() &&
@@ -540,9 +568,22 @@ export default function OrderDetail({
                         <div className="text-xs font-semibold text-ink truncate max-w-[220px]">
                           {item.productName}
                         </div>
-                        {item.variantName && (
+                        {showVariantName && (
                           <div className="text-[10px] text-ink-muted mt-0.5">
-                            {item.variantName}
+                            Type: {item.variantName}
+                          </div>
+                        )}
+                        {barcode && (
+                          <div className="mt-1 flex flex-col gap-1 text-[10px]">
+                            <span className="font-mono text-ink-muted">
+                              Barcode: {barcode}
+                            </span>
+                            <img
+                              src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${barcode}&scale=2&rotate=N`}
+                              alt={`Barcode ${barcode}`}
+                              className="h-7 max-w-[120px] object-contain"
+                              loading="lazy"
+                            />
                           </div>
                         )}
                       </div>
@@ -619,7 +660,7 @@ export default function OrderDetail({
           <DialogFooter className="gap-2">
             <Button
               variant="outline"
-              onClick={() => setIsPOSReturnOpen(false)}
+              onClick={onClose}
               className="rounded-sm text-xs font-medium h-10 px-6 shadow-none"
             >
               Cancel
@@ -635,13 +676,12 @@ export default function OrderDetail({
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      )}
 
       {/* POS Return Confirmation Dialog */}
       <Dialog open={isConfirmingPOSReturn} onOpenChange={setIsConfirmingPOSReturn}>
         <DialogContent
-          overlayClassName="bg-transparent"
-          className="sm:max-w-[400px] w-[95vw] flex flex-col p-0 gap-0 overflow-hidden bg-white shadow-2xl border-surface-muted border-t sm:rounded-sm"
+          className="sm:max-w-[400px] w-[95vw] flex flex-col p-0 gap-0 overflow-hidden bg-surface shadow-2xl border-surface-muted border-t sm:rounded-sm"
         >
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar max-h-[calc(90vh-160px)]">
             <div className="flex items-start gap-4">
@@ -658,12 +698,12 @@ export default function OrderDetail({
               </div>
             </div>
           </div>
-          <DialogFooter className="px-6 py-4 border-t border-surface-muted bg-white sm:justify-end gap-3 flex-row items-center">
+          <DialogFooter className="px-6 py-4 border-t border-surface-muted bg-surface sm:justify-end gap-3 flex-row items-center">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsConfirmingPOSReturn(false)}
-              className="flex-1 sm:flex-none border-surface-muted hover:bg-surface-muted transition-colors rounded-sm font-medium px-5 h-10 text-xs"
+              className="flex-1 sm:flex-none border-surface-muted hover:bg-surface-muted transition-colors rounded-sm font-medium px-5 h-10 text-xs shadow-none border-border"
             >
               Cancel
             </Button>
@@ -673,12 +713,11 @@ export default function OrderDetail({
                 if (onPOSReturn) {
                   onPOSReturn(order.id, itemsToReturn, posReturnReason).then(() => {
                     setIsConfirmingPOSReturn(false);
-                    setIsPOSReturnOpen(false);
-                    setPosReturnReason("");
+                    onClose();
                   });
                 }
               }}
-              className="flex-1 sm:flex-none bg-brand hover:bg-brand-dark text-white rounded-sm font-medium px-6 shadow-sm transition-all h-10 text-xs"
+              className="flex-1 sm:flex-none bg-brand hover:bg-brand-dark text-white rounded-sm font-medium px-6 shadow-none transition-all h-10 text-xs"
             >
               Confirm
             </Button>

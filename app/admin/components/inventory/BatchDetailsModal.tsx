@@ -60,7 +60,6 @@ export default function BatchDetailsModal({
         open={open}
         onOpenChange={onOpenChange}
         title="Batch Details"
-        description={`${item.name} ${item.sku}`}
         size="xl"
         hideFooter={true}
       >

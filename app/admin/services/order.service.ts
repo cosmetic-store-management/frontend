@@ -152,3 +152,21 @@ export const processPOSReturn = async (
     })
     .then((res) => res.order);
 };
+
+export interface OrderActivity {
+  _id: string;
+  orderId: string;
+  action: string;
+  statusFrom?: string;
+  statusTo?: string;
+  note?: string;
+  operatorId?: string;
+  operatorName: string;
+  createdAt: string;
+}
+
+export function getOrderActivities(orderId: string): Promise<OrderActivity[]> {
+  return apiClient
+    .get<{ activities: OrderActivity[] }>(`/orders/admin/${orderId}/activities`)
+    .then((data) => data.activities);
+}

@@ -66,6 +66,7 @@ export default function ProductEditPage() {
             id: v.id,
             name: v.name,
             sku: v.sku || "",
+            barcode: v.barcode || v.sku || "",
             price: String(v.price || 0),
             discountPrice:
               v.discountPrice != null ? String(v.discountPrice) : "",

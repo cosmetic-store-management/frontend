@@ -214,7 +214,7 @@ export function useProducts(filters: ProductFilters) {
             "Product Status": p.isActive ? "Active" : "Inactive",
             "Variant ID": "",
             "Variant Name": "Default",
-            SKU: "",
+            Barcode: "",
             "Price": 0,
             "Sale Price": 0,
             "Stock": 0,
@@ -233,7 +233,7 @@ export function useProducts(filters: ProductFilters) {
               "Product Status": p.isActive ? "Active" : "Inactive",
               "Variant ID": v.id,
               "Variant Name": v.name,
-              SKU: v.sku,
+              Barcode: v.barcode || v.sku || "",
               "Price": v.price,
               "Sale Price": v.discountPrice || "",
               "Stock": v.stock,
@@ -270,16 +270,16 @@ export function useProducts(filters: ProductFilters) {
             products: jsonData,
           });
 
-          toast.success("Nhập file Excel thành công!");
+          toast.success("Excel file imported successfully!");
           queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
           resolve();
         } catch (err: any) {
-          toast.error("Lỗi khi nhập file Excel: " + err.message);
+          toast.error("Error importing Excel file: " + err.message);
           reject(err);
         }
       };
       reader.onerror = (err) => {
-        toast.error("Không thể đọc file Excel");
+        toast.error("Unable to read Excel file");
         reject(err);
       };
       reader.readAsArrayBuffer(file);

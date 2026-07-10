@@ -34,6 +34,7 @@ interface SelectedProduct {
   variantId: string;
   variantName: string | undefined;
   sku: string | undefined;
+  barcode?: string;
   originalPrice: number;
   stock: number;
 }
@@ -69,7 +70,8 @@ export function ProductSelectModal({
     return initialSelectedVariants.filter(
       (pv) =>
         pv.productName?.toLowerCase().includes(lower) ||
-        pv.sku?.toLowerCase().includes(lower),
+        pv.sku?.toLowerCase().includes(lower) ||
+        pv.barcode?.toLowerCase().includes(lower),
     );
   }, [initialSelectedVariants, debouncedSearch]);
 
@@ -114,6 +116,7 @@ export function ProductSelectModal({
           variantId: variant.id,
           variantName: variant.name,
           sku: variant.sku,
+          barcode: variant.barcode || variant.sku,
           originalPrice: variant.price || product.price,
           stock: variant.stock,
         },
@@ -144,7 +147,7 @@ export function ProductSelectModal({
             <div className="group relative w-full sm:w-70">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-brand" />
               <Input
-                placeholder="Search product name or SKU..."
+                placeholder="Search product name or Barcode..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="h-10 border-border bg-background pl-9 pr-9 text-sm focus-visible:border-brand focus-visible:ring-brand/20"
@@ -282,6 +285,20 @@ export function ProductSelectModal({
                                   >
                                     {pinnedVariant.productName}
                                   </div>
+                                  {pinnedVariant.variantName && pinnedVariant.variantName !== "Default" && (
+                                    <div className="text-xs text-ink-muted mt-0.5">
+                                      Type: {pinnedVariant.variantName}
+                                    </div>
+                                  )}
+                                  {(() => {
+                                    const barcodeVal = pinnedVariant.barcode || pinnedVariant.sku;
+                                    if (!barcodeVal) return null;
+                                    return (
+                                      <div className="text-[11px] text-ink-muted font-mono mt-0.5">
+                                        Barcode: {barcodeVal}
+                                      </div>
+                                    );
+                                  })()}
                                 </div>
                               </div>
                             </TableCell>
@@ -346,6 +363,20 @@ export function ProductSelectModal({
                                   >
                                     {product.name}
                                   </div>
+                                  {variant?.name && variant?.name !== "Default" && (
+                                    <div className="text-xs text-ink-muted mt-0.5">
+                                      Type: {variant.name}
+                                    </div>
+                                  )}
+                                  {(() => {
+                                    const barcodeVal = variant?.barcode || variant?.sku;
+                                    if (!barcodeVal) return null;
+                                    return (
+                                      <div className="text-[11px] text-ink-muted font-mono mt-0.5">
+                                        Barcode: {barcodeVal}
+                                      </div>
+                                    );
+                                  })()}
                                 </div>
                               </div>
                             </TableCell>
