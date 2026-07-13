@@ -46,6 +46,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import DeleteModal from "@/components/ui/delete-modal";
 import {
   Table,
   TableBody,
@@ -149,9 +150,14 @@ function buildTreeRows(
   const roots: Category[] = [];
   cats.forEach((c) => {
     if (c.parentId) {
-      const s = map.get(c.parentId) || [];
-      s.push(c);
-      map.set(c.parentId, s);
+      const parentExists = cats.some((p) => p.id === c.parentId);
+      if (parentExists) {
+        const s = map.get(c.parentId) || [];
+        s.push(c);
+        map.set(c.parentId, s);
+      } else {
+        roots.push(c);
+      }
     } else roots.push(c);
   });
   const rows: Array<{ cat: Category; depth: number }> = [];
@@ -808,36 +814,20 @@ export function CategoryPage() {
       </Dialog>
 
       {/* Delete Dialog */}
-      <Dialog
+      <DeleteModal
         open={!!deleteTarget}
-        onOpenChange={(o) => !o && setDeleteTarget(null)}
-      >
-        <DialogContent className="animate-scale-in">
-          <DialogHeader>
-            <DialogTitle>Delete Category</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete{" "}
-              <strong>{deleteTarget?.name}</strong>? This action cannot be
-              undone.
-              <span className="block mt-1 text-xs text-danger">
-                Categories with products cannot be deleted.
-              </span>
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        title="Delete Category"
+        description={
+          <span>
+            Are you sure you want to delete category{" "}
+            <strong className="text-ink">"{deleteTarget?.name}"</strong>? This
+            action cannot be undone.
+          </span>
+        }
+        loading={deleteMutation.isPending}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

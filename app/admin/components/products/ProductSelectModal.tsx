@@ -429,7 +429,7 @@ export function ProductSelectModal({
               type="button"
               onClick={handleConfirm}
               disabled={localSelected.length === 0}
-              className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-hover text-white shadow-ui-soft"
+              className="rounded-sm font-medium px-6 bg-brand hover:bg-brand-dark transition-all text-white shadow-ui-soft"
             >{"Confirm"}</Button>
           </div>
         </DialogFooter>

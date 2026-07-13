@@ -1,8 +1,8 @@
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
-import { Button } from "@/components/ui/button";
-import { Lock, Unlock } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { useUpdateCustomerStatus } from "../../hooks/useCustomer";
+import { useState } from "react";
 
 interface CustomerLockModalProps {
   open: boolean;
@@ -12,87 +12,62 @@ interface CustomerLockModalProps {
 
 export function CustomerLockModal({ open, onClose, lockTarget }: CustomerLockModalProps) {
   const updateStatusMutation = useUpdateCustomerStatus();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const title = lockTarget?.isActive ? "Confirm Lock" : "Confirm Unlock";
+  const description = lockTarget?.isActive 
+    ? "Are you sure you want to lock this customer's account? They will not be able to log in or place orders."
+    : "Are you sure you want to unlock this customer's account?";
+
+  const handleConfirm = async () => {
+    if (!lockTarget) return;
+    setSubmitError(null);
+    try {
+      await updateStatusMutation.mutateAsync({
+        id: lockTarget.id,
+        isActive: !lockTarget.isActive,
+      });
+      toast.success(
+        `Account ${lockTarget.isActive ? "locked" : "unlocked"} successfully!`,
+      );
+      onClose();
+    } catch (err: any) {
+      setSubmitError(err.message || "Action failed!");
+    }
+  };
 
   return (
     <BaseCrudModal
       open={open}
-      onOpenChange={(o) => !o && onClose()}
-      title={lockTarget?.isActive ? "Lock Account" : "Unlock Account"}
+      onOpenChange={(isOpen) => !isOpen && onClose()}
+      title={title}
       size="sm"
+      primaryActionText={updateStatusMutation.isPending ? "Loading..." : "Confirm"}
+      secondaryActionText="Cancel"
+      onPrimaryAction={handleConfirm}
+      onSecondaryAction={onClose}
+      isLoading={updateStatusMutation.isPending}
+      isDanger={true}
       hideHeader={true}
-      hideFooter={true}
     >
-      <div className="flex flex-col items-center text-center p-2">
-        <div
-          className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 mb-4 ring-8 ${
-            lockTarget?.isActive
-              ? "bg-danger/10 ring-danger/5"
-              : "bg-success/10 ring-success/5"
-          }`}
-        >
-          {lockTarget?.isActive ? (
-            <Lock className="w-7 h-7 text-danger" />
-          ) : (
-            <Unlock className="w-7 h-7 text-success" />
+      <div className="flex items-start gap-4">
+        <div className="w-10 h-10 rounded-full bg-danger/10 flex items-center justify-center shrink-0 mt-0.5">
+          <AlertCircle className="w-5 h-5 text-danger" />
+        </div>
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold tracking-tight text-ink">
+            {title}
+          </h2>
+          <div className="mt-1.5 text-sm text-ink-muted leading-relaxed">
+            {description}
+          </div>
+
+          {submitError && (
+            <div className="w-full mt-4 p-3 bg-danger/10 text-danger rounded-sm text-sm font-medium border border-danger/20 text-left">
+              {submitError}
+            </div>
           )}
         </div>
-        <h2 className="text-xl font-bold text-ink">
-          {lockTarget?.isActive ? "Lock Account" : "Unlock Account"}
-        </h2>
-        <div className="text-[15px] text-ink-muted leading-relaxed mt-2">
-          Are you sure you want to{" "}
-          <strong
-            className={lockTarget?.isActive ? "text-danger" : "text-success"}
-          >
-            {lockTarget?.isActive ? "lock" : "unlock"}
-          </strong>{" "}
-          this customer's account?
-          {lockTarget?.isActive && (
-            <span className="block mt-1">
-              They will not be able to log in or place orders.
-            </span>
-          )}
-        </div>
-      </div>
-      
-      {/* We use our own footer to customize the button colors fully */}
-      <div className="flex justify-end gap-3 pt-6 mt-2 border-t border-surface-muted -mx-6 -mb-6 px-6 pb-6 bg-surface/50">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onClose}
-          className="w-full sm:w-auto h-10 px-8 font-medium rounded-sm bg-white"
-        >
-          Cancel
-        </Button>
-        <Button
-          variant="default"
-          className={`w-full sm:w-auto h-10 px-8 font-medium rounded-sm text-white transition-colors ${
-            lockTarget?.isActive
-              ? "bg-danger hover:bg-danger/90"
-              : "bg-success hover:bg-success/90"
-          }`}
-          onClick={async () => {
-            if (!lockTarget) return;
-            try {
-              await updateStatusMutation.mutateAsync({
-                id: lockTarget.id,
-                isActive: !lockTarget.isActive,
-              });
-              toast.success(
-                `Account ${
-                  lockTarget.isActive ? "locked" : "unlocked"
-                } successfully!`,
-              );
-              onClose();
-            } catch (err: any) {
-              toast.error(err.message || "Action failed!");
-            }
-          }}
-          disabled={updateStatusMutation.isPending}
-        >
-          {updateStatusMutation.isPending ? "Processing..." : "Confirm"}
-        </Button>
       </div>
     </BaseCrudModal>
   );

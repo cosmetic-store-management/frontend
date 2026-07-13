@@ -89,7 +89,7 @@ export function StripePaymentModal({
   return (
     <BaseCrudModal
       open={isOpen}
-      onOpenChange={onClose}
+      onOpenChange={(open) => !open && onClose()}
       title="Secure Payment via Stripe"
       description="Enter your international card details. Your order will be confirmed immediately after successful payment."
       size="md"

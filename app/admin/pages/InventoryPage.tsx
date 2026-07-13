@@ -166,7 +166,7 @@ export function InventoryPage() {
                 className="gap-2 h-10 bg-brand text-white hover:bg-brand-dark transition-all shadow-none"
                 size="sm"
               >
-                Inventory Operation
+                <Plus className="w-4 h-4" /> Add inventory
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent

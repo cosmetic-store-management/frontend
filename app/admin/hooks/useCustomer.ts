@@ -7,6 +7,7 @@ import {
   updateCustomer,
   updateInternalNotes,
   adjustPoints,
+  getPointHistory,
 } from "@/admin/services/user.service";
 import { fetchOrders } from "@/admin/services/order.service";
 import { handleMutationError } from "@/lib/api-helper";
@@ -117,8 +118,17 @@ export function useAdjustPoints() {
       pointsChanged: number;
       reason: string;
     }) => adjustPoints(id, pointsChanged, reason),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["customers"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "customerPointsHistory", variables.id] });
     },
+  });
+}
+
+export function useCustomerPointHistory(userId: string) {
+  return useQuery({
+    queryKey: ["admin", "customerPointsHistory", userId],
+    queryFn: () => getPointHistory(userId),
+    enabled: !!userId,
   });
 }

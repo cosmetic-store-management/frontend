@@ -18,6 +18,9 @@ import {
   useUpdateReview,
   useDeleteReview,
   useUploadMedia,
+  useReviewEligibility,
+  useLikeReview,
+  useDislikeReview,
 } from "../../hooks/useReview";
 import { toast } from "@/lib/toast";
 import DeleteModal from "@/components/ui/delete-modal";
@@ -106,19 +109,24 @@ export function ProductReviews({ product }: ProductReviewsProps) {
   const deleteReview = useDeleteReview(product.id);
   const uploadMediaMutation = useUploadMedia();
 
-  const [likedReviews, setLikedReviews] = useState<
-    Record<string, "up" | "down">
-  >({});
+  const { data: eligibility, isLoading: isEligibilityLoading } = useReviewEligibility(productId, !!user);
+  const likeMutation = useLikeReview(productId);
+  const dislikeMutation = useDislikeReview(productId);
+
   const handleLike = (reviewId: string, type: "up" | "down") => {
-    setLikedReviews((prev) => {
-      const current = prev[reviewId];
-      if (current === type) {
-        const newState = { ...prev };
-        delete newState[reviewId];
-        return newState;
-      }
-      return { ...prev, [reviewId]: type };
-    });
+    if (!user) {
+      toast.error("Vui lòng đăng nhập để bình chọn");
+      return;
+    }
+    if (type === "up") {
+      likeMutation.mutate(reviewId, {
+        onError: (err: any) => toast.error(err.message || "Lỗi khi thích"),
+      });
+    } else {
+      dislikeMutation.mutate(reviewId, {
+        onError: (err: any) => toast.error(err.message || "Lỗi khi không thích"),
+      });
+    }
   };
 
   const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
@@ -215,22 +223,42 @@ export function ProductReviews({ product }: ProductReviewsProps) {
   };
 
   const handleUpdateSubmit = async (reviewId: string) => {
+    setIsUploading(true);
+    let uploadedUrl = editImageUrl;
+    try {
+      if (mediaFile) {
+        const uploadRes = await uploadMediaMutation.mutateAsync(mediaFile);
+        uploadedUrl = uploadRes.url;
+      } else if (!mediaPreviewUrl) {
+        // User deleted/cleared the image
+        uploadedUrl = "";
+      }
+    } catch (err: any) {
+      setIsUploading(false);
+      return;
+    }
+
     updateReview.mutate(
       {
         reviewId,
         payload: {
           rating: editRating,
           comment: editComment,
-          images: editImageUrl.trim() ? [editImageUrl.trim()] : [],
+          images: uploadedUrl.trim() ? [uploadedUrl.trim()] : [],
         },
       },
       {
         onSuccess: () => {
           toast.success("Review updated");
           setEditingReviewId(null);
+          setMediaFile(null);
+          setMediaPreviewUrl("");
         },
         onError: (err: any) => {
           toast.error(err.message || "Update failed");
+        },
+        onSettled: () => {
+          setIsUploading(false);
         },
       },
     );
@@ -329,6 +357,18 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                   aria-label={`Chọn ${star} sao`}
                   onMouseEnter={() => setHoverRating(star)}
                   onClick={() => {
+                    if (!user) {
+                      toast.error("Please login to submit a review");
+                      return;
+                    }
+                    if (eligibility && !eligibility.canReview) {
+                      if (eligibility.reason === "already_reviewed") {
+                        toast.error("You have already reviewed this product.");
+                      } else {
+                        toast.error("You can only review a product after purchasing and successfully receiving it.");
+                      }
+                      return;
+                    }
                     setRating(star);
                     setIsModalOpen(true);
                   }}
@@ -348,10 +388,34 @@ export function ProductReviews({ product }: ProductReviewsProps) {
               );
             })}
           </div>
-          {reviews.length === 0 && (
+          {!user ? (
+            <span className="text-[12px] text-ink-muted mt-1">
+              Vui lòng đăng nhập để đánh giá
+            </span>
+          ) : isEligibilityLoading ? (
+            <span className="text-[12px] text-ink-muted mt-1 animate-pulse">
+              Đang kiểm tra điều kiện đánh giá...
+            </span>
+          ) : eligibility?.canReview ? (
+            <span className="text-[12px] text-success mt-1 font-medium">
+              Bạn đủ điều kiện đánh giá sản phẩm này
+            </span>
+          ) : eligibility?.reason === "already_reviewed" ? (
+            <span className="text-[12px] text-brand mt-1 font-medium">
+              Bạn đã đánh giá sản phẩm này rồi
+            </span>
+          ) : (
+            <span className="text-[12px] text-danger mt-1">
+              Mua sản phẩm để kích hoạt đánh giá
+            </span>
+          )}
+          {reviews.length === 0 && eligibility?.canReview && (
             <span
-              className="text-[13px] text-blue-500 cursor-pointer hover:underline"
-              onClick={() => setIsModalOpen(true)}
+              className="text-[13px] text-blue-500 cursor-pointer hover:underline mt-2"
+              onClick={() => {
+                setRating(5);
+                setIsModalOpen(true);
+              }}
             >
               Be the first to review this product!
             </span>
@@ -421,26 +485,31 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                           className={`w-4 h-4 ${star <= review.rating ? "text-[#FACC15] fill-[#FACC15]" : "text-border fill-border"}`}
                         />
                       ))}
+                      {review.variantName && (
+                        <span className="text-xs text-ink-muted ml-3 bg-surface-muted px-2 py-0.5 rounded-sm">
+                          Phân loại: {review.variantName}
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-4 mb-4 text-[#0066CC] text-[13px]">
                       <button
                         onClick={() => handleLike(review.id, "up")}
-                        className={`flex items-center gap-1.5 transition-opacity ${likedReviews[review.id] === "up" ? "opacity-100 font-bold" : "hover:opacity-80"}`}
+                        className={`flex items-center gap-1.5 transition-opacity ${review.hasLiked ? "opacity-100 font-bold" : "hover:opacity-80"}`}
                       >
                         <ThumbsUp
-                          className={`w-4 h-4 ${likedReviews[review.id] === "up" ? "fill-current" : ""}`}
+                          className={`w-4 h-4 ${review.hasLiked ? "fill-current" : ""}`}
                         />{" "}
-                        ({likedReviews[review.id] === "up" ? 1 : 0})
+                        ({review.likesCount})
                       </button>
                       <button
                         onClick={() => handleLike(review.id, "down")}
-                        className={`flex items-center gap-1.5 transition-opacity ${likedReviews[review.id] === "down" ? "opacity-100 font-bold" : "hover:opacity-80"}`}
+                        className={`flex items-center gap-1.5 transition-opacity ${review.hasDisliked ? "opacity-100 font-bold" : "hover:opacity-80"}`}
                       >
                         <ThumbsDown
-                          className={`w-4 h-4 ${likedReviews[review.id] === "down" ? "fill-current" : ""}`}
+                          className={`w-4 h-4 ${review.hasDisliked ? "fill-current" : ""}`}
                         />{" "}
-                        ({likedReviews[review.id] === "down" ? 1 : 0})
+                        ({review.dislikesCount})
                       </button>
                     </div>
 
@@ -530,10 +599,10 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                             </button>
                             <button
                               onClick={() => handleUpdateSubmit(review.id)}
-                              disabled={updateReview.isPending}
+                              disabled={updateReview.isPending || isUploading}
                               className="btn-hover bg-brand text-white text-sm font-bold px-4 py-1.5 rounded-sm hover:bg-brand-dark transition-colors disabled:opacity-50"
                             >
-                              {updateReview.isPending
+                              {updateReview.isPending || isUploading
                                 ? "Saving..."
                                 : "Save changes"}
                             </button>
@@ -599,6 +668,8 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                                 setEditRating(review.rating);
                                 setEditComment(review.comment || "");
                                 setEditImageUrl(review.images?.[0] || "");
+                                setMediaPreviewUrl(review.images?.[0] || "");
+                                setMediaFile(null);
                               }}
                               className="text-xs font-bold text-danger hover:underline"
                             >

@@ -148,7 +148,7 @@ export function StaffFormModal({
     <BaseCrudModal
       open={open}
       onOpenChange={handleOpenChange}
-      title="Add Staff"
+      title="Create Staff"
       description="Enter staff details. Mapped default password is GlowUp@123456."
       size="lg"
       primaryActionText="Confirm"

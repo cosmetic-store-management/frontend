@@ -27,7 +27,7 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="admin-theme flex h-screen w-full overflow-hidden bg-background text-foreground">
+    <div className="admin-theme relative flex h-screen w-full overflow-hidden bg-background text-foreground">
       <AdminSidebar />
       <main className="flex-1 min-w-0 h-full overflow-y-auto p-4 md:p-6 lg:p-8 flex flex-col">
         <Outlet />

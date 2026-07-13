@@ -118,7 +118,7 @@ export default function ImportGoodsModal({
         productImage: product.productImage,
         quantity: 1,
         importPrice: 0,
-        batchCode: "",
+        batchCode: `B${Math.floor(10000 + Math.random() * 90000)}`,
         manufactureDate: "",
         expiryDate: "",
       },
@@ -214,7 +214,7 @@ export default function ImportGoodsModal({
       onOpenChange={onOpenChange}
       title="Import Goods"
       size="xl"
-      primaryActionText="Confirm Import"
+      primaryActionText="Confirm"
       secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit as any}
       isLoading={isPending}

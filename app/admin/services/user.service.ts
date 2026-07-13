@@ -91,6 +91,7 @@ export interface Customer {
   orderCount: number;
   totalSpent: number;
   points: number;
+  tier: "member" | "silver" | "gold" | "diamond";
   internalNotes?: string;
   isActive: boolean;
   hasOnlineAccount?: boolean;
@@ -176,4 +177,23 @@ export function adjustPoints(
   return apiClient
     .patch<{ user: Customer }>(`/users/${id}/points`, { pointsChanged, reason })
     .then((res) => res.user);
+}
+
+export interface PointTransaction {
+  _id: string;
+  userId: string;
+  pointsChanged: number;
+  reason: string;
+  performedBy: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+}
+
+export function getPointHistory(id: string): Promise<PointTransaction[]> {
+  return apiClient
+    .get<{ history: PointTransaction[] }>(`/users/${id}/points/history`)
+    .then((res) => res.history);
 }

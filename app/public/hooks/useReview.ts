@@ -6,6 +6,9 @@ import {
   deleteReview,
   uploadMedia,
   CreateReviewPayload,
+  checkReviewEligibility,
+  likeReview,
+  dislikeReview,
 } from "../services/review.service";
 import { handleMutationError } from "@/lib/api-helper";
 import { QK } from "@/lib/queryKeys";
@@ -72,5 +75,37 @@ export const useUploadMedia = () => {
   return useMutation({
     mutationFn: (file: File) => uploadMedia(file),
     onError: (err) => handleMutationError(err, "Failed to upload media"),
+  });
+};
+
+export const useReviewEligibility = (productId: string, isLoggedIn: boolean) => {
+  return useQuery({
+    queryKey: ["review-eligibility", productId],
+    queryFn: () => checkReviewEligibility(productId),
+    enabled: !!productId && isLoggedIn,
+  });
+};
+
+export const useLikeReview = (productId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reviewId: string) => likeReview(reviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
+    },
+    onError: (err) => handleMutationError(err, "Không thể thích đánh giá"),
+  });
+};
+
+export const useDislikeReview = (productId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (reviewId: string) => dislikeReview(reviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
+    },
+    onError: (err) => handleMutationError(err, "Không thể đánh giá không thích"),
   });
 };

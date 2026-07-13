@@ -91,7 +91,7 @@ export default function EditBatchModal({
       onOpenChange={onOpenChange}
       title="Edit Batch"
       size="md"
-      primaryActionText="Save changes"
+      primaryActionText="Confirm"
       secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit as any}
       isLoading={updateBatchMutation.isPending}

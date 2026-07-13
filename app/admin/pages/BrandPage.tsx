@@ -12,6 +12,7 @@ import {
   Package,
   AlertTriangle,
   MoreVertical,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import DeleteModal from "@/components/ui/delete-modal";
 import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "@/lib/toast";
 import { formatCurrency } from "@/lib/utils";
@@ -335,48 +337,6 @@ export function BrandPage() {
         }
       />
 
-      {/* ── Stat Cards (WooCommerce / Magento standard) ─ */}
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          {
-            icon: <Store className="w-5 h-5 text-brand" />,
-            bg: "bg-brand/10",
-            label: "Total Brands",
-            val: totalCount,
-            cls: "text-ink",
-          },
-          {
-            icon: <CheckCircle2 className="w-5 h-5 text-success" />,
-            bg: "bg-success/10",
-            label: "Active",
-            val: activeCount,
-            cls: "text-success",
-          },
-          {
-            icon: <XCircle className="w-5 h-5 text-danger" />,
-            bg: "bg-danger/10",
-            label: "Inactive",
-            val: inactiveCount,
-            cls: "text-danger",
-          },
-        ].map(({ icon, bg, label, val, cls }) => (
-          <div
-            key={label}
-            className="border border-border rounded-sm bg-surface shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 p-4 flex items-center gap-4 group cursor-pointer"
-          >
-            <div
-              className={`w-12 h-12 rounded-full ${bg} flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6`}
-            >
-              {icon}
-            </div>
-            <div>
-              <p className="text-xs text-ink-muted font-medium mb-0.5">{label}</p>
-              <p className={`text-2xl font-bold tabular-nums tracking-tight ${cls}`}>{val}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
       {/* ── Brand Table ─────────────────────────────────── */}
       <div className="premium-card rounded-sm overflow-hidden">
         {isLoading ? (
@@ -389,6 +349,9 @@ export function BrandPage() {
           <Table className="min-w-[900px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="py-4 px-3 w-16 text-center">
+                  No.
+                </TableHead>
                 <TableHead className="py-4 px-5 w-60 text-center">
                   Brand
                 </TableHead>
@@ -398,7 +361,7 @@ export function BrandPage() {
                 <TableHead className="py-4 px-5 w-60 text-center">
                   Supplier Info
                 </TableHead>
-                <TableHead className="py-4 px-5 w-48 text-center">
+                <TableHead className="py-4 px-5 w-36 text-center">
                   Description
                 </TableHead>
                 <TableHead className="py-4 px-5 w-24 text-center">
@@ -418,15 +381,15 @@ export function BrandPage() {
                   key={brand.id}
                   className="animate-stagger group"
                 >
+                  {/* No. */}
+                  <TableCell className="py-3.5 px-3 text-center font-mono text-ink-muted/80 text-sm">
+                    {(page - 1) * 10 + i + 1}
+                  </TableCell>
+
                   {/* Logo + Name + Slug + Website */}
                   <TableCell className="py-3.5 px-5 text-center">
-                    <div className="flex items-center justify-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setViewingDetails(brand)}
-                        className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden hover:border-brand transition-colors focus:outline-none"
-                        title="Click to view details"
-                      >
+                    <div className="flex items-center justify-center gap-3 mx-auto max-w-max">
+                      <div className="w-10 h-10 shrink-0 rounded-sm border border-border bg-white flex items-center justify-center overflow-hidden">
                         <img
                           src={
                             brand.imageUrl ||
@@ -436,20 +399,17 @@ export function BrandPage() {
                           className="w-full h-full object-contain p-0.5"
                           loading="lazy"
                         />
-                      </button>
-                      <div className="min-w-0 text-center flex-1">
+                      </div>
+                      <div className="min-w-0 text-left">
                         <button
                           type="button"
                           onClick={() => setViewingDetails(brand)}
-                          className="block truncate font-semibold text-ink text-sm hover:text-brand hover:underline transition-colors text-center w-full focus:outline-none"
+                          className="block truncate font-semibold text-ink text-sm hover:text-brand hover:underline transition-colors text-left w-full focus:outline-none"
                           title="Click to view details"
                         >
                           {brand.name}
                         </button>
-                        <span className="block truncate text-[11px] font-mono text-ink-muted/70">
-                          {brand.slug}
-                        </span>
-                        {brand.website && (
+                        {brand.website ? (
                           <a
                             href={brand.website}
                             target="_blank"
@@ -458,6 +418,10 @@ export function BrandPage() {
                           >
                             {brand.website.replace(/^https?:\/\/(www\.)?/, "")}
                           </a>
+                        ) : (
+                          <span className="block truncate text-[11px] text-ink-muted/40 font-mono">
+                            —
+                          </span>
                         )}
                       </div>
                     </div>
@@ -561,7 +525,7 @@ export function BrandPage() {
                             className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                             onClick={() => setViewingDetails(brand)}
                           >
-                            <Store className="w-4 h-4 mr-2.5" />
+                            <Eye className="w-4 h-4 mr-2.5" />
                             Details
                           </DropdownMenuItem>
                           <DropdownMenuSeparator className="bg-border/60 my-1" />
@@ -634,7 +598,7 @@ export function BrandPage() {
         <DialogContent className="max-w-3xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-sm bg-surface shadow-ui-card border-border">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
             <DialogTitle className="text-xl font-bold text-ink">
-              {editing ? "Edit Brand" : "Add New Brand"}
+              {editing ? "Edit Brand" : "Create Brand"}
             </DialogTitle>
             {editing && (
               <p className="text-xs text-ink-muted mt-0.5">
@@ -654,9 +618,9 @@ export function BrandPage() {
             className="flex flex-col flex-1 overflow-hidden"
           >
             <div className="p-6 overflow-y-auto flex-1 scrollbar-thin">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex flex-col md:flex-row gap-6">
                 {/* Left: main info */}
-                <div className="md:col-span-2 space-y-5">
+                <div className="flex-1 space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div className="space-y-1.5">
                       <Label
@@ -856,7 +820,7 @@ export function BrandPage() {
                 </div>
 
                 {/* Right: logo + status */}
-                <div className="md:col-span-1 space-y-5">
+                <div className="md:w-[38%] shrink-0 space-y-5">
                   <div className="space-y-1.5">
                     <Label className="text-sm font-semibold text-ink">
                       Brand Logo
@@ -925,53 +889,21 @@ export function BrandPage() {
       </Dialog>
 
       {/* ── Delete Confirmation Dialog ───────────────────── */}
-      <Dialog
+      <DeleteModal
         open={!!deleteTarget}
-        onOpenChange={(o) => !o && setDeleteTarget(null)}
-      >
-        <DialogContent className="animate-scale-in max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-ink">
-              <AlertTriangle className="w-5 h-5 text-warning shrink-0" />
-              Delete Brand
-            </DialogTitle>
-            <DialogDescription className="text-left text-sm text-ink-muted mt-2 space-y-2">
-              <span>
-                Are you sure you want to delete the brand{" "}
-                <strong className="text-ink">{deleteTarget?.name}</strong>?
-              </span>
-              {deleteTarget && (deleteTarget.productCount ?? 0) > 0 && (
-                <span className="flex items-start gap-1.5 mt-2 p-2.5 rounded-sm bg-danger/5 border border-danger/20 text-danger text-xs font-medium">
-                  This brand has{" "}
-                  <strong>{deleteTarget.productCount} products</strong>. The
-                  system will reject this — you must move or delete the products
-                  first.
-                </span>
-              )}
-              {deleteTarget && (deleteTarget.productCount ?? 0) === 0 && (
-                <span className="block mt-1 text-xs text-ink-muted/70">
-                  Brand has no products. This action cannot be undone.
-                </span>
-              )}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-              disabled={
-                deleteMutation.isPending ||
-                (deleteTarget?.productCount ?? 0) > 0
-              }
-            >
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        title="Delete Brand"
+        description={
+          <span>
+            Are you sure you want to delete the brand{" "}
+            <strong className="text-ink">"{deleteTarget?.name}"</strong>? This
+            action cannot be undone.
+          </span>
+        }
+        loading={deleteMutation.isPending}
+        disableConfirm={deleteMutation.isPending || !!(deleteTarget && (deleteTarget.productCount ?? 0) > 0)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
 
       {/* Brand Details Dialog */}
       <Dialog open={!!viewingDetails} onOpenChange={(open) => !open && setViewingDetails(null)}>
@@ -985,103 +917,114 @@ export function BrandPage() {
           {viewingDetails && (
             <>
               <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-                {/* Left Column: Logo Image */}
-                {viewingDetails.imageUrl ? (
-                  <div className="md:w-[38%] flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0">
-                    <div className="w-32 h-32 rounded-md border border-border overflow-hidden bg-white flex items-center justify-center shadow-sm">
-                      <img src={viewingDetails.imageUrl} alt={viewingDetails.name} className="max-w-full max-h-full object-contain p-2" />
+                {/* Left Column: Logo Image & Stats */}
+                <div className="md:w-[35%] border-r border-border bg-surface-soft/20 p-6 shrink-0 flex flex-col items-center justify-center text-center gap-4">
+                  <div className="w-28 h-28 rounded-md border border-border overflow-hidden bg-white flex items-center justify-center shadow-sm">
+                    <img
+                      src={viewingDetails.imageUrl || "https://placehold.co/80x80?text=Logo"}
+                      alt={viewingDetails.name}
+                      className="max-w-full max-h-full object-contain p-2"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-bold text-ink">{viewingDetails.name}</h3>
+                    <p className="font-mono text-xs text-ink-muted/80">{viewingDetails.slug}</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 justify-center">
+                    <span className={`inline-flex items-center px-2 py-0.5 text-[11px] font-semibold rounded-sm ${viewingDetails.isActive !== false ? "bg-success/10 text-success" : "bg-ink-muted/10 text-ink-muted"}`}>
+                      {viewingDetails.isActive !== false ? "Visible" : "Hidden"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-sm bg-brand/5 text-brand">
+                      {viewingDetails.productCount ?? 0} Products
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right Column: Structured Information */}
+                <div className="flex-1 p-6 overflow-y-auto space-y-6 text-left">
+                  {/* Brand Overview Info */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-ink-muted">General Info</h4>
+                    <div className="bg-surface-soft/30 border border-border rounded-sm p-4 grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Country of Origin</span>
+                        <span className="text-sm font-medium text-ink mt-0.5 block">{viewingDetails.country || "—"}</span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Website</span>
+                        <span className="text-sm font-medium text-brand mt-0.5 block truncate">
+                          {viewingDetails.website ? (
+                            <a href={viewingDetails.website} target="_blank" rel="noreferrer" className="hover:underline">
+                              {viewingDetails.website.replace(/^https?:\/\/(www\.)?/, "")}
+                            </a>
+                          ) : (
+                            "—"
+                          )}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                ) : (
-                  <div className="md:w-[38%] flex items-center justify-center border-r border-border bg-surface-soft/30 p-6 shrink-0 text-ink-muted text-sm">
-                    No image available
-                  </div>
-                )}
 
-                {/* Right Column: Details Grid */}
-                <div className="flex-1 p-6 overflow-y-auto">
-                  <h2 className="text-xl font-bold text-ink mb-1">{viewingDetails.name}</h2>
-                  <p className="font-mono text-xs text-ink-muted mb-4">{viewingDetails.slug}</p>
-
-                  <div className="grid grid-cols-2 gap-3 text-left">
-                    <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Country</p>
-                      <p className="mt-1.5 text-sm font-medium text-ink">{viewingDetails.country || "—"}</p>
-                    </div>
-
-                    <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Website</p>
-                      <p className="mt-1.5 text-sm font-medium text-ink truncate">
-                        {viewingDetails.website ? (
-                          <a href={viewingDetails.website} target="_blank" rel="noreferrer" className="text-brand hover:underline">
-                            {viewingDetails.website.replace(/^https?:\/\/(www\.)?/, "")}
-                          </a>
-                        ) : (
-                          "—"
-                        )}
-                      </p>
-                    </div>
-
-                    {viewingDetails.supplierId && (
-                      <>
-                        <div className="col-span-2 border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Supplier</p>
-                          <p className="mt-1.5 text-sm font-semibold text-ink">
+                  {/* Supplier Info */}
+                  {viewingDetails.supplierId && (
+                    <div className="space-y-3">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-ink-muted">Supplier & Contacts</h4>
+                      <div className="bg-surface-soft/30 border border-border rounded-sm p-4 space-y-4">
+                        <div>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Supplier Name</span>
+                          <span className="text-sm font-semibold text-ink mt-0.5 block">
                             {viewingDetails.supplier?.name || viewingDetails.supplierName || "—"}
-                          </p>
+                          </span>
                         </div>
-
-                        <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Phone</p>
-                          <p className="mt-1.5 text-sm font-medium text-ink font-mono">
-                            {viewingDetails.supplier?.phone || "—"}
-                          </p>
+                        <div className="grid grid-cols-2 gap-4 border-t border-border/50 pt-3">
+                          <div>
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Phone</span>
+                            <span className="text-sm font-medium text-ink font-mono mt-0.5 block">{viewingDetails.supplier?.phone || "—"}</span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Email</span>
+                            <span className="text-sm font-medium text-ink mt-0.5 block truncate" title={viewingDetails.supplier?.email}>
+                              {viewingDetails.supplier?.email || "—"}
+                            </span>
+                          </div>
                         </div>
-
-                        <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Email</p>
-                          <p className="mt-1.5 text-sm font-medium text-ink truncate" title={viewingDetails.supplier?.email}>
-                            {viewingDetails.supplier?.email || "—"}
-                          </p>
-                        </div>
-
                         {viewingDetails.supplier?.contactPerson && (
-                          <>
-                            <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Name</p>
-                              <p className="mt-1.5 text-sm font-medium text-ink">
+                          <div className="grid grid-cols-2 gap-4 border-t border-border/50 pt-3">
+                            <div>
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Contact Person</span>
+                              <span className="text-sm font-medium text-ink mt-0.5 block">
                                 {viewingDetails.supplier.contactPerson}
                                 {viewingDetails.supplier.contactPosition && (
-                                  <span className="block text-[11px] text-ink-muted/80 font-normal mt-0.5">
+                                  <span className="text-xs text-ink-muted font-normal block">
                                     {viewingDetails.supplier.contactPosition}
                                   </span>
                                 )}
-                              </p>
+                              </span>
                             </div>
-
-                            <div className="border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">Contact</p>
-                              <div className="mt-1.5 text-sm font-medium text-ink space-y-0.5">
-                                <span className="block font-mono">
+                            <div>
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-muted block">Direct Line</span>
+                              <div className="text-sm font-medium text-ink mt-0.5 block">
+                                <span className="font-mono block">
                                   {viewingDetails.contactPhone || viewingDetails.supplier.contactPhone || "—"}
                                 </span>
                                 {(viewingDetails.contactEmail || viewingDetails.supplier.contactEmail) && (
-                                  <span className="block text-xs text-ink-muted break-all">
+                                  <span className="text-xs text-ink-muted block truncate break-all">
                                     {viewingDetails.contactEmail || viewingDetails.supplier.contactEmail}
                                   </span>
                                 )}
                               </div>
                             </div>
-                          </>
+                          </div>
                         )}
-                      </>
-                    )}
-
-                    <div className="col-span-2 border border-border bg-surface-soft/50 p-3.5 rounded-sm">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-1.5">Description</p>
-                      <div className="text-sm leading-relaxed text-ink-muted whitespace-pre-wrap">
-                        {viewingDetails.description || "No description provided."}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Description */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-ink-muted">Description</h4>
+                    <div className="bg-surface-soft/30 border border-border rounded-sm p-4 text-sm leading-relaxed text-ink-muted whitespace-pre-wrap">
+                      {viewingDetails.description || "No description provided."}
                     </div>
                   </div>
                 </div>

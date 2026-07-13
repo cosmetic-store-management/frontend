@@ -156,7 +156,7 @@ export default function StocktakeModal({
       onOpenChange={onOpenChange}
       title="Create Stocktake Sheet"
       size="xl"
-      primaryActionText="Balance stock"
+      primaryActionText="Confirm"
       secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit as any}
       isLoading={isPending}

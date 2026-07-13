@@ -86,8 +86,8 @@ export function BaseCrudModal({
         )}
       >
         {!hideHeader && (
-          <DialogHeader className="px-6 py-5 border-b border-surface-muted bg-white">
-            <DialogTitle className="text-xl font-semibold tracking-tight text-ink">
+          <DialogHeader className="px-6 py-4 border-b border-surface-muted bg-white">
+            <DialogTitle className="text-lg font-semibold tracking-tight text-ink">
               {title}
             </DialogTitle>
             {description && (

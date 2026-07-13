@@ -7,6 +7,8 @@ import {
   Truck,
   Info,
   Hash,
+  XCircle,
+  CheckCircle2,
 } from "lucide-react";
 import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Input } from "@/components/ui/input";
@@ -164,9 +166,9 @@ export default function OrderModal({
     <BaseCrudModal
       open={open}
       onOpenChange={(isOpen) => !isOpen && onClose()}
-      title="Edit Order"
+      title={isReadOnly ? "Order Details" : "Edit Order"}
       size="lg"
-      primaryActionText="Save changes"
+      primaryActionText="Confirm"
       secondaryActionText="Cancel"
       onPrimaryAction={handleSubmit}
       onSecondaryAction={onClose}
@@ -217,11 +219,19 @@ export default function OrderModal({
           </h4>
 
           {isReadOnly ? (
-            <div className="bg-surface border border-border rounded-sm p-4 flex items-start gap-2.5">
-              <Info className="w-4 h-4 text-ink-muted shrink-0 mt-0.5" />
-              <p className="text-xs text-ink-muted leading-relaxed font-medium">
+            <div className={`border rounded-sm p-4 flex items-start gap-2.5 ${
+              order.orderStatus === "completed"
+                ? "bg-success/5 border-success/20 text-success"
+                : "bg-danger/5 border-danger/20 text-danger"
+            }`}>
+              {order.orderStatus === "completed" ? (
+                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+              ) : (
+                <XCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              )}
+              <p className="text-xs leading-relaxed font-medium">
                 {order.orderStatus === "completed"
-                  ? "This order has been completed and restocked. No further modifications can be made."
+                  ? "This order has been completed. No further modifications can be made."
                   : "This order has been cancelled. No further modifications can be made."}
               </p>
             </div>

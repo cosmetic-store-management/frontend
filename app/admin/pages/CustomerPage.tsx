@@ -23,6 +23,8 @@ import {
   Lock,
   Unlock,
   Moon,
+  Eye,
+  Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,6 +75,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import DeleteModal from "@/components/ui/delete-modal";
+import { Pagination } from "@/components/ui/pagination";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -103,21 +106,23 @@ import { CustomerOrderHistoryModal } from "../components/customers/CustomerOrder
 import { CustomerLockModal } from "../components/customers/CustomerLockModal";
 import { CustomerNotesModal } from "../components/customers/CustomerNotesModal";
 import { CustomerPointsModal } from "../components/customers/CustomerPointsModal";
+import { CustomerDetailModal } from "../components/customers/CustomerDetailModal";
 
-const getTierInfo = (points: number) => {
-  if (points >= 10000)
+// Hot-reload trigger comment: align imports and modals
+const getTierInfo = (tierKey: string) => {
+  if (tierKey === "diamond")
     return {
       label: "Diamond",
       color: "bg-ink text-white border-ink shadow-sm",
       icon: "💎",
     };
-  if (points >= 5000)
+  if (tierKey === "gold")
     return {
       label: "Gold",
       color: "bg-gold/10 text-gold border-gold/20 font-bold",
       icon: "🥇",
     };
-  if (points >= 1000)
+  if (tierKey === "silver")
     return {
       label: "Silver",
       color: "bg-surface-muted text-ink border-border font-medium",
@@ -160,7 +165,7 @@ export function CustomerPage() {
   }, [search]);
 
   const [tierFilter, setTierFilter] = useState("all");
-  const [statusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [spendingFilter, setSpendingFilter] = useState("all");
   const [lastPurchaseFilter, setLastPurchaseFilter] = useState("all");
   const [sourceFilter, setSourceFilter] = useState("all");
@@ -188,7 +193,7 @@ export function CustomerPage() {
   );
   const [notesTarget, setNotesTarget] = useState<Customer | null>(null);
   const [pointsTarget, setPointsTarget] = useState<Customer | null>(null);
-
+  const [detailCustomer, setDetailCustomer] = useState<Customer | null>(null);
 
 
   const { data, isLoading } = useCustomers({
@@ -268,6 +273,17 @@ export function CustomerPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Locked</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Select value={sourceFilter} onValueChange={setSourceFilter}>
                 <SelectTrigger className="w-fit h-9 rounded-sm border-border bg-surface text-sm text-ink-muted px-3">
                   <SelectValue placeholder="Source" />
@@ -275,7 +291,7 @@ export function CustomerPage() {
                 <SelectContent>
                   <SelectItem value="all">All sources</SelectItem>
                   <SelectItem value="web">Online</SelectItem>
-                  <SelectItem value="pos">Offline (POS)</SelectItem>
+                  <SelectItem value="pos">Offline</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -285,7 +301,7 @@ export function CustomerPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All spending</SelectItem>
-                  <SelectItem value="0">No purchase (0₫)</SelectItem>
+                  <SelectItem value="0">No purchase</SelectItem>
                   <SelectItem value="under_1m">Under 1M</SelectItem>
                   <SelectItem value="1m_to_5m">1M – 5M</SelectItem>
                   <SelectItem value="over_5m">Over 5M</SelectItem>
@@ -341,61 +357,12 @@ export function CustomerPage() {
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-danger/10 text-danger transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
-            <Users className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-ink-muted font-medium mb-0.5">Total customers</p>
-            <div className="text-2xl font-bold text-ink tracking-tight">
-              {overview.totalCustomers || 0}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-success/10 text-success transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-            <UserPlus className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-ink-muted font-medium mb-0.5">New (30 days)</p>
-            <div className="text-2xl font-bold text-ink tracking-tight">
-              {overview.newCustomers || 0}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-warning/10 text-warning transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-6">
-            <Repeat className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-ink-muted font-medium mb-0.5">Returning</p>
-            <div className="text-2xl font-bold text-ink tracking-tight">
-              {overview.returningCustomers || 0}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-surface border border-border p-5 rounded-sm shadow-ui-soft hover:shadow-ui-hover hover:-translate-y-1 transition-all duration-300 flex items-center gap-4 group cursor-pointer">
-          <div className="w-12 h-12 rounded-full flex shrink-0 items-center justify-center bg-orange-500/10 text-orange-600 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-            <Moon className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-ink-muted font-medium mb-0.5">Churning Customers</p>
-            <div className="text-2xl font-bold text-ink tracking-tight">
-              {overview.churningCustomers || 0}
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="premium-card rounded-sm overflow-hidden">
         <CardContent className="p-0">
           <Table className="min-w-[1100px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-16 text-center">No.</TableHead>
                 <TableHead className="w-60 text-center">Customer</TableHead>
                 <TableHead className="w-60 text-center">Contact</TableHead>
                 <TableHead className="w-36 text-center">
@@ -412,228 +379,228 @@ export function CustomerPage() {
                 </TableHead>
               </TableRow>
             </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      className="py-12 text-center text-ink-muted"
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="py-12 text-center text-ink-muted"
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-brand" />
+                      <span>Loading customers...</span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredCustomers.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={7}
+                    className="py-12 text-center text-ink-muted"
+                  >
+                    No matching customers found.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredCustomers.map((cust, i) => {
+                  const tier = getTierInfo(cust.tier);
+                  return (
+                    <TableRow
+                      key={cust.id}
+                      className="transition-colors hover:bg-bg/40"
+                      style={{ "--i": i } as React.CSSProperties}
                     >
-                      <div className="flex items-center justify-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                        <span>Loading customers...</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : filteredCustomers.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      className="py-12 text-center text-ink-muted"
-                    >
-                      No matching customers found.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredCustomers.map((cust, i) => {
-                    const tier = getTierInfo(cust.points);
-                    return (
-                      <TableRow
-                        key={cust.id}
-                        className="transition-colors hover:bg-bg/40"
-                        style={{ "--i": i } as React.CSSProperties}
-                      >
-                        <TableCell className="px-5 py-4 align-middle text-center">
-                          <div className="flex items-center justify-center gap-4 text-center mx-auto max-w-[200px]">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-brand/20 to-brand/5 border border-brand/10 flex items-center justify-center shrink-0 shadow-sm bg-white">
-                              <span className="text-brand font-bold">
-                                {cust.name
-                                  ? cust.name.charAt(0).toUpperCase()
-                                  : "K"}
-                              </span>
-                            </div>
-                            <div className="flex flex-col items-center gap-1">
-                              <span className="font-semibold text-ink text-base leading-tight text-center">
-                                {cust.name}
-                              </span>
-                              <Badge
-                                variant="outline"
-                                className={`mt-1 text-xs px-2 py-0.5 font-medium text-center ${cust.hasOnlineAccount ? "bg-brand/5 text-brand border-brand/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20"}`}
-                              >
-                                {cust.hasOnlineAccount ? "Online" : "Offline"}
-                              </Badge>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-5 py-4 align-middle text-center">
-                          <div className="flex flex-col w-fit mx-auto gap-2 text-sm items-center text-center">
-                            <div className="flex items-center justify-center gap-2.5 text-ink-muted text-center">
-                              <Mail className="w-4 h-4 opacity-70" />
-                              <span className="truncate max-w-45 font-medium text-center">
-                                {cust.email || "—"}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-center gap-2.5 text-ink-muted text-center">
-                              <Phone className="w-4 h-4 opacity-70" />
-                              <span className="font-medium text-center">
-                                {cust.phone || "—"}
-                              </span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-5 py-4 align-middle text-center">
-                          <div className="flex flex-col items-center gap-2">
-                            <Badge
-                              variant="outline"
-                              className={`font-semibold border text-xs px-2.5 py-0.5 uppercase ${tier.color}`}
-                            >
-                              <span className="mr-1">{tier.icon}</span>{" "}
-                              {tier.label}
-                            </Badge>
-                            <span className="text-xs font-mono text-ink-muted font-medium">
-                              {cust.points.toLocaleString()} points
+                      <TableCell className="text-center text-xs font-mono text-ink-muted">
+                        {(page - 1) * limit + i + 1}
+                      </TableCell>
+                      <TableCell className="px-5 py-4 align-middle text-center">
+                        <div className="flex items-center justify-center gap-4 text-center w-full">
+                          <div className="w-10 h-10 rounded-full bg-surface-soft border border-border flex items-center justify-center shrink-0 shadow-sm">
+                            <span className="text-ink font-bold">
+                              {cust.name
+                                ? cust.name.charAt(0).toUpperCase()
+                                : "K"}
                             </span>
                           </div>
-                        </TableCell>
-                        <TableCell className="px-5 py-4 align-middle text-center">
                           <div className="flex flex-col items-center gap-1">
-                            <span
-                              className={`text-base font-bold ${!cust.totalSpent ? "text-ink-muted/50" : "text-ink"}`}
+                            <button
+                              onClick={() => setDetailCustomer(cust)}
+                              className="font-semibold text-ink hover:text-brand hover:underline transition-all text-sm leading-tight text-center"
                             >
-                              {(cust.totalSpent || 0).toLocaleString("vi-VN")}₫
-                            </span>
-                            <span
-                              className={`text-xs flex items-center gap-1.5 px-2 py-0.5 rounded-sm w-fit ${!cust.orderCount ? "bg-surface-muted text-ink-muted/50" : "bg-brand/5 text-brand"}`}
-                            >
-                              <ShoppingBag className="w-3.5 h-3.5" />{" "}
-                              {cust.orderCount || 0} orders
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-5 py-4 align-middle text-center">
-                          <div className="flex justify-center whitespace-nowrap">
+                              {cust.name}
+                            </button>
                             <Badge
                               variant="outline"
-                              className={`text-xs px-2.5 py-0.5 font-medium whitespace-nowrap shrink-0 min-w-max ${cust.isActive ? "text-success border-success/30 bg-success/10" : "text-danger border-danger/30 bg-danger/10"}`}
+                              className={`mt-1 text-xs px-2 py-0.5 font-medium text-center ${cust.hasOnlineAccount ? "bg-brand/5 text-brand border-brand/20" : "bg-orange-500/10 text-orange-600 border-orange-500/20"}`}
                             >
-                              {cust.isActive ? "Active" : "Locked"}
+                              {cust.hasOnlineAccount ? "Online" : "Offline"}
                             </Badge>
                           </div>
-                        </TableCell>
-                        <TableCell className="py-4 align-middle text-center">
-                          <div className="flex items-center justify-center">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon-sm"
-                                  className="h-8 w-8 text-ink-muted hover:text-ink hover:bg-surface-muted data-[state=open]:bg-surface-muted data-[state=open]:text-ink"
-                                >
-                                  <MoreVertical className="w-4 h-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent
-                                align="end"
-                                className="w-56 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
-                              >
-                                <DropdownMenuItem
-                                  className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => setEditingCustomer(cust)}
-                                >
-                                  <Edit2 className="w-4 h-4 mr-2.5" />
-                                  Edit Info
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => setSelectedCustomer(cust)}
-                                >
-                                  <History className="w-4 h-4 mr-2.5" />
-                                  Order History
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className="bg-border" />
-                                <DropdownMenuItem
-                                  className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => setNotesTarget(cust)}
-                                >
-                                  <StickyNote className="w-4 h-4 mr-2.5" />
-                                  Internal Notes
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() => setPointsTarget(cust)}
-                                >
-                                  <Coins className="w-4 h-4 mr-2.5" />
-                                  Adjust Points
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                  className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
-                                  onClick={() =>
-                                    setLockTarget({
-                                      id: cust.id,
-                                      isActive: cust.isActive,
-                                    })
-                                  }
-                                >
-                                  {cust.isActive !== false ? (
-                                    <>
-                                      <Lock className="w-4 h-4 mr-2.5" /> Lock Account
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Unlock className="w-4 h-4 mr-2.5" /> Unlock Account
-                                    </>
-                                  )}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className="bg-border" />
-                                <DropdownMenuItem
-                                  onClick={() => setDeleteTargetId(cust.id)}
-                                  className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
-                                >
-                                  <Trash2 className="w-4 h-4 mr-2.5" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-5 py-4 align-middle text-center">
+                        <div className="flex flex-col w-fit mx-auto gap-2 text-sm items-center text-center">
+                          <div className="flex items-center justify-center gap-2.5 text-ink-muted text-center">
+                            <Mail className="w-4 h-4 opacity-70" />
+                            <span className="truncate max-w-45 font-medium text-center">
+                              {cust.email || "—"}
+                            </span>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
+                          <div className="flex items-center justify-center gap-2.5 text-ink-muted text-center">
+                            <Phone className="w-4 h-4 opacity-70" />
+                            <span className="font-medium text-center">
+                              {cust.phone || "—"}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-5 py-4 align-middle text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className={`font-semibold border text-xs px-2.5 py-0.5 uppercase ${tier.color}`}
+                          >
+                            <span className="mr-1">{tier.icon}</span>{" "}
+                            {tier.label}
+                          </Badge>
+                          <span className="text-xs font-mono text-ink-muted font-medium">
+                            {cust.points.toLocaleString()} points
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-5 py-4 align-middle text-center">
+                        <div className="flex flex-col items-center gap-1">
+                          <span
+                            className={`text-sm font-semibold tabular-nums ${!cust.totalSpent ? "text-ink-muted/50" : "text-ink"}`}
+                          >
+                            {(cust.totalSpent || 0).toLocaleString("vi-VN")} ₫
+                          </span>
+                          <span
+                            className={`text-xs flex items-center gap-1.5 px-2 py-0.5 rounded-[4px] border w-fit ${!cust.orderCount ? "bg-surface-muted text-ink-muted/50 border-transparent" : "bg-surface-soft text-ink-muted border-border"}`}
+                          >
+                            <ShoppingBag className="w-3 h-3" />{" "}
+                            {cust.orderCount || 0} orders
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-5 py-4 align-middle text-center">
+                        <div className="flex justify-center whitespace-nowrap">
+                          <Badge
+                            variant="outline"
+                            className={`text-xs px-2.5 py-0.5 font-medium whitespace-nowrap shrink-0 min-w-max ${cust.isActive ? "text-success border-success/30 bg-success/10" : "text-danger border-danger/30 bg-danger/10"}`}
+                          >
+                            {cust.isActive ? "Active" : "Locked"}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 align-middle text-center">
+                        <div className="flex items-center justify-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon-sm"
+                                className="h-8 w-8 text-ink-muted hover:text-ink hover:bg-surface-muted data-[state=open]:bg-surface-muted data-[state=open]:text-ink"
+                              >
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-56 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
+                            >
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => setDetailCustomer(cust)}
+                              >
+                                <Eye className="w-4 h-4 mr-2.5" />
+                                Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => setEditingCustomer(cust)}
+                              >
+                                <Edit className="w-4 h-4 mr-2.5" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => setSelectedCustomer(cust)}
+                              >
+                                <History className="w-4 h-4 mr-2.5" />
+                                Order History
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="bg-border" />
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => setNotesTarget(cust)}
+                              >
+                                <StickyNote className="w-4 h-4 mr-2.5" />
+                                Internal Notes
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() => setPointsTarget(cust)}
+                              >
+                                <Coins className="w-4 h-4 mr-2.5" />
+                                Adjust Points
+                              </DropdownMenuItem>
+
+                              <DropdownMenuItem
+                                className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                                onClick={() =>
+                                  setLockTarget({
+                                    id: cust.id,
+                                    isActive: cust.isActive,
+                                  })
+                                }
+                              >
+                                {cust.isActive !== false ? (
+                                  <>
+                                    <Lock className="w-4 h-4 mr-2.5" /> Lock Account
+                                  </>
+                                ) : (
+                                  <>
+                                    <Unlock className="w-4 h-4 mr-2.5" /> Unlock Account
+                                  </>
+                                )}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator className="bg-border" />
+                              <DropdownMenuItem
+                                onClick={() => setDeleteTargetId(cust.id)}
+                                className="cursor-pointer rounded-sm text-danger focus:text-danger focus:bg-danger/10 data-[highlighted]:text-danger data-[highlighted]:bg-danger/10"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2.5" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
           {/* Pagination UI */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-4 bg-surface border-t border-border">
-              <div className="text-sm text-ink-muted font-medium">
-                Page {metaPage} / {totalPages}
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-sm h-9 px-4 font-medium text-ink-muted hover:text-ink"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                >
-                  Next
-                </Button>
-              </div>
+            <div className="flex items-center justify-center p-4 bg-surface border-t border-border">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
             </div>
           )}
         </CardContent>
       </div>
 
+      <CustomerDetailModal
+        isOpen={!!detailCustomer}
+        onClose={() => setDetailCustomer(null)}
+        customer={detailCustomer}
+      />
       <CustomerFormModal
         open={!!editingCustomer}
         onClose={() => setEditingCustomer(null)}

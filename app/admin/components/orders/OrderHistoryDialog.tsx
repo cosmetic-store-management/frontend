@@ -14,13 +14,7 @@ import {
 } from "lucide-react";
 import type { Order } from "@/admin/types/order";
 import { getOrderActivities, type OrderActivity } from "@/admin/services/order.service";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { BaseCrudModal } from "@/components/ui/base-crud-modal";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 
@@ -187,21 +181,21 @@ export default function OrderHistoryDialog({
   const displayedEvents = getDisplayedActivities(order, activities);
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-xl w-[95vw] rounded-sm bg-surface shadow-ui-card border-border p-6 text-left flex flex-col max-h-[85vh]">
-        <DialogHeader className="border-b border-border pb-3 shrink-0">
-          <DialogTitle className="text-lg font-bold text-ink">
-            Order History
-          </DialogTitle>
-        </DialogHeader>
-
+    <BaseCrudModal
+      open={open}
+      onOpenChange={(o) => !o && onClose()}
+      title="Order History"
+      size="md"
+      hideFooter={true}
+    >
+      <div className="flex flex-col gap-4 text-left">
         {loading ? (
-          <div className="flex-1 flex flex-col items-center justify-center py-20 gap-2 min-h-[300px]">
+          <div className="flex flex-col items-center justify-center py-20 gap-2 min-h-[300px]">
             <Loader2 className="w-8 h-8 animate-spin text-brand" />
             <p className="text-xs text-ink-muted">Loading history...</p>
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto space-y-6 my-4 pr-1 relative custom-scrollbar min-h-[300px] max-h-[50vh]">
+          <div className="relative space-y-6 my-4 pr-1 min-h-[300px]">
             {displayedEvents.length > 1 && (
               /* Continuous Timeline Line */
               <span className="absolute left-[13.5px] top-[15px] bottom-[15px] w-px bg-border/60" />
@@ -278,7 +272,7 @@ export default function OrderHistoryDialog({
           </div>
         )}
 
-        <DialogFooter className="border-t border-border pt-4 shrink-0 justify-end">
+        <div className="border-t border-border pt-4 flex justify-end">
           <Button
             type="button"
             variant="outline"
@@ -287,8 +281,8 @@ export default function OrderHistoryDialog({
           >
             Close
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </BaseCrudModal>
   );
 }

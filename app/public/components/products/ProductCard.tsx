@@ -134,7 +134,7 @@ export const ProductCard = React.memo(function ProductCard({
           )}
           {isOutOfStock && !isInactive && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/60">
-              <span className="bg-foreground text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wider">
+              <span className="bg-foreground text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wider rounded-sm">
                 Sold Out
               </span>
             </div>
@@ -211,7 +211,7 @@ export const ProductCard = React.memo(function ProductCard({
         {/* Out of stock overlay */}
         {isOutOfStock && !isInactive && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 backdrop-blur-[2px]">
-            <span className="bg-foreground text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wider">
+            <span className="bg-foreground text-white text-xs font-bold px-3 py-1.5 uppercase tracking-wider rounded-sm">
               Out of stock
             </span>
           </div>
@@ -266,7 +266,7 @@ export const ProductCard = React.memo(function ProductCard({
           </div>
           {hasDiscount && (
             <div
-              className="px-1.5 py-0.5 rounded-sm flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 text-white"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 mb-1 text-white leading-none"
               style={{ background: "hsl(352, 72%, 52%)" }}
             >
               -{discountPct}%

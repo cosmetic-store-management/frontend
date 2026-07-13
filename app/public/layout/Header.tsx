@@ -358,7 +358,10 @@ export default function Header() {
 
             {/* Nav Items */}
             <div className="flex items-stretch gap-6 flex-1">
-              {categories.slice(0, 2).map((cat: any) => (
+              {[...categories]
+                .sort((a: any, b: any) => (b.children?.length || 0) - (a.children?.length || 0))
+                .slice(0, 3)
+                .map((cat: any) => (
                 <div
                   key={cat.id || cat._id}
                   className="relative group flex items-center"

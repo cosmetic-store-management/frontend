@@ -9,6 +9,11 @@ export interface Review {
   comment: string;
   images?: string[];
   videos?: string[];
+  variantName?: string;
+  likesCount: number;
+  dislikesCount: number;
+  hasLiked?: boolean;
+  hasDisliked?: boolean;
   adminReply?: string;
   isVerifiedPurchase?: boolean;
   createdAt: string;
@@ -80,4 +85,28 @@ export const updateReview = async (
 
 export const deleteReview = async (reviewId: string) => {
   return apiClient.delete<{ message: string }>(`/reviews/${reviewId}`);
+};
+
+export interface ReviewEligibilityResponse {
+  canReview: boolean;
+  reason?: "not_purchased" | "already_reviewed";
+  variantName?: string;
+}
+
+export const checkReviewEligibility = async (productId: string) => {
+  return apiClient.get<ReviewEligibilityResponse>(`/reviews/eligibility/${productId}`);
+};
+
+export interface VoteResponse {
+  message: string;
+  likesCount: number;
+  dislikesCount: number;
+}
+
+export const likeReview = async (reviewId: string) => {
+  return apiClient.post<VoteResponse>(`/reviews/${reviewId}/like`);
+};
+
+export const dislikeReview = async (reviewId: string) => {
+  return apiClient.post<VoteResponse>(`/reviews/${reviewId}/dislike`);
 };

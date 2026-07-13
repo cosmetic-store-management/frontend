@@ -149,7 +149,7 @@ export function OrderPage() {
               }
             }}
             size="sm"
-            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+            className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
           >
             Export CSV
           </Button>
@@ -273,7 +273,10 @@ export function OrderPage() {
         <Table className="min-w-[1100px] table-fixed">
           <TableHeader>
             <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
-              <TableHead className="w-44 text-center">
+              <TableHead className="py-4 px-3 w-16 text-center">
+                No.
+              </TableHead>
+              <TableHead className="w-36 text-center">
                 Order ID
               </TableHead>
               <TableHead className="w-48 text-center">
@@ -294,7 +297,7 @@ export function OrderPage() {
               <TableHead className="w-36 text-center">
                 Total
               </TableHead>
-              <TableHead className="w-24 pl-3.5 pr-8 text-center">
+              <TableHead className="w-20 text-center">
                 Actions
               </TableHead>
             </TableRow>
@@ -304,7 +307,7 @@ export function OrderPage() {
               {loading && (
                 <TableRow>
                   <TableCell
-                    colSpan={8}
+                    colSpan={9}
                     className="px-4 py-12 text-center text-sm text-ink-muted"
                   >
                     Loading orders...
@@ -313,13 +316,18 @@ export function OrderPage() {
               )}
 
               {!loading &&
-                orders.map((item) => {
+                orders.map((item, i) => {
                   const meta =
                     orderStatusMeta[item.orderStatus as OrderStatus] ??
                     orderStatusMeta.pending;
                   const StatusIcon = meta.icon;
                   return (
                     <TableRow key={item.id}>
+                      {/* No. */}
+                      <TableCell className="py-3.5 px-3 text-center font-mono text-ink-muted/80 text-sm">
+                        {(page - 1) * 10 + i + 1}
+                      </TableCell>
+
                       <TableCell className="px-4 py-3.5 align-middle text-center">
                         <button
                           type="button"
@@ -382,7 +390,7 @@ export function OrderPage() {
                       <TableCell className="px-4 py-3.5 text-center align-middle font-semibold tabular-nums text-ink">
                         {formatVnd(item.totalAmount ?? 0)}
                       </TableCell>
-                      <TableCell className="pl-3.5 pr-8 py-3.5 text-center align-middle">
+                      <TableCell className="py-3.5 text-center align-middle">
                         <div className="flex items-center justify-center">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -464,7 +472,7 @@ export function OrderPage() {
               {!loading && orders.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={8}
+                    colSpan={9}
                     className="px-4 py-12 text-center text-sm text-ink-muted"
                   >
                     {keyword.trim() ? (

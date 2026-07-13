@@ -151,7 +151,7 @@ export default function OrderDetail({
           <div className="flex-1 overflow-y-auto max-h-[80vh]">
             <div className="flex flex-col lg:flex-row gap-0">
               {/* Left: items + summary */}
-              <div className="lg:w-[58%] flex flex-col p-4 sm:p-5">
+              <div className="lg:w-[62%] flex flex-col p-4 sm:p-5 shrink-0">
                 <div className="mb-4 text-left border-b border-border pb-4">
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
                     <h2 className="text-xl font-bold text-ink">{order.code}</h2>

@@ -11,6 +11,7 @@ import {
   Truck,
   AlertTriangle,
   MoreVertical,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +48,7 @@ import { toast } from "@/lib/toast";
 import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier } from "../hooks/useInventory";
 import { supplierSchema, type SupplierFormData } from "../schemas/supplier.schema";
 import type { Supplier } from "../services/inventory.service";
+import { SupplierDetailModal } from "../components/suppliers/SupplierDetailModal";
 
 const EMPTY_FORM: SupplierFormData = {
   name: "",
@@ -69,6 +71,7 @@ export function SupplierPage() {
   const [editing, setEditing] = useState<Supplier | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Supplier | null>(null);
+  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
 
   const { data: suppliers = [], isLoading } = useSuppliers();
   const createMutation = useCreateSupplier();
@@ -252,7 +255,12 @@ export function SupplierPage() {
                 paginatedSuppliers.map((sup, idx) => (
                   <TableRow key={sup.id} className="hover:bg-surface-soft/40 transition-colors">
                     <TableCell className="text-center text-xs font-mono text-ink-muted">{(page - 1) * PAGE_SIZE + idx + 1}</TableCell>
-                    <TableCell className="text-center text-sm font-semibold text-ink truncate">{sup.name}</TableCell>
+                    <TableCell
+                      className="text-center text-sm font-semibold text-ink truncate cursor-pointer hover:text-brand hover:underline"
+                      onClick={() => setSelectedSupplier(sup)}
+                    >
+                      {sup.name}
+                    </TableCell>
                     <TableCell className="text-center text-sm font-mono text-ink-muted">{sup.taxCode || "—"}</TableCell>
                     <TableCell className="text-center py-3">
                       {sup.contactPerson ? (
@@ -309,8 +317,15 @@ export function SupplierPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
                             align="end"
-                            className="w-36 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
+                            className="w-40 p-1.5 shadow-ui-card rounded-sm border-border animate-scale-in"
                           >
+                            <DropdownMenuItem
+                              className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
+                              onClick={() => setSelectedSupplier(sup)}
+                            >
+                              <Eye className="w-4 h-4 mr-2.5" />
+                              Details
+                            </DropdownMenuItem>
                             <DropdownMenuItem
                               className="cursor-pointer rounded-sm focus:bg-brand/5 focus:text-brand"
                               onClick={() => openEdit(sup)}
@@ -536,6 +551,12 @@ export function SupplierPage() {
           deleteMutation.reset();
         }}
         onConfirm={confirmDelete}
+      />
+
+      <SupplierDetailModal
+        open={!!selectedSupplier}
+        onClose={() => setSelectedSupplier(null)}
+        supplier={selectedSupplier}
       />
     </div>
   );

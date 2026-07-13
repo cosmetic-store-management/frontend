@@ -218,7 +218,7 @@ export function FlashSalePage() {
             description="Schedule and manage time-limited flash sale events to create urgency and boost revenue."
             actions={
               <Button
-                className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-hover shadow-none"
+                className="h-10 shrink-0 bg-brand px-4 text-white hover:bg-brand-dark transition-all shadow-none"
                 size="sm"
                 onClick={handleOpenCreate}
               >
@@ -259,6 +259,7 @@ export function FlashSalePage() {
             <Table className="min-w-[900px] table-fixed">
               <TableHeader>
                 <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                  <TableHead className="w-12 text-center">No.</TableHead>
                   <TableHead className="w-60 text-center">
                     Program Name
                   </TableHead>
@@ -273,14 +274,14 @@ export function FlashSalePage() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center ">
+                    <TableCell colSpan={6} className="text-center ">
                       Loading...
                     </TableCell>
                   </TableRow>
                 ) : flashSales.length === 0 ? (
                   <TableRow>
                     <TableCell
-                      colSpan={5}
+                      colSpan={6}
                       className="text-center text-muted-foreground"
                     >
                       {search || status !== "all"
@@ -289,8 +290,11 @@ export function FlashSalePage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  flashSales.map((fs) => (
+                  flashSales.map((fs, i) => (
                     <TableRow key={fs.id}>
+                      <TableCell className="text-center text-ink-muted">
+                        {(page - 1) * 10 + i + 1}
+                      </TableCell>
                       <TableCell className="font-medium text-center">
                         {fs.name}
                       </TableCell>

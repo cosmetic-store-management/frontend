@@ -276,6 +276,7 @@ export function VoucherPage() {
           <Table className="min-w-[1100px] table-fixed">
             <TableHeader>
               <TableRow className="bg-surface-muted text-ink-muted border-b border-border">
+                <TableHead className="w-12 text-center">No.</TableHead>
                 <TableHead className="w-36 text-center">
                   Voucher Code
                 </TableHead>
@@ -303,7 +304,10 @@ export function VoucherPage() {
                   className="animate-stagger"
                   style={{ "--i": i } as React.CSSProperties}
                 >
-                  <TableCell className="font-bold text-ink uppercase text-center">
+                  <TableCell className="text-center text-ink-muted">
+                    {(page - 1) * 10 + i + 1}
+                  </TableCell>
+                  <TableCell className="font-semibold text-ink-muted uppercase text-center">
                     {voucher.code}
                   </TableCell>
                   <TableCell className="text-center">
@@ -435,7 +439,7 @@ export function VoucherPage() {
         <DialogContent className="max-w-2xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden sm:rounded-md bg-surface shadow-ui-card border-border">
           <DialogHeader className="px-6 py-4 border-b border-border bg-surface shrink-0">
             <DialogTitle className="text-xl font-bold text-ink">
-              {editing ? "Edit Voucher" : "Add New Voucher"}
+              {editing ? "Edit Voucher" : "Create Voucher"}
             </DialogTitle>
           </DialogHeader>
 

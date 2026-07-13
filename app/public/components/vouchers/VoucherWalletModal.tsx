@@ -22,7 +22,7 @@ export function VoucherWalletModal({
   return (
     <BaseCrudModal
       open={isOpen}
-      onOpenChange={onClose}
+      onOpenChange={(open) => !open && onClose()}
       title="My Wallet"
       size="sm"
       hideFooter={true}
@@ -109,7 +109,7 @@ export function VoucherWalletModal({
                     className={cn(
                       "h-8 px-4 text-xs font-semibold",
                       isEligible
-                        ? "bg-brand text-white hover:bg-brand-hover shadow-ui-soft"
+                        ? "bg-brand text-white hover:bg-brand-dark transition-all shadow-ui-soft"
                         : "bg-background text-ink-muted",
                     )}
                     onClick={() => {
