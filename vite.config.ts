@@ -34,15 +34,6 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router'],
-          'ui-vendor': ['lucide-react', 'clsx', 'tailwind-merge'],
-          'chart-vendor': ['recharts'],
-          'stripe-vendor': ['@stripe/stripe-js', '@stripe/react-stripe-js'],
-          'query-vendor': ['@tanstack/react-query']
-        }
-      }
     }
   },
   // @ts-expect-error - vitest config field

@@ -267,7 +267,7 @@ export function ProductCatalogPage() {
               </div>
             ) : (
               <div
-                className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 animate-stagger transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}
+                className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}
               >
                 {products.map((product: any, index: number) => (
                   <ProductCard

@@ -553,8 +553,7 @@ export function CheckoutPage() {
                 <span className="text-ink-muted">Subtotal</span>
                 <span className="font-medium text-ink">
                   {(
-                    previewData?.subtotal ??
-                    useCartStore((state) => state.getSubtotal)()
+                    previewData?.subtotal ?? useCartStore.getState().getSubtotal()
                   ).toLocaleString("vi-VN")}
                   ₫
                 </span>
@@ -658,8 +657,7 @@ export function CheckoutPage() {
                 <span className="font-bold text-ink">Total</span>
                 <span className="text-2xl font-bold text-brand">
                   {(
-                    previewData?.finalTotalAmount ??
-                    useCartStore((state) => state.getTotal)()
+                    previewData?.finalTotalAmount ?? useCartStore.getState().getTotal()
                   ).toLocaleString("vi-VN")}
                   ₫
                 </span>
@@ -668,7 +666,7 @@ export function CheckoutPage() {
               <button
                 type="submit"
                 disabled={createOrderMutation.isPending || !defaultAddr}
-                className="w-full bg-brand hover:bg-brand-dark text-white font-bold py-3.5 rounded-sm transition-colors flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="btn-primary w-full py-3.5 flex justify-center items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {createOrderMutation.isPending ? (
                   <>

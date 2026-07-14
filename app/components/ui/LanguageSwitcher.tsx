@@ -45,15 +45,17 @@ export default function LanguageSwitcher() {
       <DropdownMenuContent align="end" className="w-32 bg-white rounded-sm border-border">
         <DropdownMenuItem 
           onClick={() => changeLanguage('en')}
-          className={`cursor-pointer rounded-sm ${language === 'en' ? 'bg-muted/50 font-semibold text-brand' : ''}`}
+          className={`cursor-pointer rounded-sm flex items-center gap-2 ${language === 'en' ? 'bg-muted/50 font-semibold text-brand' : ''}`}
         >
-          🇺🇸 English
+          <img src="https://flagcdn.com/w20/us.png" srcSet="https://flagcdn.com/w40/us.png 2x" width="20" alt="English" />
+          English
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => changeLanguage('vi')}
-          className={`cursor-pointer rounded-sm ${language === 'vi' ? 'bg-muted/50 font-semibold text-brand' : ''}`}
+          className={`cursor-pointer rounded-sm flex items-center gap-2 ${language === 'vi' ? 'bg-muted/50 font-semibold text-brand' : ''}`}
         >
-          🇻🇳 Tiếng Việt
+          <img src="https://flagcdn.com/w20/vn.png" srcSet="https://flagcdn.com/w40/vn.png 2x" width="20" alt="Vietnamese" />
+          Vietnamese
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

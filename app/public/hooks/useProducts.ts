@@ -3,6 +3,7 @@ import {
   getProducts,
   getProductBySlug,
   getRecommendedProducts,
+  getPopularSearches,
   type ProductQuery,
 } from "../services/product.service";
 import { QK } from "@/lib/queryKeys";
@@ -28,6 +29,14 @@ export function useProductRecommendations(id: string, limit: number = 10) {
     queryKey: QK.recommendations(id, limit),
     queryFn: () => getRecommendedProducts(id, limit),
     enabled: !!id,
+  });
+}
+
+export function usePopularSearches(limit: number = 10) {
+  return useQuery({
+    queryKey: ["popular-searches", limit],
+    queryFn: () => getPopularSearches(limit),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 

@@ -86,7 +86,7 @@ export function ProductDetailPage() {
         </p>
         <Link
           to="/products"
-          className="btn-hover bg-brand text-white px-6 py-2 rounded-sm font-bold"
+          className="btn-primary inline-flex justify-center"
         >
           Back to products
         </Link>
@@ -408,15 +408,14 @@ export function ProductDetailPage() {
                   <button
                     onClick={handleAddToCart}
                     disabled={isOutOfStock || !product.isActive}
-                    className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-sm transition-all duration-150 hover:bg-brand/5 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3.5 px-6 rounded-sm transition-all duration-150 hover:bg-brand/5 hover:shadow-md active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <ShoppingBag className="w-5 h-5" /> Add to Cart
                   </button>
                   <button
                     onClick={handleBuyNow}
                     disabled={isOutOfStock || !product.isActive}
-                    className="btn-hover flex-1 font-bold py-3.5 px-6 rounded-sm transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed text-white shadow-md hover:shadow-lg active:scale-[0.99]"
-                    style={{ background: "hsl(352, 72%, 52%)" }}
+                    className="btn-primary flex-1 py-3.5 px-6 shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     Buy Now
                   </button>
@@ -433,15 +432,14 @@ export function ProductDetailPage() {
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock || !product.isActive}
-            className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
+            className="flex-1 flex justify-center items-center gap-2 border-2 border-brand text-brand font-bold py-3 rounded-sm transition-all hover:bg-brand/5 active:scale-[0.98] disabled:opacity-40 text-sm"
           >
             <ShoppingBag className="w-4 h-4" /> Add to Cart
           </button>
           <button
             onClick={handleBuyNow}
             disabled={isOutOfStock || !product.isActive}
-            className="flex-1 text-white font-bold py-3 rounded-sm transition-all disabled:opacity-40 text-sm"
-            style={{ background: "hsl(352, 72%, 52%)" }}
+            className="btn-primary flex-1 py-3 text-sm disabled:opacity-40"
           >
             Buy Now
           </button>

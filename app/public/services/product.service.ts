@@ -58,3 +58,9 @@ export function getRecommendedProducts(
     }>(`/products/${id}/recommendations?limit=${limit}`)
     .then((data) => data.products);
 }
+
+export function getPopularSearches(limit: number = 10): Promise<string[]> {
+  return apiClient
+    .get<{ terms: string[] }>(`/products/popular-searches?limit=${limit}`)
+    .then((data) => data.terms);
+}

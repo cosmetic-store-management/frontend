@@ -82,8 +82,7 @@ export function CartPage() {
           </p>
           <Link
             to="/products"
-            className="inline-flex items-center gap-2 text-white font-bold py-3 px-8 rounded-sm transition-all duration-150 shadow-sm hover:shadow-md active:scale-[0.99]"
-            style={{ background: "hsl(352, 72%, 52%)" }}
+            className="btn-primary inline-flex items-center gap-2 py-3 px-8 text-sm"
           >
             <ShoppingBag className="w-4 h-4" /> Shop now
           </Link>
@@ -337,8 +336,7 @@ export function CartPage() {
                     disabled={
                       validateVoucherMutation.isPending || !voucherInput.trim()
                     }
-                    className="text-white px-4 py-2 rounded-sm text-sm font-bold transition-all disabled:opacity-50"
-                    style={{ background: "hsl(352, 72%, 52%)" }}
+                    className="btn-primary px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {validateVoucherMutation.isPending ? "..." : "Apply"}
                   </button>
@@ -370,8 +368,7 @@ export function CartPage() {
                 }
               }}
               disabled={hasInactiveItems}
-              className="w-full text-white font-bold py-3.5 rounded-sm transition-all duration-150 flex justify-center items-center gap-2 shadow-md hover:shadow-lg active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ background: "hsl(352, 72%, 52%)" }}
+              className="btn-primary w-full py-3.5 flex justify-center items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Checkout <ArrowRight className="w-4 h-4" />
             </button>

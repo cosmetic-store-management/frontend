@@ -8,6 +8,7 @@ import { useFavoriteStore } from "@/public/store/favorite.store";
 import { useQueryClient } from "@tanstack/react-query";
 import { getProductBySlug } from "../../services/product.service";
 import { QK } from "@/lib/queryKeys";
+import { motion } from "framer-motion";
 
 interface ProductCardProps {
   product: any;
@@ -138,12 +139,18 @@ export function ProductCard({
   // ────────────────────────── LIST ──────────────────────────
   if (layout === "list") {
     return (
-      <Link
-        to={`/product/${product.slug}`}
-        className="premium-card group flex flex-row h-36"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.3 }}
       >
+        <Link
+          to={`/product/${product.slug}`}
+          className="premium-card group flex flex-row h-36 relative"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
         <div className="relative w-36 h-full shrink-0 overflow-hidden bg-surface-soft">
           {product.imageUrl ? (
             <img
@@ -196,17 +203,25 @@ export function ProductCard({
           </div>
         </div>
       </Link>
+      </motion.div>
     );
   }
 
   // ────────────────────────── GRID ──────────────────────────
   return (
-    <Link
-      to={`/product/${product.slug}`}
-      className="premium-card group flex flex-col h-full"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-20px" }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="h-full"
     >
+      <Link
+        to={`/product/${product.slug}`}
+        className="premium-card group flex flex-col h-full relative"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
       {/* ── Image ── */}
       <div className="relative aspect-[3/4] overflow-hidden bg-surface-soft">
         {/* Primary image */}
@@ -217,7 +232,7 @@ export function ProductCard({
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
             decoding="async"
-            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${hoverImage ? "group-hover:opacity-0" : ""}`}
+            className={`absolute inset-0 w-full h-full object-cover [transition-property:opacity,transform] duration-700 group-hover:scale-105 ${hoverImage ? "group-hover:opacity-0" : ""}`}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-ink-muted/20">
@@ -233,7 +248,7 @@ export function ProductCard({
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
+            className="absolute inset-0 w-full h-full object-cover [transition-property:opacity,transform] duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
           />
         )}
 
@@ -333,5 +348,6 @@ export function ProductCard({
         </div>
       </div>
     </Link>
+    </motion.div>
   );
 }

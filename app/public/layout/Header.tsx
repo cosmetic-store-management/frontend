@@ -15,11 +15,11 @@ import { useCartStore } from "@/public/store/cart.store";
 import { useCategories, useBrands } from "@/public/hooks/useProducts";
 import { useLogout } from "@/auth/hooks/useAuth";
 import LanguageSwitcher from "@/components/ui/LanguageSwitcher";
+import SearchSuggest from "./SearchSuggest";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [activeMegaCategory, setActiveMegaCategory] = useState<any>(null);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
 
@@ -77,13 +77,6 @@ export default function Header() {
     navigate("/");
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchTerm.trim())}`);
-    }
-  };
-
   return (
     <>
       {/* =========================================
@@ -120,34 +113,8 @@ export default function Header() {
             />
           </Link>
 
-          <div className="hidden lg:block flex-1 max-w-150 mx-auto px-4">
-            <form
-              onSubmit={handleSearch}
-              className="flex items-center w-full relative h-9 bg-muted/60 rounded-sm border border-border/80 hover:border-brand/40 focus-within:border-brand focus-within:bg-white transition-all duration-200"
-            >
-              <Search
-                className="absolute left-3 w-4 h-4 text-muted-foreground"
-                strokeWidth={1.5}
-              />
-              <input
-                id="search"
-                name="search"
-                aria-label="Search products"
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search products, brands..."
-                className="w-full h-full bg-transparent py-0 pl-9 pr-4 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/70"
-              />
-              {searchTerm && (
-                <button
-                  type="submit"
-                  className="absolute right-3 text-xs font-semibold text-brand hover:text-brand/80 transition-colors"
-                >
-                  Go
-                </button>
-              )}
-            </form>
+          <div className="hidden lg:block flex-1 max-w-150 mx-auto px-4 z-50">
+            <SearchSuggest />
           </div>
 
           <div className="flex items-center gap-3 lg:gap-5 shrink-0 ml-auto lg:ml-0 text-ink">
