@@ -114,7 +114,7 @@ function HomeSingleVoucher({
 }
 
 export function HomeVouchers() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
   const { data: vouchers, isLoading } = useVouchers();
   const { data: walletVouchers } = useGetWalletVouchers();
   const collectMutation = useCollectVoucher();

@@ -26,28 +26,62 @@ export function useProductCatalog() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const categoryParam = searchParams.get("category") || "";
-  const selectedCategories = categoryParam
-    ? categoryParam.split(",").filter(Boolean)
-    : [];
+  const [selectedCategories, setSelectedCategories] = useState(
+    categoryParam ? categoryParam.split(",").filter(Boolean) : []
+  );
+  useEffect(() => {
+    setSelectedCategories(categoryParam ? categoryParam.split(",").filter(Boolean) : []);
+  }, [categoryParam]);
 
-  // Brands now use brand IDs (ObjectIds) instead of names for type-safe filtering
-  const brandsParam = searchParams.get("brandId") || "";
-  const selectedBrandIds = brandsParam
-    ? brandsParam.split(",").filter(Boolean)
-    : [];
+  // Brands now use brand slugs for SEO-friendly URLs
+  const brandsParam = searchParams.get("brands") || "";
+  const [selectedBrandSlugs, setSelectedBrandSlugs] = useState(
+    brandsParam ? brandsParam.split(",").filter(Boolean) : []
+  );
+  useEffect(() => {
+    setSelectedBrandSlugs(brandsParam ? brandsParam.split(",").filter(Boolean) : []);
+  }, [brandsParam]);
 
   const minPriceParam = searchParams.get("minPrice") || "";
   const maxPriceParam = searchParams.get("maxPrice") || "";
   const sortParam = searchParams.get("sort") || "newest";
+  
+  // Optimistic state for instant tab switching
+  const [localSort, setLocalSort] = useState(sortParam);
+  useEffect(() => {
+    setLocalSort(sortParam);
+  }, [sortParam]);
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const searchParam = searchParams.get("search") || "";
+  const [searchTerm, setSearchTerm] = useState(searchParam);
+  useEffect(() => {
+    setSearchTerm(searchParam);
+  }, [searchParam]);
+
   const debouncedSearch = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    if (debouncedSearch !== searchParam) {
+      const newParams = new URLSearchParams(searchParams);
+      if (debouncedSearch) newParams.set("search", debouncedSearch);
+      else newParams.delete("search");
+      newParams.delete("page");
+      setSearchParams(newParams, { preventScrollReset: true });
+    }
+  }, [debouncedSearch, searchParam, searchParams, setSearchParams]);
   const [minPriceInput, setMinPriceInput] = useState(
     minPriceParam ? parseInt(minPriceParam, 10).toLocaleString("vi-VN") : "",
   );
+  useEffect(() => {
+    setMinPriceInput(minPriceParam ? parseInt(minPriceParam, 10).toLocaleString("vi-VN") : "");
+  }, [minPriceParam]);
+
   const [maxPriceInput, setMaxPriceInput] = useState(
     maxPriceParam ? parseInt(maxPriceParam, 10).toLocaleString("vi-VN") : "",
   );
+  useEffect(() => {
+    setMaxPriceInput(maxPriceParam ? parseInt(maxPriceParam, 10).toLocaleString("vi-VN") : "");
+  }, [maxPriceParam]);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState({
     categories: true,
@@ -58,6 +92,11 @@ export function useProductCatalog() {
 
   const toggleFilter = (key: keyof typeof openFilters) => {
     setOpenFilters((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handlePriceChange =
@@ -74,7 +113,7 @@ export function useProductCatalog() {
   // Reset page when search changes
   useEffect(() => {
     {
-      /* eslint-disable-next-line  */
+       
     }
     setCurrentPage(1);
   }, [debouncedSearch]);
@@ -88,9 +127,9 @@ export function useProductCatalog() {
   } = useProducts({
     page: currentPage,
     limit: 24,
-    search: debouncedSearch || undefined,
+    search: searchParam || undefined,
     category: categoryParam || undefined,
-    brandId: brandsParam || undefined,
+    brands: brandsParam || undefined,
     minPrice: minPriceParam ? Number(minPriceParam) : undefined,
     maxPrice: maxPriceParam ? Number(maxPriceParam) : undefined,
     sort: sortParam,
@@ -125,6 +164,7 @@ export function useProductCatalog() {
       newCategories.push(slug);
     }
 
+    setSelectedCategories(newCategories); // Optimistic update
     const newParams = new URLSearchParams(searchParams);
     if (newCategories.length > 0)
       newParams.set("category", newCategories.join(","));
@@ -133,14 +173,15 @@ export function useProductCatalog() {
     setSearchParams(newParams, { preventScrollReset: true });
   };
 
-  const toggleBrand = (brandId: string) => {
-    const newIds = selectedBrandIds.includes(brandId)
-      ? selectedBrandIds.filter((b) => b !== brandId)
-      : [...selectedBrandIds, brandId];
+  const toggleBrand = (slug: string) => {
+    const newSlugs = selectedBrandSlugs.includes(slug)
+      ? selectedBrandSlugs.filter((b) => b !== slug)
+      : [...selectedBrandSlugs, slug];
 
+    setSelectedBrandSlugs(newSlugs); // Optimistic update
     const newParams = new URLSearchParams(searchParams);
-    if (newIds.length > 0) newParams.set("brandId", newIds.join(","));
-    else newParams.delete("brandId");
+    if (newSlugs.length > 0) newParams.set("brands", newSlugs.join(","));
+    else newParams.delete("brands");
     newParams.delete("page");
     setSearchParams(newParams, { preventScrollReset: true });
   };
@@ -158,10 +199,23 @@ export function useProductCatalog() {
   };
 
   const resetBrands = () => {
+    setSelectedBrandSlugs([]); // Optimistic update
     const newParams = new URLSearchParams(searchParams);
-    newParams.delete("brandId");
+    newParams.delete("brands");
     newParams.delete("page");
     setSearchParams(newParams, { preventScrollReset: true });
+  };
+
+  const clearAllFilters = () => {
+    setSearchTerm("");
+    setMinPriceInput("");
+    setMaxPriceInput("");
+    setSelectedCategories([]);
+    setSelectedBrandSlugs([]);
+    setLocalSort("newest");
+    setCurrentPage(1);
+    setSearchParams(new URLSearchParams(), { preventScrollReset: false });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   let sidebarTitle = "ALL PRODUCTS";
@@ -191,12 +245,12 @@ export function useProductCatalog() {
       searchTerm,
       minPriceInput,
       maxPriceInput,
-      sortBy: sortParam,
+      sortBy: localSort,
       isMobileFilterOpen,
       openFilters,
       currentPage,
       selectedCategories,
-      selectedBrands: selectedBrandIds,
+      selectedBrands: selectedBrandSlugs,
       categoryParam:
         selectedCategories.length === 0 ? "all" : selectedCategories[0],
     },
@@ -215,6 +269,7 @@ export function useProductCatalog() {
       setMinPriceInput,
       setMaxPriceInput,
       setSortBy: (sort: string) => {
+        setLocalSort(sort); // Instant UI feedback
         const newParams = new URLSearchParams(searchParams);
         if (sort === "newest") newParams.delete("sort");
         else newParams.set("sort", sort);
@@ -223,7 +278,7 @@ export function useProductCatalog() {
       },
       setIsMobileFilterOpen,
       setOpenFilters,
-      setCurrentPage,
+      setCurrentPage: handlePageChange,
       toggleFilter,
       handlePriceChange,
       toggleCategory,
@@ -235,11 +290,13 @@ export function useProductCatalog() {
           const newParams = new URLSearchParams(searchParams);
           newParams.delete("category");
           newParams.delete("page");
+          setSelectedCategories([]);
           setSearchParams(newParams, { preventScrollReset: true });
         } else {
           toggleCategory(catId);
         }
       },
+      clearAllFilters,
     },
   };
 }

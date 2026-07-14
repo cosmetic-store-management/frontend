@@ -43,7 +43,7 @@ export function AccountPage() {
   useEffect(() => {
     if (viewParam === "coupon") {
       {
-        /* eslint-disable-next-line  */
+         
       }
       setActiveTab("vouchers");
     } else if (viewParam && VALID_TABS.includes(viewParam as Tab)) {

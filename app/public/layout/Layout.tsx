@@ -11,7 +11,8 @@ import { useToggleFavorite } from "@/public/hooks/useUser";
 export default function Layout() {
   const { settings } = useSetting();
   const { isLoggedIn } = useAuth();
-  const { itemIds: localFavorites, clearFavorites } = useFavoriteStore();
+  const localFavorites = useFavoriteStore((state) => state.itemIds);
+  const clearFavorites = useFavoriteStore((state) => state.clearFavorites);
   const toggleFavoriteMutation = useToggleFavorite();
 
   // Sync local favorites to server upon login

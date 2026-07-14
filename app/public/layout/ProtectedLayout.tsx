@@ -9,7 +9,7 @@ export default function ProtectedLayout() {
 
   useEffect(() => {
     {
-      /* eslint-disable-next-line  */
+       
     }
     setMounted(true);
   }, []);

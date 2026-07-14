@@ -17,7 +17,7 @@ export default function HomePage() {
   const { data: categories = [] } = useCategories();
   const { data: brandsRaw = [] } = useBrands();
   const { data: prodData, isLoading } = useProducts({ limit: 30 });
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
   // Chỉ gọi recently viewed khi đã đăng nhập — tránh 401 redirect
   const { data: viewedData } = useRecentlyViewed(1, 8, { enabled: !!user });
@@ -76,6 +76,7 @@ export default function HomePage() {
               </h2>
               <Link
                 to="/categories"
+                prefetch="intent"
                 className="text-brand text-sm font-semibold underline flex items-center gap-1 hover:opacity-80 transition-opacity"
               >
                 See all <ChevronRight className="w-4 h-4" />
@@ -87,6 +88,7 @@ export default function HomePage() {
                 <Link
                   key={cat.id || cat._id}
                   to={`/products?category=${cat.slug}`}
+                  prefetch="intent"
                   className="card-animate group flex items-center gap-3 p-3 bg-surface border border-border/40 hover:border-brand/50 hover:bg-white hover:shadow-md hover:-translate-y-1 transition-all rounded-sm"
                   style={{ "--card-i": i } as React.CSSProperties}
                 >
@@ -126,6 +128,7 @@ export default function HomePage() {
               </h2>
               <Link
                 to="/brands"
+                prefetch="intent"
                 className="text-brand text-sm font-semibold underline flex items-center gap-1"
               >
                 See all <ChevronRight className="w-4 h-4" />
@@ -136,6 +139,7 @@ export default function HomePage() {
                 <Link
                   key={brand.id || brand._id}
                   to={`/products?brandId=${brand.id || brand._id}`}
+                  prefetch="intent"
                   className="group rounded-sm overflow-hidden border border-border/40 aspect-2/1 bg-surface flex items-center justify-center p-4 hover:border-brand/50 hover:shadow-md hover:-translate-y-1 transition-all"
                 >
                   {(brand.imageUrl || brand.logoUrl) &&
@@ -179,6 +183,7 @@ export default function HomePage() {
               </h2>
               <Link
                 to="/account?view=viewed"
+                prefetch="intent"
                 className="text-brand text-sm font-semibold underline flex items-center gap-1"
               >
                 See all <ChevronRight className="w-4 h-4" />
@@ -219,6 +224,7 @@ export default function HomePage() {
             <div className="mt-8 flex justify-center">
               <Link
                 to="/products"
+                prefetch="intent"
                 className="btn-outline px-12 py-3 rounded-sm hover:shadow-md hover:-translate-y-1"
               >
                 Keep exploring

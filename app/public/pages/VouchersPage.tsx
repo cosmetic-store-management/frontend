@@ -66,7 +66,7 @@ function VoucherCardFull({
   const [copied, setCopied] = useState(false);
   const { icon, title, badge, color, badgeColor } = getVoucherMeta(voucher);
   {
-    /* eslint-disable-next-line  */
+     
   }
   const now = new Date().getTime();
   const daysLeft = Math.ceil(

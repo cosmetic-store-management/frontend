@@ -308,7 +308,7 @@ export function FlashSaleEditor({
                 <div className="space-y-6">
                   <div className="p-5 rounded-sm border flex flex-col sm:flex-row items-end gap-6 mb-2">
                     <div className="space-y-2 flex-1 sm:max-w-55">
-                      {/* eslint-disable-next-line  */}
+                      { }
                       <label className="text-sm font-bold flex items-center gap-2">
                         <Percent className="w-4 h-4 text-muted-foreground" />{"Batch Discount %"}</label>
                       <Input
@@ -322,7 +322,7 @@ export function FlashSaleEditor({
                       />
                     </div>
                     <div className="space-y-2 flex-1 sm:max-w-55">
-                      {/* eslint-disable-next-line  */}
+                      { }
                       <label className="text-sm font-bold flex items-center gap-2">
                         <Package className="w-4 h-4 text-muted-foreground" />{"Flash Sale Qty"}</label>
                       <Input

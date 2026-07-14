@@ -131,7 +131,7 @@ export function PaymentPage() {
 
   const isPaid = orderTrack?.paymentStatus === "paid";
   const isCancelled = orderTrack?.orderStatus === "cancelled";
-  const { clearCart } = useCartStore();
+  const clearCart = useCartStore((state) => state.clearCart);
 
   const [timeLeft, setTimeLeft] = useState(15 * 60);
   const hasAutoCancelled = useRef(false);

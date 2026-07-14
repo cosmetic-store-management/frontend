@@ -182,7 +182,7 @@ export default function AdminSidebar() {
 
   useEffect(() => {
     {
-      /* eslint-disable-next-line  */
+       
     }
     if (isOrderRoute) setOrderOpen(true);
     if (isCatalogRoute) setCatalogOpen(true);

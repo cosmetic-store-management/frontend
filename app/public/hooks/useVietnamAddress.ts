@@ -36,7 +36,7 @@ export function useVietnamAddress() {
   useEffect(() => {
     if (provinceCode === null) {
       {
-        /* eslint-disable-next-line  */
+         
       }
       setDistricts([]);
       setWards([]);
@@ -59,7 +59,7 @@ export function useVietnamAddress() {
   useEffect(() => {
     if (districtCode === null) {
       {
-        /* eslint-disable-next-line  */
+         
       }
       setWards([]);
       return;

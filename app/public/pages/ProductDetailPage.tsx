@@ -41,64 +41,37 @@ export function ProductDetailPage() {
       recordViewedMutation.mutate(product.id);
     }
     {
-      /* eslint-disable-next-line  */
+       
     }
   }, [product?.id, isLoggedIn]);
 
   // Removed old document.title useEffect to use react-helmet-async
 
-  const { itemIds: localFavorites, toggleFavorite: toggleLocalFavorite } = useFavoriteStore();
+  const localFavorites = useFavoriteStore((state) => state.itemIds);
+  const toggleLocalFavorite = useFavoriteStore((state) => state.toggleFavorite);
 
-  const [selectedVariant, setSelectedVariant] = useState<any>(null);
-  const [quantity, setQuantity] = useState(1);
+  const [rawQuantity, setRawQuantity] = useState(1);
+  const [prevSlug, setPrevSlug] = useState(slug);
 
-  // Reset state khi chuyển sang sản phẩm khác
-  useEffect(() => {
-    {
-      /* eslint-disable-next-line  */
-    }
-    setSelectedVariant(null);
-    {
-      /* eslint-disable-next-line  */
-    }
-    setQuantity(1);
-  }, [slug]);
+  if (slug !== prevSlug) {
+    setPrevSlug(slug);
+    setRawQuantity(1);
+  }
 
-  // Sync variant từ URL hoặc tự chọn variant đầu tiên
-  useEffect(() => {
-    if (!product || !product.variants?.length) return;
-
+  const selectedVariant = (() => {
+    if (!product || !product.variants?.length) return null;
     if (variantId) {
       const found = product.variants.find(
         (v: any) => String(v.id) === variantId || String(v.sku) === variantId,
       );
-      if (found) {
-        {
-          /* eslint-disable-next-line  */
-        }
-        setSelectedVariant(found);
-        return;
-      }
+      if (found) return found;
     }
+    return product.variants[0];
+  })();
 
-    // Chỉ auto-select nếu chưa có variant hoặc variant không thuộc product này
-    const belongsToProduct = product.variants.some(
-      (v: any) => v.id === selectedVariant?.id,
-    );
-    if (!belongsToProduct) {
-      setSelectedVariant(product.variants[0]);
-    }
-  }, [product, variantId, selectedVariant]);
-
-  // Cap quantity khi variant thay đổi
-  useEffect(() => {
-    if (selectedVariant) {
-      {
-        /* eslint-disable-next-line  */
-      }
-      setQuantity((prev) => Math.max(1, Math.min(prev, selectedVariant.stock)));
-    }
-  }, [selectedVariant]);
+  const stock = selectedVariant ? selectedVariant.stock : 0;
+  const quantity = Math.max(1, Math.min(rawQuantity, stock > 0 ? stock : 1));
+  const setQuantity = setRawQuantity;
 
   if (isLoading) {
     return <ProductDetailSkeleton />;
@@ -134,7 +107,6 @@ export function ProductDetailPage() {
       ? minPrice.toLocaleString("vi-VN") + "₫"
       : `${minPrice.toLocaleString("vi-VN")}₫ - ${maxPrice.toLocaleString("vi-VN")}₫`;
 
-  const stock = selectedVariant ? selectedVariant.stock : 0;
   const isOutOfStock = stock === 0;
 
   const isFavorite = isLoggedIn
@@ -341,7 +313,6 @@ export function ProductDetailPage() {
                     <button
                       key={v.id || v.name || idx}
                       onClick={() => {
-                        setSelectedVariant(v);
                         setSearchParams(
                           { variant: String(v.id || v.sku) },
                           { replace: true, preventScrollReset: true },

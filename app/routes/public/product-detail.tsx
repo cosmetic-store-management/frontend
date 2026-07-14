@@ -1,23 +1,45 @@
 import type { MetaFunction } from "react-router";
 import { buildMeta } from "@/lib/seo";
 import { ProductDetailPage } from "../../public/pages/ProductDetailPage";
+import { queryClient } from "@/lib/queryClient";
+import { QK } from "@/lib/queryKeys";
+import { getProductBySlug } from "../../public/services/product.service";
 
 /**
- * SEO cho product detail — title/desc lý tưởng nên lấy từ product data.
- * React Router v7 loader pattern là cách đúng, nhưng cần SSR.
- * Ở đây dùng meta mặc định; ProductDetailPage tự cập nhật document.title khi load.
+ * Pre-fetch dữ liệu sản phẩm trong lúc chuyển trang (Render-as-you-fetch).
+ * Triệt tiêu hoàn toàn loading spinner khi trang load.
  */
-export const meta: MetaFunction = ({ params }) => {
-  const slug = params.slug ?? "";
-  const readableTitle = slug
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+export async function clientLoader({ params }: any) {
+  const slug = params.slug;
+  if (!slug) throw new Error("Product slug is required");
+
+  // ensureQueryData sẽ lấy từ cache nếu có, nếu không sẽ fetch trước
+  const product = await queryClient.ensureQueryData({
+    queryKey: QK.product(slug),
+    queryFn: () => getProductBySlug(slug),
+    staleTime: 60 * 1000,
+  });
+
+  return product;
+}
+
+/**
+ * Dynamic SEO: Lấy trực tiếp thông tin sản phẩm từ clientLoader
+ * để tạo thẻ <title> và <meta description> chính xác tuyệt đối!
+ */
+export const meta: MetaFunction = ({ data }) => {
+  const product = data as any;
+  if (!product) {
+    return buildMeta({
+      title: "Product Not Found",
+      description: "This product is unavailable or does not exist.",
+    });
+  }
 
   return buildMeta({
-    title: readableTitle || "Product Details",
-    description: `View details, reviews, and buy authentic ${readableTitle} products at GlowUp Cosmetics.`,
-    keywords: `${readableTitle}, authentic cosmetics, GlowUp`,
+    title: product.name,
+    description: `View details, reviews, and buy authentic ${product.name} products at GlowUp Cosmetics.`,
+    keywords: `${product.name}, authentic cosmetics, GlowUp`,
   });
 };
 

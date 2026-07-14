@@ -64,7 +64,7 @@ export function AddressPage() {
     const prov = vn.provinces.find((p) => p.name === editInitNames.province);
     if (prov) vn.setProvinceCode(prov.code);
     {
-      /* eslint-disable-next-line  */
+       
     }
   }, [editInitNames, vn.provinces]);
 
@@ -73,7 +73,7 @@ export function AddressPage() {
     const dist = vn.districts.find((d) => d.name === editInitNames.district);
     if (dist) vn.setDistrictCode(dist.code);
     {
-      /* eslint-disable-next-line  */
+       
     }
   }, [editInitNames, vn.districts]);
 

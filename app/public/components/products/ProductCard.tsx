@@ -1,10 +1,13 @@
 import React from "react";
-import { Link, useNavigate, useLocation } from "react-router";
+import { Link } from "react-router";
 import { ShoppingCart, Heart } from "lucide-react";
 import { useAuth } from "@/auth/hooks/useAuth";
 import { useToggleFavorite, useFavorites } from "../../hooks/useUser";
 import { toast } from "@/lib/toast";
 import { useFavoriteStore } from "@/public/store/favorite.store";
+import { useQueryClient } from "@tanstack/react-query";
+import { getProductBySlug } from "../../services/product.service";
+import { QK } from "@/lib/queryKeys";
 
 interface ProductCardProps {
   product: any;
@@ -32,7 +35,7 @@ function getFreeshiplabel(id: string): string {
   return FREESHIP_LABELS[hash % FREESHIP_LABELS.length];
 }
 
-export const ProductCard = React.memo(function ProductCard({
+export function ProductCard({
   product,
   layout = "grid",
   priority = false,
@@ -86,29 +89,50 @@ export const ProductCard = React.memo(function ProductCard({
   })();
 
   const { isLoggedIn } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
   const { data: favorites = [] } = useFavorites();
   const toggleFavoriteMutation = useToggleFavorite();
-  const { itemIds: localFavorites, toggleFavorite: toggleLocalFavorite } = useFavoriteStore();
+  
+  const isLocalFavorite = useFavoriteStore((state) => state.itemIds.includes(product.id || product._id));
+  const toggleLocalFavorite = useFavoriteStore((state) => state.toggleFavorite);
+  const queryClient = useQueryClient();
+
+  const hoverTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (product?.slug) {
+      hoverTimeoutRef.current = setTimeout(() => {
+        queryClient.prefetchQuery({
+          queryKey: QK.product(product.slug),
+          queryFn: () => getProductBySlug(product.slug),
+          staleTime: 60000,
+        });
+      }, 300);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+  };
 
   const isFavorite = isLoggedIn
-    ? favorites.some((fav: any) => fav.id === product.id)
-    : localFavorites.includes(product.id);
+    ? favorites.some((fav: any) => fav.id === (product.id || product._id))
+    : isLocalFavorite;
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!isLoggedIn) {
-      toggleLocalFavorite(product.id);
+      toggleLocalFavorite(product.id || product._id);
       toast.success(
-        localFavorites.includes(product.id)
-          ? "Removed from wishlist"
-          : "Added to wishlist"
+        !isLocalFavorite
+          ? "Added to wishlist"
+          : "Removed from wishlist"
       );
       return;
     }
-    toggleFavoriteMutation.mutate(product.id);
+    toggleFavoriteMutation.mutate(product.id || product._id);
   };
 
   // ────────────────────────── LIST ──────────────────────────
@@ -117,14 +141,17 @@ export const ProductCard = React.memo(function ProductCard({
       <Link
         to={`/product/${product.slug}`}
         className="premium-card group flex flex-row h-36"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <div className="relative w-36 h-full shrink-0 overflow-hidden bg-surface-soft">
           {product.imageUrl ? (
             <img
               src={product.imageUrl}
-              alt=""
+              alt={product.name}
               loading={priority ? "eager" : "lazy"}
               fetchPriority={priority ? "high" : "auto"}
+              decoding="async"
               className="w-full h-full object-cover"
             />
           ) : (
@@ -177,6 +204,8 @@ export const ProductCard = React.memo(function ProductCard({
     <Link
       to={`/product/${product.slug}`}
       className="premium-card group flex flex-col h-full"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {/* ── Image ── */}
       <div className="relative aspect-[3/4] overflow-hidden bg-surface-soft">
@@ -184,9 +213,10 @@ export const ProductCard = React.memo(function ProductCard({
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
-            alt=""
+            alt={product.name}
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "auto"}
+            decoding="async"
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${hoverImage ? "group-hover:opacity-0" : ""}`}
           />
         ) : (
@@ -199,9 +229,10 @@ export const ProductCard = React.memo(function ProductCard({
         {hoverImage && (
           <img
             src={hoverImage}
-            alt=""
+            alt={`${product.name} alternate view`}
             aria-hidden="true"
             loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:opacity-100 group-hover:scale-105"
           />
         )}
@@ -303,4 +334,4 @@ export const ProductCard = React.memo(function ProductCard({
       </div>
     </Link>
   );
-});
+}

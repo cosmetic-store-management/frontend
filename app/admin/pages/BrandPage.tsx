@@ -119,7 +119,7 @@ export function BrandPage() {
     setValue,
     formState: { errors },
   } = useForm<BrandFormData>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     resolver: zodResolver(brandSchema) as any,
     defaultValues: EMPTY_FORM,
   });

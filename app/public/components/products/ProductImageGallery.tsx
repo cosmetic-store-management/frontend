@@ -52,11 +52,11 @@ export function ProductImageGallery({
 
   useEffect(() => {
     {
-      /* eslint-disable-next-line  */
+       
     }
     changeImage(selectedVariantImage || mainImage);
     {
-      /* eslint-disable-next-line  */
+       
     }
   }, [selectedVariantImage, mainImage]);
 

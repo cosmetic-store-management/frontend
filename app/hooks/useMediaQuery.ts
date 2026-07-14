@@ -14,7 +14,7 @@ export function useMediaQuery(query: string): boolean {
     const media = window.matchMedia(query);
     if (media.matches !== matches) {
       {
-        /* eslint-disable-next-line  */
+         
       }
       setMatches(media.matches);
     }

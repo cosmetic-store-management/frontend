@@ -17,15 +17,18 @@ import {
 import { getMyAccount } from "@/public/services/user.service";
 
 export const useAuth = () => {
-  const store = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const isLoggedIn = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.clearAuth);
+
   const isAdmin = ["owner", "manager", "staff"].includes(
-    store.user?.role || "",
+    user?.role || "",
   );
   return {
-    user: store.user,
-    isLoggedIn: store.isAuthenticated,
+    user,
+    isLoggedIn,
     isAdmin,
-    logout: store.clearAuth,
+    logout,
   };
 };
 // Helper to map and sanitize server cart items defensively
@@ -49,7 +52,8 @@ const mapServerCartItems = (items: any[]): any[] => {
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  const { items, setItems } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const setItems = useCartStore((state) => state.setItems);
 
   return useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
@@ -76,7 +80,8 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
-  const { items, setItems } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const setItems = useCartStore((state) => state.setItems);
 
   return useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),

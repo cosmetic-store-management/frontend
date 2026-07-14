@@ -10,7 +10,7 @@ export default function AdminLayout() {
 
   useEffect(() => {
     {
-      /* eslint-disable-next-line  */
+       
     }
     setIsMounted(true);
   }, []);
@@ -22,7 +22,7 @@ export default function AdminLayout() {
 
   // Chặn khách, chỉ cho admin vào
   if (!isLoggedIn || !isAdmin) {
-    console.log("AdminLayout Redirecting:", { isLoggedIn, isAdmin });
+
     return <Navigate to={`/login?returnUrl=/admin`} replace />;
   }
 

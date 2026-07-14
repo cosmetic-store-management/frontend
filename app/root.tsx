@@ -15,19 +15,7 @@ import { Toaster } from "./components/ui/sonner";
 import React from "react";
 
 
-// ── QueryClient ───────────────────────────────────────────────────────────────
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000,
-      gcTime: 10 * 60 * 1000,
-      retry: 1,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true,
-    },
-  },
-});
+import { queryClient } from "@/lib/queryClient";
 
 // ── Error Boundary ────────────────────────────────────────────────────────────
 
@@ -131,7 +119,7 @@ export function ErrorBoundary() {
 
 import { useLanguageStore } from "./store/language.store";
 
-export default function App() {
+export function Layout({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     const initTranslate = () => {
       if ((window as any).google?.translate?.TranslateElement) {
@@ -152,7 +140,6 @@ export default function App() {
       initTranslate();
     }
 
-    // Interval to detect if the user closes/resets the translation (reverts to original English)
     const checkInterval = setInterval(() => {
       const cookie = document.cookie;
       const hasViCookie = cookie.includes("googtrans=/en/vi");
@@ -181,12 +168,12 @@ export default function App() {
           href="https://fonts.gstatic.com"
           crossOrigin=""
         />
-        {/* Playfair Display — expressive headings */}
+        <link rel="preconnect" href="https://translate.google.com" />
+        <link rel="preconnect" href="https://translate.googleapis.com" />
         <link
           href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
           rel="stylesheet"
         />
-        {/* DM Sans — clean readable body */}
         <link
           href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap"
           rel="stylesheet"
@@ -202,7 +189,7 @@ export default function App() {
           defer
         ></script>
         <QueryClientProvider client={queryClient}>
-          <Outlet />
+          {children}
         </QueryClientProvider>
 
         <Toaster />
@@ -211,4 +198,8 @@ export default function App() {
       </body>
     </html>
   );
+}
+
+export default function App() {
+  return <Outlet />;
 }

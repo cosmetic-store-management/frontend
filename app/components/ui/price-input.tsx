@@ -22,7 +22,7 @@ export function PriceInput({
     if (value !== undefined && value !== null && value !== "") {
       const num = parseInt(String(value).replace(/\D/g, ""), 10) || 0;
       {
-        /* eslint-disable-next-line  */
+         
       }
       setDisplay(num.toLocaleString("vi-VN"));
     } else {

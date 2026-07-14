@@ -153,7 +153,7 @@ export function OrderSuccessPage() {
   const [timeLeft, setTimeLeft] = useState(15 * 60);
   const hasAutoCancelled = useRef(false);
   const [isConfirmOpen, setConfirmOpen] = useState(false);
-  const { clearCart } = useCartStore();
+  const clearCart = useCartStore((state) => state.clearCart);
 
   useEffect(() => {
     // Clear cart if payment is confirmed via polling

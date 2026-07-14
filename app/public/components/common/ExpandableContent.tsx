@@ -16,19 +16,23 @@ export function ExpandableContent({
   const [contentHeight, setContentHeight] = useState<number>(0);
 
   useEffect(() => {
-    if (contentRef.current) {
-      setContentHeight(contentRef.current.scrollHeight);
-    }
-  }, [children]);
-
-  useEffect(() => {
-    // Check if content exceeds the max height
-    if (contentRef.current) {
-      if (contentRef.current.scrollHeight > maxHeight) {
-        setNeedsExpansion(true);
+    if (!contentRef.current) return;
+    
+    const observer = new ResizeObserver(() => {
+      if (contentRef.current) {
+        setContentHeight(contentRef.current.scrollHeight);
+        setNeedsExpansion(contentRef.current.scrollHeight > maxHeight);
       }
-    }
-  }, [children, maxHeight]);
+    });
+    
+    observer.observe(contentRef.current);
+    
+    // Initial check
+    setContentHeight(contentRef.current.scrollHeight);
+    setNeedsExpansion(contentRef.current.scrollHeight > maxHeight);
+    
+    return () => observer.disconnect();
+  }, [maxHeight]);
 
   return (
     <div className="relative w-full">
@@ -37,6 +41,8 @@ export function ExpandableContent({
         className="transition-all duration-300 ease-in-out overflow-hidden relative"
         style={{
           maxHeight: isExpanded ? `${contentHeight}px` : `${maxHeight}px`,
+          willChange: "max-height",
+          contain: "paint",
         }}
       >
         {children}

@@ -36,6 +36,8 @@ export function useBrands() {
   return useQuery({
     queryKey: QK.brands(),
     queryFn: getBrands,
+    staleTime: Infinity,
+    refetchOnMount: false,
   });
 }
 
@@ -52,5 +54,7 @@ export function useCategories() {
         return bCount - aCount;
       });
     },
+    staleTime: Infinity,
+    refetchOnMount: false,
   });
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useNavigate } from "react-router";
 
 import {
@@ -26,8 +26,9 @@ export default function Header() {
 
   const { user, isAuthenticated, clearAuth } = useAuthStore();
 
-  const items = useCartStore((state) => state.items);
-  const cartCount = items.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = useCartStore((state) => 
+    state.items.reduce((total, item) => total + item.quantity, 0)
+  );
 
   const { data: categories = [] } = useCategories();
   const { data: brands = [] } = useBrands();
@@ -45,9 +46,25 @@ export default function Header() {
     megaMenuTimer.current = setTimeout(() => setIsMegaMenuOpen(false), 200);
   };
 
+  const memoizedMegaCategories = useMemo(() => {
+    return [...categories]
+      .filter((cat: any) => cat.children && cat.children.length > 0)
+      .sort((a: any, b: any) => {
+        if (a.name === "Trang điểm" && b.name === "Chăm sóc da mặt") return -1;
+        if (a.name === "Chăm sóc da mặt" && b.name === "Trang điểm") return 1;
+        return (b.children?.length || 0) - (a.children?.length || 0);
+      });
+  }, [categories]);
+
+  const memoizedTopCategories = useMemo(() => {
+    return [...categories]
+      .sort((a: any, b: any) => (b.children?.length || 0) - (a.children?.length || 0))
+      .slice(0, 3);
+  }, [categories]);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 0);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
       if (megaMenuTimer.current) clearTimeout(megaMenuTimer.current);
@@ -92,6 +109,7 @@ export default function Header() {
           {/* Logo */}
           <Link
             to="/"
+            prefetch="intent"
             aria-label="Home"
             className="flex items-center justify-center shrink-0 w-18 h-18 overflow-hidden rounded-full hover:opacity-90 transition-opacity"
           >
@@ -214,25 +232,7 @@ export default function Header() {
                 }`}
               >
                 {(() => {
-                  const megaCategories = [...categories]
-                    .filter(
-                      (cat: any) => cat.children && cat.children.length > 0,
-                    )
-                    .sort((a: any, b: any) => {
-                      if (
-                        a.name === "Trang điểm" &&
-                        b.name === "Chăm sóc da mặt"
-                      )
-                        return -1;
-                      if (
-                        a.name === "Chăm sóc da mặt" &&
-                        b.name === "Trang điểm"
-                      )
-                        return 1;
-                      return (
-                        (b.children?.length || 0) - (a.children?.length || 0)
-                      );
-                    });
+                  const megaCategories = memoizedMegaCategories;
                   return (
                     <>
                       {/* Left Column: Level 1 Categories */}
@@ -250,6 +250,7 @@ export default function Header() {
                               <Link
                                 onClick={() => setIsMegaMenuOpen(false)}
                                 to={`/products?category=${cat.slug}`}
+                                prefetch="intent"
                                 className="flex items-center gap-3 text-ink w-full"
                               >
                                 {cat.iconUrl && (
@@ -301,6 +302,7 @@ export default function Header() {
                                     <Link
                                       onClick={() => setIsMegaMenuOpen(false)}
                                       to={`/products?category=${child.slug}`}
+                                      prefetch="intent"
                                       className="text-[13px] font-bold text-foreground hover:text-primary transition-colors uppercase tracking-wide"
                                     >
                                       {child.name}
@@ -358,16 +360,14 @@ export default function Header() {
 
             {/* Nav Items */}
             <div className="flex items-stretch gap-6 flex-1">
-              {[...categories]
-                .sort((a: any, b: any) => (b.children?.length || 0) - (a.children?.length || 0))
-                .slice(0, 3)
-                .map((cat: any) => (
+              {memoizedTopCategories.map((cat: any) => (
                 <div
                   key={cat.id || cat._id}
                   className="relative group flex items-center"
                 >
                   <Link
                     to={`/products?category=${cat.slug}`}
+                    prefetch="intent"
                     className="flex items-center h-full py-3 font-semibold text-foreground hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
                   >
                     {cat.name}
@@ -418,6 +418,7 @@ export default function Header() {
               <div className="relative group flex items-center">
                 <Link
                   to="/products?sort=newest"
+                  prefetch="intent"
                   className="flex items-center h-full py-3 font-semibold text-foreground hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:origin-center"
                 >
                   New Arrivals
@@ -427,6 +428,7 @@ export default function Header() {
               <div className="relative group flex items-center">
                 <Link
                   to="/brands"
+                  prefetch="intent"
                   className="flex items-center h-full py-3 font-semibold text-foreground hover:text-brand transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-brand after:scale-x-0 group-hover:after:scale-x-100 after:transition-transform after:origin-center"
                 >
                   Brands <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-60" />
@@ -472,8 +474,8 @@ export default function Header() {
           ========================================= */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-100 flex lg:hidden">
-          {/* eslint-disable-next-line  */}
-          {/* eslint-disable-next-line  */}
+          { }
+          { }
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileMenuOpen(false)}

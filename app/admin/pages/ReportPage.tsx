@@ -44,7 +44,7 @@ export function ReportPage() {
   // Date calculation logic
   const { startDate, endDate } = useMemo(() => {
     const now = new Date();
-    let start = new Date();
+    const start = new Date();
     if (range === "today") {
       start.setHours(0, 0, 0, 0);
     } else if (range === "week") {

@@ -6,6 +6,7 @@ import tseslint from "typescript-eslint";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import reactPlugin from "eslint-plugin-react";
 import prettierPlugin from "eslint-config-prettier";
+import reactCompiler from "eslint-plugin-react-compiler";
 
 export default tseslint.config(
   { ignores: ["dist", "build", "node_modules", ".react-router"] },
@@ -24,6 +25,7 @@ export default tseslint.config(
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
       react: reactPlugin,
+      "react-compiler": reactCompiler,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -34,6 +36,7 @@ export default tseslint.config(
           allowExportNames: ["meta", "links", "headers", "loader", "action"],
         },
       ],
+      "react-compiler/react-compiler": "error",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": [
         "warn",

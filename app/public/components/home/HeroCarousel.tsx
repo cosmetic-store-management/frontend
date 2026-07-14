@@ -112,6 +112,11 @@ export function HeroCarousel() {
             zIndex: i === current ? 1 : 0,
           }}
         >
+          {/* Preload first image for LCP (React 19 hoists this to <head>) */}
+          {i === 0 && (
+            <link rel="preload" as="image" href={s.image} fetchPriority="high" />
+          )}
+          
           {/* Parallax image */}
           <div
             className="absolute inset-0 bg-cover bg-center will-change-transform"

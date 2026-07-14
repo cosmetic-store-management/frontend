@@ -41,6 +41,7 @@ export function ProductCatalogPage() {
     applyPriceFilter,
     resetBrands,
     setSelectedCategory,
+    clearAllFilters,
   } = actions;
 
   return (
@@ -87,6 +88,8 @@ export function ProductCatalogPage() {
                         >
                           <input
                             type="checkbox"
+                            id={`category-${cat.slug}`}
+                            name={`category-${cat.slug}`}
                             checked={selectedCategories.includes(cat.slug)}
                             onChange={() => toggleCategory(cat.slug)}
                             className="w-4 h-4 text-brand bg-surface border-border focus:ring-brand accent-brand rounded-sm cursor-pointer"
@@ -122,17 +125,23 @@ export function ProductCatalogPage() {
                     <div className="flex items-center gap-2">
                       <input
                         type="text"
+                        id="minPriceInput"
+                        name="minPriceInput"
                         placeholder="0"
                         value={minPriceInput}
                         onChange={handlePriceChange(setMinPriceInput)}
+                        onKeyDown={(e) => e.key === "Enter" && applyPriceFilter()}
                         className="w-full text-sm border border-border bg-muted rounded-sm py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
                       />
                       <span className="text-muted-foreground">–</span>
                       <input
                         type="text"
+                        id="maxPriceInput"
+                        name="maxPriceInput"
                         placeholder="100.000.000"
                         value={maxPriceInput}
                         onChange={handlePriceChange(setMaxPriceInput)}
+                        onKeyDown={(e) => e.key === "Enter" && applyPriceFilter()}
                         className="w-full text-sm border border-border bg-muted rounded-sm py-2 px-3 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 transition-colors"
                       />
                     </div>
@@ -163,13 +172,7 @@ export function ProductCatalogPage() {
                     <div>
                       <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
                         {[...brands]
-                          .sort((a, b) => {
-                            const aSelected = selectedBrands.includes(a.id);
-                            const bSelected = selectedBrands.includes(b.id);
-                            if (aSelected && !bSelected) return -1;
-                            if (!aSelected && bSelected) return 1;
-                            return a.name.localeCompare(b.name);
-                          })
+                          .sort((a, b) => a.name.localeCompare(b.name))
                           .map((brand) => (
                             <label
                               key={brand.id}
@@ -177,12 +180,14 @@ export function ProductCatalogPage() {
                             >
                               <input
                                 type="checkbox"
-                                checked={selectedBrands.includes(brand.id)}
-                                onChange={() => toggleBrand(brand.id)}
+                                id={`brand-${brand.id}`}
+                                name={`brand-${brand.id}`}
+                                checked={selectedBrands.includes(brand.slug || "")}
+                                onChange={() => toggleBrand(brand.slug || "")}
                                 className="w-4 h-4 text-brand bg-surface border-border focus:ring-brand accent-brand rounded-sm cursor-pointer"
                               />
                               <span
-                                className={`text-sm transition-colors leading-tight notranslate ${selectedBrands.includes(brand.id) ? "font-semibold text-ink" : "text-ink-muted group-hover:text-brand"}`}
+                                className={`text-sm transition-colors leading-tight notranslate ${selectedBrands.includes(brand.slug || "") ? "font-semibold text-ink" : "text-ink-muted group-hover:text-brand"}`}
                               >
                                 {brand.name}
                               </span>
@@ -254,10 +259,7 @@ export function ProductCatalogPage() {
                   Try adjusting your search or filters.
                 </p>
                 <button
-                  onClick={() => {
-                    setSearchTerm("");
-                    setSelectedCategory("all");
-                  }}
+                  onClick={clearAllFilters}
                   className="mt-6 text-brand font-medium hover:underline"
                 >
                   Clear all filters
@@ -265,7 +267,7 @@ export function ProductCatalogPage() {
               </div>
             ) : (
               <div
-                className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 animate-stagger transition-opacity duration-200 ${isFetching ? "opacity-50 pointer-events-none" : "opacity-100"}`}
+                className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 animate-stagger transition-opacity duration-200 ${isFetching ? "opacity-60" : "opacity-100"}`}
               >
                 {products.map((product: any, index: number) => (
                   <ProductCard

@@ -1,12 +1,23 @@
 import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tailwindcss from "@tailwindcss/vite";
+import babel from "vite-plugin-babel";
 import path from "path";
 
 export default defineConfig({
-  plugins: [process.env.VITEST ? null : reactRouter(), tailwindcss()].filter(
-    Boolean,
-  ) as any,
+  plugins: [
+    process.env.VITEST ? null : reactRouter(),
+    tailwindcss(),
+    babel({
+      filter: /\.[jt]sx?$/,
+      babelConfig: {
+        presets: ["@babel/preset-typescript"],
+        plugins: [
+          ["babel-plugin-react-compiler"]
+        ],
+      },
+    }),
+  ].filter(Boolean) as any,
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./app"),
@@ -21,7 +32,19 @@ export default defineConfig({
       "/api": "http://localhost:3001",
     },
   },
-  build: {},
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router'],
+          'ui-vendor': ['lucide-react', 'clsx', 'tailwind-merge'],
+          'chart-vendor': ['recharts'],
+          'stripe-vendor': ['@stripe/stripe-js', '@stripe/react-stripe-js'],
+          'query-vendor': ['@tanstack/react-query']
+        }
+      }
+    }
+  },
   // @ts-expect-error - vitest config field
   test: {
     globals: true,

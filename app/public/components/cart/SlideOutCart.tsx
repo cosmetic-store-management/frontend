@@ -26,8 +26,8 @@ export function SlideOutCart() {
   return (
     <div className="fixed inset-0 z-999 flex justify-end">
       {/* Backdrop */}
-      {/* eslint-disable-next-line  */}
-      {/* eslint-disable-next-line  */}
+      { }
+      { }
       <div
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm transition-opacity animate-fade-in"
         onClick={() => setIsOpen(false)}

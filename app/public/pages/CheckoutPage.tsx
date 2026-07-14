@@ -196,7 +196,7 @@ export function CheckoutPage() {
   );
 
   const onSubmit = async (data: CheckoutFormData) => {
-    console.log("SUBMITTING FORM", data);
+
     try {
       const res = await createOrderMutation.mutateAsync({
         receiverName: data.receiverName,
@@ -285,9 +285,7 @@ export function CheckoutPage() {
       </div>
       <form
         id="checkout-form"
-        onSubmit={handleSubmit(onSubmit, (errors) =>
-          console.log("FORM VALIDATION ERRORS:", errors),
-        )}
+        onSubmit={handleSubmit(onSubmit, (errors) => {})}
         className="w-full"
       >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px] gap-4 items-start">
@@ -556,7 +554,7 @@ export function CheckoutPage() {
                 <span className="font-medium text-ink">
                   {(
                     previewData?.subtotal ??
-                    useCartStore.getState().getSubtotal()
+                    useCartStore((state) => state.getSubtotal)()
                   ).toLocaleString("vi-VN")}
                   ₫
                 </span>
@@ -661,7 +659,7 @@ export function CheckoutPage() {
                 <span className="text-2xl font-bold text-brand">
                   {(
                     previewData?.finalTotalAmount ??
-                    useCartStore.getState().getTotal()
+                    useCartStore((state) => state.getTotal)()
                   ).toLocaleString("vi-VN")}
                   ₫
                 </span>
