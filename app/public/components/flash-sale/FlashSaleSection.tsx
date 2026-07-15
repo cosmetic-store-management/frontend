@@ -223,7 +223,7 @@ export function FlashSaleSection() {
                         {item.productName}
                       </h3>
                       {item.variantName &&
-                        item.variantName !== "Mặc định" &&
+                        item.variantName !== "Default" &&
                         item.variantName !== "Default" && (
                           <p className="text-[11px] text-ink-muted mt-1 truncate">
                             {item.variantName}

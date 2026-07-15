@@ -283,7 +283,7 @@ export default function OrderDetail({
                   <div className="border border-border bg-surface-soft/50 py-4 px-4 rounded-sm min-h-[76px] flex flex-col justify-start gap-1.5">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{"Channel"}</p>
                     <p className="text-sm font-medium text-ink">
-                      {order.channel === "pos" || order.address?.includes("Bán tại quầy") ? "In-Store Purchase" : "Online Purchase"}
+                      {order.channel === "pos" || order.address?.includes("Sell at counter") ? "In-Store Purchase" : "Online Purchase"}
                     </p>
                   </div>
 
@@ -298,7 +298,7 @@ export default function OrderDetail({
                   )}
 
                   {/* Shipping Information (Only for non-POS orders) */}
-                  {!(order.channel === "pos" || order.address?.includes("Bán tại quầy")) && (
+                  {!(order.channel === "pos" || order.address?.includes("Sell at counter")) && (
                     <div className="col-span-2 border border-border bg-surface-soft/50 py-4 px-4 rounded-sm min-h-[96px] flex flex-col justify-start gap-1.5">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">{"Shipping Address"}</p>
                       <div>

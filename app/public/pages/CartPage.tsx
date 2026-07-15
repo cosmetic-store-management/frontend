@@ -374,8 +374,9 @@ export function CartPage() {
             </button>
             {hasInactiveItems && (
               <p className="text-xs text-destructive text-center font-medium">
-                Vui lòng xóa các sản phẩm ngừng kinh doanh khỏi giỏ hàng
-              </p>
+                
+                                              Please remove discontinued products from your shopping cart
+                                            </p>
             )}
           </div>
         </div>

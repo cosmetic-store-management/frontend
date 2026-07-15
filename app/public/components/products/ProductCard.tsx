@@ -191,7 +191,7 @@ export function ProductCard({
               {hasDiscount && (
                 <span className="ml-2 text-xs text-ink-muted line-through">
                   {maxOriginalPrice.toLocaleString("vi-VN")}đ
-                </span>
+                                                    </span>
               )}
             </div>
             <button onClick={handleToggleFavorite} className="p-1 shrink-0" aria-label={isFavorite ? "Remove from wishlist" : "Add to wishlist"}>
@@ -307,7 +307,7 @@ export function ProductCard({
             {hasDiscount && (
               <div className="text-[11px] text-ink-muted line-through leading-tight mt-0.5">
                 {maxOriginalPrice.toLocaleString("vi-VN")}đ
-              </div>
+                                                </div>
             )}
           </div>
           {hasDiscount && (

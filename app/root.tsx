@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   useRouteError,
+  useLocation,
 } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/sonner";
@@ -154,6 +155,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
       clearInterval(checkInterval);
     };
   }, []);
+
+  const location = useLocation();
+
+  React.useEffect(() => {
+    // Re-trigger translation on SPA navigation if language is Vietnamese
+    const timer = setTimeout(() => {
+      const currentLang = useLanguageStore.getState().language;
+      if (currentLang === "vi") {
+        const select = document.querySelector(".goog-te-combo") as HTMLSelectElement | null;
+        if (select) {
+          select.value = "vi";
+          select.dispatchEvent(new Event("change"));
+        }
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   return (
     <html lang="en" suppressHydrationWarning>

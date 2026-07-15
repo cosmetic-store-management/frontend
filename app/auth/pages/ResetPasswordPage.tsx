@@ -80,7 +80,7 @@ export default function ResetPasswordPage() {
           <div className="relative">
             <input
               type="password"
-              placeholder="Mật khẩu mới"
+              placeholder="New password"
               {...register("password")}
               className={`w-full h-12 px-4 bg-white border ${
                 errors.password

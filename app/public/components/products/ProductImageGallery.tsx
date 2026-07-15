@@ -52,11 +52,11 @@ export function ProductImageGallery({
 
   useEffect(() => {
     {
-       
+
     }
     changeImage(selectedVariantImage || mainImage);
     {
-       
+
     }
   }, [selectedVariantImage, mainImage]);
 
@@ -117,11 +117,10 @@ export function ProductImageGallery({
               data-img={img}
               onClick={() => changeImage(img)}
               style={{ width: "calc((100% - 32px) / 5)", minWidth: 48 }}
-              className={`shrink-0 aspect-square overflow-hidden rounded-sm border-2 transition-all duration-200 ${
-                currentImage === img
+              className={`shrink-0 aspect-square overflow-hidden rounded-sm border-2 transition-all duration-200 ${currentImage === img
                   ? "border-brand opacity-100"
                   : "border-transparent opacity-60 hover:opacity-90"
-              }`}
+                }`}
             >
               <img
                 src={img}

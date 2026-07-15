@@ -94,7 +94,7 @@ export const useLikeReview = (productId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
     },
-    onError: (err) => handleMutationError(err, "Không thể thích đánh giá"),
+    onError: (err) => handleMutationError(err, "Cannot like review"),
   });
 };
 
@@ -106,6 +106,6 @@ export const useDislikeReview = (productId: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", productId] });
     },
-    onError: (err) => handleMutationError(err, "Không thể đánh giá không thích"),
+    onError: (err) => handleMutationError(err, "Cannot rate dislike"),
   });
 };

@@ -115,16 +115,16 @@ export function ProductReviews({ product }: ProductReviewsProps) {
 
   const handleLike = (reviewId: string, type: "up" | "down") => {
     if (!user) {
-      toast.error("Vui lòng đăng nhập để bình chọn");
+      toast.error("Please log in to vote");
       return;
     }
     if (type === "up") {
       likeMutation.mutate(reviewId, {
-        onError: (err: any) => toast.error(err.message || "Lỗi khi thích"),
+        onError: (err: any) => toast.error(err.message || "Error liking"),
       });
     } else {
       dislikeMutation.mutate(reviewId, {
-        onError: (err: any) => toast.error(err.message || "Lỗi khi không thích"),
+        onError: (err: any) => toast.error(err.message || "Error unliking"),
       });
     }
   };
@@ -390,24 +390,29 @@ export function ProductReviews({ product }: ProductReviewsProps) {
           </div>
           {!user ? (
             <span className="text-[12px] text-ink-muted mt-1">
-              Vui lòng đăng nhập để đánh giá
-            </span>
+              
+                                        Please log in to review
+                                      </span>
           ) : isEligibilityLoading ? (
             <span className="text-[12px] text-ink-muted mt-1 animate-pulse">
-              Đang kiểm tra điều kiện đánh giá...
-            </span>
+              
+                                            Checking review eligibility...
+                                          </span>
           ) : eligibility?.canReview ? (
             <span className="text-[12px] text-success mt-1 font-medium">
-              Bạn đủ điều kiện đánh giá sản phẩm này
-            </span>
+              
+                                                You are eligible to review this product
+                                              </span>
           ) : eligibility?.reason === "already_reviewed" ? (
             <span className="text-[12px] text-brand mt-1 font-medium">
-              Bạn đã đánh giá sản phẩm này rồi
-            </span>
+              
+                                                    You have already reviewed this product
+                                                  </span>
           ) : (
             <span className="text-[12px] text-danger mt-1">
-              Mua sản phẩm để kích hoạt đánh giá
-            </span>
+              
+                                                        Purchase the product to enable review
+                                                      </span>
           )}
           {reviews.length === 0 && eligibility?.canReview && (
             <span
@@ -487,7 +492,8 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                       ))}
                       {review.variantName && (
                         <span className="text-xs text-ink-muted ml-3 bg-surface-muted px-2 py-0.5 rounded-sm">
-                          Phân loại: {review.variantName}
+                          
+                                                                Category: {review.variantName}
                         </span>
                       )}
                     </div>
@@ -680,8 +686,9 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                               disabled={deleteReview.isPending}
                               className="text-xs font-bold text-danger hover:underline disabled:opacity-50"
                             >
-                              Xóa
-                            </button>
+                              
+                                                                                Delete
+                                                                              </button>
                           </div>
                         )}
                       </>
@@ -815,8 +822,8 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                     Write a review<span className="text-danger">*</span>
                   </span>
                   <span className="text-ink-muted text-sm">
-                    {comment.length}/500 ký tự
-                  </span>
+                    {comment.length}/500 characters
+                                                        </span>
                 </div>
                 <textarea
                   value={comment}
@@ -890,15 +897,16 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                 onClick={() => setIsModalOpen(false)}
                 className="px-10 py-2.5 border border-border bg-surface text-ink font-semibold rounded-sm hover:bg-surface-muted transition-colors text-[15px]"
               >
-                Hủy
-              </button>
+                
+                                              Cancel
+                                            </button>
               <button
                 type="submit"
                 disabled={createReview.isPending || isUploading}
                 className="px-10 py-2.5 bg-[#C81D25] text-white font-semibold rounded-sm hover:bg-[#A5151E] transition-colors  disabled:opacity-50 text-[15px]"
               >
                 {createReview.isPending || isUploading
-                  ? "Đang gửi..."
+                  ? "Submitting..."
                   : "Submit review"}
               </button>
             </DialogFooter>
@@ -919,7 +927,7 @@ export function ProductReviews({ product }: ProductReviewsProps) {
                 toast.success("Review deleted");
                 setDeleteTargetId(null);
               },
-              onError: (err: any) => toast.error(err.message || "Xóa thất bại"),
+              onError: (err: any) => toast.error(err.message || "Deletion failed"),
             });
           }
         }}

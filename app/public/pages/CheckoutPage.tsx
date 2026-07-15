@@ -235,7 +235,7 @@ export function CheckoutPage() {
             return; // Ngăn redirect về trang order-success
           }
         } catch (e) {
-          console.error("Lỗi tạo intent Stripe", e);
+          console.error("Error creating Stripe intent", e);
           return; // Thêm return để ngừng tiến trình
         }
       }

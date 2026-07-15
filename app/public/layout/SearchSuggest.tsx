@@ -54,19 +54,18 @@ export default function SearchSuggest() {
         onSubmit={handleSearch}
         className="flex items-center w-full relative h-9 bg-muted/60 rounded-sm border border-border/80 hover:border-brand/40 focus-within:border-brand focus-within:bg-white transition-all duration-200"
       >
-        <Search className="absolute left-3 w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          placeholder="Tìm sản phẩm, danh mục hay thương hiệu mong muốn"
-          className="w-full h-full bg-transparent py-0 pl-9 pr-12 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/70"
+          placeholder="Find your desired product, category or brand"
+          className="w-full h-full bg-transparent py-0 pl-4 pr-10 text-sm text-foreground focus:outline-none placeholder:text-muted-foreground/70"
           autoComplete="off"
         />
         <button
           type="submit"
-          className="absolute right-0 h-full px-3 text-brand hover:bg-brand/10 transition-colors flex items-center justify-center"
+          className="absolute right-0 h-full px-3 text-brand hover:bg-brand/10 transition-colors flex items-center justify-center rounded-r-sm"
         >
           <Search className="w-4 h-4" strokeWidth={2} />
         </button>
@@ -80,7 +79,7 @@ export default function SearchSuggest() {
             <div className="p-4 space-y-6">
               {/* Popular Keywords */}
               <div>
-                <h4 className="text-sm font-bold text-ink mb-3">Từ khóa phổ biến</h4>
+                <h4 className="text-sm font-bold text-ink mb-3">Popular keywords</h4>
                 <div className="flex flex-wrap gap-2">
                   {popularSearches.length > 0 ? (
                     popularSearches.map((term, idx) => (
@@ -96,14 +95,14 @@ export default function SearchSuggest() {
                       </button>
                     ))
                   ) : (
-                    <p className="text-xs text-ink-muted italic">Đang cập nhật xu hướng...</p>
+                    <p className="text-xs text-ink-muted italic">Updating trends...</p>
                   )}
                 </div>
               </div>
 
               {/* Featured Brands */}
               <div>
-                <h4 className="text-sm font-bold text-ink mb-3">Thương hiệu nổi bật</h4>
+                <h4 className="text-sm font-bold text-ink mb-3">Outstanding brand</h4>
                 <div className="grid grid-cols-5 gap-2">
                   {featuredBrands.map((brand) => (
                     <Link
@@ -126,7 +125,7 @@ export default function SearchSuggest() {
 
               {/* Featured Categories */}
               <div>
-                <h4 className="text-sm font-bold text-ink mb-3">Danh mục nổi bật</h4>
+                <h4 className="text-sm font-bold text-ink mb-3">Featured categories</h4>
                 <div className="flex flex-wrap gap-2">
                   {featuredCategories.map((cat) => (
                     <Link
@@ -145,7 +144,7 @@ export default function SearchSuggest() {
             // Live Search Results
             <div className="flex flex-col max-h-[400px]">
               <div className="p-3 bg-surface border-b border-border text-sm font-medium text-ink flex items-center justify-between">
-                <span>Kết quả tìm kiếm cho "{searchTerm}"</span>
+                <span>Search results for "{searchTerm}"</span>
                 {isFetching && <Loader2 className="w-4 h-4 animate-spin text-brand" />}
               </div>
               <div className="overflow-y-auto flex-1 p-2">
@@ -190,8 +189,9 @@ export default function SearchSuggest() {
                 ) : (
                   !isFetching && (
                     <div className="py-8 text-center text-ink-muted text-sm">
-                      Không tìm thấy sản phẩm nào phù hợp.
-                    </div>
+                      
+                                                                        No suitable products were found.
+                                                                      </div>
                   )
                 )}
               </div>
@@ -200,8 +200,9 @@ export default function SearchSuggest() {
                   onClick={() => handleSearch()}
                   className="w-full p-3 text-sm font-bold text-brand bg-brand/5 hover:bg-brand/10 transition-colors text-center border-t border-border"
                 >
-                  Xem tất cả {searchResults.pagination?.total || searchResults.products.length} kết quả
-                </button>
+                  
+                                                        See all {searchResults.pagination?.total || searchResults.products.length}  result
+                                                      </button>
               )}
             </div>
           )}

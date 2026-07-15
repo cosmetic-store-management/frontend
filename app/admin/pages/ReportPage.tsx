@@ -173,7 +173,7 @@ export function ReportPage() {
               <p className="text-xs font-medium text-ink-muted">Revenue</p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.totalRevenue.toLocaleString("vi-VN")}đ
-              </h3>
+                                            </h3>
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ export function ReportPage() {
               </p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.averageOrderValue.toLocaleString("vi-VN")}đ
-              </h3>
+                                            </h3>
             </div>
           </div>
         </div>
@@ -217,7 +217,7 @@ export function ReportPage() {
               <p className="text-xs font-medium text-ink-muted">Profit</p>
               <h3 className="text-lg font-bold text-ink mt-0.5">
                 {stats.profit.toLocaleString("vi-VN")}đ
-              </h3>
+                                            </h3>
             </div>
           </div>
         </div>

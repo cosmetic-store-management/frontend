@@ -19,6 +19,7 @@ import SearchSuggest from "./SearchSuggest";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down" | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMegaCategory, setActiveMegaCategory] = useState<any>(null);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -50,8 +51,8 @@ export default function Header() {
     return [...categories]
       .filter((cat: any) => cat.children && cat.children.length > 0)
       .sort((a: any, b: any) => {
-        if (a.name === "Trang điểm" && b.name === "Chăm sóc da mặt") return -1;
-        if (a.name === "Chăm sóc da mặt" && b.name === "Trang điểm") return 1;
+        if (a.name === "Make up" && b.name === "Facial care") return -1;
+        if (a.name === "Facial care" && b.name === "Make up") return 1;
         return (b.children?.length || 0) - (a.children?.length || 0);
       });
   }, [categories]);
@@ -63,7 +64,20 @@ export default function Header() {
   }, [categories]);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 0);
+      
+      if (currentScrollY > 60) {
+        setScrollDirection(currentScrollY > lastScrollY ? "down" : "up");
+      } else {
+        setScrollDirection(null);
+      }
+      lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
+    };
+    
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -84,8 +98,10 @@ export default function Header() {
           ========================================= */}
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
+          scrollDirection === "down" ? "-translate-y-full" : "translate-y-0"
+        } ${
           isScrolled
-            ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-border/50"
+            ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-border/50"
             : "bg-white border-b border-border"
         }`}
       >
@@ -311,6 +327,22 @@ export default function Header() {
                                       src={activeCat.bannerUrl}
                                       alt={activeCat.name}
                                       className="w-full h-auto object-cover rounded-sm shadow-sm hover:opacity-90 transition-opacity"
+                                      onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.onerror = null; // Prevent infinite loop
+                                        
+                                        // Use beautiful real photos of cosmetics/skincare from Unsplash as fallbacks
+                                        const fallbacks = [
+                                          "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&q=80&w=400&h=600",
+                                          "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=400&h=600",
+                                          "https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=400&h=600",
+                                          "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&q=80&w=400&h=600",
+                                          "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=400&h=600"
+                                        ];
+                                        // Pick one based on the category name length so it's consistent for the same category
+                                        const idx = activeCat.name.length % fallbacks.length;
+                                        target.src = fallbacks[idx];
+                                      }}
                                     />
                                   </Link>
                                 </div>
@@ -343,40 +375,40 @@ export default function Header() {
                     )}
                   </Link>
 
-                  {/* Subcategory Dropdown */}
+                  {/* Subcategory Dropdown - Horizontal Layout */}
                   {cat.children && cat.children.length > 0 && (
-                    <div className="absolute top-full left-0 min-w-60 bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-2 border border-border/60 shadow-xl rounded-sm mt-1">
-                      {cat.children.map((child: any) => (
-                        <div
-                          key={child.id || child._id}
-                          className="group/sub relative"
-                        >
-                          <Link
-                            to={`/products?category=${child.slug}`}
-                            className="flex items-center justify-between px-4 py-2.5 text-[14px] text-ink hover:text-brand hover:bg-surface-soft transition-colors"
+                    <div className="absolute top-full -left-4 w-[600px] bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6 border border-border/60 shadow-xl rounded-sm mt-1 cursor-default">
+                      <div className="columns-2 lg:columns-3 gap-x-8">
+                        {cat.children.map((child: any) => (
+                          <div
+                            key={child.id || child._id}
+                            className="flex flex-col gap-1.5 break-inside-avoid mb-6"
                           >
-                            {child.name}
-                            {child.children && child.children.length > 0 && (
-                              <ChevronRight className="w-4 h-4" />
-                            )}
-                          </Link>
+                            <Link
+                              to={`/products?category=${child.slug}`}
+                              className="text-[14px] font-bold text-ink hover:text-brand transition-colors uppercase tracking-wide mb-2 block"
+                            >
+                              {child.name}
+                            </Link>
 
-                          {/* Level 3 Subcategory Flyout (if any) */}
-                          {child.children && child.children.length > 0 && (
-                            <div className="absolute top-0 left-full min-w-50 bg-surface opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-50 py-2 border border-border shadow-ui-card rounded-sm">
-                              {child.children.map((sub: any) => (
-                                <Link
-                                  key={sub.id || sub._id}
-                                  to={`/products?category=${sub.slug}`}
-                                  className="block px-4 py-2 text-[13.5px] text-ink hover:text-brand hover:bg-surface-soft transition-colors"
-                                >
-                                  {sub.name}
-                                </Link>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                            {/* Level 3 Subcategory List */}
+                            {child.children && child.children.length > 0 && (
+                              <ul className="flex flex-col gap-2.5 mt-1">
+                                {child.children.map((sub: any) => (
+                                  <li key={sub.id || sub._id}>
+                                    <Link
+                                      to={`/products?category=${sub.slug}`}
+                                      className="text-[13.5px] font-medium text-slate-600 hover:text-brand transition-colors block"
+                                    >
+                                      {sub.name}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -402,13 +434,13 @@ export default function Header() {
                 </Link>
 
                 {/* Brand Dropdown */}
-                <div className="absolute top-full -left-5 w-[320px] bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 py-5 border border-border/60 shadow-xl rounded-sm mt-1">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-ink-muted mb-4 px-5">
+                <div className="absolute top-full -left-5 w-[600px] bg-white opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-6 border border-border/60 shadow-xl rounded-sm mt-1 cursor-default">
+                  <p className="text-[12px] font-bold uppercase tracking-wider text-ink-muted mb-4">
                     Featured Brands
                   </p>
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-3 px-5">
+                  <div className="grid grid-cols-4 gap-x-4 gap-y-4">
                     {brands.length > 0
-                      ? brands.slice(0, 8).map((brand: any) => (
+                      ? brands.slice(0, 24).map((brand: any) => (
                           <Link
                             key={brand.id || brand._id}
                             to={`/products?brandId=${brand.id || brand._id}`}
@@ -420,7 +452,7 @@ export default function Header() {
                       : null}
                   </div>
                   <div className="mt-5 border-t border-border/60" />
-                  <div className="pt-4 px-5">
+                  <div className="pt-4">
                     <Link
                       to="/brands"
                       className="text-[13.5px] font-bold text-brand hover:underline flex items-center gap-1 group/link w-fit"

@@ -17,7 +17,7 @@ node_modules/
 /coverage
 /playwright-report/
 /test-results/
-/tests
+tests/
 
 # Production
 /build/
@@ -35,3 +35,25 @@ node_modules/
 .env.production.local
 .vercel
 .env*
+
+# Vite
+*.local
+vite.config.ts.timestamp-*
+vite.config.js.timestamp-*
+
+# IDEs and Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ESLint
+.eslintcache
+
+# TypeScript
+*.tsbuildinfo

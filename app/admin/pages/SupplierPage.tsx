@@ -384,7 +384,7 @@ export function SupplierPage() {
                   control={control}
                   name="name"
                   render={({ field }) => (
-                    <Input {...field} id="sName" placeholder="Công ty TNHH L'Oreal Việt Nam" className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
+                    <Input {...field} id="sName" placeholder="L'Oreal Vietnam Company Limited" className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
                   )}
                 />
                 {errors.name && <p className="text-xs text-danger">{errors.name.message}</p>}
@@ -434,7 +434,7 @@ export function SupplierPage() {
                 control={control}
                 name="address"
                 render={({ field }) => (
-                  <Input {...field} id="sAddress" placeholder="Tầng 10, Tòa nhà Vincom, 72 Lê Thánh Tôn, Quận 1, TP. HCM" className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
+                  <Input {...field} id="sAddress" placeholder="10th Floor, Vincom Building, 72 Le Thanh Ton, District 1, City. HCM" className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
                 )}
               />
             </div>
@@ -461,7 +461,7 @@ export function SupplierPage() {
                   control={control}
                   name="contactPosition"
                   render={({ field }) => (
-                    <Input {...field} id="sContactPosition" placeholder="Trưởng phòng thương hiệu" className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
+                    <Input {...field} id="sContactPosition" placeholder="Head of brand department" className="h-10 bg-surface border-border focus-visible:ring-brand focus-visible:border-brand" />
                   )}
                 />
               </div>

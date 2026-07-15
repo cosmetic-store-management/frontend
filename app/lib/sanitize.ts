@@ -60,6 +60,7 @@ export function sanitizeHtml(html: string): string {
       "width",
       "height",
       "class",
+      "style",
       "colspan",
       "rowspan",
     ],

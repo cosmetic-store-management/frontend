@@ -467,7 +467,7 @@ export function ProductDetailPage() {
         </h2>
         <ExpandableContent maxHeight={250}>
           <div
-            className="prose prose-sm sm:prose-base max-w-none text-muted-foreground leading-relaxed"
+            className="prose prose-sm sm:prose-base max-w-none text-muted-foreground leading-relaxed [&_img]:!block [&_img]:!mx-auto [&_img]:!float-none [&_img]:!rounded-md [&_img]:!shadow-sm [&_img]:!max-w-full [&_img]:!h-auto [&_img]:my-6 [&_figure]:!mx-auto [&_figure]:!block"
             dangerouslySetInnerHTML={{
               __html: sanitizeHtml(
                 product.description || "No product details available.",

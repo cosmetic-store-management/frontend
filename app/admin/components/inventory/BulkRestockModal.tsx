@@ -72,24 +72,24 @@ export function BulkRestockModal({
         let notFoundCount = 0;
 
         data.forEach((row) => {
-          const codeVal = row["Barcode"] || row["Mã vạch"] || row["barcode"] || row["SKU"] || row["Mã SKU"] || row["sku"];
-          const rawQty = row["Số lượng"] || row["Quantity"] || row["qty"];
-          const rawPrice = row["Giá nhập"] || row["Price"] || row["price"];
+          const codeVal = row["Barcode"] || row["Barcode"] || row["barcode"] || row["SKU"] || row["SKU"] || row["sku"];
+          const rawQty = row["Quantity"] || row["Quantity"] || row["qty"];
+          const rawPrice = row["Import price"] || row["Price"] || row["price"];
 
           if (!codeVal) return;
 
           const quantity = Number(rawQty) || 1;
           const importPrice = Number(rawPrice) || 0;
           const batchCode =
-            row["Mã lô"] || row["Batch Code"] || row["batchCode"] || "";
+            row["Batch code"] || row["Batch Code"] || row["batchCode"] || "";
           const manufactureDate =
-            row["Ngày sản xuất"] ||
+            row["Manufacture date"] ||
             row["NSX"] ||
             row["Mfg Date"] ||
             row["manufactureDate"] ||
             "";
           const expiryDate =
-            row["Hạn sử dụng"] ||
+            row["Expiration date"] ||
             row["HSD"] ||
             row["Exp Date"] ||
             row["expiryDate"] ||

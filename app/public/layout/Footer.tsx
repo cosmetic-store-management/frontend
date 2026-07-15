@@ -30,7 +30,7 @@ export default function Footer() {
                 />
               </div>
               <span
-                className="text-2xl font-bold tracking-tight text-white"
+                className="text-2xl font-bold tracking-tight text-white notranslate"
                 style={{
                   fontFamily:
                     "var(--font-display, 'Playfair Display', Georgia, serif)",
@@ -307,7 +307,7 @@ export default function Footer() {
           >
             © {new Date().getFullYear()}{" "}
             <span className="text-white font-medium notranslate">
-              {settings.storeName || "GlowUp"}
+              {(settings.storeName || "GlowUp").replace(" Cosmetics", "")}
             </span>
             . All rights reserved.
           </p>

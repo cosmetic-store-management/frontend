@@ -24,11 +24,11 @@ export function ImageUpload({
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Vui lòng chọn file hình ảnh");
+      toast.error("Please select image file");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Kích thước ảnh không được vượt quá 5MB");
+      toast.error("Photo size must not exceed 5MB");
       return;
     }
 
@@ -44,7 +44,7 @@ export function ImageUpload({
         onChange(result.url);
       } catch (err) {
         console.error("Upload error", err);
-        toast.error("Tải ảnh lên thất bại");
+        toast.error("Photo upload failed");
       } finally {
         setIsUploading(false);
         // Reset input để có thể chọn cùng file lại
@@ -83,7 +83,7 @@ export function ImageUpload({
               type="button"
               onClick={triggerUpload}
               className="p-1.5 bg-surface text-ink rounded-sm hover:bg-surface-muted transition-colors"
-              title="Thay đổi ảnh"
+              title="Change photo"
             >
               <Upload className="w-4 h-4" />
             </button>
@@ -91,7 +91,7 @@ export function ImageUpload({
               type="button"
               onClick={removeImage}
               className="p-1.5 bg-danger text-white rounded-sm hover:bg-danger transition-colors"
-              title="Xóa ảnh"
+              title="Delete photos"
             >
               <X className="w-4 h-4" />
             </button>
@@ -106,7 +106,7 @@ export function ImageUpload({
             <>
               <Loader2 className="w-5 h-5 animate-spin text-brand" />
               {!compact && (
-                <span className="text-xs font-medium mt-1 text-ink-muted">{"Đang tải lên..."}</span>
+                <span className="text-xs font-medium mt-1 text-ink-muted">{"Uploading..."}</span>
               )}
             </>
           ) : (
@@ -115,11 +115,11 @@ export function ImageUpload({
                 className={`text-ink-muted group-hover:text-brand transition-colors ${compact ? "w-5 h-5" : "w-8 h-8 mb-2"}`}
               />
               {compact ? (
-                <span className="text-[9px] text-ink-muted group-hover:text-brand transition-colors mt-1 leading-tight text-center">{"Tải lên"}</span>
+                <span className="text-[9px] text-ink-muted group-hover:text-brand transition-colors mt-1 leading-tight text-center">{"Upload"}</span>
               ) : (
                 <>
-                  <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">{"Bấm để tải ảnh lên"}</span>
-                  <span className="text-[10px] text-ink-muted/70 mt-1">{"PNG, JPG · tối đa 5MB"}</span>
+                  <span className="text-xs font-medium text-ink-muted group-hover:text-brand transition-colors">{"Click to upload photo"}</span>
+                  <span className="text-[10px] text-ink-muted/70 mt-1">{"PNG, JPG · maximum 5MB"}</span>
                 </>
               )}
             </>

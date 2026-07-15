@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
         setSubmitted(true);
       },
       onError: (err) => {
-        toast.error(err instanceof Error ? err.message : "Có lỗi xảy ra");
+        toast.error(err instanceof Error ? err.message : "An error occurred");
       },
     });
   };

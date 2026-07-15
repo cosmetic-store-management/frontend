@@ -232,7 +232,7 @@ export default function RegisterPage() {
             <Field
               label="Full Name"
               name="name"
-              placeholder={"Nguyễn Thị Lan"}
+              placeholder={"Nguyen Thi Lan"}
               error={errors.name?.message}
             />
             <Field
@@ -290,35 +290,6 @@ export default function RegisterPage() {
               }
             />
 
-            {/* Terms */}
-            <label className="flex items-start gap-3 mt-4 pt-2 cursor-pointer group">
-              <div className="relative flex items-center justify-center mt-0.5 shrink-0">
-                <input
-                  type="checkbox"
-                  required
-                  className="peer sr-only"
-                />
-                <div className="w-4 h-4 border border-border rounded-sm peer-checked:bg-brand peer-checked:border-brand transition-colors" />
-                <Check className="w-3 h-3 text-white absolute opacity-0 peer-checked:opacity-100 transition-opacity" />
-              </div>
-              <span className="text-xs text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors">
-                {"By creating an account, you agree to GlowUp's"}{" "}
-                <Link
-                  to="/terms"
-                  className="text-foreground underline decoration-border underline-offset-4 hover:decoration-brand transition-colors"
-                >
-                  {"Terms of Service"}
-                </Link>{" "}
-                {"and"}{" "}
-                <Link
-                  to="/privacy"
-                  className="text-foreground underline decoration-border underline-offset-4 hover:decoration-brand transition-colors"
-                >
-                  {"Privacy Policy"}
-                </Link>
-                .
-              </span>
-            </label>
 
             {/* Submit */}
             <button

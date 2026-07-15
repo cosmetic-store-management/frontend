@@ -152,10 +152,9 @@ export function FlashSaleEditor({
         </Button>
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight">
-            {isEditing ? "Cập nhật Flash Sale" : "Tạo Flash Sale Mới"}
+            {isEditing ? "Update Flash Sale" : "Create New Flash Sale"}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1 font-medium">{`Thiết lập chiến dịch giảm giá giới hạn thời gian một cách nhanh
-            chóng.`}</p>
+          <p className="text-sm text-muted-foreground mt-1 font-medium">{`Quickly set up time-limited discount campaigns.`}</p>
         </div>
       </div>
 

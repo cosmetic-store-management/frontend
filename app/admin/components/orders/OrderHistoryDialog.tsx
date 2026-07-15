@@ -90,25 +90,25 @@ const getDisplayedActivities = (order: Order, rawActivities: OrderActivity[]): D
     }
 
     // 2. Translate older Vietnamese log messages & extract Receipt/Invoice number
-    if (description.includes("tạo thành công tại quầy") || description.includes("POS order created")) {
+    if (description.includes("successfully created at counter") || description.includes("POS order created")) {
       description = "POS order created successfully at Counter";
       receiptNumber = order.receiptNumber || order.code;
-    } else if (description.includes("Đơn hàng trực tuyến được tạo")) {
+    } else if (description.includes("Online order created")) {
       description = "Online order placed successfully";
-    } else if (description.includes("Đã thu số tiền")) {
+    } else if (description.includes("Collected amount")) {
       const amountMatch = description.match(/[\d\.]+/);
       const amountStr = amountMatch ? amountMatch[0] : "";
-      const methodStr = description.includes("QR Code") ? "QR Code" : (description.includes("Tiền mặt") || description.includes("cash") ? "Cash" : "Card");
+      const methodStr = description.includes("QR Code") ? "QR Code" : (description.includes("Cash") || description.includes("cash") ? "Cash" : "Card");
       description = `Payment of ${amountStr || "order total"} VND successfully received via ${methodStr}`;
-    } else if (description.includes("Trạng thái đơn hàng chuyển từ")) {
+    } else if (description.includes("Order status changed from")) {
       const fromMatch = description.match(/từ "([^"]+)"|từ ([^\s]+)/);
       const toMatch = description.match(/sang "([^"]+)"|sang ([^\s]+)/);
       const from = fromMatch ? (fromMatch[1] || fromMatch[2]) : "";
       const to = toMatch ? (toMatch[1] || toMatch[2]) : "";
       description = `Order status updated from ${from || "previous"} to ${act.statusTo || to || "next"}`;
-    } else if (description.includes("Cập nhật người nhận")) {
+    } else if (description.includes("Update recipient")) {
       description = "Recipient details updated";
-    } else if (description.includes("Đã hoàn hàng & hoàn tiền")) {
+    } else if (description.includes("Returned & refunded")) {
       const reasonMatch = description.match(/Lý do:\s*"([^"]+)"|Reason:\s*(.+)$/i);
       const reason = reasonMatch ? (reasonMatch[1] || reasonMatch[2]) : "";
       description = `POS order items returned and refunded successfully. Reason: ${reason || "No reason specified"}`;
@@ -122,7 +122,7 @@ const getDisplayedActivities = (order: Order, rawActivities: OrderActivity[]): D
       title,
       description,
       receiptNumber,
-      performedBy: act.operatorName === "Nhân viên bán hàng" ? "Sales Staff" : (act.operatorName === "Khách hàng" ? "Customer" : act.operatorName),
+      performedBy: act.operatorName === "Sales staff" ? "Sales Staff" : (act.operatorName === "Customer" ? "Customer" : act.operatorName),
       time: formatDate(act.createdAt),
       status,
     };

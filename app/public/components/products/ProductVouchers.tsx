@@ -23,7 +23,7 @@ export function ProductVouchers() {
     collectMutation.mutate(code, {
       onSuccess: () => toast.success("Voucher saved to your wallet!"),
       onError: (e: any) => {
-        if (!e?.message?.includes("đã lưu") && !e?.message?.includes("already saved")) {
+        if (!e?.message?.includes("saved") && !e?.message?.includes("already saved")) {
           toast.error(e?.message || "Unable to save voucher");
         }
       },

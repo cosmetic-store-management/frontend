@@ -896,12 +896,15 @@ export function POSPage() {
           {/* Receipt Footer */}
           <div className="text-center space-y-2 mt-4 text-[9px] text-zinc-700 leading-normal">
             <p className="italic font-medium text-[10px] text-zinc-900">
-              Cảm ơn quý khách đã mua sắm tại {settings.storeName || "GlowUp"}!
+              
+                                        Thank you for shopping at {settings.storeName || "GlowUp"}!
             </p>
             <p className="text-zinc-500 font-medium">
-              Quý khách vui lòng kiểm tra hàng trước khi thanh toán.<br />
-              Chỉ nhận đổi trả trong vòng 3 ngày kể từ ngày mua kèm theo hóa đơn này.
-            </p>
+              
+                                        Please check the goods before payment.<br />
+              
+                                        Returns will only be accepted within 3 days from the date of purchase with this invoice.
+                                      </p>
             <p className="text-[8px] text-zinc-400 font-bold uppercase tracking-wider mt-1">
               www.glowup.aisq.site
             </p>
